@@ -6,72 +6,79 @@
 <title>Paletas Santa Rosa</title>
 
 <style>
-.contenedor {
-  position: relative;
-  width: 100%;
-  height: 500px;
-  margin-top: 50px;
-}
-
-.logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px;
-}
-
-.producto {
-  position: absolute;
+body {
+  font-family: Arial;
   text-align: center;
+  background: #fff8f0;
+}
+
+/* LOGO */
+.logo {
+  width: 180px;
+  margin: 20px auto;
+  display: block;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+/* PRODUCTO */
+.producto {
+  background: white;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 .producto img {
-  width: 120px;
+  width: 100%;
   border-radius: 15px;
-}
-
-/* posiciones alrededor */
-
-.p1 {
-  top: 10%;
-  left: 40%;
-}
-
-.p2 {
-  top: 60%;
-  left: 10%;
-}
-
-.p3 {
-  top: 60%;
-  right: 10%;
 }
 </style>
 </head>
 
 <body>
 
+<img src="imagenes/logo.png" class="logo">
+
 <h1>🍦 Paletas Santa Rosa</h1>
 <p>Paletas artesanales con fruta natural</p>
 
-<div class="contenedor">
+<div class="grid">
 
-  <img src="imagenes/logo.png" class="logo">
-
-  <div class="producto p1">
+  <div class="producto">
     <img src="imagenes/mango.jpg">
-    <p>Mango</p>
+    <p>Mango - $20</p>
   </div>
 
-  <div class="producto p2">
+  <div class="producto">
     <img src="imagenes/fresa.png">
-    <p>Fresa</p>
+    <p>Fresa - $20</p>
   </div>
 
-  <div class="producto p3">
+  <div class="producto">
     <img src="imagenes/otro.jpg">
-    <p>Chocolate</p>
+    <p>Chocolate - $20</p>
+  </div>
+
+  <div class="producto">
+    <img src="imagenes/mango.jpg">
+    <p>Limón - $20</p>
+  </div>
+
+  <div class="producto">
+    <img src="imagenes/fresa.png">
+    <p>Vainilla - $20</p>
+  </div>
+
+  <div class="producto">
+    <img src="imagenes/otro.jpg">
+    <p>Coco - $20</p>
   </div>
 
 </div>
