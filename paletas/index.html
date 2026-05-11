@@ -1,1 +1,106 @@
-<a href="../index.html">⬅ Volver</a>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paletas Santa Rosa</title>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+              url("imagenes/fondohelado.jpg");
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+/* LOGO */
+.logo {
+  width: 180px;
+  margin: 20px auto;
+  display: block;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+/* PRODUCTO */
+.producto {
+  background: transparent;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: none;
+}
+
+.producto img {
+  width: 100%;
+  border-radius: 15px;
+}
+.btn { 
+  display: inline-block; 
+  margin: 10px; padding: 
+  10px 20px; 
+  background: #25D366; 
+  color: white; 
+  text-decoration: none; 
+  border-radius: 10px; }
+  
+</style>
+</head>
+
+<body>
+
+<img src="imagenes/logo.png" class="logo">
+
+<h1>🍦 Paletas Santa Rosa</h1>
+<p>Paletas artesanales con fruta natural</p>
+
+<div class="grid">
+
+  <div class="producto">
+    <img src="imagenes/mango.jpg">
+    <p>Mango - $20</p>
+    <a class="btn" href="https://wa.me/5212225655003?text=Quiero%20paleta%20de%20mango"> Pedir por WhatsApp </a>
+  </div>
+
+  <div class="producto">
+    <img src="imagenes/fresa.png">
+    <p>Fresa - $20</p>
+    <a class="btn" href="https://wa.me/5212225655003?text=Quiero%20paleta%20de%20mango"> Pedir por WhatsApp </a>
+  </div>
+
+  <div class="producto">
+    <img src="imagenes/nutella.jpg">
+    <p>Chocolate - $20</p>
+    <a class="btn" href="https://wa.me/5212225655003?text=Quiero%20paleta%20de%20mango"> Pedir por WhatsApp </a>
+  </div>
+
+  <div class="producto">
+    <img src="imagenes/besoangel.jpg">
+    <p>Limón - $20</p>
+    <a class="btn" href="https://wa.me/5212225655003?text=Quiero%20paleta%20de%20beso%20de%20angel"> Pedir por WhatsApp </a>
+  </div>
+
+  <div class="producto">
+    <img src="imagenes/fresa.png">
+    <p>Vainilla - $20</p>
+    <a class="btn" href="https://wa.me/5212225655003?text=Quiero%20paleta%20de%20mango"> Pedir por WhatsApp </a>
+  </div>
+
+  <div class="producto">
+    <img src="imagenes/otro.jpg">
+    <p>Coco - $20</p>
+    <a class="btn" href="https://wa.me/5212225655003?text=Quiero%20paleta%20de%20mango"> Pedir por WhatsApp </a>
+  </div>
+
+</div>
+
+</body>
+</html>
