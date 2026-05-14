@@ -1,1 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Inventario e Insumos</title>
 
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #f4f6f8;
+  margin: 0;
+}
+
+h1 {
+  background: #ff4d6d;
+  color: white;
+  padding: 15px;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  width: 250px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sumar {
+  background: #28a745;
+  color: white;
+}
+
+.restar {
+  background: #dc3545;
+  color: white;
+}
+
+.valor {
+  font-size: 24px;
+  margin: 10px 0;
+}
+</style>
+
+</head>
+<body>
+
+<h1>📦 Inventario e Insumos</h1>
+
+<div class="container">
+
+  <!-- INVENTARIO -->
+  <div class="card">
+    <h2>🍧 Bolis</h2>
+    <div class="valor" id="bolis">0</div>
+    <button class="sumar" onclick="sumar('bolis',10)">+10 fabricar</button>
+    <button class="restar" onclick="restar('bolis',1)">-1 vender</button>
+  </div>
+
+  <div class="card">
+    <h2>🍦 Paletas</h2>
+    <div class="valor" id="paletas">0</div>
+    <button class="sumar" onclick="sumar('paletas',10)">+10 fabricar</button>
+    <button class="restar" onclick="restar('paletas',1)">-1 vender</button>
+  </div>
+
+  <!-- INSUMOS -->
+  <div class="card">
+    <h2>🍬 Azúcar</h2>
+    <div class="valor" id="azucar">0</div>
+    <button class="sumar" onclick="sumar('azucar',5)">+5 comprar</button>
+    <button class="restar" onclick="restar('azucar',1)">-1 usar</button>
+  </div>
+
+  <div class="card">
+    <h2>🍓 Fruta</h2>
+    <div class="valor" id="fruta">0</div>
+    <button class="sumar" onclick="sumar('fruta',5)">+5 comprar</button>
+    <button class="restar" onclick="restar('fruta',1)">-1 usar</button>
+  </div>
+
+</div>
+
+<script>
+function obtener(nombre) {
+  return parseFloat(localStorage.getItem(nombre)) || 0;
+}
+
+function guardar(nombre, valor) {
+  localStorage.setItem(nombre, valor);
+  document.getElementById(nombre).innerText = valor;
+}
+
+function sumar(nombre, cantidad) {
+  let valor = obtener(nombre);
+  valor += cantidad;
+  guardar(nombre, valor);
+}
+
+function restar(nombre, cantidad) {
+  let valor = obtener(nombre);
+  valor -= cantidad;
+  if (valor < 0) valor = 0;
+  guardar(nombre, valor);
+}
+
+// Cargar datos al iniciar
+window.onload = () => {
+  ['bolis','paletas','azucar','fruta'].forEach(item => {
+    guardar(item, obtener(item));
+  });
+};
+</script>
+
+</body>
+</html>
