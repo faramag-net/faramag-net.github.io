@@ -2,149 +2,258 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Inventario e Insumos</title>
+<title>Inventario</title>
 
 <style>
-body {
+body{
   font-family: Arial;
-  background: #f4f6f8;
-  padding: 20px;
+  background:#f4f6f8;
+  padding:20px;
 }
 
-h1 {
-  text-align: center;
-  color: #333;
+h1{
+  text-align:center;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  max-width: 500px;
-  margin: auto;
+table{
+  width:100%;
+  max-width:800px;
+  margin:auto;
+  border-collapse:collapse;
+  background:white;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-li {
-  background: white;
-  margin: 10px 0;
-  padding: 15px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+th, td{
+  padding:15px;
+  text-align:center;
+  border-bottom:1px solid #ddd;
 }
 
-.nombre {
-  font-weight: bold;
+th{
+  background:#ff4d6d;
+  color:white;
 }
 
-.valor {
-  margin: 0 10px;
-  font-size: 18px;
+button{
+  padding:5px 10px;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
 }
 
-button {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.mas{
+  background:#28a745;
+  color:white;
 }
 
-.mas {
-  background: #28a745;
-  color: white;
+.menos{
+  background:#dc3545;
+  color:white;
 }
 
-.menos {
-  background: #dc3545;
-  color: white;
+input{
+  width:80px;
+  text-align:center;
+  padding:5px;
 }
 
-.guardar {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background: #007bff;
-  color: white;
-  border-radius: 8px;
+.guardar{
+  margin-top:20px;
+  padding:10px 20px;
+  background:#007bff;
+  color:white;
+  border:none;
+  border-radius:8px;
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
 }
 </style>
 
 </head>
 <body>
 
-<h1>📦 Inventario e Insumos</h1>
+<h1>📦 Inventario</h1>
 
-<ul id="lista"></ul>
+<table>
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Inventario Inicial</th>
+      <th>Vendidos</th>
+      <th>Disponibles</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
 
-<button class="guardar" onclick="exportar()">💾 Guardar archivo</button>
+  <tbody id="tabla"></tbody>
+</table>
+
+<button class="guardar" onclick="exportar()">
+💾 Guardar JSON
+</button>
+
+<input type="file" onchange="importar(event)" style="display:block; margin:20px auto;">
 
 <script>
-const items = {
-  bolis: 0,
-  paletas: 0,
-  azucar: 0,
-  fruta: 0
+
+const productos = {
+  bolis: {
+    inicial: 100,
+    vendidos: 0
+  },
+
+  paletas: {
+    inicial: 50,
+    vendidos: 0
+  }
 };
 
-// Cargar desde localStorage
-function cargar() {
-  for (let key in items) {
-    items[key] = parseFloat(localStorage.getItem(key)) || 0;
+// cargar datos
+function cargar(){
+  const guardado = localStorage.getItem("inventario");
+
+  if(guardado){
+    Object.assign(productos, JSON.parse(guardado));
   }
 }
 
-// Guardar en localStorage
-function guardar() {
-  for (let key in items) {
-    localStorage.setItem(key, items[key]);
-  }
+// guardar datos
+function guardar(){
+  localStorage.setItem(
+    "inventario",
+    JSON.stringify(productos)
+  );
 }
 
-// Renderizar lista
-function render() {
-  const lista = document.getElementById("lista");
-  lista.innerHTML = "";
+// renderizar tabla
+function render(){
 
-  for (let key in items) {
-    const li = document.createElement("li");
+  const tabla = document.getElementById("tabla");
+  tabla.innerHTML = "";
 
-    li.innerHTML = `
-      <span class="nombre">${key.toUpperCase()}</span>
-      <div>
-        <button class="menos" onclick="cambiar('${key}', -1)">-1</button>
-        <span class="valor">${items[key]}</span>
-        <button class="mas" onclick="cambiar('${key}', 1)">+1</button>
-      </div>
+  for(let nombre in productos){
+
+    const p = productos[nombre];
+
+    const disponibles =
+      p.inicial - p.vendidos;
+
+    tabla.innerHTML += `
+      <tr>
+
+        <td>${nombre.toUpperCase()}</td>
+
+        <td>
+          <input type="number"
+            value="${p.inicial}"
+            onchange="editarInicial('${nombre}', this.value)">
+        </td>
+
+        <td>${p.vendidos}</td>
+
+        <td>${disponibles}</td>
+
+        <td>
+          <button class="menos"
+            onclick="vender('${nombre}', -1)">
+            -1
+          </button>
+
+          <button class="mas"
+            onclick="vender('${nombre}', 1)">
+            +1
+          </button>
+        </td>
+
+      </tr>
     `;
-
-    lista.appendChild(li);
   }
 }
 
-// Cambiar valores
-function cambiar(nombre, cantidad) {
-  items[nombre] += cantidad;
-  if (items[nombre] < 0) items[nombre] = 0;
+// editar inventario inicial
+function editarInicial(nombre, valor){
+
+  productos[nombre].inicial =
+    parseInt(valor) || 0;
 
   guardar();
   render();
 }
 
-// Exportar a archivo JSON
-function exportar() {
-  const dataStr = JSON.stringify(items, null, 2);
-  const blob = new Blob([dataStr], { type: "application/json" });
+// vender
+function vender(nombre, cantidad){
 
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "inventario.json";
+  productos[nombre].vendidos += cantidad;
+
+  if(productos[nombre].vendidos < 0){
+    productos[nombre].vendidos = 0;
+  }
+
+  if(productos[nombre].vendidos >
+      productos[nombre].inicial){
+
+    productos[nombre].vendidos =
+      productos[nombre].inicial;
+  }
+
+  guardar();
+  render();
+}
+
+// exportar JSON
+function exportar(){
+
+  const data =
+    JSON.stringify(productos, null, 2);
+
+  const blob =
+    new Blob([data], {
+      type:"application/json"
+    });
+
+  const a =
+    document.createElement("a");
+
+  a.href =
+    URL.createObjectURL(blob);
+
+  a.download =
+    "inventario.json";
+
   a.click();
 }
 
-// Inicializar
+// importar JSON
+function importar(event){
+
+  const archivo =
+    event.target.files[0];
+
+  if(!archivo) return;
+
+  const lector =
+    new FileReader();
+
+  lector.onload = function(e){
+
+    const datos =
+      JSON.parse(e.target.result);
+
+    Object.assign(productos, datos);
+
+    guardar();
+    render();
+  };
+
+  lector.readAsText(archivo);
+}
+
+// iniciar
 cargar();
 render();
+
 </script>
 
 </body>
