@@ -89,7 +89,7 @@
         width:100%;
         border-collapse:collapse;
         margin-top:15px;
-        overflow-x:auto;
+        background:white;
     }
     
     th{
@@ -256,7 +256,11 @@
     
     <h2>📋 Historial de Ventas</h2>
     
-    <div style="overflow-x:auto;">
+    <div style="
+    overflow-x:auto;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    ">
     
     <table>
     
@@ -350,6 +354,8 @@
         guardarLocal();
     
             actualizarResumen();
+            
+            renderTabla();
 
             document.getElementById("inventarioBolis").value = "";
 
@@ -357,68 +363,81 @@
     }
     
     function registrarVenta(){
-    
-        const producto =
-            document.getElementById("producto").value;
-    
-        const cliente =
-            document.getElementById("cliente").value;
-    
-        const cantidad =
-            parseInt(document.getElementById("cantidad").value);
-    
-        const precio =
-            parseFloat(document.getElementById("precio").value);
-        
-        const costo =
-        parseFloat(document.getElementById("costo").value);
-    
-        const descuento =
-        document.getElementById("descuento").value;
-    
-        if(!cantidad || cantidad <= 0){
-            alert("Cantidad inválida");
-            return;
-        }
-    
-        if(cantidad > inventario[producto]){
-            alert("No hay suficiente inventario");
-            return;
-        }
-    
-        inventario[producto] -= cantidad;
-    
-        const subtotal = cantidad * precio;
-        const ganancia = subtotal - (cantidad * costo);
-        const fecha = new Date().toLocaleDateString();
-    
-        ventas.push({
-            producto,
-            cliente,
-            cantidad,
-            inventario: inventario[producto],
-            precio,
-            costo,
-            subtotal,
-            ganancia,
-            descuento,
-            fecha
-        });
 
-        guardarLocal();
+    actualizarProducto();
 
-        renderTabla();
+    const producto =
+    document.getElementById("producto").value;
 
-        actualizarResumen();
+    const cliente =
+    document.getElementById("cliente").value;
 
-        limpiarFormulario();
+    if(cliente.trim() === ""){
+        alert("Escribe un cliente");
+        return;
+    }
 
-        document.querySelector("table")
-        .scrollIntoView({
+    const cantidad =
+    parseInt(document.getElementById("cantidad").value) || 0;
+
+    const precio =
+    Number(document.getElementById("precio").value) || 0;
+
+    const costo =
+    Number(document.getElementById("costo").value) || 0;
+
+    const descuento =
+    document.getElementById("descuento").value;
+
+    if(cantidad <= 0){
+        alert("Cantidad inválida");
+        return;
+    }
+
+    if(cantidad > inventario[producto]){
+        alert("No hay suficiente inventario");
+        return;
+    }
+
+    inventario[producto] -= cantidad;
+
+    const subtotal = cantidad * precio;
+
+    const ganancia = subtotal - (cantidad * costo);
+
+    const fecha = new Date().toLocaleString();
+
+    ventas.push({
+        producto,
+        cliente,
+        cantidad,
+        inventario: inventario[producto],
+        precio,
+        costo,
+        subtotal,
+        ganancia,
+        descuento,
+        fecha
+    });
+
+    guardarLocal();
+
+    actualizarResumen();
+    
+    renderTabla();
+
+    limpiarFormulario();
+
+    const ultimaFila =
+    document.querySelector("#tablaVentas tr:last-child");
+
+    if(ultimaFila){
+        ultimaFila.scrollIntoView({
             behavior:"smooth"
         });
-    
     }
+
+}
     
     function renderTabla(){
     
@@ -470,19 +489,23 @@
     
     function eliminarVenta(index){
     
-        const venta = ventas[index];
-    
-        inventario[venta.producto] += venta.cantidad;
-    
-        ventas.splice(index,1);
-    
-        guardarLocal();
-    
-        renderTabla();
-    
-        actualizarResumen();
-    
+    if(!confirm("¿Eliminar venta?")){
+        return;
     }
+
+    const venta = ventas[index];
+
+    inventario[venta.producto] += venta.cantidad;
+
+    ventas.splice(index,1);
+
+    guardarLocal();
+
+    renderTabla();
+
+    actualizarResumen();
+
+}
     
     function actualizarResumen(){
     
@@ -496,8 +519,9 @@
         let ganancia = 0;
         
         ventas.forEach(v=>{
-            total += v.subtotal;
-            ganancia += v.ganancia;
+            total += Number(v.subtotal) || 0;
+            
+            ganancia += Number(v.ganancia) || 0;
         });
     
         document.getElementById("totalVentas")
@@ -560,10 +584,9 @@
     
             guardarLocal();
     
-            renderTabla();
-    
             actualizarResumen();
-    
+            
+            renderTabla();
         };
     
         lector.readAsText(archivo);
@@ -616,6 +639,16 @@
     actualizarResumen();
     
     actualizarProducto();
+
+        document.addEventListener("keydown", function(e){
+
+        if(e.key === "Enter"){
+
+        registrarVenta();
+
+    }
+
+});
         
     </script>
 
