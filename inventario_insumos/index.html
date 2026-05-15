@@ -1,507 +1,409 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Sistema Inventario Santa Rosa</title>
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    font-family:Arial, sans-serif;
-    background:#f4f6f8;
-    padding:20px;
-}
-
-h1{
-    text-align:center;
-    margin-bottom:20px;
-    color:#d81b60;
-}
-
-.contenedor{
-    max-width:1400px;
-    margin:auto;
-}
-
-.panel{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    margin-bottom:20px;
-}
-
-h2{
-    margin-bottom:15px;
-    color:#333;
-}
-
-.formulario{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    gap:10px;
-}
-
-input, select{
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:8px;
-}
-
-button{
-    border:none;
-    border-radius:8px;
-    padding:10px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.btn-agregar{
-    background:#28a745;
-    color:white;
-}
-
-.btn-exportar{
-    background:#007bff;
-    color:white;
-}
-
-.btn-importar{
-    background:#6c757d;
-    color:white;
-}
-
-.btn-eliminar{
-    background:#dc3545;
-    color:white;
-    padding:5px 10px;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:15px;
-    overflow-x:auto;
-}
-
-th{
-    background:#005b84;
-    color:white;
-    padding:12px;
-    font-size:14px;
-}
-
-td{
-    background:white;
-    padding:10px;
-    text-align:center;
-    border-bottom:1px solid #ddd;
-}
-
-.resumen{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:15px;
-    margin-bottom:20px;
-}
-
-.card{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    text-align:center;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-
-.card h3{
-    color:#555;
-}
-
-.card p{
-    font-size:30px;
-    color:#d81b60;
-    margin-top:10px;
-}
-
-@media(max-width:768px){
-
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Sistema Inventario Santa Rosa</title>
+    
+    <style>
+    
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+    }
+    
     body{
+        font-family:Arial, sans-serif;
+        background:#f4f6f8;
+        padding:20px;
+    }
+    
+    h1{
+        text-align:center;
+        margin-bottom:20px;
+        color:#d81b60;
+    }
+    
+    .contenedor{
+        max-width:1400px;
+        margin:auto;
+    }
+    
+    .panel{
+        background:white;
+        padding:20px;
+        border-radius:15px;
+        box-shadow:0 4px 10px rgba(0,0,0,0.1);
+        margin-bottom:20px;
+    }
+    
+    h2{
+        margin-bottom:15px;
+        color:#333;
+    }
+    
+    .formulario{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+        gap:10px;
+    }
+    
+    input, select{
         padding:10px;
+        border:1px solid #ccc;
+        border-radius:8px;
     }
-
+    
+    button{
+        border:none;
+        border-radius:8px;
+        padding:10px;
+        cursor:pointer;
+        font-weight:bold;
+    }
+    
+    .btn-agregar{
+        background:#28a745;
+        color:white;
+    }
+    
+    .btn-exportar{
+        background:#007bff;
+        color:white;
+    }
+    
+    .btn-importar{
+        background:#6c757d;
+        color:white;
+    }
+    
+    .btn-eliminar{
+        background:#dc3545;
+        color:white;
+        padding:5px 10px;
+    }
+    
     table{
-        font-size:12px;
+        width:100%;
+        border-collapse:collapse;
+        margin-top:15px;
+        overflow-x:auto;
     }
-
-    th, td{
-        padding:8px;
+    
+    th{
+        background:#005b84;
+        color:white;
+        padding:12px;
+        font-size:14px;
     }
-
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="contenedor">
-
-<h1>🍧 Sistema Santa Rosa</h1>
-
-<div class="resumen">
-
-    <div class="card">
-        <h3>Bolis Disponibles</h3>
-        <p id="stockBolis">0</p>
+    
+    td{
+        background:white;
+        padding:10px;
+        text-align:center;
+        border-bottom:1px solid #ddd;
+    }
+    
+    .resumen{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+        gap:15px;
+        margin-bottom:20px;
+    }
+    
+    .card{
+        background:white;
+        padding:20px;
+        border-radius:15px;
+        text-align:center;
+        box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .card h3{
+        color:#555;
+    }
+    
+    .card p{
+        font-size:30px;
+        color:#d81b60;
+        margin-top:10px;
+    }
+    
+    @media(max-width:768px){
+    
+        body{
+            padding:10px;
+        }
+    
+        table{
+            font-size:12px;
+        }
+    
+        th, td{
+            padding:8px;
+        }
+    
+    }
+    
+    </style>
+    </head>
+    
+    <body>
+    
+    <div class="contenedor">
+    
+    <h1>🍧 Sistema Santa Rosa</h1>
+    
+    <div class="resumen">
+    
+        <div class="card">
+            <h3>Bolis Disponibles</h3>
+            <p id="stockBolis">0</p>
+        </div>
+    
+        <div class="card">
+            <h3>Paletas Disponibles</h3>
+            <p id="stockPaletas">0</p>
+        </div>
+    
+        <div class="card">
+            <h3>Total Vendido</h3>
+            <p id="totalVentas">$0</p>
+        </div>
+        <div class="card">
+            <h3>Ganancia Total</h3>
+            <p id="totalGanancia">$0</p>
+</div>
+    
     </div>
-
-    <div class="card">
-        <h3>Paletas Disponibles</h3>
-        <p id="stockPaletas">0</p>
+    
+    <div class="panel">
+    
+    <h2>📦 Inventario Inicial</h2>
+    
+    <div class="formulario">
+    
+        <input type="number" id="inventarioBolis" placeholder="Inventario Bolis">
+    
+        <input type="number" id="inventarioPaletas" placeholder="Inventario Paletas">
+    
+        <button class="btn-agregar" onclick="guardarInventario()">
+            Guardar Inventario
+        </button>
+    
     </div>
-
-    <div class="card">
-        <h3>Total Vendido</h3>
-        <p id="totalVentas">$0</p>
+    
     </div>
-
-</div>
-
-<div class="panel">
-
-<h2>📦 Inventario Inicial</h2>
-
-<div class="formulario">
-
-    <input type="number" id="inventarioBolis" placeholder="Inventario Bolis">
-
-    <input type="number" id="inventarioPaletas" placeholder="Inventario Paletas">
-
-    <button class="btn-agregar" onclick="guardarInventario()">
-        Guardar Inventario
-    </button>
-
-</div>
-
-</div>
-
-<div class="panel">
-
-<h2>💰 Registrar Venta</h2>
-
-<div class="formulario">
-
-    <select id="producto">
-        <option value="BOLIS">BOLIS</option>
-        <option value="PALETAS">PALETAS</option>
-    </select>
-
-    <input type="text" id="cliente" placeholder="Cliente">
-
-    <input type="number" id="cantidad" placeholder="Cantidad">
-
-    <input type="number" id="precio" placeholder="Precio">
-
-    <input type="number" id="costo" placeholder="Costo">
-
-    <button class="btn-agregar" onclick="registrarVenta()">
-        Registrar Venta
-    </button>
-
-</div>
-
-</div>
-
-<div class="panel">
-
-<h2>📋 Historial de Ventas</h2>
-
-<div style="overflow-x:auto;">
-
-<table>
-
-<thead>
-
-<tr>
-<th>PRODUCTO</th>
-<th>CLIENTE</th>
-<th>CANTIDAD</th>
-<th>INVENTARIO</th>
-<th>PRECIO</th>
-<th>COSTO</th>
-<th>SUBTOTAL</th>
-<th>FECHA</th>
-<th>ACCION</th>
-</tr>
-
-</thead>
-
-<tbody id="tablaVentas">
-
-</tbody>
-
-</table>
-
-</div>
-
-<br>
-
-<button class="btn-exportar" onclick="exportarJSON()">
-💾 Exportar JSON
-</button>
-
-<input type="file" id="importarArchivo" hidden onchange="importarJSON(event)">
-
-<button class="btn-importar"
-onclick="document.getElementById('importarArchivo').click()">
-📂 Importar JSON
-</button>
-
-</div>
-
-</div>
-
-<script>
-
-let inventario = {
-    BOLIS: 0,
-    PALETAS: 0
-};
-
-let ventas = [];
-
-function guardarLocal(){
-
-    localStorage.setItem(
-        "inventarioSantaRosa",
-        JSON.stringify({
-            inventario,
-            ventas
-        })
-    );
-
-}
-
-function cargarLocal(){
-
-    const datos = localStorage.getItem("inventarioSantaRosa");
-
-    if(datos){
-
-        const sistema = JSON.parse(datos);
-
-        inventario = sistema.inventario || inventario;
-        ventas = sistema.ventas || ventas;
-
-    }
-
-}
-
-function guardarInventario(){
-
-    inventario.BOLIS =
-        parseInt(document.getElementById("inventarioBolis").value) || 0;
-
-    inventario.PALETAS =
-        parseInt(document.getElementById("inventarioPaletas").value) || 0;
-
-    guardarLocal();
-
-    actualizarResumen();
-
-}
-
-function registrarVenta(){
-
-    const producto =
-        document.getElementById("producto").value;
-
-    const cliente =
-        document.getElementById("cliente").value;
-
-    const cantidad =
-        parseInt(document.getElementById("cantidad").value);
-
-    const precio =
-        parseFloat(document.getElementById("precio").value);
-
-    const costo =
-        parseFloat(document.getElementById("costo").value);
-
-    if(!cantidad || cantidad <= 0){
-        alert("Cantidad inválida");
-        return;
-    }
-
-    if(cantidad > inventario[producto]){
-        alert("No hay suficiente inventario");
-        return;
-    }
-
-    inventario[producto] -= cantidad;
-
-    const subtotal = cantidad * precio;
-
-    const fecha = new Date().toLocaleDateString();
-
-    ventas.push({
-        producto,
-        cliente,
-        cantidad,
-        inventario: inventario[producto],
-        precio,
-        costo,
-        subtotal,
-        fecha
-    });
-
-    guardarLocal();
-
-    renderTabla();
-
-    actualizarResumen();
-
-    limpiarFormulario();
-
-}
-
-function renderTabla(){
-
-    const tabla =
-        document.getElementById("tablaVentas");
-
-    tabla.innerHTML = "";
-
-    ventas.forEach((venta, index)=>{
-
-        tabla.innerHTML += `
-
-        <tr>
-
-        <td>${venta.producto}</td>
-
-        <td>${venta.cliente}</td>
-
-        <td>${venta.cantidad}</td>
-
-        <td>${venta.inventario}</td>
-
-        <td>$${venta.precio.toFixed(2)}</td>
-
-        <td>$${venta.costo.toFixed(2)}</td>
-
-        <td>$${venta.subtotal.toFixed(2)}</td>
-
-        <td>${venta.fecha}</td>
-
-        <td>
-            <button class="btn-eliminar"
-            onclick="eliminarVenta(${index})">
-            X
+    
+    <div class="panel">
+    
+    <h2>💰 Registrar Venta</h2>
+    
+    <div class="formulario">
+    
+        <select id="producto" onchange="actualizarProducto()">
+            <option value="BOLIS">BOLIS</option>
+            <option value="PALETAS">PALETAS</option>
+        </select>
+    
+        <input type="text"
+        id="cliente"
+        placeholder="Nombre o teléfono">
+    
+        <div style="display:flex; gap:5px; align-items:center;">
+    
+            <button type="button"
+            onclick="cambiarCantidad(-1)">
+            ➖
             </button>
-        </td>
-
-        </tr>
-
-        `;
-
-    });
-
-}
-
-function eliminarVenta(index){
-
-    const venta = ventas[index];
-
-    inventario[venta.producto] += venta.cantidad;
-
-    ventas.splice(index,1);
-
-    guardarLocal();
-
-    renderTabla();
-
-    actualizarResumen();
-
-}
-
-function actualizarResumen(){
-
-    document.getElementById("stockBolis")
-    .innerText = inventario.BOLIS;
-
-    document.getElementById("stockPaletas")
-    .innerText = inventario.PALETAS;
-
-    let total = 0;
-
-    ventas.forEach(v=>{
-        total += v.subtotal;
-    });
-
-    document.getElementById("totalVentas")
-    .innerText = "$" + total.toFixed(2);
-
-}
-
-function limpiarFormulario(){
-
-    document.getElementById("cliente").value = "";
-
-    document.getElementById("cantidad").value = "";
-
-    document.getElementById("precio").value = "";
-
-    document.getElementById("costo").value = "";
-
-}
-
-function exportarJSON(){
-
-    const datos = {
-        inventario,
-        ventas
+    
+            <input type="number"
+            id="cantidad"
+            value="1"
+            style="width:60px; text-align:center;">
+    
+            <button type="button"
+            onclick="cambiarCantidad(1)">
+            ➕
+            </button>
+    
+        </div>
+    
+        <input type="number"
+        id="precio"
+        readonly>
+    
+        <input type="number"
+        id="costo"
+        readonly>
+    
+        <input type="text"
+        id="descuento"
+        placeholder="Descuento opcional">
+    
+        <button class="btn-agregar"
+        onclick="registrarVenta()">
+            Registrar Venta
+        </button>
+    
+    </div>
+    
+    </div>
+    
+    <div class="panel">
+    
+    <h2>📋 Historial de Ventas</h2>
+    
+    <div style="overflow-x:auto;">
+    
+    <table>
+    
+    <thead>
+    
+    <tr>
+    <th>PRODUCTO</th>
+    <th>CLIENTE</th>
+    <th>CANTIDAD</th>
+    <th>INVENTARIO</th>
+    <th>PRECIO</th>
+    <th>COSTO</th>
+    <th>SUBTOTAL</th>
+    <th>GANANCIA</th>
+    <th>DESCUENTO</th>    
+    <th>FECHA</th>
+    <th>ACCION</th>
+    </tr>
+    
+    </thead>
+    
+    <tbody id="tablaVentas">
+    
+    </tbody>
+    
+    </table>
+    
+    </div>
+    
+    <br>
+    
+    <button class="btn-exportar" onclick="exportarJSON()">
+    💾 Exportar JSON
+    </button>
+    
+    <input type="file" id="importarArchivo" hidden onchange="importarJSON(event)">
+    
+    <button class="btn-importar"
+    onclick="document.getElementById('importarArchivo').click()">
+    📂 Importar JSON
+    </button>
+    
+    </div>
+    
+    </div>
+    
+    <script>
+    
+    let inventario = {
+        BOLIS: 0,
+        PALETAS: 0
     };
+    
+    let ventas = [];
+    
+    function guardarLocal(){
+    
+        localStorage.setItem(
+            "inventarioSantaRosa",
+            JSON.stringify({
+                inventario,
+                ventas
+            })
+        );
+    
+    }
+    
+    function cargarLocal(){
+    
+        const datos = localStorage.getItem("inventarioSantaRosa");
+    
+        if(datos){
+    
+            const sistema = JSON.parse(datos);
+    
+            inventario = sistema.inventario || inventario;
+            ventas = sistema.ventas || ventas;
+    
+        }
+    
+    }
+    
+    function guardarInventario(){
+    
+        inventario.BOLIS +=
+            parseInt(document.getElementById("inventarioBolis").value) || 0;
+               
+        inventario.PALETAS +=
+            parseInt(document.getElementById("inventarioPaletas").value) || 0;
+    
+        guardarLocal();
+    
+            actualizarResumen();
 
-    const blob = new Blob(
-        [JSON.stringify(datos,null,2)],
-        {type:"application/json"}
-    );
+            document.getElementById("inventarioBolis").value = "";
 
-    const a = document.createElement("a");
-
-    a.href = URL.createObjectURL(blob);
-
-    a.download = "sistema_santa_rosa.json";
-
-    a.click();
-
-}
-
-function importarJSON(event){
-
-    const archivo = event.target.files[0];
-
-    if(!archivo) return;
-
-    const lector = new FileReader();
-
-    lector.onload = function(e){
-
-        const datos =
-            JSON.parse(e.target.result);
-
-        inventario = datos.inventario || inventario;
-
-        ventas = datos.ventas || ventas;
+            document.getElementById("inventarioPaletas").value = "";
+    }
+    
+    function registrarVenta(){
+    
+        const producto =
+            document.getElementById("producto").value;
+    
+        const cliente =
+            document.getElementById("cliente").value;
+    
+        const cantidad =
+            parseInt(document.getElementById("cantidad").value);
+    
+        const precio =
+            parseFloat(document.getElementById("precio").value);
+        
+        const costo =
+        parseFloat(document.getElementById("costo").value);
+    
+        const descuento =
+        document.getElementById("descuento").value;
+    
+        if(!cantidad || cantidad <= 0){
+            alert("Cantidad inválida");
+            return;
+        }
+    
+        if(cantidad > inventario[producto]){
+            alert("No hay suficiente inventario");
+            return;
+        }
+    
+        inventario[producto] -= cantidad;
+    
+        const subtotal = cantidad * precio;
+        const ganancia = subtotal - (cantidad * costo);
+        const fecha = new Date().toLocaleDateString();
+    
+        ventas.push({
+            producto,
+            cliente,
+            cantidad,
+            inventario: inventario[producto],
+            precio,
+            costo,
+            subtotal,
+            ganancia,
+            descuento,
+            fecha
+        });
 
         guardarLocal();
 
@@ -509,19 +411,213 @@ function importarJSON(event){
 
         actualizarResumen();
 
-    };
+        limpiarFormulario();
 
-    lector.readAsText(archivo);
+        document.querySelector("table")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
+    
+    }
+    
+    function renderTabla(){
+    
+        const tabla =
+            document.getElementById("tablaVentas");
+    
+        tabla.innerHTML = "";
+    
+        ventas.forEach((venta, index)=>{
+    
+            tabla.innerHTML += `
+    
+            <tr>
+    
+            <td>${venta.producto}</td>
+    
+            <td>${venta.cliente}</td>
+    
+            <td>${venta.cantidad}</td>
+    
+            <td>${venta.inventario}</td>
+    
+            <td>$${venta.precio.toFixed(2)}</td>
+    
+            <td>$${venta.costo.toFixed(2)}</td>
+    
+            <td>$${venta.subtotal.toFixed(2)}</td>
+
+            <td>$${venta.ganancia.toFixed(2)}</td>
+            
+            <td>${venta.descuento || ""}</td>
+            
+            <td>${venta.fecha}</td>
+    
+            <td>
+                <button class="btn-eliminar"
+                onclick="eliminarVenta(${index})">
+                X
+                </button>
+            </td>
+    
+            </tr>
+    
+            `;
+    
+        });
+    
+    }
+    
+    function eliminarVenta(index){
+    
+        const venta = ventas[index];
+    
+        inventario[venta.producto] += venta.cantidad;
+    
+        ventas.splice(index,1);
+    
+        guardarLocal();
+    
+        renderTabla();
+    
+        actualizarResumen();
+    
+    }
+    
+    function actualizarResumen(){
+    
+        document.getElementById("stockBolis")
+        .innerText = inventario.BOLIS;
+    
+        document.getElementById("stockPaletas")
+        .innerText = inventario.PALETAS;
+    
+        let total = 0;
+        let ganancia = 0;
+        
+        ventas.forEach(v=>{
+            total += v.subtotal;
+            ganancia += v.ganancia;
+        });
+    
+        document.getElementById("totalVentas")
+        .innerText = "$" + total.toFixed(2);
+        document.getElementById("totalGanancia")
+        .innerText = "$" + ganancia.toFixed(2);
+    
+    }
+    
+    function limpiarFormulario(){
+
+    document.getElementById("cliente").value = "";
+
+    document.getElementById("cantidad").value = 1;
+
+    document.getElementById("descuento").value = "";
+
+    actualizarProducto();
 
 }
+    
+    function exportarJSON(){
+    
+        const datos = {
+            inventario,
+            ventas
+        };
+    
+        const blob = new Blob(
+            [JSON.stringify(datos,null,2)],
+            {type:"application/json"}
+        );
+    
+        const a = document.createElement("a");
+    
+        a.href = URL.createObjectURL(blob);
+    
+        a.download = "sistema_santa_rosa.json";
+    
+        a.click();
+    
+    }
+    
+    function importarJSON(event){
+    
+        const archivo = event.target.files[0];
+    
+        if(!archivo) return;
+    
+        const lector = new FileReader();
+    
+        lector.onload = function(e){
+    
+            const datos =
+                JSON.parse(e.target.result);
+    
+            inventario = datos.inventario || inventario;
+    
+            ventas = datos.ventas || ventas;
+    
+            guardarLocal();
+    
+            renderTabla();
+    
+            actualizarResumen();
+    
+        };
+    
+        lector.readAsText(archivo);
+    
+    }
+    function actualizarProducto(){
 
-cargarLocal();
+        const producto =
+        document.getElementById("producto").value;
 
-renderTabla();
+        if(producto === "BOLIS"){
 
-actualizarResumen();
+            document.getElementById("precio").value = 18;
 
-</script>
+            document.getElementById("costo").value = 7;
+
+    }
+
+        if(producto === "PALETAS"){
+
+            document.getElementById("precio").value = 20;
+
+            document.getElementById("costo").value = 9;
+
+        }
+
+    }
+    
+    function cambiarCantidad(valor){
+
+        const input =
+        document.getElementById("cantidad");
+
+        let cantidad =
+        parseInt(input.value) || 1;
+
+        cantidad += valor;
+
+        if(cantidad < 1){
+        cantidad = 1;
+    }
+
+        input.value = cantidad;
+
+}
+    cargarLocal();
+    
+    renderTabla();
+    
+    actualizarResumen();
+    
+    actualizarProducto();
+        
+    </script>
 
 </body>
 </html>
