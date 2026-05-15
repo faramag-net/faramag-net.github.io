@@ -640,11 +640,14 @@
     
     actualizarProducto();
 
-        document.addEventListener("keydown", function(e){
+document.getElementById("descuento")
+.addEventListener("keydown", function(e){
 
-        if(e.key === "Enter"){
-            e.preventDefault(); 
-            registrarVenta();
+    if(e.key === "Enter"){
+
+        e.preventDefault();
+
+        registrarVenta();
 
     }
 
