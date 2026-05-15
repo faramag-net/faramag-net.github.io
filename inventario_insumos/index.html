@@ -439,53 +439,65 @@
 
 }
     
-    function renderTabla(){
-    
-        const tabla =
-            document.getElementById("tablaVentas");
-    
-        tabla.innerHTML = "";
-    
-        ventas.forEach((venta, index)=>{
-    
-            tabla.innerHTML += `
-    
-            <tr>
-    
-            <td>${venta.producto}</td>
-    
-            <td>${venta.cliente}</td>
-    
-            <td>${venta.cantidad}</td>
-    
-            <td>${venta.inventario}</td>
-    
-            <td>$${venta.precio.toFixed(2)}</td>
-    
-            <td>$${venta.costo.toFixed(2)}</td>
-    
-            <td>$${venta.subtotal.toFixed(2)}</td>
+function renderTabla(){
 
-            <td>$${venta.ganancia.toFixed(2)}</td>
-            
-            <td>${venta.descuento || ""}</td>
-            
-            <td>${venta.fecha}</td>
-    
-            <td>
-                <button class="btn-eliminar"
-                onclick="eliminarVenta(${index})">
-                X
-                </button>
-            </td>
-    
-            </tr>
-    
-            `;
-    
-        });
-    
-    }
+    const tabla =
+    document.getElementById("tablaVentas");
+
+    tabla.innerHTML = "";
+
+    ventas.forEach((venta, index)=>{
+
+        const precio =
+        Number(venta.precio) || 0;
+
+        const costo =
+        Number(venta.costo) || 0;
+
+        const subtotal =
+        Number(venta.subtotal) || 0;
+
+        const ganancia =
+        Number(venta.ganancia) || 0;
+
+        tabla.innerHTML += `
+
+        <tr>
+
+        <td>${venta.producto || ""}</td>
+
+        <td>${venta.cliente || ""}</td>
+
+        <td>${venta.cantidad || 0}</td>
+
+        <td>${venta.inventario || 0}</td>
+
+        <td>$${precio.toFixed(2)}</td>
+
+        <td>$${costo.toFixed(2)}</td>
+
+        <td>$${subtotal.toFixed(2)}</td>
+
+        <td>$${ganancia.toFixed(2)}</td>
+
+        <td>${venta.descuento || ""}</td>
+
+        <td>${venta.fecha || ""}</td>
+
+        <td>
+            <button class="btn-eliminar"
+            onclick="eliminarVenta(${index})">
+            X
+            </button>
+        </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
     
     function eliminarVenta(index){
     
