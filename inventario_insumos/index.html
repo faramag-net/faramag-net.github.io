@@ -189,8 +189,10 @@
     
         <input type="number" id="inventarioPaletas" placeholder="Inventario Paletas">
     
-        <button class="btn-agregar" onclick="guardarInventario()">
-            Guardar Inventario
+        <button id="btnInventario"
+        class="btn-agregar"
+        onclick="guardarInventario()">    
+        Guardar Inventario
         </button>
     
     </div>
@@ -295,7 +297,12 @@
     <button class="btn-exportar" onclick="exportarJSON()">
     💾 Exportar JSON
     </button>
-    
+        
+    <button class="btn-eliminar"
+    onclick="cerrarCorte()">
+    🗑 Cerrar Corte
+        
+    </button>
     <input type="file" id="importarArchivo" hidden onchange="importarJSON(event)">
     
     <button class="btn-importar"
@@ -344,7 +351,12 @@
     }
     
     function guardarInventario(){
-    
+
+        const boton =
+        document.getElementById("btnInventario");
+        
+        boton.disabled = true;
+        
         inventario.BOLIS +=
             parseInt(document.getElementById("inventarioBolis").value) || 0;
                
@@ -360,6 +372,11 @@
             document.getElementById("inventarioBolis").value = "";
 
             document.getElementById("inventarioPaletas").value = "";
+            setTimeout(()=>{
+
+            boton.disabled = false;
+
+            }, 500);
     }
     
     function registrarVenta(){
@@ -517,8 +534,22 @@ function renderTabla(){
 
     actualizarResumen();
 
-}
-    
+    }
+     function cerrarCorte(){
+
+    if(!confirm("¿Cerrar corte y borrar ventas?")){
+        return;
+    }
+
+    ventas = [];
+
+    guardarLocal();
+
+    renderTabla();
+
+    actualizarResumen();
+
+    }   
     function actualizarResumen(){
     
         document.getElementById("stockBolis")
@@ -571,7 +602,15 @@ function renderTabla(){
     
         a.href = URL.createObjectURL(blob);
     
-        a.download = "sistema_santa_rosa.json";
+       const hoy = new Date();
+
+        const fecha =
+        hoy.getFullYear() + "-" +
+        String(hoy.getMonth()+1).padStart(2,"0") + "-" +
+        String(hoy.getDate()).padStart(2,"0");
+
+        a.download =
+        "santa_rosa_" + fecha + ".json";
     
         a.click();
     
