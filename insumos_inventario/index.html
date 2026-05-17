@@ -214,7 +214,30 @@
         </div>
     
     </div>
-        
+                
+        <div class="panel">
+
+        <h2>📦 Entrada de Inventario</h2>
+
+        <div class="formulario">
+
+            <select id="productoInventario">
+            </select>
+
+            <input type="number"
+            id="agregarStock"
+            placeholder="Cantidad">
+
+            <button class="btn-agregar"
+            onclick="agregarInventario()">
+
+    Agregar Inventario
+
+    </button>
+
+        </div>
+
+</div>     
         <div class="panel">
         
         <h2>💰 Registrar Venta</h2>
@@ -347,221 +370,272 @@
         stock:0
     }
     
-    ];
+    ];   
     
-    let ventas = [];
-     function agregarProducto(){
-    
-        const nombre =
-        document.getElementById("nuevoProducto").value;
-    
-        const precio =
-        Number(document.getElementById("nuevoPrecio").value);
-    
-        const costo =
-        Number(document.getElementById("nuevoCosto").value);
-    
-        const stock =
-        Number(document.getElementById("nuevoStock").value);
-    
-        if(nombre.trim() === ""){
-
-            alert("Escribe un nombre");
-
-            return;
-        }
-
-        if(precio <= 0){
-
-            alert("Precio inválido");
-
-            return;
-        }
-
-        if(costo < 0){
-
-            alert("Costo inválido");
-
-            return;
-        }
-
-        if(stock < 0){
-
-            alert("Inventario inválido");
-
-            return;
-        }
+                let ventas = [];
+                     function agregarProducto(){    
         
-         const existe =
-            productos.some(
-            p => p.nombre.toLowerCase() === nombre.toLowerCase()
-            );
+                        const nombre =
+                                document.getElementById("nuevoProducto").value;
     
-            if(existe){
-    
-            alert("Ese producto ya existe");
-    
-            return;
-    }
-        productos.push({
-            nombre,
-            precio,
-            costo,
-            stock
-        });
-    
-        actualizarSelectProductos();
-        document.getElementById("producto").value = nombre;
+        
+                             const precio =       
+                                     Number(document.getElementById("nuevoPrecio").value);    
+        
+                             const costo =       
+                                     Number(document.getElementById("nuevoCosto").value);                            
+        
+                             const stock =        
+                                     Number(document.getElementById("nuevoStock").value);
+        
+                             if(nombre.trim() === ""){           
+                                     alert("Escribe un nombre");           
+                                     return;      
+                             }
 
-        actualizarProducto();
+        
+                             if(precio <= 0){          
+                                     alert("Precio inválido");           
+                                     return;       
+                             }                            
+
+                             if(costo < 0){            
+                                     alert("Costo inválido");            
+                                     return;       
+                             }
+
+        
+                             if(stock < 0){           
+                                     alert("Inventario inválido");            
+                                     return;                                                                          
+                             }        
          
-        guardarLocal();
+                             const existe =            
+                                     productos.some(            
+                                             p => p.nombre.toLowerCase() === nombre.toLowerCase()           
+                                     );    
+            
+                             
+                             if(existe){
     
-        limpiarNuevoProducto();
+                                     const productoExistente =    
+                                             productos.find(   
+                                                     p => p.nombre.toLowerCase() === nombre.toLowerCase()
+                                             );
     
-        actualizarResumen();
+                                     productoExistente.stock += stock;
     
-}
+                                     productoExistente.precio = precio;
+    
+                                     productoExistente.costo = costo;
+    
+                                     guardarLocal();
+                                     
+                                     actualizarSelectProductos();    
+                                     document.getElementById("producto").value = nombre;
+                                     
+                                     actualizarResumen();
+    
+                                     actualizarProducto();
+    
+                                     limpiarNuevoProducto();
+    
+                                     alert("Producto actualizado");    
+                                     return;
+                             }
+       
+                             productos.push({           
+                                     nombre,           
+                                     precio,
+                                     costo,           
+                                     stock        
+                             });    
+        
+                             actualizarSelectProductos();        
+                             document.getElementById("producto").value = nombre;
+        
+                             actualizarProducto();         
+       
+                             guardarLocal();    
+        
+                             limpiarNuevoProducto();    
+        
+                             actualizarResumen();   
+                     }
 
-function eliminarProducto(){
+                function eliminarProducto(){
+                        const nombre =
+                                    document.getElementById("producto").value;
+                        if(!nombre){ 
+                                alert("Selecciona un producto");  
+                                return;   
+                        }
 
-    const nombre =
-    document.getElementById("producto").value;
+    
+                        if(!confirm("¿Eliminar producto?")){      
+                                return;   
+                        }   
+                        productos =  
+                                productos.filter(p => p.nombre !== nombre);
+    
+                        guardarLocal();
+   
+                        actualizarSelectProductos();
+    
+                        actualizarResumen();
+    
+                        actualizarProducto();
+                }
 
-    if(!nombre){
+                function agregarInventario(){
 
-        alert("Selecciona un producto");
+                        const nombre =
+                                document.getElementById("productoInventario").value;
+                        const cantidad =
+                                Number(document.getElementById("agregarStock").value);
 
-        return;
-    }
+                        if(cantidad <= 0){
 
-    if(!confirm("¿Eliminar producto?")){
+                        alert("Cantidad inválida");
+                                        return;
+                                
+                        }
 
-        return;
-    }
+    
+                        const producto =
+                                    productos.find(p => p.nombre === nombre);
+                        if(!producto){
 
-    productos =
-    productos.filter(p => p.nombre !== nombre);
+                                alert("Producto no encontrado");
 
-    guardarLocal();
+                                return;
+                        }
+                        
+                        producto.stock += cantidad;
+                        ventas.push({
+                                producto: nombre,
+                                cliente: "ENTRADA INVENTARIO",
+                                cantidad: "+" + cantidad,
+                                inventario: producto.stock,
+                                precio: 0,
+                                costo: 0,
+                                subtotal: 0,
+                                ganancia: 0,
+                                descuento: "",
+                                fecha: new Date().toLocaleString()
+                        });
+                        
+                        guardarLocal();
+                        actualizarResumen();
+                        renderTabla();
 
-    actualizarSelectProductos();
+                        document.getElementById("agregarStock").value = "";
 
-    actualizarResumen();
-
-    actualizarProducto();
-
-}
+                        alert("Inventario agregado");
+                }                
+                function guardarLocal(){
+        
+                        localStorage.setItem(
+                                "inventarioSantaRosa",
+                                JSON.stringify({
+                                        productos,
+                                        ventas
+                                })
+                        );
+        
+                }
                 
-        function guardarLocal(){
+                function cargarLocal(){
         
-            localStorage.setItem(
-                "inventarioSantaRosa",
-                JSON.stringify({
-                    productos,
-                    ventas
-                })
-            );
+                        const datos = localStorage.getItem("inventarioSantaRosa");
         
-        }
+                        if(datos){
+                                const sistema = JSON.parse(datos);
         
-        function cargarLocal(){
+                                productos = sistema.productos || productos;
+                                ventas = sistema.ventas || ventas;
+
+                        }
         
-            const datos = localStorage.getItem("inventarioSantaRosa");
-        
-            if(datos){
-        
-                const sistema = JSON.parse(datos);
-        
-                productos = sistema.productos || productos;
-                ventas = sistema.ventas || ventas;
-        
-            }
-        
-        }
-        
-      
-        function registrarVenta(){
+                }
+              
+                function registrarVenta(){
     
-        actualizarProducto();
+                        actualizarProducto();
     
-        const producto =
-        document.getElementById("producto").value;
-    
+                        const producto =
+                                document.getElementById("producto").value;
+                        
         const cliente =
-        document.getElementById("cliente").value;
-    
+                document.getElementById("cliente").value;
+                        
         if(cliente.trim() === ""){
-            alert("Escribe un cliente");
-            return;
+                alert("Escribe un cliente");
+                return;
         }
     
         const cantidad =
-        parseInt(document.getElementById("cantidad").value) || 0;
+                parseInt(document.getElementById("cantidad").value) || 0;
+                        
+                        const precio =
+                                Number(document.getElementById("precio").value) || 0;
     
-        const precio =
-        Number(document.getElementById("precio").value) || 0;
+                        const costo =
+                                Number(document.getElementById("costo").value) || 0;
     
-        const costo =
-        Number(document.getElementById("costo").value) || 0;
+                        const descuento =
+                                document.getElementById("descuento").value;
     
-        const descuento =
-        document.getElementById("descuento").value;
+                        if(cantidad <= 0){
+                                        alert("Cantidad inválida");
+                                            return;
+                               }
     
-        if(cantidad <= 0){
-            alert("Cantidad inválida");
-            return;
-        }
+                            const productoObj =
+                                    productos.find(p => p.nombre === producto);
+                                if(cantidad > productoObj.stock){
+                                            alert("No hay suficiente inventario");
+                                           return;    
+                        }
     
-    const productoObj =
-    productos.find(p => p.nombre === producto);
-    
-    if(cantidad > productoObj.stock){
-    
-        alert("No hay suficiente inventario");
-    
-        return;
-    }
-    
-        productoObj.stock -= cantidad;
-    
-        const subtotal = cantidad * precio;
-    
-        const ganancia = subtotal - (cantidad * costo);
-    
-        const fecha = new Date().toLocaleString();
-    
-        ventas.push({
-            producto,
-            cliente,
-            cantidad,
-            inventario: productoObj.stock,
-            precio,
-            costo,
-            subtotal,
-            ganancia,
-            descuento,
-            fecha
-        });
-    
-        guardarLocal();
-    
-        actualizarResumen();
         
-        renderTabla();
+                        productoObj.stock -= cantidad;
+                        const subtotal = cantidad * precio;
+                        const ganancia = subtotal - (cantidad * costo);   
+                        const fecha = new Date().toLocaleString();
+
+                        ventas.push({
+                                producto,
+                                cliente,
+                                cantidad,
+                                inventario: productoObj.stock,
+                                precio,
+                                costo,
+                                subtotal,
+                                ganancia,
+                                descuento,
+                                fecha
+                        });
     
-        limpiarFormulario();
+
+                        guardarLocal();
+        
+                        actualizarResumen();
+        
+                        renderTabla();
+
+                        limpiarFormulario();
     
-        const ultimaFila =
-        document.querySelector("#tablaVentas tr:last-child");
-    
-        if(ultimaFila){
-            ultimaFila.scrollIntoView({
-                behavior:"smooth"
-            });
-        }
-    
-    }
+        
+                        const ultimaFila =
+                                document.querySelector("#tablaVentas tr:last-child");
+
+                        if(ultimaFila){
+                                ultimaFila.scrollIntoView({
+                                        behavior:"smooth"
+                                });
+                        }
+                }
         
     function renderTabla(){
     
@@ -624,46 +698,45 @@ function eliminarProducto(){
     }
         
         function eliminarVenta(index){
+                if(!confirm("¿Eliminar movimiento?")){        
+                        return;    
+                }
+    
+                const venta = ventas[index];
+    
+                const producto =    
+                        productos.find(p => p.nombre === venta.producto);
+    
+                if(producto){
+                        const cantidad =        
+                                Number(venta.cantidad);
         
-        if(!confirm("¿Eliminar venta?")){
-            return;
-        }
+                        if(venta.cliente === "ENTRADA INVENTARIO"){
+                                producto.stock -= cantidad;
+                        }else{
+                                producto.stock += cantidad;        
+                        }    
+                }
     
-        const venta = ventas[index];
+                ventas.splice(index,1);
     
-        const producto =
-        productos.find(p => p.nombre === venta.producto);
+                guardarLocal();
     
-        if(producto){
+                renderTabla();
     
-        producto.stock += venta.cantidad;
-    
-        }
-    
-        ventas.splice(index,1);
-    
-        guardarLocal();
-    
-        renderTabla();
-    
-        actualizarResumen();
-    
-        }
-         function cerrarCorte(){
-    
-        if(!confirm("¿Cerrar corte y borrar ventas?")){
-            return;
-        }
-    
-        ventas = [];
-    
-        guardarLocal();
-    
-        renderTabla();
-    
-        actualizarResumen();
-    
-        } 
+                actualizarResumen();        
+        }                
+         
+                function cerrarCorte(){    
+        
+                 if(!confirm("¿Cerrar corte y borrar ventas?")){           
+                         return;        
+                 }    
+                        ventas = [];   
+                        guardarLocal();       
+                        renderTabla();   
+                        actualizarResumen();        
+                } 
             
     function actualizarResumen(){
     
@@ -774,24 +847,33 @@ function eliminarProducto(){
         
         }
     
-    function actualizarSelectProductos(){
-    
-        const select =
-        document.getElementById("producto");
-    
-        select.innerHTML = "";
-    
-        productos.forEach(p=>{
-    
-            select.innerHTML += `
-            <option value="${p.nombre}">
-            ${p.nombre}
-            </option>
-            `;
-    
-        });
-    
-    }
+        function actualizarSelectProductos(){
+
+            const selectVenta =
+            document.getElementById("producto");
+
+            const selectInventario =
+            document.getElementById("productoInventario");
+
+            selectVenta.innerHTML = "";
+
+            selectInventario.innerHTML = "";
+
+            productos.forEach(p=>{
+
+                const option = `
+                <option value="${p.nombre}">
+                ${p.nombre}
+                </option>
+                `;
+
+                selectVenta.innerHTML += option;
+
+                selectInventario.innerHTML += option;
+
+            });
+
+        }
             
     function actualizarProducto(){
     
