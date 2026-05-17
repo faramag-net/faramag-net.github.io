@@ -185,27 +185,32 @@
     
         <div class="formulario">
     
-            <input type="text"
-            id="nuevoProducto"
-            placeholder="Nombre del producto">
+        <input type="text"
+        id="nuevoProducto"
+        placeholder="Nombre del producto">
     
-            <input type="number"
-            id="nuevoPrecio"
-            placeholder="Precio">
+        <input type="number"
+        id="nuevoPrecio"
+        placeholder="Precio">
     
-            <input type="number"
-            id="nuevoCosto"
-            placeholder="Costo">
+        <input type="number"
+        id="nuevoCosto"
+        placeholder="Costo">
     
-            <input type="number"
-            id="nuevoStock"
-            placeholder="Inventario">
+        <input type="number"
+        id="nuevoStock"
+        placeholder="Inventario">
     
-            <button class="btn-agregar"
-            onclick="agregarProducto()">
-            Agregar Producto
-            </button>
-    
+        <button class="btn-agregar"
+        onclick="agregarProducto()">
+        Agregar Producto
+        </button>
+                
+        <button class="btn-eliminar"
+        onclick="eliminarProducto()">
+        Eliminar Producto
+        </button>
+            
         </div>
     
     </div>
@@ -359,33 +364,33 @@
         const stock =
         Number(document.getElementById("nuevoStock").value);
     
-if(nombre.trim() === ""){
+        if(nombre.trim() === ""){
 
-    alert("Escribe un nombre");
+            alert("Escribe un nombre");
 
-    return;
-}
+            return;
+        }
 
-if(precio <= 0){
+        if(precio <= 0){
 
-    alert("Precio inválido");
+            alert("Precio inválido");
 
-    return;
-}
+            return;
+        }
 
-if(costo < 0){
+        if(costo < 0){
 
-    alert("Costo inválido");
+            alert("Costo inválido");
 
-    return;
-}
+            return;
+        }
 
-if(stock < 0){
+        if(stock < 0){
 
-    alert("Inventario inválido");
+            alert("Inventario inválido");
 
-    return;
-}
+            return;
+        }
         
          const existe =
             productos.some(
@@ -416,8 +421,38 @@ if(stock < 0){
     
         actualizarResumen();
     
+}
+
+function eliminarProducto(){
+
+    const nombre =
+    document.getElementById("producto").value;
+
+    if(!nombre){
+
+        alert("Selecciona un producto");
+
+        return;
     }
-            
+
+    if(!confirm("¿Eliminar producto?")){
+
+        return;
+    }
+
+    productos =
+    productos.filter(p => p.nombre !== nombre);
+
+    guardarLocal();
+
+    actualizarSelectProductos();
+
+    actualizarResumen();
+
+    actualizarProducto();
+
+}
+                
         function guardarLocal(){
         
             localStorage.setItem(
@@ -768,11 +803,18 @@ if(stock < 0){
     
         if(producto){
     
-            document.getElementById("precio").value =
-            producto.precio;
+                document.getElementById("precio").value =
+                producto.precio;
     
-            document.getElementById("costo").value =
-            producto.costo;
+                document.getElementById("costo").value =
+                producto.costo;
+                
+        }else{
+
+                document.getElementById("precio").value = "";
+
+                document.getElementById("costo").value = "";
+
     
         }
     
