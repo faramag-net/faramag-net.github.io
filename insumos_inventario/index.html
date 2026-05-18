@@ -220,77 +220,93 @@
         <h2>📦 Entrada de Inventario</h2>
 
         <div class="formulario">
+        
+                <select id="productoInventario">
+                </select>
+                
+            <select id="tipoMovimiento">
+                    
+                    <option value="ENTRADA INVENTARIO">
+                            ENTRADA INVENTARIO
+                    </option>
+                    
+                    <option value="MERMA">
+                            MERMA
+                    </option>
 
-            <select id="productoInventario">
+                    <option value="CORTESIA">
+                            CORTESIA
+                    </option>
+
+                    <option value="AJUSTE">
+                            AJUSTE
+                    </option>
+
             </select>
-
-            <input type="number"
-            id="agregarStock"
-            placeholder="Cantidad">
-
-            <button class="btn-agregar"
-            onclick="agregarInventario()">
-
-    Agregar Inventario
-
-    </button>
-
-        </div>
-
-</div>     
-        <div class="panel">
-        
-        <h2>💰 Registrar Venta</h2>
-        
-        <div class="formulario">
-        
-            <select id="producto" 
-            onchange="actualizarProducto()">
-            </select>
-        
-            <input type="text"
-            id="cliente"
-            placeholder="Nombre o teléfono">
-        
-            <div style="display:flex; gap:5px; align-items:center;">
-        
-                <button type="button"
-                onclick="cambiarCantidad(-1)">
-                ➖
+            
+                <input type="number"            
+                        id="agregarStock"            
+                        placeholder="Cantidad">
+            
+                <button class="btn-agregar"            
+                        onclick="agregarInventario()">
+    
+                        Agregar Inventario
+                        
                 </button>
         
-                <input type="number"
-                id="cantidad"
-                value="1"
-                style="width:60px; text-align:center;">
-        
-                <button type="button"
-                onclick="cambiarCantidad(1)">
-                ➕
-                </button>
-        
-            </div>
-        
-            <input type="number"
-            id="precio"
-            readonly>
-        
-            <input type="number"
-            id="costo"
-            readonly>
-        
-            <input type="text"
-            id="descuento"
-            placeholder="Descuento opcional">
-        
-            <button class="btn-agregar"
-            onclick="registrarVenta()">
-                Registrar Venta
-            </button>
-        
         </div>
+
+        </div>                
+
+                <div class="panel">        
+                        <h2>💰 Registrar Venta</h2>       
+                        <div class="formulario">                   
+                                <select id="producto"             
+                                        onchange="actualizarProducto()">            
+                                </select>       
+                                <input type="text"            
+                                        id="cliente"            
+                                        placeholder="Nombre o teléfono">        
+            
+                                <div style="display:flex; gap:5px; align-items:center;">        
+                                        <button type="button"
+                                                onclick="cambiarCantidad(-1)">
+                                                ➖
+                                                
+                                        </button>        
+                                        <input type="number"
+                                                id="cantidad"
+                                                value="1"
+                                                style="width:60px; text-align:center;">
+                
+                                        <button type="button"
+                                                onclick="cambiarCantidad(1)">
+                                                ➕
+                                        </button>
         
-        </div>
+                                </div>        
+            
+                                <input type="number"            
+                                        id="precio"            
+                                        readonly>        
+            
+                                <input type="number"            
+                                        id="costo"            
+                                        readonly>        
+            
+                                <input type="text"            
+                                        id="descuento"            
+                                        placeholder="Descuento opcional">        
+            
+                                <button class="btn-agregar"            
+                                        onclick="registrarVenta()">                
+                                        Registrar Venta            
+                                </button>        
+        
+                        </div>        
+        
+                </div>
         
         <div class="panel">
         
@@ -492,30 +508,21 @@
                         const nombre =
                                 document.getElementById("productoInventario").value;
                         const cantidad =
-                                Number(document.getElementById("agregarStock").value);
-
-                        if(cantidad <= 0){
-
-                        alert("Cantidad inválida");
-                                        return;
-                                
-                        }
-
-    
+                                Number(document.getElementById("agregarStock").value);   
+                        const tipo =        
+                                document.getElementById("tipoMovimiento").value;
                         const producto =
                                     productos.find(p => p.nombre === nombre);
                         if(!producto){
-
                                 alert("Producto no encontrado");
-
                                 return;
                         }
                         
                         producto.stock += cantidad;
                         ventas.push({
                                 producto: nombre,
-                                cliente: "ENTRADA INVENTARIO",
-                                cantidad: "+" + cantidad,
+                                cliente: tipo,
+                                cantidad: cantidad,
                                 inventario: producto.stock,
                                 precio: 0,
                                 costo: 0,
@@ -593,9 +600,16 @@
     
                             const productoObj =
                                     productos.find(p => p.nombre === producto);
-                                if(cantidad > productoObj.stock){
-                                            alert("No hay suficiente inventario");
-                                           return;    
+                               
+                        if(cantidad > productoObj.stock){    
+                                const continuar =    
+                                        confirm(        
+                                                "Inventario insuficiente.\n\n¿Deseas continuar?"    
+                                        );
+    
+                                if(!continuar){       
+                                        return;    
+                                }
                         }
     
         
@@ -709,13 +723,22 @@
     
                 if(producto){
                         const cantidad =        
-                                Number(venta.cantidad);
-        
-                        if(venta.cliente === "ENTRADA INVENTARIO"){
+                                Number(venta.cantidad);        
+                       
+                        if(    
+                                venta.cliente === "ENTRADA INVENTARIO" ||
+    
+                                venta.cliente === "MERMA" ||
+    
+                                venta.cliente === "CORTESIA" ||
+    
+                                venta.cliente === "AJUSTE"
+
+                        ){    
                                 producto.stock -= cantidad;
-                        }else{
-                                producto.stock += cantidad;        
-                        }    
+                        }else{    
+                                producto.stock += cantidad;
+                        }
                 }
     
                 ventas.splice(index,1);
