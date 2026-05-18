@@ -113,23 +113,37 @@
             margin-bottom:20px;
         }
         
-        .card{
-            background:white;
-            padding:20px;
-            border-radius:15px;
-            text-align:center;
-            box-shadow:0 4px 10px rgba(0,0,0,0.1);
-        }
-        
-        .card h3{
-            color:#555;
-        }
-        
-        .card p{
-            font-size:30px;
-            color:#d81b60;
-            margin-top:10px;
-        }
+.card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card-producto{
+    background:white;
+    padding:10px 15px;
+    border-radius:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    min-width:120px;
+    text-align:center;
+}
+
+.card-producto h4{
+    font-size:14px;
+    color:#555;
+}
+
+.card-producto p{
+    font-size:22px;
+    margin-top:5px;
+    font-weight:bold;
+}
+
+.card h3{
+    color:#555;
+}
         
         @media(max-width:768px){
         
@@ -164,19 +178,23 @@
             </div>
         
             <div class="card">
-                <h3>Inventario Total</h3>
-                <p id="inventarioTotal">0</p>
-            </div>
-        
-            <div class="card">
                 <h3>Total Vendido</h3>
                 <p id="totalVentas">$0</p>
             </div>
             <div class="card">
                 <h3>Ganancia Total</h3>
                 <p id="totalGanancia">$0</p>
-    </div>
-        
+    </div>               
+                </div>
+                
+                <div id="cardsInventario"
+                        style="
+                        display:flex;
+                        flex-wrap:wrap;
+                        gap:10px;
+                        margin-top:15px;
+                        justify-content:center;
+                        ">
     </div>
               
         <div class="panel">
@@ -766,16 +784,38 @@
         document.getElementById("totalProductos")
         .innerText = productos.length;
     
-        let inventarioTotal = 0;
-    
-        productos.forEach(p=>{
-    
-            inventarioTotal += p.stock;
-    
-        });
-    
-        document.getElementById("inventarioTotal")
-        .innerText = inventarioTotal;
+const cards =
+document.getElementById("cardsInventario");
+
+cards.innerHTML = "";
+
+productos.forEach(p=>{
+
+    let color = "#28a745";
+
+    if(p.stock <= 5){
+        color = "#ffc107";
+    }
+
+    if(p.stock < 0){
+        color = "#dc3545";
+    }
+
+    cards.innerHTML += `
+
+    <div class="card-producto">
+
+        <h4>${p.nombre}</h4>
+
+        <p style="color:${color}">
+        ${p.stock}
+        </p>
+
+    </div>
+
+    `;
+
+});
     
         let total = 0;
     
