@@ -526,12 +526,44 @@ onclick="registrarComanda()">
                                      return;
                              }
        
-                             productos.push({           
-                                     nombre,           
-                                     precio,
-                                     costo,           
-                                     stock        
-                             });    
+productos.push({           
+nombre,           
+precio,
+costo,           
+stock
+        
+});
+
+const folio =
+generarFolio("I", contadorInventario);
+
+contadorInventario++;
+
+ventas.push({
+
+    folio,
+
+    producto: nombre,
+
+    cliente: "ALTA PRODUCTO",
+
+    cantidad: stock,
+
+    inventario: stock,
+
+    precio,
+
+    costo,
+
+    subtotal: 0,
+
+    ganancia: 0,
+
+    descuento: "",
+
+    fecha: new Date().toLocaleString()
+
+});
         
                              actualizarSelectProductos();        
                              document.getElementById("producto").value = nombre;
