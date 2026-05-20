@@ -294,8 +294,9 @@ gap:10px;
 background:#f8f9fa;
 padding:8px 12px;
 border-radius:12px;
-flex-wrap:nowrap;
-width:max-content;
+flex-wrap:wrap;
+width:100%;
+max-width:100%;
 ">
 
     <button
@@ -395,9 +396,15 @@ width:max-content;
     </div>
 
 </div>
-                                <input type="text"            
-                                        id="descuento"            
-                                        placeholder="Descuento opcional">        
+                                
+<input
+type="text"
+id="descuento"
+placeholder="Descuento opcional"
+style="
+min-width:180px;
+width:100%;
+">        
             
                                 <button class="btn-agregar"            
                                         onclick="registrarVenta()">                
