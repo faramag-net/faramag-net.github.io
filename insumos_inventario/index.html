@@ -447,6 +447,8 @@ onclick="registrarComanda()">
 
                 let contadorInventario = 1;
 
+                let ubicacionActual = null;
+
                         function generarFolio(tipo, contador){
 
                             return tipo +
@@ -561,6 +563,8 @@ ventas.push({
 
     descuento: "",
 
+        ubicacion: ubicacionActual,
+
     fecha: new Date().toLocaleString()
 
 });
@@ -639,6 +643,7 @@ ventas.push({
                                 subtotal: 0,
                                 ganancia: 0,
                                 descuento: "",
+                                ubicacion: ubicacionActual,
                                 fecha: new Date().toLocaleString()
                         });
                         
@@ -661,7 +666,8 @@ ventas.push({
         comanda,
         contadorVentas,
         contadorComandas,
-        contadorInventario
+        contadorInventario,
+         ubicacionActual
 })
                                 
                         );
@@ -681,6 +687,7 @@ ventas.push({
         contadorVentas = sistema.contadorVentas || contadorVentas;
         contadorComandas = sistema.contadorComandas || contadorComandas;
         contadorInventario = sistema.contadorInventario || contadorInventario;
+        ubicacionActual = sistema.ubicacionActual || ubicacionActual;
                 
                 }
         
@@ -751,6 +758,7 @@ ventas.push({
                                 subtotal,
                                 ganancia,
                                 descuento,
+                                ubicacion: ubicacionActual,
                                 fecha
                         });
     
@@ -966,6 +974,8 @@ function registrarComanda(){
 
         descuento: "",
 
+        ubicacion: ubicacionActual,
+
         fecha
 
         });
@@ -1180,7 +1190,8 @@ productos.forEach(p=>{
                 comanda,
                 contadorVentas,
                 contadorComandas,
-                contadorInventario
+                contadorInventario,
+                ubicacionActual
             };
         
             const blob = new Blob(
@@ -1230,7 +1241,8 @@ productos.forEach(p=>{
                 contadorVentas = datos.contadorVentas || contadorVentas;
                 contadorComandas = datos.contadorComandas || contadorComandas;
                 contadorInventario = datos.contadorInventario || contadorInventario;
-        
+                ubicacionActual = datos.ubicacionActual || ubicacionActual;
+                    
                 guardarLocal();
         
                 actualizarResumen();
@@ -1328,7 +1340,38 @@ productos.forEach(p=>{
             input.value = cantidad;
     
     }
+        function obtenerUbicacion(){
+
+    if(navigator.geolocation){
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(pos){
+
+                ubicacionActual = {
+
+                    lat: pos.coords.latitude,
+
+                    lng: pos.coords.longitude
+
+                };
+
+            },
+
+            function(){
+
+                console.log("Ubicación no permitida");
+
+            }
+
+        );
+
+    }
+
+}
         cargarLocal();
+
+        obtenerUbicacion();
     
         actualizarSelectProductos();
             
