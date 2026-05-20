@@ -387,6 +387,7 @@ onclick="registrarComanda()">
         <thead>
         
         <tr>
+        <th>FOLIO</th>
         <th>PRODUCTO</th>
         <th>CLIENTE</th>
         <th>CANTIDAD</th>
@@ -439,6 +440,20 @@ onclick="registrarComanda()">
                 let ventas = [];
                 
                 let comanda = [];
+                
+                let contadorVentas = 1;
+
+                let contadorComandas = 1;
+
+                let contadorInventario = 1;
+
+                        function generarFolio(tipo, contador){
+
+                            return tipo +
+
+                            String(contador).padStart(6,"0");
+
+                                }
                 
                      function agregarProducto(){    
         
@@ -568,6 +583,10 @@ onclick="registrarComanda()">
                                 alert("Producto no encontrado");
                                 return;
                         }
+                        const folio =
+                        generarFolio("I", contadorInventario);
+
+                        contadorInventario++;
                         
                 if(
                 tipo === "MERMA" ||
@@ -578,6 +597,7 @@ onclick="registrarComanda()">
                 producto.stock += cantidad;
 }
                         ventas.push({
+                                folio,
                                 producto: nombre,
                                 cliente: tipo,
                                 cantidad: cantidad,
@@ -599,34 +619,40 @@ onclick="registrarComanda()">
 
                         alert("Inventario agregado");
                 }                
-                function guardarLocal(){
+        function guardarLocal(){
         
-                        localStorage.setItem(
-                                "inventarioSantaRosa",
-JSON.stringify({
-    productos,
-    ventas,
-    comanda
+        localStorage.setItem(
+        "inventarioSantaRosa",
+        JSON.stringify({
+        productos,
+        ventas,
+        comanda,
+        contadorVentas,
+        contadorComandas,
+        contadorInventario
 })
                                 
                         );
         
                 }
                 
-                function cargarLocal(){
+        function cargarLocal(){
         
-                        const datos = localStorage.getItem("inventarioSantaRosa");
+        const datos = localStorage.getItem("inventarioSantaRosa");
         
-                        if(datos){
-                                const sistema = JSON.parse(datos);
+        if(datos){
+        const sistema = JSON.parse(datos);
         
-                                productos = sistema.productos || productos;
-                                ventas = sistema.ventas || ventas;
-                                comanda = sistema.comanda || comanda;
-
-                        }
-        
+        productos = sistema.productos || productos;
+        ventas = sistema.ventas || ventas;
+        comanda = sistema.comanda || comanda;
+        contadorVentas = sistema.contadorVentas || contadorVentas;
+        contadorComandas = sistema.contadorComandas || contadorComandas;
+        contadorInventario = sistema.contadorInventario || contadorInventario;
+                
                 }
+        
+        }
               
                 function registrarVenta(){
     
@@ -679,8 +705,11 @@ JSON.stringify({
                         const subtotal = cantidad * precio;
                         const ganancia = subtotal - (cantidad * costo);   
                         const fecha = new Date().toLocaleString();
-
+                        const folio = generarFolio("V", contadorVentas);
+                        contadorVentas++;
+                        
                         ventas.push({
+                                folio,
                                 producto,
                                 cliente,
                                 cantidad,
@@ -843,9 +872,12 @@ function registrarComanda(){
 
     }
 
-    const fecha =
-    new Date().toLocaleString();
-
+        const fecha =
+                new Date().toLocaleString();
+        const folioComanda =
+                generarFolio("C", contadorComandas);
+                contadorComandas++;
+        
     comanda.forEach(item=>{
 
         const productoObj =
@@ -882,26 +914,27 @@ function registrarComanda(){
         item.subtotal - (item.cantidad * costo);
 
         ventas.push({
+        folio: folioComanda,
+                
+        producto: item.producto,
 
-            producto: item.producto,
+        cliente,
 
-            cliente,
+        cantidad: item.cantidad,
 
-            cantidad: item.cantidad,
+        inventario: productoObj.stock,
 
-            inventario: productoObj.stock,
+        precio: item.precio,
 
-            precio: item.precio,
+        costo,
 
-            costo,
+        subtotal: item.subtotal,
 
-            subtotal: item.subtotal,
+        ganancia,
 
-            ganancia,
+        descuento: "",
 
-            descuento: "",
-
-            fecha
+        fecha
 
         });
 
@@ -947,7 +980,9 @@ function registrarComanda(){
             tabla.innerHTML += `
     
             <tr>
-    
+            
+            <td>${venta.folio || ""}</td>
+            
             <td>${venta.producto || ""}</td>
     
             <td>${venta.cliente || ""}</td>
@@ -999,11 +1034,7 @@ function registrarComanda(){
                        
                         if(    
                                 venta.cliente === "ENTRADA INVENTARIO" ||
-    
-                                venta.cliente === "MERMA" ||
-    
-                                venta.cliente === "CORTESIA" ||
-    
+        
                                 venta.cliente === "AJUSTE"
 
                         ){    
@@ -1114,7 +1145,10 @@ productos.forEach(p=>{
             const datos = {
                 productos,
                 ventas,
-                comanda
+                comanda,
+                contadorVentas,
+                contadorComandas,
+                contadorInventario
             };
         
             const blob = new Blob(
@@ -1160,6 +1194,10 @@ productos.forEach(p=>{
                 ventas = datos.ventas || ventas;
 
                 comanda = datos.comanda || comanda;
+                    
+                contadorVentas = datos.contadorVentas || contadorVentas;
+                contadorComandas = datos.contadorComandas || contadorComandas;
+                contadorInventario = datos.contadorInventario || contadorInventario;
         
                 guardarLocal();
         
