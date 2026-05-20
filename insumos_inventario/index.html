@@ -287,103 +287,114 @@
                                         id="cliente"            
                                         placeholder="Nombre o teléfono">        
             
-<button
-type="button"
-onclick="cambiarCantidad(-1)"
-style="
-width:45px;
-height:45px;
-font-size:22px;
-font-weight:bold;
-">
-
-➖
-
-</button>
-<input type="number"
-id="cantidad"
-value="1"
-style="
-width:50px;
-height:45px;
-text-align:center;
-font-size:18px;
-">
-                
-<button
-type="button"
-onclick="cambiarCantidad(1)"
-style="
-width:45px;
-height:45px;
-font-size:22px;
-font-weight:bold;
-">
-
-➕
-
-</button>
-        
-                                </div>        
-            
 <div style="
 display:flex;
 align-items:center;
-gap:3px;
-max-width:90px;
+gap:10px;
+background:#f8f9fa;
+padding:8px 12px;
+border-radius:12px;
+flex-wrap:nowrap;
+width:max-content;
 ">
 
-<span style="
-padding:0 5px;
-font-weight:bold;
-">
+    <button
+    type="button"
+    onclick="cambiarCantidad(-1)"
+    style="
+    width:45px;
+    height:45px;
+    font-size:22px;
+    font-weight:bold;
+    ">
 
-$
+    ➖
 
-</span>
+    </button>
 
-<input
-type="number"
-id="precio"
-readonly
-style="
-width:55px;
-padding:6px;
-text-align:center;
-font-weight:bold;
-">
+    <input
+    type="number"
+    id="cantidad"
+    value="1"
+    style="
+    width:55px;
+    height:45px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+    ">
 
-                        </div>      
-            
-<div style="
-display:flex;
-align-items:center;
-gap:3px;
-max-width:90px;
-">
+    <button
+    type="button"
+    onclick="cambiarCantidad(1)"
+    style="
+    width:45px;
+    height:45px;
+    font-size:22px;
+    font-weight:bold;
+    ">
 
-<span style="
-padding:0 5px;
-font-weight:bold;
-">
+    ➕
 
-$
+    </button>
 
-</span>
+    <div style="
+    display:flex;
+    align-items:center;
+    gap:4px;
+    ">
 
-<input
-type="number"
-id="costo"
-readonly
-style="
-width:55px;
-padding:6px;
-text-align:center;
-font-weight:bold;
-">
+        <span style="
+        font-weight:bold;
+        font-size:18px;
+        ">
 
-                        </div>
-            
+        $
+
+        </span>
+
+        <input
+        type="number"
+        id="precio"
+        readonly
+        style="
+        width:60px;
+        height:40px;
+        text-align:center;
+        font-weight:bold;
+        ">
+
+    </div>
+
+    <div style="
+    display:flex;
+    align-items:center;
+    gap:4px;
+    ">
+
+        <span style="
+        font-weight:bold;
+        font-size:18px;
+        ">
+
+        $
+
+        </span>
+
+        <input
+        type="number"
+        id="costo"
+        readonly
+        style="
+        width:60px;
+        height:40px;
+        text-align:center;
+        font-weight:bold;
+        ">
+
+    </div>
+
+</div>
                                 <input type="text"            
                                         id="descuento"            
                                         placeholder="Descuento opcional">        
