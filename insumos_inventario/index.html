@@ -180,7 +180,13 @@
     
     <h2>➕ Agregar Producto</h2>
 
-    <div class="formulario">
+<div style="
+display:flex;
+gap:15px;
+align-items:center;
+overflow-x:auto;
+width:100%;
+">
 
     <input type="text"
     id="nuevoProducto"
@@ -216,12 +222,28 @@
 
     <h2>📦 Entrada de Inventario</h2>
 
-    <div class="formulario">
+<div style="
+display:flex;
+gap:15px;
+align-items:center;
+overflow-x:auto;
+width:100%;
+">
     
-            <select id="productoInventario">
-            </select>
+<select
+id="productoInventario"
+style="
+min-width:220px;
+height:55px;
+">
+</select>
             
-        <select id="tipoMovimiento">
+<select
+id="tipoMovimiento"
+style="
+min-width:220px;
+height:55px;
+">
                 
                 <option value="ENTRADA INVENTARIO">
                         ENTRADA INVENTARIO
@@ -241,83 +263,236 @@
 
         </select>
         
-            <input type="number"            
-                    id="agregarStock"            
-                    placeholder="Cantidad">
+<input
+type="number"
+id="agregarStock"
+placeholder="Cantidad"
+style="
+width:120px;
+height:55px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+">
         
-            <button class="btn-agregar"            
-                    onclick="agregarInventario()">
-
-                    Agregar Inventario
-                    
-            </button>
+<button
+class="btn-agregar"
+onclick="agregarInventario()"
+style="
+min-width:240px;
+height:55px;
+font-size:18px;
+">
+Agregar Inventario
+</button>
     
     </div>
 
-    </div>                
+</div>                
 
-            <div class="panel">        
-                    <h2>💰 Registrar Venta</h2>       
-                    <div class="formulario">                   
-                            <select id="producto"             
-                                    onchange="actualizarProducto()">            
-                            </select>       
-                            <input type="text"            
-                                    id="cliente"            
-                                    placeholder="Nombre o teléfono">        
-        
-                            <div style="display:flex; gap:5px; align-items:center;">        
-                                    <button type="button"
-                                            onclick="cambiarCantidad(-1)">
-                                            ➖
-                                            
-                                    </button>        
-                                    <input type="number"
-                                            id="cantidad"
-                                            value="1"
-                                            style="width:60px; text-align:center;">
-            
-                                    <button type="button"
-                                            onclick="cambiarCantidad(1)">
-                                            ➕
-                                    </button>
+<div class="panel">        
+
+    <h2>💰 Registrar Venta</h2>       
+
+    <div style="
+    display:flex;
+    align-items:center;
+    gap:15px;
+    width:100%;
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    ">
+
+        <select
+        id="producto"
+        onchange="actualizarProducto()"
+        style="
+        min-width:220px;
+        height:55px;
+        ">
+        </select>
+
+        <input
+        type="text"
+        id="cliente"
+        placeholder="Nombre o teléfono"
+        style="
+        min-width:220px;
+        height:55px;
+        ">
+
+        <div style="
+        display:flex;
+        gap:8px;
+        align-items:center;
+        background:#f8f9fa;
+        padding:8px 12px;
+        border-radius:12px;
+        flex-shrink:0;
+        ">
+
+            <button
+            type="button"
+            onclick="cambiarCantidad(-1)"
+            style="
+            width:45px;
+            height:45px;
+            font-size:22px;
+            ">
+
+            ➖
+
+            </button>
+
+            <input
+            type="number"
+            id="cantidad"
+            value="1"
+            style="
+            width:60px;
+            height:45px;
+            text-align:center;
+            font-size:18px;
+            font-weight:bold;
+            ">
+
+            <button
+            type="button"
+            onclick="cambiarCantidad(1)"
+            style="
+            width:45px;
+            height:45px;
+            font-size:22px;
+            ">
+
+            ➕
+
+            </button>
+
+        </div>
+
+        <div style="
+        display:flex;
+        align-items:center;
+        gap:5px;
+        background:white;
+        border:1px solid #ddd;
+        border-radius:12px;
+        padding:0 15px;
+        height:55px;
+        flex-shrink:0;
+        ">
+
+            <span style="
+            font-size:24px;
+            font-weight:bold;
+            ">
+
+            $
+
+            </span>
+
+            <input
+            type="number"
+            id="precio"
+            readonly
+            style="
+            width:80px;
+            border:none;
+            background:transparent;
+            font-size:22px;
+            font-weight:bold;
+            text-align:center;
+            ">
+
+        </div>
+
+        <button
+        class="btn-agregar"
+        onclick="registrarVenta()"
+        style="
+        min-width:220px;
+        height:55px;
+        font-size:18px;
+        ">
+
+        Registrar Venta
+
+        </button>
+
+        <button
+        type="button"
+        class="btn-exportar"
+        onclick="agregarAComanda()"
+        style="
+        min-width:260px;
+        height:55px;
+        font-size:18px;
+        ">
+
+        🛒 Agregar a Comanda
+
+        </button>
+
+    </div>        
+
+</div>
+
+<div class="panel">
+
+    <h2>🛒 Comanda Actual</h2>
+
+    <div style="
+    overflow-x:auto;
+    border-radius:10px;
+    ">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>PRODUCTO</th>
+                    <th>CANTIDAD</th>
+                    <th>PRECIO</th>
+                    <th>SUBTOTAL</th>
+                    <th>ACCION</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaComanda">
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <br>
+
+    <h3 id="totalComanda">
+    TOTAL: $0
+    </h3>
+
+    <br>
+
+    <button
+    class="btn-agregar"
+    onclick="registrarComanda()"
+    style="
+    width:100%;
+    height:55px;
+    font-size:18px;
+    ">
+
+    ✅ Registrar Comanda
+
+    </button>
+
+</div>
+
+<div class="panel">
     
-                            </div>        
-        
-                            <input type="number"            
-                                    id="precio"            
-                                    readonly>        
-        
-                            <input type="number"            
-                                    id="costo"            
-                                    readonly>        
-        
-                            <input type="text"            
-                                    id="descuento"            
-                                    placeholder="Descuento opcional">        
-        
-                            <button class="btn-agregar"            
-                                    onclick="registrarVenta()">                
-                                    Registrar Venta            
-                            </button>
-                            
-                            <button type="button"
-                            class="btn-exportar"
-                            onclick="agregarAComanda()">
-
-                            🛒 Agregar a Comanda
-
-                            </button>
-    
-                    </div>        
-    
-            </div>
-    <div class="panel">
-
-
-
-✅ Registrar Comanda
-
     <h2>📋 Historial de Ventas</h2>
     
     <div style="
@@ -340,7 +515,6 @@
     <th>COSTO</th>
     <th>SUBTOTAL</th>
     <th>GANANCIA</th>
-    <th>DESCUENTO</th>
     <th>UBICACION</th>
     <th>FECHA</th>
     <th>ACCION</th>
@@ -712,9 +886,6 @@ alert("Inventario agregado");
                     const costo =
                             Number(document.getElementById("costo").value) || 0;
 
-                    const descuento =
-                            document.getElementById("descuento").value;
-
                     if(cantidad <= 0){
                                     alert("Cantidad inválida");
                                         return;
@@ -753,7 +924,6 @@ alert("Inventario agregado");
                             costo,
                             subtotal,
                             ganancia,
-                            descuento,
                             ubicacion,
                             fecha
                     });
@@ -1039,8 +1209,6 @@ function renderTabla(){
 
         <td>$${ganancia.toFixed(2)}</td>
 
-        <td>${venta.descuento || ""}</td>
-
         <td>${venta.ubicacion?`📍 ${venta.ubicacion.lat.toFixed(4)},
             ${venta.ubicacion.lng.toFixed(4)}`:""}</td>
 
@@ -1175,8 +1343,6 @@ cards.innerHTML += `
     document.getElementById("cliente").value = "";
 
     document.getElementById("cantidad").value = 1;
-
-    document.getElementById("descuento").value = "";
 
     actualizarProducto();
 
@@ -1392,20 +1558,7 @@ return new Promise((resolve)=>{
     actualizarProducto();
 
     renderComanda();
-
-document.getElementById("descuento")
-.addEventListener("keydown", function(e){
-
-    if(e.key === "Enter"){
-
-        e.preventDefault();
-
-        registrarVenta();
-
-    }
-
-});
-        
+       
     </script>
 
 </body>
