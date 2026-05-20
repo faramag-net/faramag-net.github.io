@@ -320,12 +320,58 @@
                                 <button class="btn-agregar"            
                                         onclick="registrarVenta()">                
                                         Registrar Venta            
-                                </button>        
+                                </button>
+                                
+                                <button type="button"
+                                class="btn-exportar"
+                                onclick="agregarAComanda()">
+
+                                🛒 Agregar a Comanda
+
+                                </button>
         
                         </div>        
         
                 </div>
-        
+        <div class="panel">
+
+<h2>🛒 Comanda Actual</h2>
+
+<table>
+
+<thead>
+
+<tr>
+<th>PRODUCTO</th>
+<th>CANTIDAD</th>
+<th>PRECIO</th>
+<th>SUBTOTAL</th>
+<th>ACCION</th>
+</tr>
+
+</thead>
+
+<tbody id="tablaComanda">
+</tbody>
+
+</table>
+
+<br>
+
+<h3 id="totalComanda">
+TOTAL: $0
+</h3>
+
+<br>
+
+<button class="btn-agregar"
+onclick="registrarComanda()">
+
+✅ Registrar Comanda
+
+</button>
+
+</div>
         <div class="panel">
         
         <h2>📋 Historial de Ventas</h2>
@@ -388,25 +434,12 @@
         
         <script>
         
-    let productos = [
-    
-    {
-        nombre:"BOLIS",
-        precio:18,
-        costo:7,
-        stock:0
-    },
-    
-    {
-        nombre:"PALETAS",
-        precio:20,
-        costo:9,
-        stock:0
-    }
-    
-    ];   
-    
+                let productos = [];
+        
                 let ventas = [];
+                
+                let comanda = [];
+                
                      function agregarProducto(){    
         
                         const nombre =
@@ -536,7 +569,14 @@
                                 return;
                         }
                         
-                        producto.stock += cantidad;
+                if(
+                tipo === "MERMA" ||
+                tipo === "CORTESIA"
+                ){
+                producto.stock -= cantidad;
+                }else{
+                producto.stock += cantidad;
+}
                         ventas.push({
                                 producto: nombre,
                                 cliente: tipo,
@@ -553,6 +593,7 @@
                         guardarLocal();
                         actualizarResumen();
                         renderTabla();
+                        renderComanda();
 
                         document.getElementById("agregarStock").value = "";
 
@@ -562,10 +603,12 @@
         
                         localStorage.setItem(
                                 "inventarioSantaRosa",
-                                JSON.stringify({
-                                        productos,
-                                        ventas
-                                })
+JSON.stringify({
+    productos,
+    ventas,
+    comanda
+})
+                                
                         );
         
                 }
@@ -579,6 +622,7 @@
         
                                 productos = sistema.productos || productos;
                                 ventas = sistema.ventas || ventas;
+                                comanda = sistema.comanda || comanda;
 
                         }
         
@@ -656,6 +700,8 @@
         
                         renderTabla();
 
+                        renderComanda();
+
                         limpiarFormulario();
     
         
@@ -668,7 +714,215 @@
                                 });
                         }
                 }
+                
+function agregarAComanda(){
+
+        const producto =
+        document.getElementById("producto").value;
+
+        const cantidad =
+        Number(document.getElementById("cantidad").value);
+
+        const precio =
+        Number(document.getElementById("precio").value);
         
+        const costo =
+        Number(document.getElementById("costo").value);
+
+    if(cantidad <= 0){
+
+        alert("Cantidad inválida");
+
+        return;
+
+    }
+
+    const existe =
+    comanda.find(p => p.producto === producto);
+
+    if(existe){
+
+        existe.cantidad += cantidad;
+
+        existe.subtotal =
+        existe.cantidad * existe.precio;
+
+    }else{
+
+        comanda.push({
+
+        producto,
+        cantidad,
+        precio,
+        costo,
+        subtotal: cantidad * precio
+
+        });
+
+    }
+
+        renderComanda();
+        guardarLocal();
+
+}
+                
+function renderComanda(){
+
+    const tabla =
+    document.getElementById("tablaComanda");
+
+    tabla.innerHTML = "";
+
+    let total = 0;
+
+    comanda.forEach((item,index)=>{
+
+        total += item.subtotal;
+
+        tabla.innerHTML += `
+
+        <tr>
+
+            <td>${item.producto}</td>
+
+            <td>${item.cantidad}</td>
+
+            <td>$${item.precio.toFixed(2)}</td>
+
+            <td>$${item.subtotal.toFixed(2)}</td>
+
+            <td>
+
+                <button class="btn-eliminar"
+                onclick="eliminarComanda(${index})">
+
+                X
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById("totalComanda")
+    .innerText = "TOTAL: $" + total.toFixed(2);
+
+}  
+                
+function eliminarComanda(index){
+
+    comanda.splice(index,1);
+    
+        renderComanda();
+        guardarLocal();
+
+} 
+                
+function registrarComanda(){
+
+    const cliente =
+    document.getElementById("cliente").value;
+
+    if(cliente.trim() === ""){
+
+        alert("Escribe un cliente");
+
+        return;
+
+    }
+
+    if(comanda.length === 0){
+
+        alert("La comanda está vacía");
+
+        return;
+
+    }
+
+    const fecha =
+    new Date().toLocaleString();
+
+    comanda.forEach(item=>{
+
+        const productoObj =
+        productos.find(
+            p => p.nombre === item.producto
+        );
+
+        if(!productoObj){
+            return;
+        }
+
+        if(item.cantidad > productoObj.stock){
+
+            const continuar = confirm(
+
+                item.producto +
+
+                " tiene inventario insuficiente.\n\n¿Continuar?"
+
+            );
+
+            if(!continuar){
+                return;
+            }
+
+        }
+
+        productoObj.stock -= item.cantidad;
+
+        const costo =
+        productoObj.costo;
+
+        const ganancia =
+        item.subtotal - (item.cantidad * costo);
+
+        ventas.push({
+
+            producto: item.producto,
+
+            cliente,
+
+            cantidad: item.cantidad,
+
+            inventario: productoObj.stock,
+
+            precio: item.precio,
+
+            costo,
+
+            subtotal: item.subtotal,
+
+            ganancia,
+
+            descuento: "",
+
+            fecha
+
+        });
+
+    });
+
+    comanda = [];
+
+    renderComanda();
+
+    guardarLocal();
+
+    actualizarResumen();
+
+    renderTabla();
+
+    limpiarFormulario();
+
+    alert("Comanda registrada");
+
+}
+                
     function renderTabla(){
     
         const tabla =
@@ -757,6 +1011,7 @@
                         }else{    
                                 producto.stock += cantidad;
                         }
+                        
                 }
     
                 ventas.splice(index,1);
@@ -764,6 +1019,8 @@
                 guardarLocal();
     
                 renderTabla();
+
+                renderComanda();
     
                 actualizarResumen();        
         }                
@@ -773,9 +1030,11 @@
                  if(!confirm("¿Cerrar corte y borrar ventas?")){           
                          return;        
                  }    
-                        ventas = [];   
+                        ventas = [];
+                        comanda = [];
                         guardarLocal();       
-                        renderTabla();   
+                        renderTabla();
+                        renderComanda();
                         actualizarResumen();        
                 } 
             
@@ -854,7 +1113,8 @@ productos.forEach(p=>{
         
             const datos = {
                 productos,
-                ventas
+                ventas,
+                comanda
             };
         
             const blob = new Blob(
@@ -898,12 +1158,16 @@ productos.forEach(p=>{
                 actualizarSelectProductos();
                 
                 ventas = datos.ventas || ventas;
+
+                comanda = datos.comanda || comanda;
         
                 guardarLocal();
         
                 actualizarResumen();
                 
                 renderTabla();
+                    
+                renderComanda();
             };
         
             lector.readAsText(archivo);
@@ -1003,6 +1267,8 @@ productos.forEach(p=>{
         actualizarResumen();
         
         actualizarProducto();
+
+        renderComanda();
     
     
     
