@@ -1,635 +1,614 @@
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        <title>Sistema Inventario Santa Rosa</title>
-        
-        <style>
-        
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
-        
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Sistema Inventario Santa Rosa</title>
+    
+    <style>
+    
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+    }
+    
+    body{
+        font-family:Arial, sans-serif;
+        background:#f4f6f8;
+        padding:20px;
+    }
+    
+    h1{
+        text-align:center;
+        margin-bottom:20px;
+        color:#d81b60;
+    }
+    
+    .contenedor{
+        max-width:1400px;
+        margin:auto;
+    }
+    
+    .panel{
+        background:white;
+        padding:20px;
+        border-radius:15px;
+        box-shadow:0 4px 10px rgba(0,0,0,0.1);
+        margin-bottom:20px;
+    }
+    
+    h2{
+        margin-bottom:15px;
+        color:#333;
+    }
+    
+    .formulario{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+        gap:10px;
+    }
+    
+    input, select{
+        padding:10px;
+        border:1px solid #ccc;
+        border-radius:8px;
+    }
+    
+    button{
+        border:none;
+        border-radius:8px;
+        padding:10px;
+        cursor:pointer;
+        font-weight:bold;
+    }
+    
+    .btn-agregar{
+        background:#28a745;
+        color:white;
+    }
+    
+    .btn-exportar{
+        background:#007bff;
+        color:white;
+    }
+    
+    .btn-importar{
+        background:#6c757d;
+        color:white;
+    }
+    
+    .btn-eliminar{
+        background:#dc3545;
+        color:white;
+        padding:5px 10px;
+    }
+    
+    table{
+        width:100%;
+        border-collapse:collapse;
+        margin-top:15px;
+        background:white;
+    }
+    
+    th{
+        background:#005b84;
+        color:white;
+        padding:12px;
+        font-size:14px;
+    }
+    
+    td{
+        background:white;
+        padding:10px;
+        text-align:center;
+        border-bottom:1px solid #ddd;
+    }
+    
+    .resumen{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+        gap:15px;
+        margin-bottom:20px;
+    }
+    
+
+.card{background:white;padding:20px;border-radius:15px;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+
+.card-producto{background:white;padding:10px 15px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,0.1);min-width:120px;text-align:center;}
+
+.card-producto h4{font-size:14px;color:#555;}
+
+.card-producto p{font-size:22px;margin-top:5px;font-weight:bold;}
+
+.card h3{color:#555;}
+
+    @media(max-width:768px){
+    
         body{
-            font-family:Arial, sans-serif;
-            background:#f4f6f8;
-            padding:20px;
-        }
-        
-        h1{
-            text-align:center;
-            margin-bottom:20px;
-            color:#d81b60;
-        }
-        
-        .contenedor{
-            max-width:1400px;
-            margin:auto;
-        }
-        
-        .panel{
-            background:white;
-            padding:20px;
-            border-radius:15px;
-            box-shadow:0 4px 10px rgba(0,0,0,0.1);
-            margin-bottom:20px;
-        }
-        
-        h2{
-            margin-bottom:15px;
-            color:#333;
-        }
-        
-        .formulario{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-            gap:10px;
-        }
-        
-        input, select{
             padding:10px;
-            border:1px solid #ccc;
-            border-radius:8px;
         }
-        
-        button{
-            border:none;
-            border-radius:8px;
-            padding:10px;
-            cursor:pointer;
-            font-weight:bold;
-        }
-        
-        .btn-agregar{
-            background:#28a745;
-            color:white;
-        }
-        
-        .btn-exportar{
-            background:#007bff;
-            color:white;
-        }
-        
-        .btn-importar{
-            background:#6c757d;
-            color:white;
-        }
-        
-        .btn-eliminar{
-            background:#dc3545;
-            color:white;
-            padding:5px 10px;
-        }
-        
+    
         table{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:15px;
-            background:white;
+            font-size:12px;
         }
-        
-        th{
-            background:#005b84;
-            color:white;
-            padding:12px;
-            font-size:14px;
+    
+        th, td{
+            padding:8px;
         }
-        
-        td{
-            background:white;
-            padding:10px;
-            text-align:center;
-            border-bottom:1px solid #ddd;
-        }
-        
-        .resumen{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-            gap:15px;
-            margin-bottom:20px;
-        }
-        
-.card{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    text-align:center;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-
-.card-producto{
-    background:white;
-    padding:10px 15px;
-    border-radius:12px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.1);
-    min-width:120px;
-    text-align:center;
-}
-
-.card-producto h4{
-    font-size:14px;
-    color:#555;
-}
-
-.card-producto p{
-    font-size:22px;
-    margin-top:5px;
-    font-weight:bold;
-}
-
-.card h3{
-    color:#555;
-}
-        
-        @media(max-width:768px){
-        
-            body{
-                padding:10px;
-            }
-        
-            table{
-                font-size:12px;
-            }
-        
-            th, td{
-                padding:8px;
-            }
-        
-        }
-        
-        </style>
-        </head>
-        
-        <body>
-        
-        <div class="contenedor">
-        
-        <h1>🍧 Sistema Santa Rosa</h1>
-        
-        <div class="resumen">
-        
-            <div class="card">
-                <h3>Total Productos</h3>
-                <p id="totalProductos">0</p>
-            </div>
-        
-            <div class="card">
-                <h3>Total Vendido</h3>
-                <p id="totalVentas">$0</p>
-            </div>
-            <div class="card">
-                <h3>Ganancia Total</h3>
-                <p id="totalGanancia">$0</p>
-    </div>               
-                </div>
-                
-                <div id="cardsInventario"
-                        style="
-                        display:flex;
-                        flex-wrap:wrap;
-                        gap:10px;
-                        margin-top:15px;
-                        justify-content:center;
-                        ">
-    </div>
-              
-        <div class="panel">
-        
-        <h2>➕ Agregar Producto</h2>
     
-        <div class="formulario">
+    }
     
-        <input type="text"
-        id="nuevoProducto"
-        placeholder="Nombre del producto">
+    </style>
+    </head>
     
-        <input type="number"
-        id="nuevoPrecio"
-        placeholder="Precio">
+    <body>
     
-        <input type="number"
-        id="nuevoCosto"
-        placeholder="Costo">
+    <div class="contenedor">
     
-        <input type="number"
-        id="nuevoStock"
-        placeholder="Inventario">
+    <h1>🍧 Sistema Santa Rosa</h1>
     
-        <button class="btn-agregar"
-        onclick="agregarProducto()">
-        Agregar Producto
-        </button>
-                
-        <button class="btn-eliminar"
-        onclick="eliminarProducto()">
-        Eliminar Producto
-        </button>
-            
+    <div class="resumen">
+    
+        <div class="card">
+            <h3>Total Productos</h3>
+            <p id="totalProductos">0</p>
         </div>
     
-    </div>
-                
-        <div class="panel">
-
-        <h2>📦 Entrada de Inventario</h2>
-
-        <div class="formulario">
-        
-                <select id="productoInventario">
-                </select>
-                
-            <select id="tipoMovimiento">
-                    
-                    <option value="ENTRADA INVENTARIO">
-                            ENTRADA INVENTARIO
-                    </option>
-                    
-                    <option value="MERMA">
-                            MERMA
-                    </option>
-
-                    <option value="CORTESIA">
-                            CORTESIA
-                    </option>
-
-                    <option value="AJUSTE">
-                            AJUSTE
-                    </option>
-
-            </select>
-            
-                <input type="number"            
-                        id="agregarStock"            
-                        placeholder="Cantidad">
-            
-                <button class="btn-agregar"            
-                        onclick="agregarInventario()">
-    
-                        Agregar Inventario
-                        
-                </button>
-        
+        <div class="card">
+            <h3>Total Vendido</h3>
+            <p id="totalVentas">$0</p>
         </div>
-
-        </div>                
-
-                <div class="panel">        
-                        <h2>💰 Registrar Venta</h2>       
-                        <div class="formulario">                   
-                                <select id="producto"             
-                                        onchange="actualizarProducto()">            
-                                </select>       
-                                <input type="text"            
-                                        id="cliente"            
-                                        placeholder="Nombre o teléfono">        
+        <div class="card">
+            <h3>Ganancia Total</h3>
+            <p id="totalGanancia">$0</p>
+</div>               
+            </div>
             
-<div style="
-display:flex;
-align-items:center;
-gap:10px;
-background:#f8f9fa;
-padding:8px 12px;
-border-radius:12px;
-flex-wrap:wrap;
-width:100%;
-max-width:100%;
-">
+            <div id="cardsInventario"
+                    style="
+                    display:flex;
+                    flex-wrap:wrap;
+                    gap:10px;
+                    margin-top:15px;
+                    justify-content:center;
+                    ">
+</div>
+          
+    <div class="panel">
+    
+    <h2>➕ Agregar Producto</h2>
 
-    <button
-    type="button"
-    onclick="cambiarCantidad(-1)"
-    style="
-    width:45px;
-    height:45px;
-    font-size:22px;
-    font-weight:bold;
-    ">
+    <div class="formulario">
 
-    ➖
+    <input type="text"
+    id="nuevoProducto"
+    placeholder="Nombre del producto">
 
+    <input type="number"
+    id="nuevoPrecio"
+    placeholder="Precio">
+
+    <input type="number"
+    id="nuevoCosto"
+    placeholder="Costo">
+
+    <input type="number"
+    id="nuevoStock"
+    placeholder="Inventario">
+
+    <button class="btn-agregar"
+    onclick="agregarProducto()">
+    Agregar Producto
     </button>
-
-    <input
-    type="number"
-    id="cantidad"
-    value="1"
-    style="
-    width:55px;
-    height:45px;
-    text-align:center;
-    font-size:18px;
-    font-weight:bold;
-    ">
-
-    <button
-    type="button"
-    onclick="cambiarCantidad(1)"
-    style="
-    width:45px;
-    height:45px;
-    font-size:22px;
-    font-weight:bold;
-    ">
-
-    ➕
-
+            
+    <button class="btn-eliminar"
+    onclick="eliminarProducto()">
+    Eliminar Producto
     </button>
-
-    <div style="
-    display:flex;
-    align-items:center;
-    gap:4px;
-    ">
-
-        <span style="
-        font-weight:bold;
-        font-size:18px;
-        ">
-
-        $
-
-        </span>
-
-        <input
-        type="number"
-        id="precio"
-        readonly
-        style="
-        width:60px;
-        height:40px;
-        text-align:center;
-        font-weight:bold;
-        ">
-
-    </div>
-
-    <div style="
-    display:flex;
-    align-items:center;
-    gap:4px;
-    ">
-
-        <span style="
-        font-weight:bold;
-        font-size:18px;
-        ">
-
-        $
-
-        </span>
-
-        <input
-        type="number"
-        id="costo"
-        readonly
-        style="
-        width:60px;
-        height:40px;
-        text-align:center;
-        font-weight:bold;
-        ">
-
+        
     </div>
 
 </div>
-                                
-<input
-type="text"
-id="descuento"
-placeholder="Descuento opcional"
-style="
-min-width:180px;
-width:100%;
-">        
             
-                                <button class="btn-agregar"            
-                                        onclick="registrarVenta()">                
-                                        Registrar Venta            
-                                </button>
-                                
-                                <button type="button"
-                                class="btn-exportar"
-                                onclick="agregarAComanda()">
+    <div class="panel">
 
-                                🛒 Agregar a Comanda
+    <h2>📦 Entrada de Inventario</h2>
 
-                                </button>
+    <div class="formulario">
+    
+            <select id="productoInventario">
+            </select>
+            
+        <select id="tipoMovimiento">
+                
+                <option value="ENTRADA INVENTARIO">
+                        ENTRADA INVENTARIO
+                </option>
+                
+                <option value="MERMA">
+                        MERMA
+                </option>
+
+                <option value="CORTESIA">
+                        CORTESIA
+                </option>
+
+                <option value="AJUSTE">
+                        AJUSTE
+                </option>
+
+        </select>
         
-                        </div>        
+            <input type="number"            
+                    id="agregarStock"            
+                    placeholder="Cantidad">
         
-                </div>
-        <div class="panel">
+            <button class="btn-agregar"            
+                    onclick="agregarInventario()">
 
-<h2>🛒 Comanda Actual</h2>
+                    Agregar Inventario
+                    
+            </button>
+    
+    </div>
 
-<table>
+    </div>                
 
-<thead>
+            <div class="panel">        
+                    <h2>💰 Registrar Venta</h2>       
+                    <div class="formulario">                   
+                            <select id="producto"             
+                                    onchange="actualizarProducto()">            
+                            </select>       
+                            <input type="text"            
+                                    id="cliente"            
+                                    placeholder="Nombre o teléfono">        
+        
+                            <div style="display:flex; gap:5px; align-items:center;">        
+                                    <button type="button"
+                                            onclick="cambiarCantidad(-1)">
+                                            ➖
+                                            
+                                    </button>        
+                                    <input type="number"
+                                            id="cantidad"
+                                            value="1"
+                                            style="width:60px; text-align:center;">
+            
+                                    <button type="button"
+                                            onclick="cambiarCantidad(1)">
+                                            ➕
+                                    </button>
+    
+                            </div>        
+        
+                            <input type="number"            
+                                    id="precio"            
+                                    readonly>        
+        
+                            <input type="number"            
+                                    id="costo"            
+                                    readonly>        
+        
+                            <input type="text"            
+                                    id="descuento"            
+                                    placeholder="Descuento opcional">        
+        
+                            <button class="btn-agregar"            
+                                    onclick="registrarVenta()">                
+                                    Registrar Venta            
+                            </button>
+                            
+                            <button type="button"
+                            class="btn-exportar"
+                            onclick="agregarAComanda()">
 
-<tr>
-<th>PRODUCTO</th>
-<th>CANTIDAD</th>
-<th>PRECIO</th>
-<th>SUBTOTAL</th>
-<th>ACCION</th>
-</tr>
+                            🛒 Agregar a Comanda
 
-</thead>
+                            </button>
+    
+                    </div>        
+    
+            </div>
+    <div class="panel">
 
-<tbody id="tablaComanda">
-</tbody>
 
-</table>
-
-<br>
-
-<h3 id="totalComanda">
-TOTAL: $0
-</h3>
-
-<br>
-
-<button class="btn-agregar"
-onclick="registrarComanda()">
 
 ✅ Registrar Comanda
 
-</button>
-
-</div>
-        <div class="panel">
+    <h2>📋 Historial de Ventas</h2>
+    
+    <div style="
+    overflow-x:auto;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    ">
+    
+    <table>
+    
+    <thead>
+    
+    <tr>
+    <th>FOLIO</th>
+    <th>PRODUCTO</th>
+    <th>CLIENTE</th>
+    <th>CANTIDAD</th>
+    <th>INVENTARIO</th>
+    <th>PRECIO</th>
+    <th>COSTO</th>
+    <th>SUBTOTAL</th>
+    <th>GANANCIA</th>
+    <th>DESCUENTO</th>
+    <th>UBICACION</th>
+    <th>FECHA</th>
+    <th>ACCION</th>
+    </tr>
+    
+    </thead>
+    
+    <tbody id="tablaVentas">
+    
+    </tbody>
+    
+    </table>
+    
+    </div>
+    
+    <br>
+    
+    <button class="btn-exportar" onclick="exportarJSON()">
+    💾 Exportar JSON
+    </button>
         
-        <h2>📋 Historial de Ventas</h2>
+    <button class="btn-eliminar"
+    onclick="cerrarCorte()">
+    🗑 Cerrar Corte
         
-        <div style="
-        overflow-x:auto;
-        border-radius:10px;
-        box-shadow:0 4px 10px rgba(0,0,0,0.1);
-        ">
-        
-        <table>
-        
-        <thead>
-        
-        <tr>
-        <th>FOLIO</th>
-        <th>PRODUCTO</th>
-        <th>CLIENTE</th>
-        <th>CANTIDAD</th>
-        <th>INVENTARIO</th>
-        <th>PRECIO</th>
-        <th>COSTO</th>
-        <th>SUBTOTAL</th>
-        <th>GANANCIA</th>
-        <th>DESCUENTO</th>
-        <th>UBICACION</th>
-        <th>FECHA</th>
-        <th>ACCION</th>
-        </tr>
-        
-        </thead>
-        
-        <tbody id="tablaVentas">
-        
-        </tbody>
-        
-        </table>
-        
-        </div>
-        
-        <br>
-        
-        <button class="btn-exportar" onclick="exportarJSON()">
-        💾 Exportar JSON
-        </button>
+    </button>
+    <input type="file" id="importarArchivo" hidden onchange="importarJSON(event)">
+    
+    <button class="btn-importar"
+    onclick="document.getElementById('importarArchivo').click()">
+    📂 Importar JSON
+    </button>
+    
+    </div>
+    
+    </div>
+    
+    <script>
+    
+            let productos = [];
+    
+            let ventas = [];
             
-        <button class="btn-eliminar"
-        onclick="cerrarCorte()">
-        🗑 Cerrar Corte
+            let comanda = [];
             
-        </button>
-        <input type="file" id="importarArchivo" hidden onchange="importarJSON(event)">
-        
-        <button class="btn-importar"
-        onclick="document.getElementById('importarArchivo').click()">
-        📂 Importar JSON
-        </button>
-        
-        </div>
-        
-        </div>
-        
-        <script>
-        
-                let productos = [];
-        
-                let ventas = [];
-                
-                let comanda = [];
-                
-                let contadorVentas = 1;
+            let contadorVentas = 1;
 
-                let contadorComandas = 1;
+            let contadorComandas = 1;
 
-                let contadorInventario = 1;
+            let contadorInventario = 1;
 
-                        function generarFolio(tipo, contador){
+                    function generarFolio(tipo, contador){
 
-                            return tipo +
+                        return tipo +
 
-                            String(contador).padStart(6,"0");
+                        String(contador).padStart(6,"0");
 
-                                }
-                
-                     async function agregarProducto(){    
-        
-                        const nombre =
-                                document.getElementById("nuevoProducto").value;
-    
-        
-                             const precio =       
-                                     Number(document.getElementById("nuevoPrecio").value);    
-        
-                             const costo =       
-                                     Number(document.getElementById("nuevoCosto").value);                            
-        
-                             const stock =        
-                                     Number(document.getElementById("nuevoStock").value);
-                             
-                                const ubicacion = await obtenerUbicacion();
-                             
-                             if(nombre.trim() === ""){           
-                                     alert("Escribe un nombre");           
-                                     return;      
-                             }
-
-        
-                             if(precio <= 0){          
-                                     alert("Precio inválido");           
-                                     return;       
-                             }                            
-
-                             if(costo < 0){            
-                                     alert("Costo inválido");            
-                                     return;       
-                             }
-
-        
-                             if(stock < 0){           
-                                     alert("Inventario inválido");            
-                                     return;                                                                          
-                             }        
-         
-                             const existe =            
-                                     productos.some(            
-                                             p => p.nombre.toLowerCase() === nombre.toLowerCase()           
-                                     );    
+                            }
             
-                             
-                             if(existe){
+                 async function agregarProducto(){    
     
-                                     const productoExistente =    
-                                             productos.find(   
-                                                     p => p.nombre.toLowerCase() === nombre.toLowerCase()
-                                             );
+                    const nombre =
+                            document.getElementById("nuevoProducto").value;
+
     
-                                     productoExistente.stock += stock;
+                         const precio =       
+                                 Number(document.getElementById("nuevoPrecio").value);    
     
-                                     productoExistente.precio = precio;
+                         const costo =       
+                                 Number(document.getElementById("nuevoCosto").value);                            
     
-                                     productoExistente.costo = costo;
+                         const stock =        
+                                 Number(document.getElementById("nuevoStock").value);
+                         
+                            const ubicacion = await obtenerUbicacion();
+                         
+                         if(nombre.trim() === ""){           
+                                 alert("Escribe un nombre");           
+                                 return;      
+                         }
+
     
-                                     guardarLocal();
-                                     
-                                     actualizarSelectProductos();    
-                                     document.getElementById("producto").value = nombre;
-                                     
-                                     actualizarResumen();
+                         if(precio <= 0){          
+                                 alert("Precio inválido");           
+                                 return;       
+                         }                            
+
+                         if(costo < 0){            
+                                 alert("Costo inválido");            
+                                 return;       
+                         }
+
     
-                                     actualizarProducto();
-    
-                                     limpiarNuevoProducto();
-    
-                                     alert("Producto actualizado");    
-                                     return;
-                             }
-       
-productos.push({           
-nombre,           
-precio,
-costo,           
-stock
+                         if(stock < 0){           
+                                 alert("Inventario inválido");            
+                                 return;                                                                          
+                         }        
+     
+                         const existe =            
+                                 productos.some(            
+                                         p => p.nombre.toLowerCase() === nombre.toLowerCase()           
+                                 );    
         
+                         
+                         if(existe){
+
+                                 const productoExistente =    
+                                         productos.find(   
+                                                 p => p.nombre.toLowerCase() === nombre.toLowerCase()
+                                         );
+
+                                 productoExistente.stock += stock;
+
+                                 productoExistente.precio = precio;
+
+                                 productoExistente.costo = costo;
+
+                                 guardarLocal();
+                                 
+                                 actualizarSelectProductos();    
+                                 document.getElementById("producto").value = nombre;
+                                 
+                                 actualizarResumen();
+
+                                 actualizarProducto();
+
+                                 limpiarNuevoProducto();
+
+                                 alert("Producto actualizado");    
+                                 return;
+                         }
+   
+
+productos.push({nombre,precio,costo,stock
+
 });
+
+const folio =generarFolio("I", contadorInventario);
+
+contadorInventario++;
+
+ventas.push({
+
+folio,
+
+producto: nombre,
+
+cliente: "ALTA PRODUCTO",
+
+cantidad: stock,
+
+inventario: stock,
+
+precio,
+
+costo,
+
+subtotal: 0,
+
+ganancia: 0,
+
+descuento: "",
+
+    ubicacion,
+
+fecha: new Date().toLocaleString()
+
+});
+
+                         actualizarSelectProductos();        
+                         document.getElementById("producto").value = nombre;
+    
+                         actualizarProducto();         
+   
+                         guardarLocal();    
+    
+                         limpiarNuevoProducto();    
+    
+                         actualizarResumen();   
+                 }
+
+function eliminarProducto(){
+
+const nombre =
+document.getElementById("producto").value;
+
+if(!nombre){
+
+    alert("Selecciona un producto");
+
+    return;
+
+}
+
+const tieneMovimientos =
+ventas.some(v => v.producto === nombre);
+
+if(tieneMovimientos){
+
+    alert(
+        "No puedes eliminar un producto con historial"
+    );
+
+    return;
+
+}
+
+if(!confirm("¿Eliminar producto?")){
+
+    return;
+
+}
+
+productos =
+productos.filter(p => p.nombre !== nombre);
+
+guardarLocal();
+
+actualizarSelectProductos();
+
+actualizarResumen();
+
+actualizarProducto();
+
+}
+
+async function agregarInventario(){
+
+const nombre =
+document.getElementById("productoInventario").value;
+
+const cantidad =
+Number(document.getElementById("agregarStock").value);
+
+const tipo =
+document.getElementById("tipoMovimiento").value;
+
+const producto =
+productos.find(p => p.nombre === nombre);
+
+if(!producto){
+
+    alert("Producto no encontrado");
+
+    return;
+
+}
 
 const folio =
 generarFolio("I", contadorInventario);
 
 contadorInventario++;
+
+if(
+    tipo === "MERMA" ||
+    tipo === "CORTESIA"
+){
+
+    producto.stock -= cantidad;
+
+}else{
+
+    producto.stock += cantidad;
+
+}
+
+const ubicacion =
+await obtenerUbicacion();
 
 ventas.push({
 
@@ -637,15 +616,15 @@ ventas.push({
 
     producto: nombre,
 
-    cliente: "ALTA PRODUCTO",
+    cliente: tipo,
 
-    cantidad: stock,
+    cantidad: cantidad,
 
-    inventario: stock,
+    inventario: producto.stock,
 
-    precio,
+    precio: 0,
 
-    costo,
+    costo: 0,
 
     subtotal: 0,
 
@@ -653,366 +632,426 @@ ventas.push({
 
     descuento: "",
 
-        ubicacion,
+    ubicacion,
 
     fecha: new Date().toLocaleString()
 
 });
-        
-                             actualizarSelectProductos();        
-                             document.getElementById("producto").value = nombre;
-        
-                             actualizarProducto();         
-       
-                             guardarLocal();    
-        
-                             limpiarNuevoProducto();    
-        
-                             actualizarResumen();   
-                     }
 
-function eliminarProducto(){
+guardarLocal();
 
-    const nombre =
-    document.getElementById("producto").value;
+actualizarResumen();
 
-    if(!nombre){
+renderTabla();
 
-        alert("Selecciona un producto");
+renderComanda();
 
-        return;
+document.getElementById("agregarStock").value = "";
 
-    }
-
-    const tieneMovimientos =
-    ventas.some(v => v.producto === nombre);
-
-    if(tieneMovimientos){
-
-        alert(
-            "No puedes eliminar un producto con historial"
-        );
-
-        return;
-
-    }
-
-    if(!confirm("¿Eliminar producto?")){
-
-        return;
-
-    }
-
-    productos =
-    productos.filter(p => p.nombre !== nombre);
-
-    guardarLocal();
-
-    actualizarSelectProductos();
-
-    actualizarResumen();
-
-    actualizarProducto();
+alert("Inventario agregado");
 
 }
-                
-async function agregarInventario(){
 
-    const nombre =
-    document.getElementById("productoInventario").value;
+    function guardarLocal(){
+    
+    localStorage.setItem(
+    "inventarioSantaRosa",
+    JSON.stringify({
+    productos,
+    ventas,
+    comanda,
+    contadorVentas,
+    contadorComandas,
+    contadorInventario,
+
+})
+
+                    );
+    
+            }
+            
+    function cargarLocal(){
+    
+    const datos = localStorage.getItem("inventarioSantaRosa");
+    
+    if(datos){
+    const sistema = JSON.parse(datos);
+    
+    productos = sistema.productos || productos;
+    ventas = sistema.ventas || ventas;
+    comanda = sistema.comanda || comanda;
+    contadorVentas = sistema.contadorVentas || contadorVentas;
+    contadorComandas = sistema.contadorComandas || contadorComandas;
+    contadorInventario = sistema.contadorInventario || contadorInventario;
+            
+            }
+    
+    }
+          
+            async function registrarVenta(){
+
+                    actualizarProducto();
+
+                    const producto =
+                            document.getElementById("producto").value;
+                    
+    const cliente =
+            document.getElementById("cliente").value;
+                    
+    if(cliente.trim() === ""){
+            alert("Escribe un cliente");
+            return;
+    }
 
     const cantidad =
-    Number(document.getElementById("agregarStock").value);
+            parseInt(document.getElementById("cantidad").value) || 0;
+                    
+                    const precio =
+                            Number(document.getElementById("precio").value) || 0;
 
-    const tipo =
-    document.getElementById("tipoMovimiento").value;
+                    const costo =
+                            Number(document.getElementById("costo").value) || 0;
+
+                    const descuento =
+                            document.getElementById("descuento").value;
+
+                    if(cantidad <= 0){
+                                    alert("Cantidad inválida");
+                                        return;
+                           }
+
+                        const productoObj =
+                                productos.find(p => p.nombre === producto);
+                           
+                    if(cantidad > productoObj.stock){    
+                            const continuar =    
+                                    confirm(        
+                                            "Inventario insuficiente.\n\n¿Deseas continuar?"    
+                                    );
+
+                            if(!continuar){       
+                                    return;    
+                            }
+                    }
+
+    
+                    productoObj.stock -= cantidad;
+                    const subtotal = cantidad * precio;
+                    const ganancia = subtotal - (cantidad * costo);   
+                    const fecha = new Date().toLocaleString();
+                    const folio = generarFolio("V", contadorVentas);
+                    contadorVentas++;
+                    const ubicacion = await obtenerUbicacion();
+                    
+                    ventas.push({
+                            folio,
+                            producto,
+                            cliente,
+                            cantidad,
+                            inventario: productoObj.stock,
+                            precio,
+                            costo,
+                            subtotal,
+                            ganancia,
+                            descuento,
+                            ubicacion,
+                            fecha
+                    });
+
+                    guardarLocal();
+    
+                    actualizarResumen();
+    
+                    renderTabla();
+
+                    renderComanda();
+
+                    limpiarFormulario();
+
+                    const ultimaFila =
+                            document.querySelector("#tablaVentas tr:last-child");
+
+                    if(ultimaFila){
+                            ultimaFila.scrollIntoView({
+                                    behavior:"smooth"
+                            });
+                    }
+            }
+            
+
+function agregarAComanda(){
 
     const producto =
-    productos.find(p => p.nombre === nombre);
+    document.getElementById("producto").value;
 
-    if(!producto){
+    const cantidad =
+    Number(document.getElementById("cantidad").value);
 
-        alert("Producto no encontrado");
+    const precio =
+    Number(document.getElementById("precio").value);
+    
+    const costo =
+    Number(document.getElementById("costo").value);
 
-        return;
+if(cantidad <= 0){
 
-    }
+    alert("Cantidad inválida");
 
-    const folio =
-    generarFolio("I", contadorInventario);
+    return;
 
-    contadorInventario++;
+}
 
-    if(
-        tipo === "MERMA" ||
-        tipo === "CORTESIA"
-    ){
+const existe =
+comanda.find(p => p.producto === producto);
 
-        producto.stock -= cantidad;
+if(existe){
 
-    }else{
+    existe.cantidad += cantidad;
 
-        producto.stock += cantidad;
+    existe.subtotal =
+    existe.cantidad * existe.precio;
 
-    }
+}else{
 
-    const ubicacion =
-    await obtenerUbicacion();
+    comanda.push({
 
-    ventas.push({
-
-        folio,
-
-        producto: nombre,
-
-        cliente: tipo,
-
-        cantidad: cantidad,
-
-        inventario: producto.stock,
-
-        precio: 0,
-
-        costo: 0,
-
-        subtotal: 0,
-
-        ganancia: 0,
-
-        descuento: "",
-
-        ubicacion,
-
-        fecha: new Date().toLocaleString()
+    producto,
+    cantidad,
+    precio,
+    costo,
+    subtotal: cantidad * precio
 
     });
 
-    guardarLocal();
-
-    actualizarResumen();
-
-    renderTabla();
+}
 
     renderComanda();
-
-    document.getElementById("agregarStock").value = "";
-
-    alert("Inventario agregado");
+    guardarLocal();
 
 }
-                
-        function guardarLocal(){
-        
-        localStorage.setItem(
-        "inventarioSantaRosa",
-        JSON.stringify({
-        productos,
-        ventas,
-        comanda,
-        contadorVentas,
-        contadorComandas,
-        contadorInventario
 
-})
-                                
-                        );
-        
-                }
-                
-        function cargarLocal(){
-        
-        const datos = localStorage.getItem("inventarioSantaRosa");
-        
-        if(datos){
-        const sistema = JSON.parse(datos);
-        
-        productos = sistema.productos || productos;
-        ventas = sistema.ventas || ventas;
-        comanda = sistema.comanda || comanda;
-        contadorVentas = sistema.contadorVentas || contadorVentas;
-        contadorComandas = sistema.contadorComandas || contadorComandas;
-        contadorInventario = sistema.contadorInventario || contadorInventario;
-                
-                }
-        
-        }
-              
-                async function registrarVenta(){
-    
-                        actualizarProducto();
-    
-                        const producto =
-                                document.getElementById("producto").value;
-                        
-        const cliente =
-                document.getElementById("cliente").value;
-                        
-        if(cliente.trim() === ""){
-                alert("Escribe un cliente");
-                return;
-        }
-    
-        const cantidad =
-                parseInt(document.getElementById("cantidad").value) || 0;
-                        
-                        const precio =
-                                Number(document.getElementById("precio").value) || 0;
-    
-                        const costo =
-                                Number(document.getElementById("costo").value) || 0;
-    
-                        const descuento =
-                                document.getElementById("descuento").value;
-    
-                        if(cantidad <= 0){
-                                        alert("Cantidad inválida");
-                                            return;
-                               }
-    
-                            const productoObj =
-                                    productos.find(p => p.nombre === producto);
-                               
-                        if(cantidad > productoObj.stock){    
-                                const continuar =    
-                                        confirm(        
-                                                "Inventario insuficiente.\n\n¿Deseas continuar?"    
-                                        );
-    
-                                if(!continuar){       
-                                        return;    
-                                }
-                        }
-    
-        
-                        productoObj.stock -= cantidad;
-                        const subtotal = cantidad * precio;
-                        const ganancia = subtotal - (cantidad * costo);   
-                        const fecha = new Date().toLocaleString();
-                        const folio = generarFolio("V", contadorVentas);
-                        contadorVentas++;
-                        const ubicacion = await obtenerUbicacion();
-                        
-                        ventas.push({
-                                folio,
-                                producto,
-                                cliente,
-                                cantidad,
-                                inventario: productoObj.stock,
-                                precio,
-                                costo,
-                                subtotal,
-                                ganancia,
-                                descuento,
-                                ubicacion,
-                                fecha
-                        });
-    
-                        guardarLocal();
-        
-                        actualizarResumen();
-        
-                        renderTabla();
-
-                        renderComanda();
-
-                        limpiarFormulario();
- 
-                        const ultimaFila =
-                                document.querySelector("#tablaVentas tr:last-child");
-
-                        if(ultimaFila){
-                                ultimaFila.scrollIntoView({
-                                        behavior:"smooth"
-                                });
-                        }
-                }
-                
-function agregarAComanda(){
-
-        const producto =
-        document.getElementById("producto").value;
-
-        const cantidad =
-        Number(document.getElementById("cantidad").value);
-
-        const precio =
-        Number(document.getElementById("precio").value);
-        
-        const costo =
-        Number(document.getElementById("costo").value);
-
-    if(cantidad <= 0){
-
-        alert("Cantidad inválida");
-
-        return;
-
-    }
-
-    const existe =
-    comanda.find(p => p.producto === producto);
-
-    if(existe){
-
-        existe.cantidad += cantidad;
-
-        existe.subtotal =
-        existe.cantidad * existe.precio;
-
-    }else{
-
-        comanda.push({
-
-        producto,
-        cantidad,
-        precio,
-        costo,
-        subtotal: cantidad * precio
-
-        });
-
-    }
-
-        renderComanda();
-        guardarLocal();
-
-}
-                
 function renderComanda(){
 
+const tabla =
+document.getElementById("tablaComanda");
+
+tabla.innerHTML = "";
+
+let total = 0;
+
+comanda.forEach((item,index)=>{
+
+    total += item.subtotal;
+
+    tabla.innerHTML += `
+
+    <tr>
+
+        <td>${item.producto}</td>
+
+        <td>${item.cantidad}</td>
+
+        <td>$${item.precio.toFixed(2)}</td>
+
+        <td>$${item.subtotal.toFixed(2)}</td>
+
+        <td>
+
+            <button class="btn-eliminar"
+            onclick="eliminarComanda(${index})">
+
+            X
+
+            </button>
+
+        </td>
+
+    </tr>
+
+    `;
+
+});
+
+document.getElementById("totalComanda")
+.innerText = "TOTAL: $" + total.toFixed(2);
+
+}
+
+function eliminarComanda(index){
+
+comanda.splice(index,1);
+
+    renderComanda();
+    guardarLocal();
+
+}
+
+async function registrarComanda(){
+
+const cliente =
+document.getElementById("cliente").value;
+
+if(cliente.trim() === ""){
+
+    alert("Escribe un cliente");
+
+    return;
+
+}
+
+if(comanda.length === 0){
+
+    alert("La comanda está vacía");
+
+    return;
+
+}
+
+    const fecha =
+            new Date().toLocaleString();
+    const folioComanda =
+            generarFolio("C", contadorComandas);
+            contadorComandas++;
+    const ubicacion = await obtenerUbicacion();
+    
+comanda.forEach(item=>{
+
+    const productoObj =
+    productos.find(
+        p => p.nombre === item.producto
+    );
+
+    if(!productoObj){
+        return;
+    }
+
+    if(item.cantidad > productoObj.stock){
+
+        const continuar = confirm(
+
+            item.producto +
+
+            " tiene inventario insuficiente.\n\n¿Continuar?"
+
+        );
+
+        if(!continuar){
+            return;
+        }
+
+    }
+
+    productoObj.stock -= item.cantidad;
+
+    const costo =
+    productoObj.costo;
+
+    const ganancia =
+    item.subtotal - (item.cantidad * costo);
+
+    ventas.push({
+    folio: folioComanda,
+            
+    producto: item.producto,
+
+    cliente,
+
+    cantidad: item.cantidad,
+
+    inventario: productoObj.stock,
+
+    precio: item.precio,
+
+    costo,
+
+    subtotal: item.subtotal,
+
+    ganancia,
+
+    descuento: "",
+
+    ubicacion,
+
+    fecha
+
+    });
+
+});
+
+comanda = [];
+
+renderComanda();
+           
+guardarLocal();
+
+actualizarResumen();
+
+renderTabla();
+
+limpiarFormulario();
+
+alert("Comanda registrada");
+    
+    
+
+}
+
+function renderTabla(){
+
     const tabla =
-    document.getElementById("tablaComanda");
+    document.getElementById("tablaVentas");
 
     tabla.innerHTML = "";
 
-    let total = 0;
+    ventas.forEach((venta, index)=>{
 
-    comanda.forEach((item,index)=>{
+        const precio =
+        Number(venta.precio) || 0;
 
-        total += item.subtotal;
+        const costo =
+        Number(venta.costo) || 0;
+
+        const subtotal =
+        Number(venta.subtotal) || 0;
+
+        const ganancia =
+        Number(venta.ganancia) || 0;
 
         tabla.innerHTML += `
 
         <tr>
+        
+        <td>${venta.folio || ""}</td>
+        
+        <td>${venta.producto || ""}</td>
 
-            <td>${item.producto}</td>
+        <td>${venta.cliente || ""}</td>
 
-            <td>${item.cantidad}</td>
+        <td>${venta.cantidad || 0}</td>
 
-            <td>$${item.precio.toFixed(2)}</td>
+        <td>${venta.inventario || 0}</td>
 
-            <td>$${item.subtotal.toFixed(2)}</td>
+        <td>$${precio.toFixed(2)}</td>
 
-            <td>
+        <td>$${costo.toFixed(2)}</td>
 
-                <button class="btn-eliminar"
-                onclick="eliminarComanda(${index})">
+        <td>$${subtotal.toFixed(2)}</td>
 
-                X
+        <td>$${ganancia.toFixed(2)}</td>
 
-                </button>
+        <td>${venta.descuento || ""}</td>
 
-            </td>
+        <td>${venta.ubicacion?`📍 ${venta.ubicacion.lat.toFixed(4)},
+            ${venta.ubicacion.lng.toFixed(4)}`:""}</td>
+
+        <td>${venta.fecha || ""}</td>
+
+        <td>
+            <button class="btn-eliminar"
+            onclick="eliminarVenta(${index})">
+            X
+            </button>
+        </td>
 
         </tr>
 
@@ -1020,542 +1059,354 @@ function renderComanda(){
 
     });
 
-    document.getElementById("totalComanda")
-    .innerText = "TOTAL: $" + total.toFixed(2);
-
-}  
-                
-function eliminarComanda(index){
-
-    comanda.splice(index,1);
+}
     
-        renderComanda();
-        guardarLocal();
-
-} 
-                
-async function registrarComanda(){
-
-    const cliente =
-    document.getElementById("cliente").value;
-
-    if(cliente.trim() === ""){
-
-        alert("Escribe un cliente");
-
-        return;
-
-    }
-
-    if(comanda.length === 0){
-
-        alert("La comanda está vacía");
-
-        return;
-
-    }
-
-        const fecha =
-                new Date().toLocaleString();
-        const folioComanda =
-                generarFolio("C", contadorComandas);
-                contadorComandas++;
-        const ubicacion = await obtenerUbicacion();
-        
-    comanda.forEach(item=>{
-
-        const productoObj =
-        productos.find(
-            p => p.nombre === item.producto
-        );
-
-        if(!productoObj){
-            return;
-        }
-
-        if(item.cantidad > productoObj.stock){
-
-            const continuar = confirm(
-
-                item.producto +
-
-                " tiene inventario insuficiente.\n\n¿Continuar?"
-
-            );
-
-            if(!continuar){
-                return;
+    function eliminarVenta(index){
+            if(!confirm("¿Eliminar movimiento?")){        
+                    return;    
             }
 
-        }
+            const venta = ventas[index];
 
-        productoObj.stock -= item.cantidad;
+            const producto =    
+                    productos.find(p => p.nombre === venta.producto);
 
-        const costo =
-        productoObj.costo;
+            if(producto){
+                    const cantidad =        
+                            Number(venta.cantidad);        
+                   
+                    if(    
+                            venta.cliente === "ENTRADA INVENTARIO" ||
+    
+                            venta.cliente === "AJUSTE"
 
-        const ganancia =
-        item.subtotal - (item.cantidad * costo);
+                    ){    
+                            producto.stock -= cantidad;
+                    }else{    
+                            producto.stock += cantidad;
+                    }
+                    
+            }
 
-        ventas.push({
-        folio: folioComanda,
-                
-        producto: item.producto,
+            ventas.splice(index,1);
 
-        cliente,
+            guardarLocal();
 
-        cantidad: item.cantidad,
+            renderTabla();
 
-        inventario: productoObj.stock,
+            renderComanda();
 
-        precio: item.precio,
-
-        costo,
-
-        subtotal: item.subtotal,
-
-        ganancia,
-
-        descuento: "",
-
-        ubicacion,
-
-        fecha
-
-        });
-
-    });
-
-    comanda = [];
-
-    renderComanda();
-               
-    guardarLocal();
-
-    actualizarResumen();
-
-    renderTabla();
-
-    limpiarFormulario();
-
-    alert("Comanda registrada");
+            actualizarResumen();        
+    }                
+     
+            function cerrarCorte(){    
+    
+             if(!confirm("¿Cerrar corte y borrar ventas?")){           
+                     return;        
+             }    
+                    ventas = [];
+                    comanda = [];
+                    guardarLocal();       
+                    renderTabla();
+                    renderComanda();
+                    actualizarSelectProductos();
+                    actualizarResumen();        
+            } 
         
-        
+function actualizarResumen(){
 
-}
-                
-    function renderTabla(){
-    
-        const tabla =
-        document.getElementById("tablaVentas");
-    
-        tabla.innerHTML = "";
-    
-        ventas.forEach((venta, index)=>{
-    
-            const precio =
-            Number(venta.precio) || 0;
-    
-            const costo =
-            Number(venta.costo) || 0;
-    
-            const subtotal =
-            Number(venta.subtotal) || 0;
-    
-            const ganancia =
-            Number(venta.ganancia) || 0;
-    
-            tabla.innerHTML += `
-    
-            <tr>
-            
-            <td>${venta.folio || ""}</td>
-            
-            <td>${venta.producto || ""}</td>
-    
-            <td>${venta.cliente || ""}</td>
-    
-            <td>${venta.cantidad || 0}</td>
-    
-            <td>${venta.inventario || 0}</td>
-    
-            <td>$${precio.toFixed(2)}</td>
-    
-            <td>$${costo.toFixed(2)}</td>
-    
-            <td>$${subtotal.toFixed(2)}</td>
-    
-            <td>$${ganancia.toFixed(2)}</td>
-    
-            <td>${venta.descuento || ""}</td>
+    document.getElementById("totalProductos")
+    .innerText = productos.length;
 
-            <td>${venta.ubicacion?`📍 ${venta.ubicacion.lat.toFixed(4)},
-                ${venta.ubicacion.lng.toFixed(4)}`:""}</td>
-    
-            <td>${venta.fecha || ""}</td>
-    
-            <td>
-                <button class="btn-eliminar"
-                onclick="eliminarVenta(${index})">
-                X
-                </button>
-            </td>
-    
-            </tr>
-    
-            `;
-    
-        });
-    
-    }
-        
-        function eliminarVenta(index){
-                if(!confirm("¿Eliminar movimiento?")){        
-                        return;    
-                }
-    
-                const venta = ventas[index];
-    
-                const producto =    
-                        productos.find(p => p.nombre === venta.producto);
-    
-                if(producto){
-                        const cantidad =        
-                                Number(venta.cantidad);        
-                       
-                        if(    
-                                venta.cliente === "ENTRADA INVENTARIO" ||
-        
-                                venta.cliente === "AJUSTE"
-
-                        ){    
-                                producto.stock -= cantidad;
-                        }else{    
-                                producto.stock += cantidad;
-                        }
-                        
-                }
-    
-                ventas.splice(index,1);
-    
-                guardarLocal();
-    
-                renderTabla();
-
-                renderComanda();
-    
-                actualizarResumen();        
-        }                
-         
-                function cerrarCorte(){    
-        
-                 if(!confirm("¿Cerrar corte y borrar ventas?")){           
-                         return;        
-                 }    
-                        ventas = [];
-                        comanda = [];
-                        guardarLocal();       
-                        renderTabla();
-                        renderComanda();
-                        actualizarSelectProductos();
-                        actualizarResumen();        
-                } 
-            
-    function actualizarResumen(){
-    
-        document.getElementById("totalProductos")
-        .innerText = productos.length;
-    
-const cards =
-document.getElementById("cardsInventario");
+const cards =document.getElementById("cardsInventario");
 
 cards.innerHTML = "";
 
 productos.forEach(p=>{
 
-    let color = "#28a745";
+let color = "#28a745";
 
-    if(p.stock <= 5){
-        color = "#ffc107";
-    }
+if(p.stock <= 5){
+    color = "#ffc107";
+}
 
-    if(p.stock < 0){
-        color = "#dc3545";
-    }
+if(p.stock < 0){
+    color = "#dc3545";
+}
 
-    cards.innerHTML += `
+cards.innerHTML += `
 
-    <div class="card-producto">
+<div class="card-producto">
 
-        <h4>${p.nombre}</h4>
+    <h4>${p.nombre}</h4>
 
-        <p style="color:${color}">
-        ${p.stock}
-        </p>
+    <p style="color:${color}">
+    ${p.stock}
+    </p>
 
-    </div>
+</div>
 
-    `;
+`;
 
 });
+
+    let total = 0;
+
+    let ganancia = 0;
+
+    ventas.forEach(v=>{
+
+        total += Number(v.subtotal) || 0;
+
+        ganancia += Number(v.ganancia) || 0;
+
+    });
+
+    document.getElementById("totalVentas")
+    .innerText = "$" + total.toFixed(2);
+
+    document.getElementById("totalGanancia")
+    .innerText = "$" + ganancia.toFixed(2);
+
+}
     
-        let total = 0;
+    function limpiarFormulario(){
+
+    document.getElementById("cliente").value = "";
+
+    document.getElementById("cantidad").value = 1;
+
+    document.getElementById("descuento").value = "";
+
+    actualizarProducto();
+
+    document.getElementById("cliente").focus();
+}
     
-        let ganancia = 0;
+    function exportarJSON(){
     
-        ventas.forEach(v=>{
+        const datos = {
+            productos,
+            ventas,
+            comanda,
+            contadorVentas,
+            contadorComandas,
+            contadorInventario,
+        };
     
-            total += Number(v.subtotal) || 0;
+        const blob = new Blob(
+            [JSON.stringify(datos,null,2)],
+            {type:"application/json"}
+        );
     
-            ganancia += Number(v.ganancia) || 0;
+        const a = document.createElement("a");
     
+        a.href = URL.createObjectURL(blob);
+    
+       const hoy = new Date();
+
+        const fecha =
+        hoy.getFullYear() + "-" +
+        String(hoy.getMonth()+1).padStart(2,"0") + "-" +
+        String(hoy.getDate()).padStart(2,"0");
+
+        a.download =
+        "santa_rosa_" + fecha + ".json";
+    
+        a.click();
+    
+    }
+    
+    function importarJSON(event){
+    
+        const archivo = event.target.files[0];
+    
+        if(!archivo) return;
+    
+        const lector = new FileReader();
+    
+        lector.onload = function(e){
+    
+            const datos =
+                JSON.parse(e.target.result);
+    
+            productos = datos.productos || productos;
+
+            actualizarSelectProductos();
+            
+            ventas = datos.ventas || ventas;
+
+            comanda = datos.comanda || comanda;
+                
+            contadorVentas = datos.contadorVentas || contadorVentas;
+            contadorComandas = datos.contadorComandas || contadorComandas;
+            contadorInventario = datos.contadorInventario || contadorInventario;
+                
+            guardarLocal();
+    
+            actualizarResumen();
+            
+            renderTabla();
+                
+            renderComanda();
+
+                
+        };
+    
+        lector.readAsText(archivo);
+    
+    }
+
+    function actualizarSelectProductos(){
+
+        const selectVenta =
+        document.getElementById("producto");
+
+        const selectInventario =
+        document.getElementById("productoInventario");
+
+        selectVenta.innerHTML = "";
+
+        selectInventario.innerHTML = "";
+
+        productos.forEach(p=>{
+
+            const option = `
+            <option value="${p.nombre}">
+            ${p.nombre}
+            </option>
+            `;
+
+            selectVenta.innerHTML += option;
+
+            selectInventario.innerHTML += option;
+
         });
-    
-        document.getElementById("totalVentas")
-        .innerText = "$" + total.toFixed(2);
-    
-        document.getElementById("totalGanancia")
-        .innerText = "$" + ganancia.toFixed(2);
-    
+
     }
         
-        function limpiarFormulario(){
-    
-        document.getElementById("cliente").value = "";
-    
-        document.getElementById("cantidad").value = 1;
-    
-        document.getElementById("descuento").value = "";
-    
-        actualizarProducto();
+function actualizarProducto(){
 
-        document.getElementById("cliente").focus();
-    }
-        
-        function exportarJSON(){
-        
-            const datos = {
-                productos,
-                ventas,
-                comanda,
-                contadorVentas,
-                contadorComandas,
-                contadorInventario,
-            };
-        
-            const blob = new Blob(
-                [JSON.stringify(datos,null,2)],
-                {type:"application/json"}
-            );
-        
-            const a = document.createElement("a");
-        
-            a.href = URL.createObjectURL(blob);
-        
-           const hoy = new Date();
-    
-            const fecha =
-            hoy.getFullYear() + "-" +
-            String(hoy.getMonth()+1).padStart(2,"0") + "-" +
-            String(hoy.getDate()).padStart(2,"0");
-    
-            a.download =
-            "santa_rosa_" + fecha + ".json";
-        
-            a.click();
-        
-        }
-        
-        function importarJSON(event){
-        
-            const archivo = event.target.files[0];
-        
-            if(!archivo) return;
-        
-            const lector = new FileReader();
-        
-            lector.onload = function(e){
-        
-                const datos =
-                    JSON.parse(e.target.result);
-        
-                productos = datos.productos || productos;
-    
-                actualizarSelectProductos();
-                
-                ventas = datos.ventas || ventas;
+    const nombre =
+    document.getElementById("producto").value;
 
-                comanda = datos.comanda || comanda;
-                    
-                contadorVentas = datos.contadorVentas || contadorVentas;
-                contadorComandas = datos.contadorComandas || contadorComandas;
-                contadorInventario = datos.contadorInventario || contadorInventario;
-                    
-                guardarLocal();
-        
-                actualizarResumen();
-                
-                renderTabla();
-                    
-                renderComanda();
+    const producto =
+    productos.find(p => p.nombre === nombre);
 
-                    
-            };
-        
-            lector.readAsText(archivo);
-        
-        }
-    
-        function actualizarSelectProductos(){
+    if(producto){
 
-            const selectVenta =
-            document.getElementById("producto");
+            document.getElementById("precio").value =
+            producto.precio;
 
-            const selectInventario =
-            document.getElementById("productoInventario");
-
-            selectVenta.innerHTML = "";
-
-            selectInventario.innerHTML = "";
-
-            productos.forEach(p=>{
-
-                const option = `
-                <option value="${p.nombre}">
-                ${p.nombre}
-                </option>
-                `;
-
-                selectVenta.innerHTML += option;
-
-                selectInventario.innerHTML += option;
-
-            });
-
-        }
+            document.getElementById("costo").value =
+            producto.costo;
             
-    function actualizarProducto(){
-    
-        const nombre =
-        document.getElementById("producto").value;
-    
-        const producto =
-        productos.find(p => p.nombre === nombre);
-    
-        if(producto){
-    
-                document.getElementById("precio").value =
-                producto.precio;
-    
-                document.getElementById("costo").value =
-                producto.costo;
-                
-        }else{
+    }else{
 
-                document.getElementById("precio").value = "";
+            document.getElementById("precio").value = "";
 
-                document.getElementById("costo").value = "";
+            document.getElementById("costo").value = "";
 
-    
-        }
-    
+
     }
+
+}
+        
+
+    function limpiarNuevoProducto(){
+
+    document.getElementById("nuevoProducto").value = "";
+
+    document.getElementById("nuevoPrecio").value = "";
+
+    document.getElementById("nuevoCosto").value = "";
+
+    document.getElementById("nuevoStock").value = "";
+
+}
+    function cambiarCantidad(valor){
+
+        const input =
+        document.getElementById("cantidad");
+
+        let cantidad =
+        parseInt(input.value) || 1;
+
+        cantidad += valor;
+
+        if(cantidad < 1){
+        cantidad = 1;
+    }
+
+        input.value = cantidad;
+
+}
             
-    
-        function limpiarNuevoProducto(){
-    
-        document.getElementById("nuevoProducto").value = "";
-    
-        document.getElementById("nuevoPrecio").value = "";
-    
-        document.getElementById("nuevoCosto").value = "";
-    
-        document.getElementById("nuevoStock").value = "";
-    
-    }
-        function cambiarCantidad(valor){
-    
-            const input =
-            document.getElementById("cantidad");
-    
-            let cantidad =
-            parseInt(input.value) || 1;
-    
-            cantidad += valor;
-    
-            if(cantidad < 1){
-            cantidad = 1;
-        }
-    
-            input.value = cantidad;
-    
-    }
-                
+
 function obtenerUbicacion(){
 
-    return new Promise((resolve)=>{
+return new Promise((resolve)=>{
 
-        if(!navigator.geolocation){
+    if(!navigator.geolocation){
+
+        resolve(null);
+
+        return;
+
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(pos){
+
+            const ubicacion = {
+
+                lat: pos.coords.latitude,
+
+                lng: pos.coords.longitude
+
+            };
+
+            resolve(ubicacion);
+
+        },
+
+        function(){
 
             resolve(null);
 
-            return;
-
         }
 
-        navigator.geolocation.getCurrentPosition(
+    );
 
-            function(pos){
+});
 
-                const ubicacion = {
+}cargarLocal();
 
-                    lat: pos.coords.latitude,
-
-                    lng: pos.coords.longitude
-
-                };
-
-                resolve(ubicacion);
-
-            },
-
-            function(){
-
-                resolve(null);
-
-            }
-
-        );
-
-    });
-
-}
-        cargarLocal();
-  
-        actualizarSelectProductos();
-            
-        renderTabla();
+    actualizarSelectProductos();
         
-        actualizarResumen();
-        
-        actualizarProducto();
+    renderTabla();
+    
+    actualizarResumen();
+    
+    actualizarProducto();
 
-        renderComanda();
-    
-    document.getElementById("descuento")
-    .addEventListener("keydown", function(e){
-    
-        if(e.key === "Enter"){
-    
-            e.preventDefault();
-    
-            registrarVenta();
-    
-        }
-    
-    });
-            
-        </script>
-    
-    </body>
-    </html>
+    renderComanda();
+
+document.getElementById("descuento")
+.addEventListener("keydown", function(e){
+
+    if(e.key === "Enter"){
+
+        e.preventDefault();
+
+        registrarVenta();
+
+    }
+
+});
+        
+    </script>
+
+</body>
+</html>
