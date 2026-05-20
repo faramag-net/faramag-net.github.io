@@ -396,7 +396,8 @@ onclick="registrarComanda()">
         <th>COSTO</th>
         <th>SUBTOTAL</th>
         <th>GANANCIA</th>
-        <th>DESCUENTO</th>    
+        <th>DESCUENTO</th>
+        <th>UBICACION</th>
         <th>FECHA</th>
         <th>ACCION</th>
         </tr>
@@ -447,8 +448,6 @@ onclick="registrarComanda()">
 
                 let contadorInventario = 1;
 
-                let ubicacionActual = null;
-
                         function generarFolio(tipo, contador){
 
                             return tipo +
@@ -457,7 +456,7 @@ onclick="registrarComanda()">
 
                                 }
                 
-                     function agregarProducto(){    
+                     async function agregarProducto(){    
         
                         const nombre =
                                 document.getElementById("nuevoProducto").value;
@@ -471,7 +470,9 @@ onclick="registrarComanda()">
         
                              const stock =        
                                      Number(document.getElementById("nuevoStock").value);
-        
+                             
+                                const ubicacion = await obtenerUbicacion();
+                             
                              if(nombre.trim() === ""){           
                                      alert("Escribe un nombre");           
                                      return;      
@@ -563,7 +564,7 @@ ventas.push({
 
     descuento: "",
 
-        ubicacion: ubicacionActual,
+        ubicacion,
 
     fecha: new Date().toLocaleString()
 
@@ -581,81 +582,136 @@ ventas.push({
                              actualizarResumen();   
                      }
 
-                function eliminarProducto(){
-                        const nombre =
-                                    document.getElementById("producto").value;
-                        if(!nombre){ 
-                                alert("Selecciona un producto");  
-                                return;   
-                        }
+function eliminarProducto(){
 
-    
-                        if(!confirm("¿Eliminar producto?")){      
-                                return;   
-                        }   
-                        productos =  
-                                productos.filter(p => p.nombre !== nombre);
-    
-                        guardarLocal();
-   
-                        actualizarSelectProductos();
-    
-                        actualizarResumen();
-    
-                        actualizarProducto();
-                }
+    const nombre =
+    document.getElementById("producto").value;
 
-                function agregarInventario(){
+    if(!nombre){
 
-                        const nombre =
-                                document.getElementById("productoInventario").value;
-                        const cantidad =
-                                Number(document.getElementById("agregarStock").value);   
-                        const tipo =        
-                                document.getElementById("tipoMovimiento").value;
-                        const producto =
-                                    productos.find(p => p.nombre === nombre);
-                        if(!producto){
-                                alert("Producto no encontrado");
-                                return;
-                        }
-                        const folio =
-                        generarFolio("I", contadorInventario);
+        alert("Selecciona un producto");
 
-                        contadorInventario++;
-                        
-                if(
-                tipo === "MERMA" ||
-                tipo === "CORTESIA"
-                ){
-                producto.stock -= cantidad;
-                }else{
-                producto.stock += cantidad;
+        return;
+
+    }
+
+    const tieneMovimientos =
+    ventas.some(v => v.producto === nombre);
+
+    if(tieneMovimientos){
+
+        alert(
+            "No puedes eliminar un producto con historial"
+        );
+
+        return;
+
+    }
+
+    if(!confirm("¿Eliminar producto?")){
+
+        return;
+
+    }
+
+    productos =
+    productos.filter(p => p.nombre !== nombre);
+
+    guardarLocal();
+
+    actualizarSelectProductos();
+
+    actualizarResumen();
+
+    actualizarProducto();
+
 }
-                        ventas.push({
-                                folio,
-                                producto: nombre,
-                                cliente: tipo,
-                                cantidad: cantidad,
-                                inventario: producto.stock,
-                                precio: 0,
-                                costo: 0,
-                                subtotal: 0,
-                                ganancia: 0,
-                                descuento: "",
-                                ubicacion: ubicacionActual,
-                                fecha: new Date().toLocaleString()
-                        });
-                        
-                        guardarLocal();
-                        actualizarResumen();
-                        renderTabla();
-                        renderComanda();
+                
+async function agregarInventario(){
 
-                        document.getElementById("agregarStock").value = "";
+    const nombre =
+    document.getElementById("productoInventario").value;
 
-                        alert("Inventario agregado");
-                }                
+    const cantidad =
+    Number(document.getElementById("agregarStock").value);
+
+    const tipo =
+    document.getElementById("tipoMovimiento").value;
+
+    const producto =
+    productos.find(p => p.nombre === nombre);
+
+    if(!producto){
+
+        alert("Producto no encontrado");
+
+        return;
+
+    }
+
+    const folio =
+    generarFolio("I", contadorInventario);
+
+    contadorInventario++;
+
+    if(
+        tipo === "MERMA" ||
+        tipo === "CORTESIA"
+    ){
+
+        producto.stock -= cantidad;
+
+    }else{
+
+        producto.stock += cantidad;
+
+    }
+
+    const ubicacion =
+    await obtenerUbicacion();
+
+    ventas.push({
+
+        folio,
+
+        producto: nombre,
+
+        cliente: tipo,
+
+        cantidad: cantidad,
+
+        inventario: producto.stock,
+
+        precio: 0,
+
+        costo: 0,
+
+        subtotal: 0,
+
+        ganancia: 0,
+
+        descuento: "",
+
+        ubicacion,
+
+        fecha: new Date().toLocaleString()
+
+    });
+
+    guardarLocal();
+
+    actualizarResumen();
+
+    renderTabla();
+
+    renderComanda();
+
+    document.getElementById("agregarStock").value = "";
+
+    alert("Inventario agregado");
+
+}
+                
         function guardarLocal(){
         
         localStorage.setItem(
@@ -666,8 +722,8 @@ ventas.push({
         comanda,
         contadorVentas,
         contadorComandas,
-        contadorInventario,
-         ubicacionActual
+        contadorInventario
+
 })
                                 
                         );
@@ -687,13 +743,12 @@ ventas.push({
         contadorVentas = sistema.contadorVentas || contadorVentas;
         contadorComandas = sistema.contadorComandas || contadorComandas;
         contadorInventario = sistema.contadorInventario || contadorInventario;
-        ubicacionActual = sistema.ubicacionActual || ubicacionActual;
                 
                 }
         
         }
               
-                function registrarVenta(){
+                async function registrarVenta(){
     
                         actualizarProducto();
     
@@ -746,6 +801,7 @@ ventas.push({
                         const fecha = new Date().toLocaleString();
                         const folio = generarFolio("V", contadorVentas);
                         contadorVentas++;
+                        const ubicacion = await obtenerUbicacion();
                         
                         ventas.push({
                                 folio,
@@ -758,11 +814,10 @@ ventas.push({
                                 subtotal,
                                 ganancia,
                                 descuento,
-                                ubicacion: ubicacionActual,
+                                ubicacion,
                                 fecha
                         });
     
-
                         guardarLocal();
         
                         actualizarResumen();
@@ -772,8 +827,7 @@ ventas.push({
                         renderComanda();
 
                         limpiarFormulario();
-    
-        
+ 
                         const ultimaFila =
                                 document.querySelector("#tablaVentas tr:last-child");
 
@@ -891,7 +945,7 @@ function eliminarComanda(index){
 
 } 
                 
-function registrarComanda(){
+async function registrarComanda(){
 
     const cliente =
     document.getElementById("cliente").value;
@@ -917,6 +971,7 @@ function registrarComanda(){
         const folioComanda =
                 generarFolio("C", contadorComandas);
                 contadorComandas++;
+        const ubicacion = await obtenerUbicacion();
         
     comanda.forEach(item=>{
 
@@ -974,7 +1029,7 @@ function registrarComanda(){
 
         descuento: "",
 
-        ubicacion: ubicacionActual,
+        ubicacion,
 
         fecha
 
@@ -985,7 +1040,7 @@ function registrarComanda(){
     comanda = [];
 
     renderComanda();
-
+               
     guardarLocal();
 
     actualizarResumen();
@@ -995,6 +1050,8 @@ function registrarComanda(){
     limpiarFormulario();
 
     alert("Comanda registrada");
+        
+        
 
 }
                 
@@ -1042,6 +1099,9 @@ function registrarComanda(){
             <td>$${ganancia.toFixed(2)}</td>
     
             <td>${venta.descuento || ""}</td>
+
+            <td>${venta.ubicacion?`📍 ${venta.ubicacion.lat.toFixed(4)},
+                ${venta.ubicacion.lng.toFixed(4)}`:""}</td>
     
             <td>${venta.fecha || ""}</td>
     
@@ -1108,6 +1168,7 @@ function registrarComanda(){
                         guardarLocal();       
                         renderTabla();
                         renderComanda();
+                        actualizarSelectProductos();
                         actualizarResumen();        
                 } 
             
@@ -1191,7 +1252,6 @@ productos.forEach(p=>{
                 contadorVentas,
                 contadorComandas,
                 contadorInventario,
-                ubicacionActual
             };
         
             const blob = new Blob(
@@ -1241,7 +1301,6 @@ productos.forEach(p=>{
                 contadorVentas = datos.contadorVentas || contadorVentas;
                 contadorComandas = datos.contadorComandas || contadorComandas;
                 contadorInventario = datos.contadorInventario || contadorInventario;
-                ubicacionActual = datos.ubicacionActual || ubicacionActual;
                     
                 guardarLocal();
         
@@ -1250,6 +1309,8 @@ productos.forEach(p=>{
                 renderTabla();
                     
                 renderComanda();
+
+                    
             };
         
             lector.readAsText(archivo);
@@ -1340,15 +1401,24 @@ productos.forEach(p=>{
             input.value = cantidad;
     
     }
-        function obtenerUbicacion(){
+                
+function obtenerUbicacion(){
 
-    if(navigator.geolocation){
+    return new Promise((resolve)=>{
+
+        if(!navigator.geolocation){
+
+            resolve(null);
+
+            return;
+
+        }
 
         navigator.geolocation.getCurrentPosition(
 
             function(pos){
 
-                ubicacionActual = {
+                const ubicacion = {
 
                     lat: pos.coords.latitude,
 
@@ -1356,23 +1426,23 @@ productos.forEach(p=>{
 
                 };
 
+                resolve(ubicacion);
+
             },
 
             function(){
 
-                console.log("Ubicación no permitida");
+                resolve(null);
 
             }
 
         );
 
-    }
+    });
 
 }
         cargarLocal();
-
-        obtenerUbicacion();
-    
+  
         actualizarSelectProductos();
             
         renderTabla();
@@ -1382,8 +1452,6 @@ productos.forEach(p=>{
         actualizarProducto();
 
         renderComanda();
-    
-    
     
     document.getElementById("descuento")
     .addEventListener("keydown", function(e){
