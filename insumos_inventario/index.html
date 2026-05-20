@@ -287,31 +287,102 @@
                                         id="cliente"            
                                         placeholder="Nombre o teléfono">        
             
-                                <div style="display:flex; gap:5px; align-items:center;">        
-                                        <button type="button"
-                                                onclick="cambiarCantidad(-1)">
-                                                ➖
-                                                
-                                        </button>        
-                                        <input type="number"
-                                                id="cantidad"
-                                                value="1"
-                                                style="width:60px; text-align:center;">
+<button
+type="button"
+onclick="cambiarCantidad(-1)"
+style="
+width:45px;
+height:45px;
+font-size:22px;
+font-weight:bold;
+">
+
+➖
+
+</button>
+<input type="number"
+id="cantidad"
+value="1"
+style="
+width:50px;
+height:45px;
+text-align:center;
+font-size:18px;
+">
                 
-                                        <button type="button"
-                                                onclick="cambiarCantidad(1)">
-                                                ➕
-                                        </button>
+<button
+type="button"
+onclick="cambiarCantidad(1)"
+style="
+width:45px;
+height:45px;
+font-size:22px;
+font-weight:bold;
+">
+
+➕
+
+</button>
         
                                 </div>        
             
-                                <input type="number"            
-                                        id="precio"            
-                                        readonly>        
+<div style="
+display:flex;
+align-items:center;
+gap:3px;
+max-width:90px;
+">
+
+<span style="
+padding:0 5px;
+font-weight:bold;
+">
+
+$
+
+</span>
+
+<input
+type="number"
+id="precio"
+readonly
+style="
+width:55px;
+padding:6px;
+text-align:center;
+font-weight:bold;
+">
+
+                        </div>      
             
-                                <input type="number"            
-                                        id="costo"            
-                                        readonly>        
+<div style="
+display:flex;
+align-items:center;
+gap:3px;
+max-width:90px;
+">
+
+<span style="
+padding:0 5px;
+font-weight:bold;
+">
+
+$
+
+</span>
+
+<input
+type="number"
+id="costo"
+readonly
+style="
+width:55px;
+padding:6px;
+text-align:center;
+font-weight:bold;
+">
+
+                        </div>
             
                                 <input type="text"            
                                         id="descuento"            
