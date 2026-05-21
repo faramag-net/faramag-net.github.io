@@ -50,7 +50,7 @@
     e.preventDefault();
   
     const producto = document.getElementById('producto').value.trim();
-    const precio = document.getElementById('precio').value;
+    const precio = Number(document.getElementById('precio').value).toFixed(2);
     const tienda = document.getElementById('tienda').value.trim();
     const contacto = document.getElementById('contacto').value.trim();
 
