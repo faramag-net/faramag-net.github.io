@@ -1,7 +1,39 @@
 const form = document.getElementById('productForm');
 const tabla = document.getElementById('tablaProductos');
+const ubicacionBtn = document.getElementById('ubicacionBtn');
 
 let productos = [];
+
+let latitud = '';
+let longitud = '';
+
+ubicacionBtn.addEventListener('click', () => {
+
+  if (navigator.geolocation) {
+
+    navigator.geolocation.getCurrentPosition(
+
+      (position) => {
+
+        latitud = position.coords.latitude;
+        longitud = position.coords.longitude;
+
+        alert('Ubicación obtenida ✅');
+      },
+
+      () => {
+        alert('No se pudo obtener ubicación');
+      }
+
+    );
+
+  } else {
+
+    alert('Tu navegador no soporta geolocalización');
+
+  }
+
+});
 
 form.addEventListener('submit', function(e) {
 
@@ -19,7 +51,9 @@ form.addEventListener('submit', function(e) {
     precio,
     tienda,
     contacto,
-    fecha
+    fecha,
+    latitud,
+    longitud
   };
 
   productos.push(nuevoProducto);
@@ -27,6 +61,7 @@ form.addEventListener('submit', function(e) {
   mostrarProductos();
 
   form.reset();
+
 });
 
 function mostrarProductos() {
@@ -42,7 +77,10 @@ function mostrarProductos() {
         <td>${p.tienda}</td>
         <td>${p.contacto}</td>
         <td>${p.fecha}</td>
+        <td>${p.latitud}</td>
+        <td>${p.longitud}</td>
       </tr>
     `;
   });
+
 }
