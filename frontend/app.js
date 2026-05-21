@@ -1,4 +1,4 @@
-  const contador = document.getElementById('contador');
+  
   const form = document.getElementById('productForm');
   const tabla = document.getElementById('tablaProductos');
   const ubicacionBtn = document.getElementById('ubicacionBtn');
@@ -48,7 +48,8 @@
   form.addEventListener('submit', function(e) {
   
     e.preventDefault();
-  
+    
+    const tipo = document.getElementById('tipo').value;
     const producto = document.getElementById('producto').value.trim();
     const precio = Number(document.getElementById('precio').value).toFixed(2);
     const tienda = document.getElementById('tienda').value.trim();
@@ -81,6 +82,7 @@
     
     const nuevoProducto = {
       id: Date.now(),
+      tipo,
       producto,
       precio,
       tienda,
@@ -124,6 +126,7 @@
   
       const fila = `
       <tr>
+        <td>${p.tipo}</td>
         <td>${p.producto}</td>
         <td>$${p.precio}</td>
         <td>${p.tienda}</td>
@@ -203,7 +206,7 @@ function actualizarSugerencias(){
   
     }
   
-    let csv = 'Producto,Precio,Tienda,Contacto,Fecha,FechaISO,Latitud,Longitud\n';
+    let csv = 'Tipo,Producto,Precio,Tienda,Contacto,Fecha,FechaISO,Latitud,Longitud\n';
   
     const productosOrdenados = [...productos].sort(
     (a, b) => new Date(b.fechaISO || 0) - new Date(a.fechaISO || 0)
@@ -211,7 +214,7 @@ function actualizarSugerencias(){
   
   productosOrdenados.forEach(p => {
   
-      csv += `"${p.producto}","${p.precio}","${p.tienda}","${p.contacto}","${p.fecha}","${p.fechaISO}","${p.latitud}","${p.longitud}"\n`;
+      csv += `"${p.tipo}","${p.producto}","${p.precio}","${p.tienda}","${p.contacto}","${p.fecha}","${p.fechaISO}","${p.latitud}","${p.longitud}"\n`;
   
     });
   
