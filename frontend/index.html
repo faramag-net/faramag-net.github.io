@@ -14,17 +14,12 @@
 
     <form id="productForm">
 
-      <input 
-      type="text" 
-      id="buscar" 
-      placeholder="Buscar producto o tienda"
-      list="sugerencias"
-      >
+      <input type="text" id="buscar" placeholder="Buscar producto o tienda"list="sugerencias">
       <datalist id="sugerencias"></datalist>
       
       <input type="text" id="producto" placeholder="Producto" required>
 
-      <input type="number" id="precio" placeholder="Precio" required>
+      <input type="number" id="precio" placeholder="Precio" step="0.01" min="0.01" required>
 
       <input type="text" id="tienda" placeholder="Tienda" required>
 
