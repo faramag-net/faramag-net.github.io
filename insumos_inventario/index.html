@@ -3,7 +3,7 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+       
     <title>Sistema Inventario Santa Rosa</title>
     
     <style>
@@ -30,7 +30,71 @@
         max-width:1400px;
         margin:auto;
     }
-    
+        
+.dark{
+    background:#121212;
+    color:white;
+}
+     
+.dark button{
+    opacity:0.95;
+}
+
+.dark .btn-agregar{
+    background:#1faa59;
+}
+
+.dark .btn-exportar{
+    background:#1565c0;
+}
+.dark .btn-importar{
+    background:#455a64;
+}
+.dark .btn-eliminar{
+    background:#c62828;
+}
+.dark .panel,
+.dark .card,
+.dark .card-producto,
+.dark table,
+.dark td{
+    background:#1e1e1e;
+    color:white;
+}
+
+.dark th{
+    background:#333;
+}
+
+.dark input::placeholder{
+    color:#bbb;
+}
+.dark input,        
+.dark select{
+    background:#2b2b2b;
+    color:white;
+    border:1px solid #555;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4{
+    color:white;
+}
+
+body,
+.panel,
+.card,
+.card-producto,
+table,
+td,
+input,
+select,
+button{
+    transition:0.25s;
+}
+       
     .panel{
         background:white;
         padding:20px;
@@ -38,6 +102,7 @@
         box-shadow:0 4px 10px rgba(0,0,0,0.1);
         margin-bottom:20px;
     }
+        
     
     h2{
         margin-bottom:15px;
@@ -144,7 +209,25 @@
     </head>
     
     <body>
-    
+
+<button
+onclick="toggleDarkMode()"
+style="
+position:fixed;
+top:15px;
+right:15px;
+z-index:999;
+padding:12px 18px;
+border-radius:12px;
+background:#111;
+color:white;
+font-size:18px;
+">
+
+🌙
+
+</button>
+        
     <div class="contenedor">
     
     <h1>🍧 Sistema Santa Rosa</h1>
@@ -303,6 +386,16 @@ Agregar Inventario
     flex-wrap:nowrap;
     ">
 
+<input
+type="text"
+id="buscarProducto"
+placeholder="🔍 Buscar producto"
+oninput="filtrarProductos()"
+style="
+min-width:250px;
+height:55px;
+">
+    
         <select
         id="producto"
         onchange="actualizarProducto()"
@@ -348,6 +441,7 @@ Agregar Inventario
             type="number"
             id="cantidad"
             value="1"
+            oninput="actualizarSubtotal()"
             style="
             width:60px;
             height:45px;
@@ -457,7 +551,18 @@ flex-shrink:0;
         Registrar Venta
 
         </button>
+<h3
+id="subtotalVista"
+style="
+min-width:180px;
+text-align:center;
+color:#28a745;
+font-size:22px;
+">
 
+SUBTOTAL: $0
+
+</h3>
         <button
         type="button"
         class="btn-exportar"
@@ -906,7 +1011,13 @@ alert("Inventario agregado");
 
                     const producto =
                             document.getElementById("producto").value;
-                    
+                    if(!producto){
+
+                    alert("Selecciona producto");
+
+                    return;
+
+}
     const cliente =
             document.getElementById("cliente").value;
                     
@@ -929,19 +1040,27 @@ alert("Inventario agregado");
                                         return;
                            }
 
-                        const productoObj =
-                                productos.find(p => p.nombre === producto);
-                           
-                    if(cantidad > productoObj.stock){    
-                            const continuar =    
-                                    confirm(        
-                                            "Inventario insuficiente.\n\n¿Deseas continuar?"    
-                                    );
+const productoObj =
+productos.find(
+    p => p.nombre === producto)
+    ;
+if(!productoObj){
 
-                            if(!continuar){       
-                                    return;    
-                            }
-                    }
+alert("Producto inválido");
+
+return;
+
+}
+if(cantidad > productoObj.stock){    
+const continuar =    
+confirm(        
+"Inventario insuficiente.\n\n¿Deseas continuar?"    
+);
+
+if(!continuar){       
+return;    
+}
+}
 
     
                     productoObj.stock -= cantidad;
@@ -975,7 +1094,10 @@ alert("Inventario agregado");
                     renderComanda();
 
                     limpiarFormulario();
-
+                    document
+                    .getElementById("buscarProducto")
+                    .focus();
+                    
                     const ultimaFila =
                             document.querySelector("#tablaVentas tr:last-child");
 
@@ -991,7 +1113,14 @@ function agregarAComanda(){
 
     const producto =
     document.getElementById("producto").value;
+    
+    if(!producto){
 
+    alert("Selecciona producto");
+
+    return;
+
+}
     const cantidad =
     Number(document.getElementById("cantidad").value);
 
@@ -1129,9 +1258,16 @@ comanda.forEach(item=>{
         p => p.nombre === item.producto
     );
 
-    if(!productoObj){
-        return;
-    }
+if(!productoObj){
+
+    alert(
+        item.producto +
+        " ya no existe"
+    );
+
+    return;
+
+}
 
     if(item.cantidad > productoObj.stock){
 
@@ -1197,7 +1333,10 @@ actualizarResumen();
 renderTabla();
 
 limpiarFormulario();
-
+document
+.getElementById("buscarProducto")
+.focus();
+    
 alert("Comanda registrada");
     
     
@@ -1330,29 +1469,55 @@ cards.innerHTML = "";
 
 productos.forEach(p=>{
 
-let color = "#28a745";
+    let color = "#28a745";
 
-if(p.stock <= 5){
-    color = "#ffc107";
-}
+    let estado = "✅ OK";
 
-if(p.stock < 0){
-    color = "#dc3545";
-}
+    if(p.stock <= 5){
 
-cards.innerHTML += `
+        color = "#ffc107";
 
-<div class="card-producto">
+        estado = "⚠️ BAJO";
 
-    <h4>${p.nombre}</h4>
+    }
 
-    <p style="color:${color}">
-    ${p.stock}
-    </p>
+    if(p.stock === 0){
 
-</div>
+        color = "#dc3545";
 
-`;
+        estado = "⛔ AGOTADO";
+
+    }
+    if(p.stock < 0){
+
+    color = "#b00020";
+
+    estado = "🚨 NEGATIVO";
+
+    }
+    
+    cards.innerHTML += `
+
+    <div class="card-producto">
+
+        <h4>${p.nombre}</h4>
+
+        <p style="
+        color:${color};
+        ">
+        ${p.stock}
+        </p>
+
+        <small style="
+        color:${color};
+        font-weight:bold;
+        ">
+        ${estado}
+        </small>
+
+    </div>
+
+    `;
 
 });
 
@@ -1504,7 +1669,9 @@ function actualizarProducto(){
 
             document.getElementById("costo").value =
             producto.costo;
-            
+
+        actualizarSubtotal();
+        
     }else{
 
             document.getElementById("precio").value = "";
@@ -1528,6 +1695,27 @@ function actualizarProducto(){
     document.getElementById("nuevoStock").value = "";
 
 }
+        
+    function actualizarSubtotal(){
+
+    const cantidad =
+    Number(
+        document.getElementById("cantidad").value
+    );
+
+    const precio =
+    Number(
+        document.getElementById("precio").value
+    );
+
+    const subtotal =
+    cantidad * precio;
+
+    document.getElementById("subtotalVista")
+    .innerText =
+    "SUBTOTAL: $" + subtotal.toFixed(2);
+
+}
     function cambiarCantidad(valor){
 
         const input =
@@ -1543,7 +1731,8 @@ function actualizarProducto(){
     }
 
         input.value = cantidad;
-
+        
+    actualizarSubtotal();
 }
             
 
@@ -1585,7 +1774,46 @@ return new Promise((resolve)=>{
 
 });
 
-}cargarLocal();
+    }
+
+    function filtrarProductos(){
+
+    const texto =
+    document.getElementById("buscarProducto")
+    .value
+    .toLowerCase();
+
+    const select =
+    document.getElementById("producto");
+
+    select.innerHTML = "";
+
+    const filtrados =
+    productos.filter(p =>
+        p.nombre.toLowerCase().includes(texto)
+    );
+
+    filtrados.forEach(p=>{
+
+        select.innerHTML += `
+        <option value="${p.nombre}">
+        ${p.nombre}
+        </option>
+        `;
+
+    });
+
+    if(filtrados.length > 0){
+
+        select.value = filtrados[0].nombre;
+
+        actualizarProducto();
+
+    }
+
+}
+    
+    cargarLocal();
 
     actualizarSelectProductos();
         
@@ -1596,7 +1824,63 @@ return new Promise((resolve)=>{
     actualizarProducto();
 
     renderComanda();
-       
+        
+    actualizarSubtotal();
+
+document.addEventListener("keydown", function(e){
+
+    if(e.key === "/"){
+
+        e.preventDefault();
+
+        document
+        .getElementById("buscarProducto")
+        .focus();
+
+    }
+    
+});
+        
+document.addEventListener("keydown", function(e){
+
+    if(e.key === "Enter"){
+
+            if(e.repeat){
+            return;
+        }
+        
+        const cliente =
+        document.getElementById("cliente");
+
+        if(document.activeElement === cliente){
+
+            e.preventDefault();
+
+            agregarAComanda();
+
+        }
+
+    }
+
+});
+
+function toggleDarkMode(){
+
+    document.body.classList.toggle("dark");
+
+    localStorage.setItem(
+        "darkMode",
+        document.body.classList.contains("dark")
+    );
+
+}
+
+if(localStorage.getItem("darkMode") === "true"){
+
+    document.body.classList.add("dark");
+
+}
+        
     </script>
 
 </body>
