@@ -14,6 +14,8 @@
 
     <form id="productForm">
 
+      <input type="text" id="buscar" placeholder="Buscar producto o tienda">
+      
       <input type="text" id="producto" placeholder="Producto" required>
 
       <input type="number" id="precio" placeholder="Precio" required>
@@ -33,6 +35,8 @@
       📥 Exportar CSV
       </button>
       
+      <button class="eliminarBtn" onclick="eliminarProducto(${p.id})">
+        
     </form>
 
     <h2>Lista de productos</h2>
