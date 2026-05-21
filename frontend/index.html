@@ -1,1 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Productos</title>
 
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>📦 Productos y Tiendas</h1>
+
+    <form id="productForm">
+
+      <input type="text" id="producto" placeholder="Producto" required>
+
+      <input type="number" id="precio" placeholder="Precio" required>
+
+      <input type="text" id="tienda" placeholder="Tienda" required>
+
+      <input type="text" id="contacto" placeholder="Contacto">
+
+      <button type="submit">Guardar</button>
+
+    </form>
+
+    <h2>Lista de productos</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Precio</th>
+          <th>Tienda</th>
+          <th>Contacto</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+
+      <tbody id="tablaProductos"></tbody>
+    </table>
+
+  </div>
+
+  <script src="app.js"></script>
+
+</body>
+</html>
