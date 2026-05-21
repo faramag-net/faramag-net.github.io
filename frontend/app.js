@@ -4,7 +4,8 @@
   const ubicacionBtn = document.getElementById('ubicacionBtn');
   const exportarBtn = document.getElementById('exportarBtn');
   const buscar = document.getElementById('buscar');
-  
+  const sugerencias = document.getElementById('sugerencias');
+
   let productos = JSON.parse(localStorage.getItem('productos')) || [];
   
   let latitud = '';
@@ -93,7 +94,8 @@
     productos.push(nuevoProducto);
   
     mostrarProductos();
-  
+    actualizarSugerencias();
+    
     form.reset();
     ubicacionBtn.innerText = '📍 Obtener ubicación';
     latitud = '';
@@ -163,8 +165,32 @@
     );
   
   }
-  
+
+function actualizarSugerencias(){
+
+  sugerencias.innerHTML = '';
+
+  const valoresUnicos = new Set();
+
+  productos.forEach(p => {
+
+    valoresUnicos.add(p.producto);
+    valoresUnicos.add(p.tienda);
+
+  });
+
+  valoresUnicos.forEach(valor => {
+
+    sugerencias.innerHTML += `
+      <option value="${valor}">
+    `;
+
+  });
+
+}
+
   mostrarProductos();
+  actualizarSugerencias();
 
   buscar.addEventListener('input', mostrarProductos);
 
@@ -216,5 +242,5 @@
     productos = productos.filter(p => p.id !== id);
   
     mostrarProductos();
-       
+    actualizarSugerencias();       
   }
