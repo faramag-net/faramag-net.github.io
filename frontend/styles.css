@@ -45,18 +45,20 @@ button {
   font-size: 16px;
 }
 
-input {
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
 button {
+  margin-top:5px;
+
   background: #0077ff;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: 0.2s;
+}
+
+input {
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 button:hover {
@@ -126,4 +128,25 @@ input:focus{
 
 .eliminarBtn:hover{
   background:#cc0000;
+}
+
+@media (max-width: 600px){
+
+  body{
+    padding:10px;
+  }
+
+  .container{
+    padding:15px;
+  }
+
+}
+  
+table::-webkit-scrollbar{
+  height:8px;
+}
+
+table::-webkit-scrollbar-thumb{
+  background:#ccc;
+  border-radius:10px;
 }
