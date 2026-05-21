@@ -191,6 +191,17 @@ button{
 
     @media(max-width:768px){
     
+    .panel div[style*="display:flex"]{
+    flex-direction:column;
+    align-items:stretch !important;
+}
+        
+.panel button,
+.panel input,
+.panel select{
+    width:100% !important;
+    min-width:100% !important;
+}
         body{
             padding:10px;
         }
@@ -382,8 +393,7 @@ Agregar Inventario
     align-items:center;
     gap:15px;
     width:100%;
-    overflow-x:auto;
-    flex-wrap:nowrap;
+    flex-wrap:wrap;
     ">
 
 <input
