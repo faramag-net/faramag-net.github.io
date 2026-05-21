@@ -72,7 +72,7 @@
   
     }
   
-    if(precio <= 0){
+    if(Number(precio) <= 0){
   
     alert('El precio debe ser mayor a 0');
     return;
