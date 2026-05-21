@@ -82,7 +82,15 @@
 .dark h4{
     color:white;
 }
+.dark #cantidad{
+    color:white !important;
+    background:#2b2b2b !important;
+}
 
+.dark #cantidad::-webkit-outer-spin-button{
+    filter:invert(1);
+}
+        
 body,
 .panel,
 .card,
@@ -447,10 +455,23 @@ height:55px;
             </button>
 
             <input
-            type="number"
+            type="text"
             id="cantidad"
+            inputmode="numeric"
+            maxlength="3"
             value="1"
-            oninput="actualizarSubtotal()"
+            oninput="
+            this.value=this.value.replace(/[^0-9]/g,'');
+            actualizarSubtotal();
+                
+            "
+            onblur="
+            if(this.value===''){
+            this.value=1;
+            actualizarSubtotal();
+            }
+            "
+                
             style="
             width:60px;
             height:45px;
