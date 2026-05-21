@@ -1,3 +1,4 @@
+const contador = document.getElementById('contador');
 const form = document.getElementById('productForm');
 const tabla = document.getElementById('tablaProductos');
 const ubicacionBtn = document.getElementById('ubicacionBtn');
@@ -52,8 +53,15 @@ form.addEventListener('submit', function(e) {
   return;
 
   }
+
+  if(precio <= 0){
+
+  alert('El precio debe ser mayor a 0');
+  return;
+  }
   
   const nuevoProducto = {
+    id: Date.now(),
     producto,
     precio,
     tienda,
@@ -78,25 +86,37 @@ function mostrarProductos(){
 
   tabla.innerHTML = '';
 
-  productos.forEach(p => {
+  const productosOrdenados = [...productos].reverse();
 
-    tabla.innerHTML += `
-      <tr>
-        <td>${p.producto}</td>
-        <td>$${p.precio}</td>
-        <td>${p.tienda}</td>
-        <td>${p.contacto}</td>
-        <td>
-        <a href="https://www.google.com/maps?q=${p.latitud},${p.longitud}" target="_blank">
-        Ver mapa
-        </a>
-        </td>
-        <td>${p.fecha}</td>
-      </tr>
+  productosOrdenados.forEach(p => {
+
+    const fila = `
+    <tr>
+      <td>${p.producto}</td>
+      <td>$${p.precio}</td>
+      <td>${p.tienda}</td>
+      <td>${p.contacto}</td>
+      <td>
+
+      <a 
+        href="https://www.google.com/maps?q=${p.latitud},${p.longitud}" 
+        target="_blank"
+        title="${p.latitud}, ${p.longitud}"
+      >
+        📍 Ver mapa
+      </a>
+
+      </td>
+      <td>${p.fecha}</td>
+    </tr>
     `;
+
+    tabla.innerHTML += fila;
 
   });
 
+  contador.innerText = `Registros: ${productos.length}`;
+  
   localStorage.setItem(
     'productos',
     JSON.stringify(productos)
