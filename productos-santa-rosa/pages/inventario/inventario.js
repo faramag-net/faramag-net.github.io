@@ -19,6 +19,19 @@ import {
 }
 from "./modules/historial.js";
 
+import {
+    exportarJSON,
+    importarJSON,
+    cerrarInventario
+}
+from "./modules/exportar.js";
+
+window.exportarJSON = exportarJSON;
+
+window.importarJSON = importarJSON;
+
+window.cerrarInventario = cerrarInventario;    
+
 actualizarResumen();
 
 renderTabla();
