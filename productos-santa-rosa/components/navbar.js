@@ -12,31 +12,31 @@ export function crearNavbar(){
 
         <div class="links-navbar">
 
-            <a href="/productos-santa-rosa/index.html">
+            <a href="/productos-santa-rosa">
 
                 🏠 Inicio
 
             </a>
 
-            <a href="/productos-santa-rosa/pages/productos/index.html">
+            <a href="/productos-santa-rosa/pages/producto">
 
                 🍦 Productos
 
             </a>
 
-            <a href="/productos-santa-rosa/pages/inventario/index.html">
+            <a href="/productos-santa-rosa/pages/inventario">
 
                 📦 Inventario
 
             </a>
 
-            <a href="/productos-santa-rosa/pages/ventas/index.html">
+            <a href="/productos-santa-rosa/pages/ventas">
 
                 💰 Ventas
 
             </a>
 
-            <a href="/productos-santa-rosa/pages/visitas/index.html">
+            <a href="/productos-santa-rosa/pages/visitas">
 
                 📍 Visitas
 
