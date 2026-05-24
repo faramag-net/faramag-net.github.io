@@ -1,1 +1,8 @@
+import {
+    agregarProducto,
+    eliminarProducto
+}
+from "./modules/agregar-producto.js";
 
+window.agregarProducto = agregarProducto;
+window.eliminarProducto = eliminarProducto;
