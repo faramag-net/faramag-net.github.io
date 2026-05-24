@@ -32,6 +32,8 @@ window.importarJSON = importarJSON;
 
 window.cerrarInventario = cerrarInventario;    
 
+cargarLocal();
+
 actualizarResumen();
 
 renderTabla();
