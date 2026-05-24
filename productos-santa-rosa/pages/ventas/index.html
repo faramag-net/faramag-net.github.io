@@ -1,1 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>Ventas</title>
+
+    <link rel="stylesheet" href="ventas.css">
+
+</head>
+
+<body>
+
+    <h1>💰 Sistema de Ventas</h1>
+
+    <!-- KPI CARDS -->
+
+    <div class="resumen">
+
+        <div class="card">
+
+            <h3>Total Vendido</h3>
+
+            <p id="totalVentas">$0</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Ganancia Total</h3>
+
+            <p id="totalGanancia">$0</p>
+
+        </div>
+
+    </div>
+
+    <!-- REGISTRAR VENTA -->
+
+    <div class="panel">
+
+        <h2>🛒 Registrar Venta</h2>
+
+        <select
+        id="producto"
+        onchange="actualizarProducto()">
+        </select>
+
+        <input
+        type="text"
+        id="cliente"
+        placeholder="Cliente">
+
+        <div class="cantidad">
+
+            <button
+            onclick="cambiarCantidad(-1)">
+            -
+            </button>
+
+            <input
+            type="number"
+            id="cantidad"
+            value="1"
+            onchange="actualizarSubtotal()">
+
+            <button
+            onclick="cambiarCantidad(1)">
+            +
+            </button>
+
+        </div>
+
+        <input
+        type="hidden"
+        id="precio">
+
+        <input
+        type="hidden"
+        id="costo">
+
+        <h3 id="subtotalVista">
+
+            SUBTOTAL: $0
+
+        </h3>
+
+        <button
+        onclick="registrarVenta()">
+
+        Registrar Venta
+
+        </button>
+
+    </div>
+
+    <!-- HISTORIAL -->
+
+    <div class="panel">
+
+        <h2>📋 Historial Ventas</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>PRODUCTO</th>
+                    <th>CLIENTE</th>
+                    <th>CANTIDAD</th>
+                    <th>PRECIO</th>
+                    <th>COSTO</th>
+                    <th>SUBTOTAL</th>
+                    <th>GANANCIA</th>
+                    <th>FECHA</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaVentas"></tbody>
+
+        </table>
