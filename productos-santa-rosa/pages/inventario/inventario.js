@@ -12,3 +12,13 @@ import {
     eliminarProducto
 }
 from "./modules/agregar-producto.js";
+
+import {
+    renderTabla,
+    actualizarResumen
+}
+from "./modules/historial.js";
+
+actualizarResumen();
+
+renderTabla();
