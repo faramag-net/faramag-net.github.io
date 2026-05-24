@@ -97,7 +97,8 @@
         Registrar Venta
 
         </button>
-        
+     
+        </div>   
       
 <!-- COMANDA -->
 
@@ -181,7 +182,42 @@
         </table>
 
     </div>
+    
+<div class="panel">
 
+    <h2>⚙️ Administrar Ventas</h2>
+
+    <button onclick="exportarVentas()">
+
+        💾 Exportar JSON
+
+    </button>
+
+    <input
+    type="file"
+    id="importarVentas"
+    hidden
+    onchange="importarVentas(event)">
+
+    <button
+    onclick="
+    document
+    .getElementById('importarVentas')
+    .click()
+    ">
+
+    📂 Importar JSON
+
+    </button>
+
+    <button onclick="cerrarCorte()">
+
+        🗑 Cerrar Corte
+
+    </button>
+
+</div>
+    
     <script type="module" src="ventas.js"></script>
 
 </body>
