@@ -1,1 +1,64 @@
+body {
+  font-family: Arial;
+  text-align: center;
+  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+              url("../../../../imagenes/fondofrescolargo.png");
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
 
+/* LOGO */
+.logo {
+  width: 180px;
+  display: block;
+  margin: 20px auto;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* PRODUCTO */
+.producto {
+  background: transparent;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: none;
+  text-align: center;
+}
+
+.producto img {
+  width: 100%;
+  max-height: 160px;
+  object-fit: contain;
+  border-radius: 15px;
+}
+
+.btn {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 20px;
+  background: #25D366;
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+}
+
+.nav {
+  position: sticky;
+  top: 10px;
+}
+
+.nav a {
+  background: #ffffffcc;
+  color: black;
+  padding: 8px 15px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: bold;
+}
