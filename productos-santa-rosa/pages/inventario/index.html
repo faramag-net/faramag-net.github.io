@@ -1,1 +1,68 @@
-<tbody id="tablaInventario"></tbody>
+<div class="panel">
+
+    <h2>📋 Historial Inventario</h2>
+
+    <div style="
+    overflow-x:auto;
+    border-radius:10px;
+    ">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>TIPO</th>
+                    <th>PRODUCTO</th>
+                    <th>CANTIDAD</th>
+                    <th>STOCK</th>
+                    <th>FECHA</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaInventario"></tbody>
+
+        </table>
+
+    </div>
+
+    <br>
+
+    <button
+    class="btn-exportar"
+    onclick="exportarJSON()">
+
+    💾 Exportar JSON
+
+    </button>
+
+    <input
+    type="file"
+    id="importarArchivo"
+    hidden
+    onchange="importarJSON(event)">
+
+    <button
+    class="btn-importar"
+    onclick="
+    document
+    .getElementById('importarArchivo')
+    .click()
+    ">
+
+    📂 Importar JSON
+
+    </button>
+
+    <button
+    class="btn-eliminar"
+    onclick="cerrarInventario()">
+
+    🗑 Cerrar Inventario
+
+    </button>
+
+</div>
