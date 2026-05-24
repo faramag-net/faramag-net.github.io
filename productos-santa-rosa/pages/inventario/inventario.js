@@ -1,11 +1,7 @@
-window.agregarProducto = agregarProducto;
-window.eliminarProducto = eliminarProducto;
 import {
-    agregarInventario
+    cargarLocal
 }
-from "./modules/entradas.js";
-
-window.agregarInventario = agregarInventario;
+from "./modules/storage.js";
 
 import {
     agregarProducto,
@@ -14,8 +10,13 @@ import {
 from "./modules/agregar-producto.js";
 
 import {
-    renderTabla,
-    actualizarResumen
+    agregarInventario
+}
+from "./modules/entradas.js";
+
+import {
+    actualizarResumen,
+    renderTabla
 }
 from "./modules/historial.js";
 
@@ -26,11 +27,23 @@ import {
 }
 from "./modules/exportar.js";
 
-window.exportarJSON = exportarJSON;
+window.agregarProducto =
+agregarProducto;
 
-window.importarJSON = importarJSON;
+window.eliminarProducto =
+eliminarProducto;
 
-window.cerrarInventario = cerrarInventario;    
+window.agregarInventario =
+agregarInventario;
+
+window.exportarJSON =
+exportarJSON;
+
+window.importarJSON =
+importarJSON;
+
+window.cerrarInventario =
+cerrarInventario;
 
 cargarLocal();
 
