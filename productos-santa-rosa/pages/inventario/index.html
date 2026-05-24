@@ -1,5 +1,78 @@
 <div class="panel">
 
+    <h2>📦 Agregar Producto</h2>
+
+    <input
+    type="text"
+    id="nuevoProducto"
+    placeholder="Nombre producto">
+
+    <input
+    type="number"
+    id="nuevoPrecio"
+    placeholder="Precio">
+
+    <input
+    type="number"
+    id="nuevoCosto"
+    placeholder="Costo">
+
+    <input
+    type="number"
+    id="nuevoStock"
+    placeholder="Stock inicial">
+
+    <button onclick="agregarProducto()">
+
+        ➕ Agregar Producto
+
+    </button>
+
+</div>
+
+<div class="panel">
+
+    <h2>📥 Movimiento Inventario</h2>
+
+    <select id="productoInventario"></select>
+
+    <select id="tipoMovimiento">
+
+        <option value="ENTRADA">
+
+            ENTRADA
+
+        </option>
+
+        <option value="MERMA">
+
+            MERMA
+
+        </option>
+
+        <option value="CORTESIA">
+
+            CORTESIA
+
+        </option>
+
+    </select>
+
+    <input
+    type="number"
+    id="agregarStock"
+    placeholder="Cantidad">
+
+    <button onclick="agregarInventario()">
+
+        Registrar Movimiento
+
+    </button>
+
+</div>
+
+<div class="panel">
+
     <h2>📋 Historial Inventario</h2>
 
     <div style="
@@ -66,3 +139,11 @@
     </button>
 
 </div>
+
+<script
+type="module"
+src="inventario.js">
+</script>
+
+</body>
+</html>
