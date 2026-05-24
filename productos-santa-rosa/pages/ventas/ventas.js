@@ -16,6 +16,16 @@ cambiarCantidad;
 window.registrarVenta =
 registrarVenta;
 
+import {
+    renderTablaVentas,
+    actualizarKPIs
+}
+from "./modules/historial.js";
+
 cargarProductos();
 
 actualizarSubtotal();
+
+renderTablaVentas();
+
+actualizarKPIs();
