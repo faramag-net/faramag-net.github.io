@@ -12,11 +12,17 @@
     <title>Ventas</title>
 
     <link rel="stylesheet" href="ventas.css">
-
+    
+    <link
+    rel="stylesheet"
+    href="../../components/navbar.css">
+    
 </head>
 
 <body>
 
+    <div id="navbar"></div>
+    
     <h1>💰 Sistema de Ventas</h1>
 
     <!-- KPI CARDS -->
@@ -147,11 +153,9 @@
         </button>
 
     </div>
-
-</div>
-        
-    </div>
-
+    
+        </div>
+    
     <!-- HISTORIAL -->
 
     <div class="panel">
@@ -217,6 +221,20 @@
     </button>
 
 </div>
+    
+    <script type="module">
+
+import {
+    crearNavbar
+}
+from "../../components/navbar.js";
+
+document
+.getElementById("navbar")
+.innerHTML =
+crearNavbar();
+
+</script>
     
     <script type="module" src="ventas.js"></script>
 
