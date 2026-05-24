@@ -22,6 +22,25 @@ import {
 }
 from "./modules/historial.js";
 
+import {
+
+    agregarComanda,
+    renderComanda,
+    eliminarComanda,
+    registrarComanda
+
+}
+from "./modules/comandas.js";
+
+window.agregarComanda =
+agregarComanda;
+
+window.eliminarComanda =
+eliminarComanda;
+
+window.registrarComanda =
+registrarComanda;
+
 cargarProductos();
 
 actualizarSubtotal();
