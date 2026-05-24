@@ -16,9 +16,15 @@
     rel="stylesheet"
     href="inventario.css">
 
+    <link
+    rel="stylesheet"
+    href="../../components/navbar.css">
+
 </head>
 
 <body>
+    
+     <div id="navbar"></div>
     
   <h1>📦 Inventario Santa Rosa</h1>
     
@@ -164,11 +170,25 @@
 
 </div>
 
+<script type="module">
+
+import {
+    crearNavbar
+}
+from "../../components/navbar.js";
+
+document
+.getElementById("navbar")
+.innerHTML =
+crearNavbar();
+
+</script> 
+    
 <script
 type="module"
 src="inventario.js">
 </script>
-
+        
 </body>
 
 </html>
