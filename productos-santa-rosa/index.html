@@ -1,1 +1,182 @@
+<!DOCTYPE html>
 
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>Productos Santa Rosa</title>
+
+    <link
+    rel="stylesheet"
+    href="./styles.css">
+
+    <link
+    rel="stylesheet"
+    href="./components/navbar.css">
+
+</head>
+
+<body>
+
+    <div id="navbar"></div>
+
+    <h1 class="titulo">
+
+        🍦 Productos Santa Rosa
+
+    </h1>
+
+    <!-- KPI -->
+
+    <section class="dashboard">
+
+        <div class="card">
+
+            <h3>💰 Ventas Totales</h3>
+
+            <p id="kpiVentas">$0</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>📦 Productos</h3>
+
+            <p id="kpiProductos">0</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>⚠️ Stock Bajo</h3>
+
+            <p id="kpiStockBajo">0</p>
+
+        </div>
+
+    </section>
+
+    <!-- MODULOS -->
+
+    <section class="modulos">
+
+        <a
+        class="modulo"
+        href="./pages/productos/index.html">
+
+            🍦 Productos
+
+        </a>
+
+        <a
+        class="modulo"
+        href="./pages/inventario/index.html">
+
+            📦 Inventario
+
+        </a>
+
+        <a
+        class="modulo"
+        href="./pages/ventas/index.html">
+
+            💰 Ventas
+
+        </a>
+
+        <a
+        class="modulo"
+        href="./pages/visitas/index.html">
+
+            📍 Visitas
+
+        </a>
+
+    </section>
+
+    <script type="module">
+
+    import {
+        crearNavbar
+    }
+    from "./components/navbar.js";
+
+    document
+    .getElementById("navbar")
+    .innerHTML =
+    crearNavbar();
+
+    // INVENTARIO
+
+    const inventario =
+    JSON.parse(
+
+        localStorage.getItem(
+            "inventarioSantaRosa"
+        )
+
+    ) || {};
+
+    const productos =
+    inventario.productos || [];
+
+    // VENTAS
+
+    const ventasData =
+    JSON.parse(
+
+        localStorage.getItem(
+            "ventasSantaRosa"
+        )
+
+    ) || {};
+
+    const ventas =
+    ventasData.ventas || [];
+
+    // KPI PRODUCTOS
+
+    document
+    .getElementById("kpiProductos")
+    .innerText =
+    productos.length;
+
+    // KPI STOCK BAJO
+
+    const stockBajo =
+    productos.filter(
+        p => p.stock <= 5
+    );
+
+    document
+    .getElementById("kpiStockBajo")
+    .innerText =
+    stockBajo.length;
+
+    // KPI VENTAS
+
+    let totalVentas = 0;
+
+    ventas.forEach(venta=>{
+
+        totalVentas +=
+        Number(venta.subtotal) || 0;
+
+    });
+
+    document
+    .getElementById("kpiVentas")
+    .innerText =
+    "$" + totalVentas.toFixed(2);
+
+    </script>
+
+</body>
+
+</html>
