@@ -1,1 +1,64 @@
-productos
+body {
+  margin: 0;
+  font-family: Arial;
+  text-align: center;
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+              url("../../../imagenes/fondofrescolargo.png");
+
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+/* CONTENEDOR */
+.contenido {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* LOGO */
+.logo {
+  width: 180px;
+  margin-bottom: 20px;
+}
+
+/* TEXTO */
+h1 {
+  margin: 10px 0;
+  font-size: 28px;
+}
+
+p {
+  margin-bottom: 30px;
+}
+
+/* BOTONES */
+.btn {
+  width: 220px;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 15px;
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  display: block;
+  transition: 0.3s;
+}
+
+/* estilos individuales */
+.bolis {
+  background: #00b4d8;
+}
+
+.paletas {
+  background: #ff4d6d;
+}
+
+/* efecto */
+.btn:hover {
+  transform: scale(1.05);
+}
