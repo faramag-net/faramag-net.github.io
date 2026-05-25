@@ -1,4 +1,9 @@
 import {
+    renderProductos
+}
+from "./entradas.js";
+
+import {
     productos,
     movimientos,
     guardarLocal
@@ -95,6 +100,8 @@ export function agregarProducto(){
     });
 
     guardarLocal();
+
+    renderProductos();
 
     limpiarFormulario();
 
