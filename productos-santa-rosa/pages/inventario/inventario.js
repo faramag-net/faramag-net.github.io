@@ -10,7 +10,8 @@ import {
 from "./modules/agregar-producto.js";
 
 import {
-    agregarInventario
+    agregarInventario,
+    renderProductos
 }
 from "./modules/entradas.js";
 
@@ -46,6 +47,8 @@ window.cerrarInventario =
 cerrarInventario;
 
 cargarLocal();
+
+renderProductos();
 
 actualizarResumen();
 
