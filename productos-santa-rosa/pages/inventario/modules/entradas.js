@@ -1,5 +1,7 @@
 import {
-    productos
+    productos,
+    movimientos,
+    guardarLocal
 }
 from "./storage.js";
 
@@ -28,13 +30,6 @@ export function renderProductos(){
     });
 
 }
-
-import {
-    productos,
-    movimientos,
-    guardarLocal
-}
-from "./storage.js";
 
 export function agregarInventario(){
 
