@@ -1,4 +1,35 @@
 import {
+    productos
+}
+from "./storage.js";
+
+export function renderProductos(){
+
+    const select =
+    document.getElementById(
+        "productoInventario"
+    );
+
+    select.innerHTML = "";
+
+    productos.forEach(producto=>{
+
+        const option =
+        document.createElement("option");
+
+        option.value =
+        producto.nombre;
+
+        option.textContent =
+        producto.nombre;
+
+        select.appendChild(option);
+
+    });
+
+}
+
+import {
     productos,
     movimientos,
     guardarLocal
