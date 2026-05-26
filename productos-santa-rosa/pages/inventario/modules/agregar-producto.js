@@ -112,7 +112,9 @@ export function agregarProducto(){
 export function eliminarProducto(){
 
     const nombre =
-    document.getElementById("producto").value;
+    document.getElementById(
+    "productoEliminar"
+    ).value;
 
     if(!nombre){
 
@@ -150,6 +152,8 @@ export function eliminarProducto(){
     });
 
     guardarLocal();
+    
+    renderProductos();
 
     alert("Producto eliminado");
 
