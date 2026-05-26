@@ -3,7 +3,7 @@
     flex-wrap:wrap;
     gap:10px;
     align-items:center;
-
+    
 }
 
 .cantidad{
@@ -13,7 +13,8 @@
     gap:10px;
 
     align-items:center;
-
+    
+    flex:0;
 }
 
 .cantidad button{
