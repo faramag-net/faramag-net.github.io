@@ -7,25 +7,51 @@ from "./storage.js";
 
 export function renderProductos(){
 
-    const select =
+    const selectInventario =
     document.getElementById(
         "productoInventario"
     );
 
-    select.innerHTML = "";
+    const selectEliminar =
+    document.getElementById(
+        "productoEliminar"
+    );
+
+    selectInventario.innerHTML = "";
+
+    selectEliminar.innerHTML = "";
 
     productos.forEach(producto=>{
 
-        const option =
+        // INVENTARIO
+
+        const optionInventario =
         document.createElement("option");
 
-        option.value =
+        optionInventario.value =
         producto.nombre;
 
-        option.textContent =
+        optionInventario.textContent =
         producto.nombre;
 
-        select.appendChild(option);
+        selectInventario.appendChild(
+            optionInventario
+        );
+
+        // ELIMINAR
+
+        const optionEliminar =
+        document.createElement("option");
+
+        optionEliminar.value =
+        producto.nombre;
+
+        optionEliminar.textContent =
+        producto.nombre;
+
+        selectEliminar.appendChild(
+            optionEliminar
+        );
 
     });
 
