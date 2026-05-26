@@ -44,6 +44,15 @@ width:120px;
 
 }
 
+#precio,
+#costo{
+
+    width:90px;
+
+    text-align:center;
+
+}
+
 .acciones-comanda button{
 
     width:auto;
