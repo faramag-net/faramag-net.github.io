@@ -25,6 +25,11 @@ import {
 from "./modules/historial.js";
 
 import {
+    cargarVentas
+}
+from "./modules/storage.js";
+
+import {
 
     agregarComanda,
     renderComanda,
@@ -116,6 +121,8 @@ function renderStock(){
 }
 
 renderStock();
+
+cargarVentas();
 
 cargarProductos();
 
