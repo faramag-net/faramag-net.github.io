@@ -1,72 +1,63 @@
-.acciones-venta{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    
-}
+/* GRID FORMULARIO */
 
-.cantidad{
+.grid-formulario{
 
-    display:flex;
-    
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
     gap:10px;
 
-    align-items:center;
-    
-    flex:0;
-}
-
-.cantidad button{
-
-    width:50px;
+    margin-bottom:15px;
 
 }
 
-.acciones-comanda{
+/* GRID CANTIDAD */
 
-    display:flex;
+.grid-cantidad{
 
-    flex-wrap:wrap;
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(60px,1fr));
 
     gap:10px;
 
     align-items:center;
 
-}
-
-.cantidad input{
-width:120px;
+    margin-bottom:15px;
 
 }
 
-#cantidad{
+/* GRID BOTONES */
 
-    width:60px;
+.grid-botones{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(180px,1fr));
+
+    gap:10px;
 
 }
 
+/* INPUTS PEQUEÑOS */
+
+#cantidad,
 #precio,
 #costo{
-
-    width:70px;
 
     text-align:center;
 
 }
 
-.acciones-comanda button{
+/* BOTONES CANTIDAD */
 
-    width:auto;
+.grid-cantidad button{
 
-}
-
-@media(max-width:768px){
-
-    .acciones-comanda{
-
-        flex-direction:column;
-
-    }
+    width:100%;
 
 }
 
