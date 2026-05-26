@@ -4,10 +4,20 @@ import {
 }
 from "./storage.js";
 
-import {
-    obtenerProductos
+function obtenerProductos(){
+
+    const inventario =
+    JSON.parse(
+
+        localStorage.getItem(
+            "inventarioSantaRosa"
+        )
+
+    ) || {};
+
+    return inventario.productos || [];
+
 }
-from "./inventario-api.js";
 
 export function cargarProductos(){
 
