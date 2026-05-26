@@ -5,6 +5,7 @@ import {
     cambiarCantidad,
     registrarVenta
 }
+
 from "./modules/registrar-venta.js";
 
 window.actualizarProducto =
@@ -20,6 +21,7 @@ import {
     renderTablaVentas,
     actualizarKPIs
 }
+
 from "./modules/historial.js";
 
 import {
@@ -40,6 +42,80 @@ eliminarComanda;
 
 window.registrarComanda =
 registrarComanda;
+
+// INVENTARIO
+
+const inventarioData =
+JSON.parse(
+
+    localStorage.getItem(
+        "inventarioSantaRosa"
+    )
+
+) || {};
+
+const productos =
+inventarioData.productos || [];
+
+// RENDER STOCK
+
+function renderStock(){
+
+    const contenedor =
+    document.getElementById(
+        "stockCards"
+    );
+
+    contenedor.innerHTML = "";
+
+    productos.forEach(producto=>{
+
+        let clase = "";
+        let icono = "";
+
+        if(producto.stock <= 0){
+
+            clase = "stock-rojo";
+            icono = "🔴";
+
+        }else if(producto.stock < 5){
+
+            clase = "stock-amarillo";
+            icono = "🟡";
+
+        }else{
+
+            clase = "stock-verde";
+            icono = "🟢";
+
+        }
+
+        contenedor.innerHTML += `
+
+        <div class="stock-card ${clase}">
+
+            <span>
+
+                ${icono}
+                ${producto.nombre}
+
+            </span>
+
+            <span>
+
+                ${producto.stock}
+
+            </span>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+renderStock();
 
 cargarProductos();
 
