@@ -1,3 +1,11 @@
+.acciones-venta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+
+}
+
 .cantidad{
 
     display:flex;
@@ -10,7 +18,7 @@
 
 .cantidad button{
 
-    width:10px;
+    width:60px;
 
 }
 
