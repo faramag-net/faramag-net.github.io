@@ -32,6 +32,11 @@
 
 }
 
+.cantidad input{
+width:15px;
+
+}
+
 .acciones-comanda button{
 
     flex:1;
