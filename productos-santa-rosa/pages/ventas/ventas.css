@@ -1,6 +1,5 @@
 .acciones-venta{
     display:flex;
-    flex-wrap:wrap;
     gap:10px;
     align-items:center;
     
@@ -31,6 +30,8 @@
 
     gap:10px;
 
+    align-items:center;
+
 }
 
 .cantidad input{
@@ -47,7 +48,7 @@ width:120px;
 #precio,
 #costo{
 
-    width:90px;
+    width:70px;
 
     text-align:center;
 
