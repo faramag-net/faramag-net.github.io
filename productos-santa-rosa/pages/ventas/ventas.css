@@ -39,3 +39,61 @@
     }
 
 }
+
+
+/* STOCK CARDS */
+
+.stock-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(180px,1fr));
+
+    gap:10px;
+
+}
+
+.stock-card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:12px;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+    box-shadow:
+    0 2px 6px rgba(0,0,0,.1);
+
+}
+
+.stock-verde{
+
+    border-left:
+    6px solid #22c55e;
+
+}
+
+.stock-amarillo{
+
+    border-left:
+    6px solid #facc15;
+
+}
+
+.stock-rojo{
+
+    border-left:
+    6px solid #ef4444;
+
+}
