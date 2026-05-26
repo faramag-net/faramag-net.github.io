@@ -27,9 +27,9 @@
 
     display:flex;
 
-    gap:15px;
+    flex-wrap:wrap;
 
-    margin-top:20px;
+    gap:10px;
 
 }
 
@@ -38,9 +38,15 @@ width:120px;
 
 }
 
+#cantidad{
+
+    width:60px;
+
+}
+
 .acciones-comanda button{
 
-    flex:1;
+    width:auto;
 
 }
 
