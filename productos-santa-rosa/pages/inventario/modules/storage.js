@@ -1,31 +1,21 @@
+import LocalDB from "../../../core/storage/local-db.js";
+
 export let productos = [];
 
 export let movimientos = [];
 
-export function guardarLocal(){
+export function guardarLocal() {
 
-    localStorage.setItem(
-        "inventarioSantaRosa",
+    LocalDB.saveProducts(productos);
 
-        JSON.stringify({
-            productos,
-            movimientos
-        })
-    );
-
+    LocalDB.saveMovements(movimientos);
 }
 
-export function cargarLocal(){
+export function cargarLocal() {
 
-    const datos =
-    localStorage.getItem("inventarioSantaRosa");
+    productos =
+        LocalDB.getProducts();
 
-    if(!datos) return;
-
-    const sistema = JSON.parse(datos);
-
-    productos = sistema.productos || [];
-
-    movimientos = sistema.movimientos || [];
-
+    movimientos =
+        LocalDB.getMovements();
 }
