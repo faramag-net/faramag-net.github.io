@@ -71,7 +71,7 @@ function clienteCard(
 
             <button
             onclick="
-            verVisitas('${cliente.id}')
+            openClienteModal('${cliente.id}')
             ">
 
                 Abrir Cliente
