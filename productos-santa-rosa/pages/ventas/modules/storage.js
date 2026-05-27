@@ -1,40 +1,21 @@
-export let ventas = [];
+import LocalDB from "../../../core/storage/local-db.js";
 
-export let comanda = [];
+export let productos = [];
 
-export function guardarVentas(){
+export let movimientos = [];
 
-    localStorage.setItem(
+export function guardarLocal() {
 
-        "ventasSantaRosa",
+    LocalDB.saveProducts(productos);
 
-        JSON.stringify({
-
-            ventas,
-            comanda
-
-        })
-
-    );
-
+    LocalDB.saveMovements(movimientos);
 }
 
-export function cargarVentas(){
+export function cargarLocal() {
 
-    const datos =
-    localStorage.getItem(
-        "ventasSantaRosa"
-    );
+    productos =
+        LocalDB.getProducts();
 
-    if(!datos) return;
-
-    const sistema =
-    JSON.parse(datos);
-
-    ventas =
-    sistema.ventas || [];
-
-    comanda =
-    sistema.comanda || [];
-
+    movimientos =
+        LocalDB.getMovements();
 }
