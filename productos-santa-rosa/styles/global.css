@@ -207,3 +207,22 @@ a{
     margin-top:20px;
 
 }
+
+.toast{
+
+    position: fixed;
+
+    bottom: 20px;
+
+    right: 20px;
+
+    background: #111;
+
+    color: white;
+
+    padding: 12px 18px;
+
+    border-radius: 8px;
+
+    z-index: 9999;
+}
