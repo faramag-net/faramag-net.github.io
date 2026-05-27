@@ -1,46 +1,24 @@
-// INVENTARIO
+import LocalDB from "./core/storage/local-db.js";
 
-const inventarioData =
-JSON.parse(
-
-    localStorage.getItem(
-        "inventarioSantaRosa"
-    )
-
-) || {};
-
-const productos =
-inventarioData.productos || [];
-
-const movimientos =
-inventarioData.movimientos || [];
-
-// VENTAS
-
-const ventasData =
-JSON.parse(
-
-    localStorage.getItem(
-        "ventasSantaRosa"
-    )
-
-) || {};
+const metrics =
+    LocalDB.getDashboardMetrics();
 
 const ventas =
-ventasData.ventas || [];
+    LocalDB.getSales();
+
+const productos =
+    LocalDB.getProducts();
+
+const movimientos =
+    LocalDB.getHistory();
 
 // KPI VENTAS
-
 const totalVentas =
-ventas.reduce(
+    metrics.totalSalesToday;
 
-    (acc, venta) =>
+const totalProductos =
+    metrics.totalProducts;
 
-    acc + Number(venta.subtotal || 0),
-
-0
-
-);
 
 // KPI GANANCIA
 
@@ -57,19 +35,14 @@ ventas.reduce(
 
 // KPI PRODUCTOS
 
-const totalProductos =
-productos.length;
 
 // KPI STOCK BAJO
 
 const stockBajo =
-productos.filter(
+    metrics.lowStockCount;
 
-    producto =>
-
-    Number(producto.stock) <= 5
-
-).length;
+const stockNegativo =
+    metrics.negativeStockCount;
 
 //ultima venta
 const ultimaVenta =
