@@ -74,7 +74,7 @@ function clienteCard(
             verVisitas('${cliente.id}')
             ">
 
-                Ver Visitas
+                Abrir Cliente
 
             </button>
 
