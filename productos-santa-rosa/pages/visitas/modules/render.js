@@ -27,53 +27,71 @@ export function renderClientes() {
             color = "#dc3545";
         }
 
-        container.innerHTML += `
+        container.innerHTML +=
+            clienteCard(
+                cliente,
+                color,
+                estado
+            );
 
-        <div class="card-cliente">
+    });
+}
 
-            <h3>
-                ${cliente.nombre}
-            </h3>
+function clienteCard(
+    cliente,
+    color,
+    estado
+){
 
-            <p>
-                📞 ${cliente.telefono || "-"}
-            </p>
+    return `
 
-            <p>
-                📍 ${cliente.direccion || "-"}
-            </p>
+    <div class="card-cliente">
 
-            <p style="color:${color}">
-                Saldo: $${cliente.saldo || 0}
-            </p>
+        <h3>
+            ${cliente.nombre}
+        </h3>
 
-            <small>
-                ${estado}
-            </small>
+        <p>
+            📞 ${cliente.telefono || "-"}
+        </p>
 
-    <div class="acciones-cliente">
+        <p>
+            📍 ${cliente.direccion || "-"}
+        </p>
 
-        <button
-        onclick="verVisitas('${cliente.id}')">
+        <p style="color:${color}">
+            Saldo: $${cliente.saldo || 0}
+        </p>
 
-            Ver Visitas
+        <small>
+            ${estado}
+        </small>
 
-        </button>
+        <div class="acciones-cliente">
 
-        <button
-        onclick="
-        abrirRegistroVisita(
-            '${cliente.id}'
-        )">
+            <button
+            onclick="
+            verVisitas('${cliente.id}')
+            ">
 
-            Registrar Visita
+                Ver Visitas
 
-        </button>
+            </button>
 
-    </div>
+            <button
+            onclick="
+            abrirRegistroVisita(
+                '${cliente.id}'
+            )
+            ">
+
+                Registrar Visita
+
+            </button>
 
         </div>
 
-        `;
-    });
+    </div>
+
+    `;
 }
