@@ -101,16 +101,39 @@ class LocalDB {
     return updated.find((p) => p.id === id);
   }
 
-  static deleteProduct(id) {
-    const products = this.getProducts();
+static deleteInventoryByProductId(productId) {
 
-    const filtered = products.filter((p) => p.id !== id);
+   const inventory =
+        this.getInventory();
+
+    const filtered =
+        inventory.filter(
+            (item) =>
+                item.productId !== productId
+        );
+
+    this.saveInventory(filtered);
+
+    return true;
+}
+  
+static deleteProduct(id) {
+
+    const products =
+        this.getProducts();
+
+    const filtered =
+        products.filter(
+            (p) => p.id !== id
+        );
 
     this.saveProducts(filtered);
 
-    return true;
-  }
+    this.deleteInventoryByProductId(id);
 
+    return true;
+}
+  
   // =========================
   // Inventory
   // =========================
@@ -215,34 +238,7 @@ class LocalDB {
     return newSale;
   }
 
-  // =========================
-  // Clients
-  // =========================
-
-  static getClients() {
-    return this.get(DB_KEYS.CLIENTS);
-  }
-
-  static saveClients(clients) {
-    return this.set(DB_KEYS.CLIENTS, clients);
-  }
-
-  static addClient(client) {
-    const clients = this.getClients();
-
-    const newClient = {
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      ...client,
-    };
-
-    clients.push(newClient);
-
-    this.saveClients(clients);
-
-    return newClient;
-  }
-  
+ 
   // =========================
   // Movements
   // =========================
@@ -353,6 +349,64 @@ static saveMovements(movements) {
       negativeStockCount:negativeStock.length,
     };
   }
+  
+  // =========================
+  // Clients
+  // =========================
+
+  static getClients() {
+    return this.get(DB_KEYS.CLIENTS);
+}
+
+static saveClients(clients) {
+    return this.set(
+        DB_KEYS.CLIENTS,
+        clients
+    );
+}
+
+static addClient(client) {
+
+    const clients =
+        this.getClients();
+
+    const newClient = {
+
+        id: crypto.randomUUID(),
+
+        nombre: client.nombre || "",
+
+        telefono: client.telefono || "",
+
+        direccion: client.direccion || "",
+
+        notas: client.notas || "",
+
+        saldo: client.saldo || 0,
+
+        ultimaVisita:
+            client.ultimaVisita || null,
+
+        createdAt:
+            new Date().toISOString()
+
+    };
+
+    clients.push(newClient);
+
+    this.saveClients(clients);
+
+    this.addHistory({
+
+        type: "CLIENT_CREATED",
+
+        data: newClient
+
+    });
+
+    return newClient;
+}
+  
 }
 
 export default LocalDB;
