@@ -1,12 +1,12 @@
+import LocalDB from "../../../core/storage/local-db.js";
+
 import {
     renderProductos
 }
 from "./entradas.js";
 
 import {
-    productos,
-    movimientos,
-    guardarLocal
+    productos
 }
 from "./storage.js";
 
@@ -77,35 +77,44 @@ export function agregarProducto(){
         return;
 
     }
-
-    productos.push({
+           
+const nuevoProducto =
+    LocalDB.addProduct({
 
         nombre,
         precio,
         costo,
-        stock
 
     });
 
-    movimientos.push({
+LocalDB.addHistory({
 
-        tipo: "ALTA PRODUCTO",
+    tipo: "ALTA PRODUCTO",
 
-        producto: nombre,
+    producto: nombre,
 
-        cantidad: stock,
+    cantidad: stock,
 
-        fecha: new Date().toLocaleString()
+    fecha: new Date().toLocaleString()
 
-    });
+});
 
-    guardarLocal();
+LocalDB.updateStock(
+    nuevoProducto.id,
+    stock 
+);
+    
+productos.length = 0;
 
-    renderProductos();
+productos.push(
+    ...LocalDB.getProducts()
+);
+    
+renderProductos();
 
-    limpiarFormulario();
+limpiarFormulario();
 
-    alert("Producto agregado");
+alert("Producto agregado");
 
 }
 
@@ -137,21 +146,30 @@ export function eliminarProducto(){
 
     }
 
-    productos.splice(index,1);
+const producto =
+    productos[index];
 
-    movimientos.push({
+LocalDB.deleteProduct(
+    producto.id
+);
 
-        tipo: "ELIMINAR PRODUCTO",
+LocalDB.addHistory({
 
-        producto: nombre,
+    tipo: "ELIMINAR PRODUCTO",
 
-        cantidad: 0,
+    producto: nombre,
 
-        fecha: new Date().toLocaleString()
+    cantidad: 0,
 
-    });
+    fecha: new Date().toLocaleString()
 
-    guardarLocal();
+});
+
+productos.length = 0;
+
+productos.push(
+    ...LocalDB.getProducts()
+);
     
     renderProductos();
 
