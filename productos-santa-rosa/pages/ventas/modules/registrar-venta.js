@@ -1,28 +1,9 @@
-import {
-    ventas,
-    guardarVentas
-}
-from "./storage.js";
-
-function obtenerProductos(){
-
-    const inventario =
-    JSON.parse(
-
-        localStorage.getItem(
-            "inventarioSantaRosa"
-        )
-
-    ) || {};
-
-    return inventario.productos || [];
-
-}
+import LocalDB from "../../../core/storage/local-db.js";
 
 export function cargarProductos(){
 
     const productos =
-    obtenerProductos();
+    LocalDB.getProducts();
 
     const select =
     document.getElementById("producto");
@@ -50,7 +31,7 @@ export function cargarProductos(){
 export function actualizarProducto(){
 
     const productos =
-    obtenerProductos();
+    LocalDB.getProducts();
 
     const nombre =
     document.getElementById("producto").value;
@@ -118,7 +99,7 @@ export function cambiarCantidad(valor){
 export function registrarVenta(){
 
     const productos =
-    obtenerProductos();
+    LocalDB.getProducts();
 
     const nombre =
     document.getElementById("producto").value;
@@ -152,45 +133,51 @@ export function registrarVenta(){
 
     }
 
-    if(cantidad > producto.stock){
+    const stockActual =
+    LocalDB.getProductStock(
+        producto.id
+    );
 
-        alert("Inventario insuficiente");
+    if(cantidad > stockActual){
 
-        return;
+    alert("Inventario insuficiente");
 
+    return;
     }
-
-    producto.stock -= cantidad;
-
+    
     const subtotal =
     cantidad * producto.precio;
 
     const ganancia =
     subtotal - (cantidad * producto.costo);
 
-    ventas.push({
+LocalDB.createSale({
 
-        producto: nombre,
+    producto: nombre,
 
-        cliente,
+    cliente,
 
-        cantidad,
+    cantidad,
 
-        precio: producto.precio,
+    precio: producto.precio,
 
-        costo: producto.costo,
+    costo: producto.costo,
 
-        subtotal,
+    total: subtotal,
 
-        ganancia,
+    ganancia,
 
-        fecha: new Date().toLocaleString()
+    items: [
+        {
+            productId: producto.id,
+            quantity: cantidad,
+            price: producto.precio
+        }
+    ],
 
-    });
+    fecha: new Date().toLocaleString()
 
-    actualizarInventario(productos);
-
-    guardarVentas();
+});
 
     limpiarFormulario();
 
@@ -200,28 +187,6 @@ export function registrarVenta(){
 
 }
 
-function actualizarInventario(productos){
-
-    const datos =
-    JSON.parse(
-
-        localStorage.getItem(
-            "inventarioSantaRosa"
-        )
-
-    );
-
-    datos.productos = productos;
-
-    localStorage.setItem(
-
-        "inventarioSantaRosa",
-
-        JSON.stringify(datos)
-
-    );
-
-}
 
 function limpiarFormulario(){
 
