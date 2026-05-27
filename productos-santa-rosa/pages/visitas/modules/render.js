@@ -51,6 +51,27 @@ export function renderClientes() {
                 ${estado}
             </small>
 
+    <div class="acciones-cliente">
+
+        <button
+        onclick="verVisitas('${cliente.id}')">
+
+            Ver Visitas
+
+        </button>
+
+        <button
+        onclick="
+        abrirRegistroVisita(
+            '${cliente.id}'
+        )">
+
+            Registrar Visita
+
+        </button>
+
+    </div>
+
         </div>
 
         `;
