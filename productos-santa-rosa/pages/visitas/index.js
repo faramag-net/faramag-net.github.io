@@ -23,6 +23,11 @@ import {
 }
 from "./modules/visitas.js";
 
+import {
+    openClienteModal
+}
+from "./modules/cliente-modal.js";
+
 window.crearCliente =
     crearCliente;
 
@@ -31,6 +36,9 @@ window.verVisitas =
 
 window.abrirRegistroVisita =
     abrirRegistroVisita;
+
+window.openClienteModal =
+    openClienteModal;
 
 renderClientes();
 renderDashboardVisitas();
