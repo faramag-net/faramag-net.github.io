@@ -13,6 +13,16 @@ import {
 }
 from "./dashboard-visitas.js";
 
+import {
+    renderVisitas
+}
+from "./modules/render-visitas.js";
+
+import {
+    abrirRegistroVisita
+}
+from "./modules/visitas.js";
+
 window.crearCliente =
     crearCliente;
 
