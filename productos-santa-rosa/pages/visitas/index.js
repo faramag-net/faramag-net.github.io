@@ -8,7 +8,13 @@ import {
 }
 from "./modules/render.js";
 
+import {
+    renderDashboardVisitas
+}
+from "./dashboard-visitas.js";
+
 window.crearCliente =
     crearCliente;
 
 renderClientes();
+renderDashboardVisitas();
