@@ -2,6 +2,7 @@
 
 const DB_KEYS = {
   PRODUCTS: "psr_products",
+  MOVEMENTS: "psr_movements",
   INVENTORY: "psr_inventory",
   SALES: "psr_sales",
   CLIENTS: "psr_clients",
@@ -16,6 +17,7 @@ class LocalDB {
   // =========================
 
   static get(key) {
+    
     try {
       const data = localStorage.getItem(key);
       return data ? JSON.parse(data) : [];
@@ -24,7 +26,7 @@ class LocalDB {
       return [];
     }
   }
-
+   
   static set(key, value) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
@@ -56,7 +58,7 @@ class LocalDB {
   static saveProducts(products) {
     return this.set(DB_KEYS.PRODUCTS, products);
   }
-
+  
   static addProduct(product) {
     const products = this.getProducts();
 
@@ -129,7 +131,17 @@ class LocalDB {
     );
 
     if (index >= 0) {
-      inventory[index].stock += quantity;
+
+        inventory[index].stock += quantity;
+
+        if (inventory[index].stock < 0) {
+
+            console.warn(
+                `Stock negativo en producto ${productId}`
+            );
+        }
+
+
       inventory[index].updatedAt = new Date().toISOString();
     } else {
       inventory.push({
@@ -230,7 +242,21 @@ class LocalDB {
 
     return newClient;
   }
+  
+  // =========================
+  // Movements
+  // =========================
+  
+static getMovements() {
+    return this.get(DB_KEYS.MOVEMENTS);
+}
 
+static saveMovements(movements) {
+    return this.set(
+        DB_KEYS.MOVEMENTS,
+        movements
+    );
+}
   // =========================
   // Visits
   // =========================
@@ -302,8 +328,16 @@ class LocalDB {
       0
     );
 
-    const lowStock = inventory.filter(
-      (item) => item.stock <= 5
+    const lowStock =
+    inventory.filter(
+        item =>
+            item.stock > 0 &&
+            item.stock <= 5
+    );
+
+    const negativeStock =
+    inventory.filter(
+        item => item.stock < 0
     );
 
     const pendingVisits = visits.filter(
@@ -316,6 +350,7 @@ class LocalDB {
       salesCountToday: todaySales.length,
       lowStockCount: lowStock.length,
       pendingVisits: pendingVisits.length,
+      negativeStockCount:negativeStock.length,
     };
   }
 }
