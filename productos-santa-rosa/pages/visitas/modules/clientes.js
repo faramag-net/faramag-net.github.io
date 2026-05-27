@@ -56,7 +56,5 @@ export function crearCliente() {
     "clienteNombre"
     ).focus();
     
-    alert("Cliente registrado");
-
-
+    showToast("Cliente registrado");
 }
