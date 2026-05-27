@@ -12,6 +12,8 @@ export function openClienteModal(clienteId){
         LocalDB.getClients()
         .find(c => c.id === clienteId);
 
+    if(!cliente) return;
+
     const visitas =
         LocalDB.getVisits()
         .filter(v =>
@@ -22,25 +24,39 @@ export function openClienteModal(clienteId){
 
         <div class="cliente-modal">
 
-            <h2>
-                ${cliente.nombre}
-            </h2>
+            <div class="cliente-header">
+
+                <h2>
+                    ${cliente.nombre}
+                </h2>
+
+                <span class="cliente-status">
+
+                    ${
+                        cliente.saldo > 0
+                        ? "💰 Pendiente"
+                        : "✅ OK"
+                    }
+
+                </span>
+
+            </div>
 
             <div class="tabs">
 
-                <button>
+                <button class="tab-btn">
                     INFO
                 </button>
 
-                <button>
+                <button class="tab-btn">
                     VISITAS
                 </button>
 
-                <button>
+                <button class="tab-btn">
                     COBRANZA
                 </button>
 
-                <button>
+                <button class="tab-btn">
                     PEDIDOS
                 </button>
 
@@ -64,26 +80,35 @@ export function openClienteModal(clienteId){
                 <hr>
 
                 <h3>
-                    Últimas visitas
+                    Historial visitas
                 </h3>
 
                 ${
                     visitas.length
                     ? visitas.map(v => `
+
                         <div class="visita-item">
 
                             <small>
+
                                 ${
                                     new Date(v.fecha)
                                     .toLocaleDateString()
                                 }
+
                             </small>
 
                             <p>
                                 ${v.nota || "-"}
                             </p>
 
+                            <strong>
+                                Pedido:
+                                ${v.pedido || "-"}
+                            </strong>
+
                         </div>
+
                     `).join("")
                     : `
                         <p>
