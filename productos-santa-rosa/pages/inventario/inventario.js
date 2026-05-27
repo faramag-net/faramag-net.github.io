@@ -1,3 +1,5 @@
+import LocalDB from "../../core/storage/local-db.js";
+
 import {
     cargarLocal
 }
