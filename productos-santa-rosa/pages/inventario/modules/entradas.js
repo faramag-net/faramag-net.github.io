@@ -1,7 +1,7 @@
+import LocalDB from "../../../core/storage/local-db.js";
+
 import {
-    productos,
-    movimientos,
-    guardarLocal
+    productos
 }
 from "./storage.js";
 
@@ -91,35 +91,46 @@ export function agregarInventario(){
 
     }
 
-    if(
-        tipo === "MERMA" ||
-        tipo === "CORTESIA"
-    ){
+let movimientoCantidad = cantidad;
 
-        producto.stock -= cantidad;
+if(
+    tipo === "MERMA" ||
+    tipo === "CORTESIA"
+){
 
-    }else{
+    movimientoCantidad = -cantidad;
+}
 
-        producto.stock += cantidad;
+LocalDB.updateStock(
+    producto.id,
+    movimientoCantidad
+);
 
-    }
+const stockActual =
+    LocalDB.getProductStock(
+        producto.id
+    );
 
-    movimientos.push({
+LocalDB.addHistory({
 
-        tipo,
+    tipo,
 
-        producto: nombre,
+    producto: nombre,
 
-        cantidad,
+    cantidad,
 
-        stock: producto.stock,
+    stock: stockActual,
 
-        fecha: new Date().toLocaleString()
+    fecha: new Date().toLocaleString()
 
-    });
+});
 
-    guardarLocal();
+    productos.length = 0;
 
+productos.push(
+    ...LocalDB.getProducts()
+);
+    
     document.getElementById("agregarStock").value = "";
 
     alert("Movimiento registrado");
