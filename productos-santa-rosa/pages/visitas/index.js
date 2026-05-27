@@ -16,5 +16,11 @@ from "./dashboard-visitas.js";
 window.crearCliente =
     crearCliente;
 
+window.verVisitas =
+    renderVisitas;
+
+window.abrirRegistroVisita =
+    abrirRegistroVisita;
+
 renderClientes();
 renderDashboardVisitas();
