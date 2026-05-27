@@ -1,5 +1,10 @@
 import LocalDB from "../../../core/storage/local-db.js";
 
+import {
+    renderClientes
+}
+from "./render.js";
+
 export function crearCliente() {
 
     const nombre =
@@ -33,7 +38,25 @@ export function crearCliente() {
         notas: ""
 
     });
+    renderClientes();
 
+    document.getElementById(
+    "clienteNombre"
+    ).value = "";
+    
+    document.getElementById(
+    "clienteTelefono"
+    ).value = "";
+
+    document.getElementById(
+    "clienteDireccion"
+    ).value = "";
+
+    document.getElementById(
+    "clienteNombre"
+    ).focus();
+    
     alert("Cliente registrado");
+
 
 }
