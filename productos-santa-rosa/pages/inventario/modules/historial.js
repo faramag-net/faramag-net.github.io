@@ -1,6 +1,7 @@
+import LocalDB from "../../../core/storage/local-db.js";
+
 import {
-    productos,
-    movimientos
+    productos
 }
 from "./storage.js";
 
@@ -13,7 +14,10 @@ export function renderTabla(){
 
     tabla.innerHTML = "";
 
-    movimientos.forEach((movimiento,index)=>{
+    const movimientos =
+    LocalDB.getHistory();
+
+        movimientos.forEach((movimiento)=>{
 
         tabla.innerHTML += `
 
@@ -61,8 +65,13 @@ export function actualizarResumen(){
         let color = "#28a745";
 
         let estado = "✅ OK";
-
-        if(producto.stock <= 5){
+        
+        const stock =
+        LocalDB.getProductStock(
+        producto.id
+        );
+        
+    if(stock > 0 && stock <= 5){
 
             color = "#ffc107";
 
@@ -70,7 +79,7 @@ export function actualizarResumen(){
 
         }
 
-        if(producto.stock === 0){
+        if(stock === 0){
 
             color = "#dc3545";
 
@@ -78,7 +87,7 @@ export function actualizarResumen(){
 
         }
 
-        if(producto.stock < 0){
+        if(stock < 0){
 
             color = "#b00020";
 
@@ -93,7 +102,7 @@ export function actualizarResumen(){
             <h4>${producto.nombre}</h4>
 
             <p style="color:${color}">
-                ${producto.stock}
+                ${stock}
             </p>
 
             <small
