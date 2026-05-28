@@ -136,12 +136,11 @@ export function cerrarInventario(){
         return;
     }
 
-    LocalDB.set(
-        "psr_history",
-        []
-    );
+    LocalDB.clearHistory();
 
     renderTabla();
+
+    actualizarResumen();
 
     alert(
         "Historial eliminado"
