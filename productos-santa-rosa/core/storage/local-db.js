@@ -72,23 +72,7 @@ class LocalDB {
     products.push(newProduct);
 
     this.saveProducts(products);
-
-this.addHistory({
-
-   tipo: "PRODUCT_CREATED",
-
-   producto: newProduct.nombre,
-
-   cantidad: 0,
-
-   stock: 0,
-
-   fecha: new Date().toLocaleString(),
-
-   metadata: newProduct
-
-});
-    
+   
     return newProduct;
   }
 
@@ -192,20 +176,6 @@ const product =
     this.getProducts().find(
         p => p.id === productId
     );
-
-this.addHistory({
-
-   tipo: "STOCK_UPDATED",
-
-   producto: product?.nombre || "N/A",
-
-   cantidad: quantity,
-
-   stock: this.getProductStock(productId),
-
-   fecha: new Date().toLocaleString()
-
-});
 
     return true;
   }
