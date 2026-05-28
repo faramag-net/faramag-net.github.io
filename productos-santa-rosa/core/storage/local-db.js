@@ -293,6 +293,15 @@ static saveMovements(movements) {
     return this.get(DB_KEYS.HISTORY);
   }
 
+  static clearHistory() {
+
+    this.set(
+        DB_KEYS.HISTORY,
+        []
+    );
+
+}
+  
   static addHistory(log) {
     const history = this.getHistory();
 
