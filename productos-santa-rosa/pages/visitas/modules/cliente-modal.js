@@ -9,7 +9,7 @@ from "../../../components/ui/modal.js";
 import {
     showToast
 }
-from "../../../components/ui/toast.js";
+from "../../../components/toast.js";
 
 export function openClienteModal(clienteId){
 
