@@ -19,11 +19,6 @@ import {
 from "./modules/render-visitas.js";
 
 import {
-    abrirRegistroVisita
-}
-from "./modules/visitas.js";
-
-import {
     openClienteModal
 }
 from "./modules/cliente-modal.js";
@@ -33,9 +28,6 @@ window.crearCliente =
 
 window.verVisitas =
     renderVisitas;
-
-window.abrirRegistroVisita =
-    abrirRegistroVisita;
 
 window.openClienteModal =
     openClienteModal;
