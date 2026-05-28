@@ -130,14 +130,21 @@ export function cerrarInventario(){
 
     if(
         !confirm(
-            "¿Borrar inventario completo?"
+            "¿Borrar historial de inventario?"
         )
     ){
         return;
     }
 
-    LocalDB.clearAll();
+    LocalDB.set(
+        "psr_history",
+        []
+    );
 
-    location.reload();
+    renderTabla();
+
+    alert(
+        "Historial eliminado"
+    );
 
 }
