@@ -73,11 +73,22 @@ class LocalDB {
 
     this.saveProducts(products);
 
-    this.addHistory({
-      type: "PRODUCT_CREATED",
-      data: newProduct,
-    });
+this.addHistory({
 
+   tipo: "PRODUCT_CREATED",
+
+   producto: newProduct.nombre,
+
+   cantidad: 0,
+
+   stock: 0,
+
+   fecha: new Date().toLocaleString(),
+
+   metadata: newProduct
+
+});
+    
     return newProduct;
   }
 
@@ -177,13 +188,24 @@ static deleteProduct(id) {
 
     this.saveInventory(inventory);
 
-    this.addHistory({
-      type: "STOCK_UPDATED",
-      data: {
-        productId,
-        quantity,
-      },
-    });
+const product =
+    this.getProducts().find(
+        p => p.id === productId
+    );
+
+this.addHistory({
+
+   tipo: "STOCK_UPDATED",
+
+   producto: product?.nombre || "N/A",
+
+   cantidad: quantity,
+
+   stock: this.getProductStock(productId),
+
+   fecha: new Date().toLocaleString()
+
+});
 
     return true;
   }
@@ -230,10 +252,21 @@ static deleteProduct(id) {
 
     this.saveSales(sales);
 
-    this.addHistory({
-      type: "SALE_CREATED",
-      data: newSale,
-    });
+this.addHistory({
+
+   tipo: "SALE_CREATED",
+
+   producto: "VENTA",
+
+   cantidad: sale.items?.length || 0,
+
+   stock: 0,
+
+   fecha: new Date().toLocaleString(),
+
+   metadata: newSale
+
+});
 
     return newSale;
   }
@@ -396,14 +429,22 @@ static addClient(client) {
 
     this.saveClients(clients);
 
-    this.addHistory({
+this.addHistory({
 
-        type: "CLIENT_CREATED",
+    tipo: "CLIENT_CREATED",
 
-        data: newClient
+    producto: newClient.nombre,
 
-    });
+    cantidad: 0,
 
+    stock: 0,
+
+    fecha: new Date().toLocaleString(),
+
+    metadata: newClient
+
+});
+  
     return newClient;
 }
   
