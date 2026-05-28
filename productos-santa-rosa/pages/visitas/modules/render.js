@@ -78,17 +78,6 @@ function clienteCard(
 
             </button>
 
-            <button
-            onclick="
-            abrirRegistroVisita(
-                '${cliente.id}'
-            )
-            ">
-
-                Registrar Visita
-
-            </button>
-
         </div>
 
     </div>
