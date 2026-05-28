@@ -1,9 +1,4 @@
-import {
-    productos,
-    movimientos,
-    guardarLocal
-}
-from "./storage.js";
+import LocalDB from "../../../core/storage/local-db.js";
 
 import {
     actualizarResumen,
@@ -13,12 +8,21 @@ from "./historial.js";
 
 export function exportarJSON(){
 
-    const datos = {
+const datos = {
 
-        productos,
-        movimientos
+    productos:
+        LocalDB.getProducts(),
 
-    };
+    inventario:
+        LocalDB.getInventory(),
+
+    historial:
+        LocalDB.getHistory(),
+
+    ventas:
+        LocalDB.getSales()
+
+};
 
     const blob = new Blob(
 
@@ -30,33 +34,37 @@ export function exportarJSON(){
 
     );
 
-    const a =
-    document.createElement("a");
+const a =
+document.createElement("a");
 
-    a.href =
-    URL.createObjectURL(blob);
+const url =
+URL.createObjectURL(blob);
 
-    const hoy =
-    new Date();
+const hoy =
+new Date();
 
-    const fecha =
+const fecha =
 
-        hoy.getFullYear() + "-" +
+    hoy.getFullYear() + "-" +
 
-        String(
-            hoy.getMonth()+1
-        ).padStart(2,"0")
+    String(
+        hoy.getMonth()+1
+    ).padStart(2,"0")
 
-        + "-" +
+    + "-" +
 
-        String(
-            hoy.getDate()
-        ).padStart(2,"0");
+    String(
+        hoy.getDate()
+    ).padStart(2,"0");
 
-    a.download =
-    "inventario_" + fecha + ".json";
+a.href = url;
 
-    a.click();
+a.download =
+"inventario_" + fecha + ".json";
+
+a.click();
+
+URL.revokeObjectURL(url);
 
 }
 
@@ -72,27 +80,45 @@ export function importarJSON(event){
 
     lector.onload = function(e){
 
-        const datos =
-        JSON.parse(e.target.result);
+let datos = {};
 
-        productos.length = 0;
-        movimientos.length = 0;
+try {
 
-        productos.push(
-            ...(datos.productos || [])
+    datos =
+    JSON.parse(e.target.result);
+
+} catch(error){
+
+    alert("JSON inválido");
+
+    return;
+
+}
+        
+        LocalDB.saveProducts(
+            datos.productos || []
         );
 
-        movimientos.push(
-            ...(datos.movimientos || [])
+        LocalDB.saveInventory(
+            datos.inventario || []
         );
 
-        guardarLocal();
+        LocalDB.set(
+            "psr_history",
+            datos.historial || []
+        );
+
+        LocalDB.saveSales(
+            datos.ventas || []
+        );
 
         actualizarResumen();
 
         renderTabla();
 
         alert("Inventario importado");
+
+        location.reload();
 
     };
 
@@ -104,22 +130,14 @@ export function cerrarInventario(){
 
     if(
         !confirm(
-            "¿Borrar historial inventario?"
+            "¿Borrar inventario completo?"
         )
     ){
-
         return;
-
     }
 
-    movimientos.length = 0;
+    LocalDB.clearAll();
 
-    guardarLocal();
-
-    renderTabla();
-
-    actualizarResumen();
-
-    alert("Historial eliminado");
+    location.reload();
 
 }
