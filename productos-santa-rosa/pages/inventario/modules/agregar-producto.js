@@ -118,65 +118,6 @@ alert("Producto agregado");
 
 }
 
-export function eliminarProducto(){
-
-    const nombre =
-    document.getElementById(
-    "productoEliminar"
-    ).value;
-
-    if(!nombre){
-
-        alert("Selecciona producto");
-
-        return;
-
-    }
-
-    const index =
-    productos.findIndex(
-        p => p.nombre === nombre
-    );
-
-    if(index === -1){
-
-        alert("Producto no encontrado");
-
-        return;
-
-    }
-
-const producto =
-    productos[index];
-
-LocalDB.deleteProduct(
-    producto.id
-);
-
-LocalDB.addHistory({
-
-    tipo: "ELIMINAR PRODUCTO",
-
-    producto: nombre,
-
-    cantidad: 0,
-
-    fecha: new Date().toLocaleString()
-
-});
-
-productos.length = 0;
-
-productos.push(
-    ...LocalDB.getProducts()
-);
-    
-    renderProductos();
-
-    alert("Producto eliminado");
-
-}
-
 function limpiarFormulario(){
 
     document.getElementById("nuevoProducto").value = "";
