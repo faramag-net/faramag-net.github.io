@@ -12,14 +12,7 @@ export function renderProductos(){
         "productoInventario"
     );
 
-    const selectEliminar =
-    document.getElementById(
-        "productoEliminar"
-    );
-
     selectInventario.innerHTML = "";
-
-    selectEliminar.innerHTML = "";
 
     productos.forEach(producto=>{
 
@@ -37,24 +30,7 @@ export function renderProductos(){
         selectInventario.appendChild(
             optionInventario
         );
-
-        // ELIMINAR
-
-        const optionEliminar =
-        document.createElement("option");
-
-        optionEliminar.value =
-        producto.nombre;
-
-        optionEliminar.textContent =
-        producto.nombre;
-
-        selectEliminar.appendChild(
-            optionEliminar
-        );
-
     });
-
 }
 
 export function agregarInventario(){
@@ -132,7 +108,9 @@ productos.push(
 );
     
     document.getElementById("agregarStock").value = "";
-
+    
+    renderTablaProductos();
+    
     alert("Movimiento registrado");
 
 }
