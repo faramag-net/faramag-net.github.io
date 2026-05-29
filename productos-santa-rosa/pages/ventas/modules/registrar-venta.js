@@ -125,11 +125,17 @@ export function registrarVenta(){
 
     }
 
-    if(cantidad <= 0){
+    if(stockActual <= 0){
 
-        alert("Cantidad inválida");
+    alert(
+        "⚠️ Inventario en cero o negativo. La venta será registrada."
+    );
+        
+    }else if(cantidad > stockActual){
 
-        return;
+    alert(
+        "⚠️ La venta dejará inventario negativo. La venta será registrada."
+    );
 
     }
 
@@ -137,13 +143,6 @@ export function registrarVenta(){
     LocalDB.getProductStock(
         producto.id
     );
-
-    if(cantidad > stockActual){
-
-    alert("Inventario insuficiente");
-
-    return;
-    }
     
     const subtotal =
     cantidad * producto.precio;
