@@ -18,9 +18,9 @@
 
 .tabla-productos button{
 
-    width:32px;
+    width:28px;
 
-    height:32px;
+    height:28px;
 
     padding:0;
 
@@ -32,18 +32,21 @@
 
 .tabla-productos td{
 
-    padding:4px 8px;
+    padding:1px 6px;
+
+    font-size:14px;
 
 }
 
 .tabla-productos td:last-child{
 
-    width:70px;
+    width:40px;
 
 }
 
 .tabla-productos th{
 
-    padding:8px;
+    padding:6px;
 
+    font-size:14px;
 }
