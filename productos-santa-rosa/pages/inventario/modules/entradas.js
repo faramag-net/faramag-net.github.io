@@ -136,3 +136,99 @@ productos.push(
     alert("Movimiento registrado");
 
 }
+
+export function renderTablaProductos(){
+
+    const tabla =
+    document.getElementById(
+        "tablaProductos"
+    );
+
+    if(!tabla) return;
+
+    tabla.innerHTML = "";
+
+    LocalDB.getProducts()
+    .forEach(producto=>{
+
+        const stock =
+        LocalDB.getProductStock(
+            producto.id
+        );
+
+        let estado = "OK";
+
+        if(stock <= 0)
+            estado = "AGOTADO";
+
+        else if(stock < 5)
+            estado = "BAJO";
+
+        tabla.innerHTML += `
+
+        <tr>
+
+            <td>${producto.nombre}</td>
+
+            <td>${stock}</td>
+
+            <td>${estado}</td>
+
+            <td>
+
+                <button
+                    onclick="eliminarProductoPorId('${producto.id}')"
+                >
+                    🗑
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+export function eliminarProductoPorId(id){
+
+    const producto =
+    LocalDB.getProducts()
+    .find(
+        p => p.id === id
+    );
+
+    if(!producto) return;
+
+    if(
+        !confirm(
+            `¿Eliminar ${producto.nombre}?`
+        )
+    ){
+        return;
+    }
+
+    LocalDB.deleteProduct(id);
+
+    LocalDB.addHistory({
+
+        tipo: "ELIMINAR PRODUCTO",
+
+        producto: producto.nombre,
+
+        cantidad: 0,
+
+        stock: 0,
+
+        fecha: new Date().toLocaleString()
+
+    });
+
+    location.reload();
+
+}
+
+window.eliminarProductoPorId =
+    eliminarProductoPorId;
