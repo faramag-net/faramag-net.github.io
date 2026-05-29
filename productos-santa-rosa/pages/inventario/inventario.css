@@ -16,6 +16,8 @@
 
 }
 
+/* BOTON ELIMINAR */
+
 .tabla-productos button{
 
     width:28px;
@@ -29,6 +31,8 @@
     border-radius:6px;
 
 }
+
+/* TABLA INVENTARIO */
 
 .tabla-productos td{
 
@@ -50,3 +54,92 @@
 
     font-size:14px;
 }
+
+/* CONTENEDOR */
+
+.container{
+
+    max-width:1200px;
+
+    margin:auto;
+
+}
+    
+/* PANELES */
+
+.panel{
+
+    padding:12px !important;
+
+    margin:10px auto !important;
+
+    border-radius:10px;
+
+}
+
+/* TITULOS */
+
+h1{
+
+    margin:10px 0 !important;
+
+    font-size:24px;
+
+}
+
+.panel h2{
+
+    margin-bottom:8px;
+
+    font-size:18px;
+
+}
+
+/* INPUTS */
+
+.panel input,
+.panel select,
+.panel button{
+
+    padding:6px 10px;
+
+    margin:4px 0;
+
+    font-size:14px;
+
+    min-height:34px;
+
+}
+
+/* HISTORIAL */
+
+#tablaInventario td{
+
+    padding:4px 6px;
+
+    font-size:13px;
+
+}
+
+#tablaInventario th{
+
+    padding:6px;
+
+    font-size:13px;
+
+}
+
+/* BOTONES INFERIORES */
+
+.btn-exportar,
+.btn-importar,
+.btn-eliminar{
+
+    padding:6px 12px;
+
+    min-height:32px;
+
+}
+
+
+
