@@ -13,7 +13,8 @@ from "./modules/agregar-producto.js";
 
 import {
     agregarInventario,
-    renderProductos
+    renderProductos,
+    renderTablaProductos
 }
 from "./modules/entradas.js";
 
@@ -51,6 +52,8 @@ cerrarInventario;
 cargarLocal();
 
 renderProductos();
+
+renderTablaProductos();
 
 actualizarResumen();
 
