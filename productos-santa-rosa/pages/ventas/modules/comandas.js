@@ -42,7 +42,12 @@ export function agregarComanda(){
         return;
 
     }
-
+    
+    const stockActual =
+    LocalDB.getProductStock(
+        producto.id
+    );
+    
 if(stockActual <= 0){
 
     alert(
