@@ -7,7 +7,6 @@ from "./modules/storage.js";
 
 import {
     agregarProducto,
-    eliminarProducto
 }
 from "./modules/agregar-producto.js";
 
@@ -33,9 +32,6 @@ from "./modules/exportar.js";
 
 window.agregarProducto =
 agregarProducto;
-
-window.eliminarProducto =
-eliminarProducto;
 
 window.agregarInventario =
 agregarInventario;
