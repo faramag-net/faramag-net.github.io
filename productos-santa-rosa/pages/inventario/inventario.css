@@ -18,26 +18,32 @@
 
 .tabla-productos button{
 
-    width:40px;
+    width:32px;
 
-    height:40px;
+    height:32px;
 
     padding:0;
 
     margin:0;
 
-    border-radius:8px;
+    border-radius:6px;
 
 }
 
 .tabla-productos td{
 
-    padding:8px 12px;
+    padding:4px 8px;
 
 }
 
 .tabla-productos td:last-child{
 
     width:70px;
+
+}
+
+.tabla-productos th{
+
+    padding:8px;
 
 }
