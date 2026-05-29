@@ -178,11 +178,9 @@ h1{
     display:grid;
 
     grid-template-columns:
-        2fr 2fr 1fr 1fr;
+        repeat(2,1fr);
 
     gap:8px;
-
-    align-items:center;
 
 }
 
@@ -215,11 +213,9 @@ h1{
     display:grid;
 
     grid-template-columns:
-        3fr 1fr 1fr 1fr 1fr;
+        repeat(3,1fr);
 
     gap:8px;
-
-    align-items:center;
 
 }
 
@@ -227,5 +223,17 @@ h1{
 .producto-grid button{
 
     margin:0;
+
+}
+
+.producto-grid .stock{
+
+    grid-column:1 / 3;
+
+}
+
+.producto-grid .btn-agregar{
+
+    grid-column:3;
 
 }
