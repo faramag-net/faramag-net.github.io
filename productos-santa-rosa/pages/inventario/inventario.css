@@ -172,3 +172,60 @@ h1{
     }
 
 }
+
+.movimiento-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        2fr 2fr 1fr 1fr;
+
+    gap:8px;
+
+    align-items:center;
+
+}
+
+.movimiento-grid select,
+.movimiento-grid input,
+.movimiento-grid button{
+
+    margin:0;
+
+}
+
+.movimiento-grid *{
+
+    margin:0;
+
+}
+
+@media(max-width:768px){
+
+    .movimiento-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+.producto-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        3fr 1fr 1fr 1fr 1fr;
+
+    gap:8px;
+
+    align-items:center;
+
+}
+
+.producto-grid input,
+.producto-grid button{
+
+    margin:0;
+
+}
