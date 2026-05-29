@@ -43,21 +43,20 @@ export function agregarComanda(){
 
     }
 
-    if(cantidad <= 0){
+    alert(
+        "⚠️ Inventario en cero o negativo. La venta será registrada."
+    );
+        
+    }else if(cantidad > stockActual){
 
-        alert("Cantidad inválida");
+    alert(
+        "⚠️ La venta dejará inventario negativo. La venta será registrada."
+    );
 
-        return;
+    }
 
     }
 
-    if(cantidad > producto.stock){
-
-        alert("Inventario insuficiente");
-
-        return;
-
-    }
 
     const subtotal =
     cantidad * producto.precio;
