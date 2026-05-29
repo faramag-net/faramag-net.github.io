@@ -1,3 +1,5 @@
+import LocalDB from "../../core/storage/local-db.js";
+
 import {
     cargarProductos,
     actualizarProducto,
@@ -25,11 +27,6 @@ import {
 from "./modules/historial.js";
 
 import {
-    cargarVentas
-}
-from "./modules/storage.js";
-
-import {
 
     agregarComanda,
     renderComanda,
@@ -50,18 +47,6 @@ registrarComanda;
 
 // INVENTARIO
 
-const inventarioData =
-JSON.parse(
-
-    localStorage.getItem(
-        "inventarioSantaRosa"
-    )
-
-) || {};
-
-const productos =
-inventarioData.productos || [];
-
 // RENDER STOCK
 
 function renderStock(){
@@ -70,20 +55,34 @@ function renderStock(){
     document.getElementById(
         "stockCards"
     );
-
+    
+    const productos =
+        LocalDB.getProducts();
+    
+    const inventario = 
+        LocalDB.getInventory();
+    
     contenedor.innerHTML = "";
 
     productos.forEach(producto=>{
 
+    const itemInventario =
+        inventario.find(
+            i => i.productId === producto.id
+        );
+
+    const stock =
+        itemInventario?.stock || 0;
+
         let clase = "";
         let icono = "";
 
-        if(producto.stock <= 0){
+        if(stock <= 0){
 
             clase = "stock-rojo";
             icono = "🔴";
 
-        }else if(producto.stock < 5){
+        }else if(stock < 5){
 
             clase = "stock-amarillo";
             icono = "🟡";
@@ -108,7 +107,7 @@ function renderStock(){
 
             <span>
 
-                ${producto.stock}
+                ${stock}
 
             </span>
 
@@ -121,8 +120,6 @@ function renderStock(){
 }
 
 renderStock();
-
-cargarVentas();
 
 cargarProductos();
 
