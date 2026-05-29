@@ -87,16 +87,14 @@ const nuevoProducto =
 
     });
 
+const stockInicial = Number(stock);
+
 LocalDB.addHistory({
-
     tipo: "ALTA PRODUCTO",
-
     producto: nombre,
-
-    cantidad: stock,
-
+    cantidad: stockInicial,
+    stock: stockInicial,
     fecha: new Date().toLocaleString()
-
 });
 
 LocalDB.updateStock(
