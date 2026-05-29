@@ -1,22 +1,10 @@
-import {
-    ventas,
-    comanda,
-    guardarVentas
-}
-from "./storage.js";
+import LocalDB from "../../../core/storage/local-db.js";
+
+const comanda = [];
 
 function obtenerProductos(){
 
-    const inventario =
-    JSON.parse(
-
-        localStorage.getItem(
-            "inventarioSantaRosa"
-        )
-
-    ) || {};
-
-    return inventario.productos || [];
+    return LocalDB.getProducts();
 
 }
 
@@ -169,55 +157,45 @@ export function registrarComanda(){
 
     }
 
-    const datos =
-    JSON.parse(
+comanda.forEach(item => {
 
-        localStorage.getItem(
-            "inventarioSantaRosa"
-        )
+    const producto =
+    LocalDB.getProducts()
+    .find(p => p.nombre === item.producto);
 
-    );
+    if(!producto) return;
 
-    const productos =
-    datos.productos;
+    LocalDB.createSale({
 
-    comanda.forEach(item=>{
+        producto: item.producto,
 
-        const producto =
-        productos.find(
-            p => p.nombre === item.producto
-        );
+        cliente: item.cliente,
 
-        if(producto){
+        cantidad: item.cantidad,
 
-            producto.stock -= item.cantidad;
+        precio: item.precio,
 
-        }
+        costo: item.costo,
 
-        ventas.push({
+        total: item.subtotal,
 
-            ...item,
+        ganancia: item.ganancia,
 
-            fecha:
-            new Date().toLocaleString()
+        items: [
+            {
+                productId: producto.id,
+                quantity: item.cantidad,
+                price: item.precio
+            }
+        ],
 
-        });
+        fecha: new Date().toLocaleString()
 
     });
 
-    datos.productos = productos;
-
-    localStorage.setItem(
-
-        "inventarioSantaRosa",
-
-        JSON.stringify(datos)
-
-    );
+});
 
     comanda.length = 0;
-
-    guardarVentas();
 
     renderComanda();
 
