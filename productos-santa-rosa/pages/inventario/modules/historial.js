@@ -1,10 +1,5 @@
 import LocalDB from "../../../core/storage/local-db.js";
 
-import {
-    productos
-}
-from "./storage.js";
-
 export function renderTabla(){
 
     const tabla =
