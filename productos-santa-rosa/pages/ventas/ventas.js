@@ -19,6 +19,9 @@ cambiarCantidad;
 window.registrarVenta =
 registrarVenta;
 
+window.actualizarSubtotal =
+actualizarSubtotal;
+
 import {
     renderTablaVentas,
     actualizarKPIs
