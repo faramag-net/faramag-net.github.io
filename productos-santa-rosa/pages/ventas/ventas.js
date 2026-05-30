@@ -48,7 +48,21 @@ eliminarComanda;
 window.registrarComanda =
 registrarComanda;
 
-// INVENTARIO
+import {
+    exportarVentas,
+    importarVentas,
+    cerrarCorte
+}
+from "./modules/exportar.js";
+
+window.exportarVentas =
+exportarVentas;
+
+window.importarVentas =
+importarVentas;
+
+window.cerrarCorte =
+cerrarCorte;
 
 // RENDER STOCK
 
