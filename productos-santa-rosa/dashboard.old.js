@@ -12,11 +12,6 @@ const productos =
 const movimientos =
     LocalDB.getHistory();
 
-console.log(metrics);
-console.log(ventas);
-console.log(productos);
-console.log(movimientos);
-
 // KPI VENTAS
 const totalVentas =
     metrics.totalSalesToday;
