@@ -1,9 +1,4 @@
-import {
-    ventas,
-    comanda,
-    guardarVentas
-}
-from "./storage.js";
+import LocalDB from "../../../core/storage/local-db.js";
 
 import {
     actualizarKPIs,
@@ -20,8 +15,7 @@ export function exportarVentas(){
 
     const datos = {
 
-        ventas,
-        comanda
+    ventas: LocalDB.getSales(),
 
     };
 
@@ -80,16 +74,8 @@ export function importarVentas(event){
         const datos =
         JSON.parse(e.target.result);
 
-        ventas.length = 0;
-
-        comanda.length = 0;
-
-        ventas.push(
-            ...(datos.ventas || [])
-        );
-
-        comanda.push(
-            ...(datos.comanda || [])
+        LocalDB.saveSales(
+            datos.ventas || []
         );
 
         guardarVentas();
@@ -120,11 +106,7 @@ export function cerrarCorte(){
 
     }
 
-    ventas.length = 0;
-
-    comanda.length = 0;
-
-    guardarVentas();
+    LocalDB.saveSales([]);
 
     renderTablaVentas();
 
