@@ -16,11 +16,11 @@ actualizarProducto;
 window.cambiarCantidad =
 cambiarCantidad;
 
-window.registrarVenta =
-registrarVenta;
-
 window.actualizarSubtotal =
 actualizarSubtotal;
+
+window.registrarVenta =
+registrarVenta;
 
 import {
     renderTablaVentas,
