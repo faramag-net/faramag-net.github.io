@@ -9,12 +9,10 @@ const inventario =
 const ventas =
     LocalDB.getSales();
 
-// PRODUCTOS
+/* KPIs */
 
 const totalProductos =
     productos.length;
-
-// STOCK BAJO
 
 const stockBajo =
 inventario.filter(
@@ -22,8 +20,6 @@ inventario.filter(
         item.stock > 0 &&
         item.stock <= 5
 );
-
-// VENTAS
 
 const totalVentas =
 ventas.reduce(
@@ -38,8 +34,6 @@ ventas.reduce(
 
 );
 
-// GANANCIA
-
 const totalGanancia =
 ventas.reduce(
 
@@ -53,7 +47,7 @@ ventas.reduce(
 
 );
 
-// RENDER
+/* RENDER */
 
 document
 .getElementById("kpiProductos")
