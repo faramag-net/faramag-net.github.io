@@ -78,7 +78,6 @@ export function importarVentas(event){
             datos.ventas || []
         );
 
-        guardarVentas();
 
         renderTablaVentas();
 
