@@ -226,11 +226,13 @@ this.addHistory({
 
    tipo: "SALE_CREATED",
 
-   producto: "VENTA",
+   producto: sale.producto,
 
-   cantidad: sale.items?.length || 0,
+   cantidad: sale.cantidad,
 
-   stock: 0,
+   stock: this.getProductStock(
+       sale.items?.[0]?.productId
+   ),
 
    fecha: new Date().toLocaleString(),
 
