@@ -125,6 +125,11 @@ export function registrarVenta(){
 
     }
 
+    const stockActual =
+    LocalDB.getProductStock(
+        producto.id
+    );
+    
     if(stockActual <= 0){
 
     alert(
@@ -139,10 +144,6 @@ export function registrarVenta(){
 
     }
 
-    const stockActual =
-    LocalDB.getProductStock(
-        producto.id
-    );
     
     const subtotal =
     cantidad * producto.precio;
