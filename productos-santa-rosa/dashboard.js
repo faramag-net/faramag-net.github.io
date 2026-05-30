@@ -3,12 +3,16 @@ from "./core/storage/local-db.js";
 
 const productos =
     LocalDB.getProducts();
+window.productos = productos;
 
 const inventario =
     LocalDB.getInventory();
+window.inventario = inventario;
 
 const ventas =
     LocalDB.getSales();
+
+window.ventas = ventas;
 
 console.log("Productos", productos);
 
