@@ -1,27 +1,20 @@
-import LocalDB
-from "./core/storage/local-db.js";
+import LocalDB from "./core/storage/local-db.js";
 
 const productos =
     LocalDB.getProducts();
-window.productos = productos;
 
 const inventario =
     LocalDB.getInventory();
-window.inventario = inventario;
 
 const ventas =
     LocalDB.getSales();
 
-window.ventas = ventas;
-
-console.log("Productos", productos);
-
-console.log("Inventario", inventario);
-
-console.log("Ventas", ventas);
+// PRODUCTOS
 
 const totalProductos =
     productos.length;
+
+// STOCK BAJO
 
 const stockBajo =
 inventario.filter(
@@ -30,27 +23,37 @@ inventario.filter(
         item.stock <= 5
 );
 
+// VENTAS
+
 const totalVentas =
 ventas.reduce(
 
     (acc, venta) =>
 
-    acc + Number(venta.total || 0),
+    acc + Number(
+        venta.total || 0
+    ),
 
 0
 
 );
+
+// GANANCIA
 
 const totalGanancia =
 ventas.reduce(
 
     (acc, venta) =>
 
-    acc + Number(venta.ganancia || 0),
+    acc + Number(
+        venta.ganancia || 0
+    ),
 
 0
 
 );
+
+// RENDER
 
 document
 .getElementById("kpiProductos")
