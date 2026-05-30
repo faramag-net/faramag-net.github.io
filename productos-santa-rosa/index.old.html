@@ -152,35 +152,20 @@ href="./styles.css">
     .innerHTML =
     crearNavbar();
 
-    // INVENTARIO
 
-    const inventario =
-    JSON.parse(
+import LocalDB
+from "./core/storage/local-db.js";
 
-        localStorage.getItem(
-            "inventarioSantaRosa"
-        )
+const productos =
+    LocalDB.getProducts();
 
-    ) || {};
+const inventario =
+    LocalDB.getInventory();
 
-    const productos =
-    inventario.productos || [];
+const ventas =
+    LocalDB.getSales();
 
-    // VENTAS
 
-    const ventasData =
-    JSON.parse(
-
-        localStorage.getItem(
-            "ventasSantaRosa"
-        )
-
-    ) || {};
-
-    const ventas =
-    ventasData.ventas || [];
-
-    // KPI PRODUCTOS
 
     document
     .getElementById("kpiProductos")
