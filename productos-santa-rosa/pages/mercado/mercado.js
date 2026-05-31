@@ -15,6 +15,7 @@ import {
     editarProducto,
     eliminarProducto,
     registrarHistorial
+    getResumenProducto
     
 } from "./modules/productos.js";
 
@@ -165,8 +166,13 @@ function abrirCliente(id){
 
     ${
         productos.map(producto => `
-            <div class="producto-card">
-
+        
+            <div
+                class="producto-card"
+                data-producto="${producto.producto}"
+                data-presentacion="${producto.presentacion}"
+            >
+            
                 <strong>
                     ${producto.producto}
                 </strong>
@@ -264,7 +270,22 @@ function abrirCliente(id){
         
             });
 
-
+            document
+                .querySelectorAll(
+                    ".producto-card"
+                )
+                .forEach(card => {
+            
+                    card.addEventListener(
+                        "click",
+                        () =>
+                            mostrarResumenProducto(
+                                card.dataset.producto,
+                                card.dataset.presentacion
+                            )
+                    );
+            
+                });
     
 }
 
@@ -470,4 +491,55 @@ function eliminarProductoUI(
     abrirCliente(
         clienteId
     );
+}
+
+function mostrarResumenProducto(
+    producto,
+    presentacion
+){
+
+    const resumen =
+        getResumenProducto(
+            producto,
+            presentacion
+        );
+
+    if(!resumen) return;
+
+    document
+        .getElementById(
+            "detalleProducto"
+        )
+        .innerHTML = `
+
+        <div class="producto-resumen">
+
+            <h2>
+                ${producto}
+                ${presentacion}
+            </h2>
+
+            <p>
+                Precio mínimo 7 días:
+                $${resumen.minimo}
+            </p>
+
+            <p>
+                Precio máximo 7 días:
+                $${resumen.maximo}
+            </p>
+
+            <p>
+                Promedio:
+                $${resumen.promedio}
+            </p>
+
+            <p>
+                Observaciones:
+                ${resumen.observaciones}
+            </p>
+
+        </div>
+
+    `;
 }
