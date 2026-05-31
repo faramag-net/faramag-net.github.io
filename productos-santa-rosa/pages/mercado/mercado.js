@@ -4,11 +4,6 @@ import {
     crearCliente
 } from "./modules/clientes.js";
 
-import {
-    crearCliente
-}
-from "./modules/clientes.js";
-
 crearCliente({
     nombre: "Abarrotes Lupita",
     encargado: "Juan Perez",
