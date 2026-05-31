@@ -4,12 +4,6 @@ import {
     crearCliente
 } from "./modules/clientes.js";
 
-crearCliente({
-    nombre: "Abarrotes Lupita",
-    encargado: "Juan Perez",
-    telefono: "2221234567"
-});
-
             console.log("mercado.js cargado");
 
 window.addEventListener(
@@ -43,22 +37,23 @@ function renderClientes() {
         
 console.log(cliente);
         
-        lista.innerHTML += `
-            <div
-                class="card-cliente"
-                data-id="${cliente.id}"
-            >
-                <h3>${cliente.nombre}</h3>
+lista.innerHTML += `
+    <div
+        class="card-cliente"
+        data-id="${cliente.id}"
+    >
+        <h3>${cliente.nombre}</h3>
 
-                <p>
-                    ${cliente.encargado}
-                </p>
+        <p>
+            ${cliente.encargado || ""}
+        </p>
 
-                <p>
-                    ${cliente.telefono}
-                </p>
-            </div>
-        `;
+        <p>
+            ${cliente.telefono || ""}
+        </p>
+    </div>
+`;
+        
     });
         document
         .querySelectorAll(".card-cliente")
@@ -72,6 +67,16 @@ console.log(cliente);
             );
 
         });
+    
+    document
+    .getElementById(
+        "btnNuevoCliente"
+    )
+    .addEventListener(
+        "click",
+        nuevoCliente
+    );
+    
     }
 
 function abrirCliente(id){
@@ -81,4 +86,20 @@ function abrirCliente(id){
 
     console.log(cliente);
 
+}
+
+function nuevoCliente(){
+
+    const nombre =
+        prompt(
+            "Nombre cliente"
+        );
+
+    if(!nombre) return;
+
+    crearCliente({
+        nombre
+    });
+
+    renderClientes();
 }
