@@ -103,3 +103,35 @@ export function eliminarProducto(id) {
         nuevosProductos
     );
 }
+
+export function registrarHistorial(data){
+
+    const historial =
+        LocalDB.getClientHistory();
+
+    historial.push({
+
+        id: crypto.randomUUID(),
+
+        clienteId:
+            data.clienteId,
+
+        producto:
+            data.producto,
+
+        presentacion:
+            data.presentacion,
+
+        precio:
+            Number(data.precio),
+
+        fecha:
+            new Date()
+                .toISOString()
+
+    });
+
+    LocalDB.saveClientHistory(
+        historial
+    );
+}
