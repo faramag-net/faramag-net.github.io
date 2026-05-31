@@ -84,8 +84,44 @@ function abrirCliente(id){
     const cliente =
         getClienteById(id);
 
-    console.log(cliente);
+    const detalle =
+        document.getElementById(
+            "detalleCliente"
+        );
 
+    detalle.innerHTML = `
+        <div class="cliente-detalle">
+
+            <h2>${cliente.nombre}</h2>
+
+            <p>
+                Encargado:
+                ${cliente.encargado || ""}
+            </p>
+
+            <p>
+                Teléfono:
+                ${cliente.telefono || ""}
+            </p>
+
+            <p>
+                Dirección:
+                ${cliente.direccion || ""}
+            </p>
+
+            <button
+                id="btnAgregarProducto"
+            >
+                Agregar Producto
+            </button>
+
+            <div
+                id="productosCliente"
+            >
+            </div>
+
+        </div>
+    `;
 }
 
 function nuevoCliente(){
