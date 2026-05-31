@@ -159,14 +159,29 @@ function abrirCliente(id){
 function nuevoCliente(){
 
     const nombre =
-        prompt(
-            "Nombre cliente"
-        );
+        prompt("Nombre cliente");
 
     if(!nombre) return;
 
+    const encargado =
+        prompt("Encargado");
+
+    const telefono =
+        prompt("Teléfono");
+
+    const direccion =
+        prompt("Dirección");
+
     crearCliente({
-        nombre
+
+        nombre,
+
+        encargado,
+
+        telefono,
+
+        direccion
+
     });
 
     renderClientes();
