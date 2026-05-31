@@ -1,12 +1,16 @@
 import {
     getClientes,
     getClienteById,
-    crearCliente
+    crearCliente,
+    editarCliente,
+    eliminarCliente
 } from "./modules/clientes.js";
 
 import {
     getProductosCliente,
-    agregarProducto
+    agregarProducto,
+    editarProducto,
+    eliminarProducto
 } from "./modules/productos.js";
 
             console.log("mercado.js cargado");
@@ -118,8 +122,16 @@ function abrirCliente(id){
 
             <button
                 id="btnAgregarProducto"
-            >
+            >                
                 Agregar Producto
+            </button>
+
+            <button id="btnEditarCliente">
+                Editar Cliente
+            </button>
+
+            <button id="btnEliminarCliente">
+                Eliminar Cliente
             </button>
 
 <div id="productosCliente">
@@ -140,7 +152,22 @@ function abrirCliente(id){
                     $${producto.precio}
                 </p>
 
+                   <button
+                    class="btnEditarProducto"
+                    data-id="${producto.id}"
+                >
+                    Editar
+                </button>
+            
+                <button
+                    class="btnEliminarProducto"
+                    data-id="${producto.id}"
+                >
+                    Eliminar
+                </button>
+
             </div>
+            
         `).join("")
     }
 
@@ -157,6 +184,61 @@ function abrirCliente(id){
             "click",
             () => nuevoProducto(id)
         );
+
+            document
+            .getElementById(
+                "btnEditarCliente"
+            )
+            .addEventListener(
+                "click",
+                () => editarClienteUI(id)
+            );
+        
+        document
+            .getElementById(
+                "btnEliminarCliente"
+            )
+            .addEventListener(
+                "click",
+                () => eliminarClienteUI(id)
+            );
+    
+        document
+            .querySelectorAll(
+                ".btnEditarProducto"
+            )
+            .forEach(btn => {
+        
+                btn.addEventListener(
+                    "click",
+                    () =>
+                        editarProductoUI(
+                            btn.dataset.id,
+                            id
+                        )
+                );
+        
+            });
+        
+        document
+            .querySelectorAll(
+                ".btnEliminarProducto"
+            )
+            .forEach(btn => {
+        
+                btn.addEventListener(
+                    "click",
+                    () =>
+                        eliminarProductoUI(
+                            btn.dataset.id,
+                            id
+                        )
+                );
+        
+            });
+
+
+    
 }
 
 function nuevoCliente(){
@@ -216,4 +298,137 @@ function nuevoProducto(clienteId){
     });
 
     abrirCliente(clienteId);
+}
+
+function editarClienteUI(id){
+
+    const cliente =
+        getClienteById(id);
+
+    const nombre =
+        prompt(
+            "Nombre",
+            cliente.nombre
+        );
+
+    if(!nombre) return;
+
+    const encargado =
+        prompt(
+            "Encargado",
+            cliente.encargado || ""
+        );
+
+    const telefono =
+        prompt(
+            "Teléfono",
+            cliente.telefono || ""
+        );
+
+    const direccion =
+        prompt(
+            "Dirección",
+            cliente.direccion || ""
+        );
+
+    editarCliente(
+        id,
+        {
+            nombre,
+            encargado,
+            telefono,
+            direccion
+        }
+    );
+
+    renderClientes();
+
+    abrirCliente(id);
+}
+
+function eliminarClienteUI(id){
+
+    const confirmar =
+        confirm(
+            "¿Eliminar cliente?"
+        );
+
+    if(!confirmar) return;
+
+    eliminarCliente(id);
+
+    document
+        .getElementById(
+            "detalleCliente"
+        )
+        .innerHTML = "";
+
+    renderClientes();
+}
+
+function editarProductoUI(
+    productoId,
+    clienteId
+){
+
+    const producto =
+        getProductosCliente(
+            clienteId
+        )
+        .find(
+            p => p.id === productoId
+        );
+
+    const nombre =
+        prompt(
+            "Producto",
+            producto.producto
+        );
+
+    if(!nombre) return;
+
+    const presentacion =
+        prompt(
+            "Presentación",
+            producto.presentacion
+        );
+
+    const precio =
+        prompt(
+            "Precio",
+            producto.precio
+        );
+
+    editarProducto(
+        productoId,
+        {
+            producto: nombre,
+            presentacion,
+            precio
+        }
+    );
+
+    abrirCliente(
+        clienteId
+    );
+}
+
+function eliminarProductoUI(
+    productoId,
+    clienteId
+){
+
+    if(
+        !confirm(
+            "¿Eliminar producto?"
+        )
+    ) return;
+
+    eliminarProducto(
+        productoId
+    );
+
+    abrirCliente(
+        clienteId
+    );
 }
