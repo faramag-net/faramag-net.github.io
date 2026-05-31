@@ -1,1 +1,34 @@
+.mercado-container{
+    padding:20px;
+}
 
+.mercado-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+#listaClientes{
+    display:grid;
+    gap:12px;
+}
+
+.card-cliente{
+
+    background:white;
+
+    border-radius:12px;
+
+    padding:16px;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,.08);
+}
+
+.card-cliente:hover{
+
+    transform:translateY(-2px);
+}
