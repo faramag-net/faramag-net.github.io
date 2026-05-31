@@ -46,6 +46,7 @@ function renderClientes() {
         
        
 lista.innerHTML += `
+
     <div
         class="card-cliente"
         data-id="${cliente.id}"
