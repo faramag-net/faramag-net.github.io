@@ -57,6 +57,18 @@ export function agregarProducto(data) {
         productos
     );
 
+    registrarHistorial({
+
+    clienteId,
+
+    producto,
+
+    presentacion,
+
+    precio
+
+});
+
     return nuevoProducto;
 }
 
