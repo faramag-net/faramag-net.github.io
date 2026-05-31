@@ -1,5 +1,16 @@
 import { getClientes } from "./modules/clientes.js";
 
+import {
+    crearCliente
+}
+from "./modules/clientes.js";
+
+crearCliente({
+    nombre: "Abarrotes Lupita",
+    encargado: "Juan Perez",
+    telefono: "2221234567"
+});
+
             console.log("mercado.js cargado");
 
 window.addEventListener(
