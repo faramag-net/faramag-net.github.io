@@ -53,15 +53,20 @@ function renderClientes(filtro = "") {
             "listaClientes"
         );
 
-    const clientes =
-        getClientes()
-            .filter(cliente =>
-                cliente.nombre
-                    .toLowerCase()
-                    .includes(
-                        filtro.toLowerCase()
-                    )
-            );
+const clientes =
+    getClientes()
+        .filter(cliente =>
+            `
+                ${cliente.nombre || ""}
+                ${cliente.encargado || ""}
+                ${cliente.telefono || ""}
+                ${cliente.direccion || ""}
+            `
+            .toLowerCase()
+            .includes(
+                filtro.toLowerCase()
+            )
+        );
 
     lista.innerHTML = "";
 
