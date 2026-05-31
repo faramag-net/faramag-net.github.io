@@ -96,6 +96,8 @@ function abrirCliente(id){
     
         <div class="cliente-detalle">
 
+        <h3>Detalle del Cliente</h3>
+        
             <h2>${cliente.nombre}</h2>
 
             <p>
