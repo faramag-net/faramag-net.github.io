@@ -6,6 +6,8 @@ const DB_KEYS = {
   INVENTORY: "psr_inventory",
   SALES: "psr_sales",
   CLIENTS: "psr_clients",
+  CLIENT_PRODUCTS: "psr_client_products",
+  CLIENT_HISTORY: "psr_client_history",
   VISITS: "psr_visits",
   SETTINGS: "psr_settings",
   HISTORY: "psr_history",
@@ -429,7 +431,47 @@ this.addHistory({
     return newClient;
 }
   
-}
+     static getClients() {
+        return JSON.parse(
+            localStorage.getItem(DB_KEYS.CLIENTS)
+        ) || [];
+    }
+
+    static saveClients(data) {
+        localStorage.setItem(
+            DB_KEYS.CLIENTS,
+            JSON.stringify(data)
+        );
+    }
+
+    static getClientProducts() {
+        return JSON.parse(
+            localStorage.getItem(DB_KEYS.CLIENT_PRODUCTS)
+        ) || [];
+    }
+
+    static saveClientProducts(data) {
+        localStorage.setItem(
+            DB_KEYS.CLIENT_PRODUCTS,
+            JSON.stringify(data)
+        );
+    }
+
+    static getClientHistory() {
+        return JSON.parse(
+            localStorage.getItem(DB_KEYS.CLIENT_HISTORY)
+        ) || [];
+    }
+
+    static saveClientHistory(data) {
+        localStorage.setItem(
+            DB_KEYS.CLIENT_HISTORY,
+            JSON.stringify(data)
+        );
+    }
+  
+} 
+
 
 export default LocalDB;
 export { DB_KEYS };
