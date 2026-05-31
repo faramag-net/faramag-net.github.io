@@ -4,6 +4,11 @@ import {
     crearCliente
 } from "./modules/clientes.js";
 
+import {
+    getProductosCliente,
+    agregarProducto
+} from "./modules/productos.js";
+
             console.log("mercado.js cargado");
 
 window.addEventListener(
@@ -83,8 +88,12 @@ function abrirCliente(id){
         document.getElementById(
             "detalleCliente"
         );
-
+    
+    const productos =
+        getProductosCliente(id);
+    
     detalle.innerHTML = `
+    
         <div class="cliente-detalle">
 
             <h2>${cliente.nombre}</h2>
@@ -110,13 +119,41 @@ function abrirCliente(id){
                 Agregar Producto
             </button>
 
-            <div
-                id="productosCliente"
-            >
+<div id="productosCliente">
+
+    ${
+        productos.map(producto => `
+            <div class="producto-card">
+
+                <strong>
+                    ${producto.producto}
+                </strong>
+
+                <p>
+                    ${producto.presentacion}
+                </p>
+
+                <p>
+                    $${producto.precio}
+                </p>
+
             </div>
+        `).join("")
+    }
+
+</div>
 
         </div>
     `;
+
+        document
+        .getElementById(
+            "btnAgregarProducto"
+        )
+        .addEventListener(
+            "click",
+            () => nuevoProducto(id)
+        );
 }
 
 function nuevoCliente(){
