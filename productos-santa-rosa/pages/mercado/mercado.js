@@ -40,7 +40,9 @@ function renderClientes() {
     lista.innerHTML = "";
 
     clientes.forEach(cliente => {
-
+        
+console.log(cliente);
+        
         lista.innerHTML += `
             <div
                 class="card-cliente"
