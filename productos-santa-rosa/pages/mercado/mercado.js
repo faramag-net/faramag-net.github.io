@@ -1,4 +1,8 @@
-import { getClientes } from "./modules/clientes.js";
+import {
+    getClientes,
+    getClienteById,
+    crearCliente
+} from "./modules/clientes.js";
 
 import {
     crearCliente
@@ -11,6 +15,7 @@ crearCliente({
     telefono: "2221234567"
 });
 
+console.log(lista);
             console.log("mercado.js cargado");
 
 window.addEventListener(
