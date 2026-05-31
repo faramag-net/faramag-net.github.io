@@ -171,3 +171,31 @@ function nuevoCliente(){
 
     renderClientes();
 }
+
+function nuevoProducto(clienteId){
+
+    const producto =
+        prompt("Producto");
+
+    if(!producto) return;
+
+    const presentacion =
+        prompt("Presentación");
+
+    const precio =
+        prompt("Precio");
+
+    agregarProducto({
+
+        clienteId,
+
+        producto,
+
+        presentacion,
+
+        precio
+
+    });
+
+    abrirCliente(clienteId);
+}
