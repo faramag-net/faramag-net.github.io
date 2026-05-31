@@ -147,3 +147,60 @@ export function registrarHistorial(data){
         historial
     );
 }
+
+export function getResumenProducto(
+    producto,
+    presentacion
+){
+
+    const hace7Dias =
+        new Date();
+
+    hace7Dias.setDate(
+        hace7Dias.getDate() - 7
+    );
+
+    const historial =
+        LocalDB.getClientHistory()
+            .filter(item =>
+                item.producto === producto &&
+                item.presentacion === presentacion &&
+                new Date(item.fecha) >= hace7Dias
+            );
+
+    if(historial.length === 0){
+
+        return null;
+
+    }
+
+    const precios =
+        historial.map(
+            h => Number(h.precio)
+        );
+
+    return {
+
+        minimo:
+            Math.min(...precios),
+
+        maximo:
+            Math.max(...precios),
+
+        promedio:
+            (
+                precios.reduce(
+                    (a,b) => a+b,
+                    0
+                ) /
+                precios.length
+            ).toFixed(2),
+
+        observaciones:
+            historial.length,
+
+        historial
+
+    };
+
+}
