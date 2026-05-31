@@ -10,7 +10,6 @@ crearCliente({
     telefono: "2221234567"
 });
 
-console.log(lista);
             console.log("mercado.js cargado");
 
 window.addEventListener(
