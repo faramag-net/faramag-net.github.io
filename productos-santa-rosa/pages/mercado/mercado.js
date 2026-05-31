@@ -1,22 +1,29 @@
 import { getClientes } from "./modules/clientes.js";
 
+            console.log("mercado.js cargado");
+
 window.addEventListener(
     "DOMContentLoaded",
     () => {
 
+           console.log("DOM cargado");
+        
         renderClientes();
     }
 );
 
 function renderClientes() {
-
+    
+     console.log("renderClientes ejecutado");
+    
     console.log(getClientes());
     
     const lista =
         document.getElementById(
             "listaClientes"
         );
-
+                console.log(lista);
+    
     const clientes =
         getClientes();
 
