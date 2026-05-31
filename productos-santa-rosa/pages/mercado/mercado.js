@@ -39,4 +39,25 @@ function renderClientes() {
             </div>
         `;
     });
+        document
+        .querySelectorAll(".card-cliente")
+        .forEach(card => {
+
+            card.addEventListener(
+                "click",
+                () => abrirCliente(
+                    card.dataset.id
+                )
+            );
+
+        });
+    }
+
+function abrirCliente(id){
+
+    const cliente =
+        getClienteById(id);
+
+    console.log(cliente);
+
 }
