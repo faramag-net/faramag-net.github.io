@@ -1,16 +1,21 @@
 import {
+    
     getClientes,
     getClienteById,
     crearCliente,
     editarCliente,
     eliminarCliente
+    
 } from "./modules/clientes.js";
 
 import {
+    
     getProductosCliente,
     agregarProducto,
     editarProducto,
-    eliminarProducto
+    eliminarProducto,
+    registrarHistorial
+    
 } from "./modules/productos.js";
 
             console.log("mercado.js cargado");
@@ -429,6 +434,18 @@ function editarProductoUI(
             precio
         }
     );
+
+    registrarHistorial({
+
+    clienteId,
+
+    producto: nombre,
+
+    presentacion,
+
+    precio
+
+});
 
     abrirCliente(
         clienteId
