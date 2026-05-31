@@ -11,7 +11,16 @@ window.addEventListener(
     () => {
 
            console.log("DOM cargado");
-        
+
+            document
+    .getElementById(
+        "btnNuevoCliente"
+    )
+    .addEventListener(
+        "click",
+        nuevoCliente
+    );
+    
         renderClientes();
     }
 );
@@ -62,15 +71,7 @@ lista.innerHTML += `
 
         });
     
-    document
-    .getElementById(
-        "btnNuevoCliente"
-    )
-    .addEventListener(
-        "click",
-        nuevoCliente
-    );
-    
+
     }
 
 function abrirCliente(id){
