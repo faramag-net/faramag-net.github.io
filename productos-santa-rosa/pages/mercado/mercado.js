@@ -10,6 +10,8 @@ window.addEventListener(
 
 function renderClientes() {
 
+    console.log(getClientes());
+    
     const lista =
         document.getElementById(
             "listaClientes"
