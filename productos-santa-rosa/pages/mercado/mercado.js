@@ -29,46 +29,64 @@ window.addEventListener(
         "click",
         nuevoCliente
     );
-    
+        document
+    .getElementById(
+        "buscarCliente"
+    )
+    .addEventListener(
+        "input",
+        e =>
+            renderClientes(
+                e.target.value
+            )
+    );
+        
         renderClientes();
+        
     }
 );
 
-function renderClientes() {
-       
+function renderClientes(filtro = "") {
+
     const lista =
         document.getElementById(
             "listaClientes"
         );
-    
+
     const clientes =
-        getClientes();
+        getClientes()
+            .filter(cliente =>
+                cliente.nombre
+                    .toLowerCase()
+                    .includes(
+                        filtro.toLowerCase()
+                    )
+            );
 
     lista.innerHTML = "";
 
     clientes.forEach(cliente => {
-        
-       
-lista.innerHTML += `
 
-    <div
-        class="card-cliente"
-        data-id="${cliente.id}"
-    >
-        <h3>${cliente.nombre}</h3>
+        lista.innerHTML += `
+            <div
+                class="card-cliente"
+                data-id="${cliente.id}"
+            >
+                <h3>${cliente.nombre}</h3>
 
-        <p>
-            ${cliente.encargado || ""}
-        </p>
+                <p>
+                    ${cliente.encargado || ""}
+                </p>
 
-        <p>
-            ${cliente.telefono || ""}
-        </p>
-    </div>
-`;
-        
+                <p>
+                    ${cliente.telefono || ""}
+                </p>
+            </div>
+        `;
+
     });
-        document
+
+    document
         .querySelectorAll(".card-cliente")
         .forEach(card => {
 
@@ -80,9 +98,8 @@ lista.innerHTML += `
             );
 
         });
-    
 
-    }
+}
 
 function abrirCliente(id){
 
