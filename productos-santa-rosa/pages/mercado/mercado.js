@@ -17,16 +17,11 @@ window.addEventListener(
 );
 
 function renderClientes() {
-    
-     console.log("renderClientes ejecutado");
-    
-    console.log(getClientes());
-    
+       
     const lista =
         document.getElementById(
             "listaClientes"
         );
-                console.log(lista);
     
     const clientes =
         getClientes();
@@ -35,8 +30,7 @@ function renderClientes() {
 
     clientes.forEach(cliente => {
         
-console.log(cliente);
-        
+       
 lista.innerHTML += `
     <div
         class="card-cliente"
