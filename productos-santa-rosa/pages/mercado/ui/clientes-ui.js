@@ -6,16 +6,17 @@ import {
     editarCliente,
     eliminarCliente
     
-} from "./modules/clientes.js";
+} from "../modules/clientes.js";
+
+import {
+    getProductosCliente
+}
+from "../modules/productos.js";
 
 import {
     setAbrirCliente
 }
 from "./shared-ui.js";
-
-setAbrirCliente(
-    abrirCliente
-);
 
 import {
     nuevoProducto,
@@ -26,6 +27,9 @@ import {
 from "./productos-ui.js";
 
 export function inicializarClientesUI(){
+    setAbrirCliente(
+    abrirCliente
+    );
     
     document
         .getElementById(
@@ -317,6 +321,10 @@ function nuevoCliente(){
     });
 
     renderClientes();
+    abrirCliente(
+    cliente.id
+);
+    
 }
 
 function editarClienteUI(id){
