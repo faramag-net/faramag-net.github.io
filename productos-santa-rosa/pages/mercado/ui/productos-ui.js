@@ -4,7 +4,6 @@ import {
     agregarProducto,
     editarProducto,
     eliminarProducto,
-    registrarHistorial,
     getResumenProducto
     
 } from "../modules/productos.js";
@@ -38,19 +37,7 @@ function nuevoProducto(clienteId){
         precio
 
     });
-  
-    registrarHistorial({
     
-        clienteId,
-    
-        producto,
-    
-        presentacion,
-    
-        precio
-    
-    });
-  
     refrescarCliente(clienteId);
 }
 
@@ -96,21 +83,9 @@ function editarProductoUI(
         }
     );
 
-    registrarHistorial({
 
-    clienteId,
-
-    producto: nombre,
-
-    presentacion,
-
-    precio
-
-});
-
-    abrirCliente(
-        clienteId
-    );
+refrescarCliente(clienteId);
+    
 }
 
 function eliminarProductoUI(
@@ -128,9 +103,8 @@ function eliminarProductoUI(
         productoId
     );
 
-    abrirCliente(
-        clienteId
-    );
+refrescarCliente(clienteId);
+    
 }
 
 function mostrarResumenProducto(
