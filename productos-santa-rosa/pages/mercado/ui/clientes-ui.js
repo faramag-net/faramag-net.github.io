@@ -87,7 +87,10 @@ function renderClientes(filtro = "") {
         });
 
     lista.innerHTML = "";
-
+    
+    const busquedaActiva =
+        filtro.trim().length > 0;
+    
     clientes.forEach(cliente => {
         
     const productos =
@@ -97,15 +100,23 @@ function renderClientes(filtro = "") {
         
         lista.innerHTML += `
         
-            <div
-                class="card-cliente"
-                data-id="${cliente.id}"
-            >
+        <div
+            class="card-cliente ${
+                busquedaActiva
+                    ? "expanded"
+                    : ""
+            }"
+            data-id="${cliente.id}"
+        >
 
                 <div class="cliente-header">
 
                     <span class="expand-icon">
-                        ▶
+                        ${
+                            busquedaActiva
+                                ? "▼"
+                                : "▶"
+                        }
                     </span>
 
                     <div>
