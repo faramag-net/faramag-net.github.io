@@ -59,13 +59,17 @@ export function agregarProducto(data) {
 
     registrarHistorial({
 
-    clienteId,
+    clienteId:
+        nuevoProducto.clienteId,
 
-    producto,
+    producto:
+        nuevoProducto.producto,
 
-    presentacion,
+    presentacion:
+        nuevoProducto.presentacion,
 
-    precio
+    precio:
+        nuevoProducto.precio
 
 });
 
@@ -97,6 +101,24 @@ export function editarProducto(
     LocalDB.saveClientProducts(
         productos
     );
+
+
+registrarHistorial({
+
+    clienteId:
+        productos[index].clienteId,
+
+    producto:
+        productos[index].producto,
+
+    presentacion:
+        productos[index].presentacion,
+
+    precio:
+        productos[index].precio
+
+});
+
 
     return productos[index];
 }
