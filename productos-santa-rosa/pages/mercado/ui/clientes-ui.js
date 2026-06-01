@@ -190,17 +190,29 @@ function renderClientes(filtro = "") {
                                             );
                             
                                         if(!resumen){
-                            
+                                        
                                             return `
+                                            
+                                                <p>
+                                                    Precio actual:
+                                                    $${producto.precio}
+                                                </p>
+                                        
                                                 <p>
                                                     Sin historial registrado
                                                 </p>
+                                        
                                             `;
-                            
+                                        
                                         }
                             
                                         return `
-                            
+                                        
+                                            <p>
+                                                Precio actual:
+                                                $${producto.precio}
+                                            </p>
+                                            
                                             <h5>
                                                 Últimos 7 días
                                             </h5>
