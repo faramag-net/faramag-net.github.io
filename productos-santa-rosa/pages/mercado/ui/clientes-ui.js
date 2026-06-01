@@ -80,7 +80,12 @@ function renderClientes(filtro = "") {
     lista.innerHTML = "";
 
     clientes.forEach(cliente => {
-
+        
+    const productos =
+        getProductosCliente(
+            cliente.id
+        );
+        
         lista.innerHTML += `
             <div
                 class="card-cliente"
@@ -107,24 +112,54 @@ function renderClientes(filtro = "") {
 
                 </div>
 
-                <div class="cliente-body">
-                
-                    <p>
-                        Teléfono:
-                        ${cliente.telefono || ""}
-                    </p>
-                
-                    <p>
-                        Dirección:
-                        ${cliente.direccion || ""}
-                    </p>
-                
-                    <p>
-                        Comentarios:
-                        ${cliente.comentarios || "Sin comentarios"}
-                    </p>
-                
+            <div class="cliente-body">
+            
+                <p>
+                    Teléfono:
+                    ${cliente.telefono || ""}
+                </p>
+            
+                <p>
+                    Dirección:
+                    ${cliente.direccion || ""}
+                </p>
+            
+                <p>
+                    Comentarios:
+                    ${cliente.comentarios || "Sin comentarios"}
+                </p>
+            
+                <div class="cliente-productos">
+            
+                    <h4>
+                        Productos
+                    </h4>
+            
+                    ${
+                        productos.length
+                            ? productos.map(producto => `
+                                <div class="producto-mini">
+            
+                                    <strong>
+                                        ${producto.producto}
+                                    </strong>
+            
+                                    <span>
+                                        ${producto.presentacion}
+                                    </span>
+            
+                                </div>
+                            `).join("")
+                            : `
+                                <p>
+                                    Sin productos registrados
+                                </p>
+                            `
+                    }
+            
                 </div>
+            
+            </div>
 
             </div>
         `;
