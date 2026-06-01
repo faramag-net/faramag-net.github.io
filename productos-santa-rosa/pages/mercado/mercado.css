@@ -75,3 +75,20 @@
     flex-shrink:0;
 }
 
+.cliente-productos{
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px solid #eee;
+}
+
+.cliente-productos h4{
+    margin-bottom:8px;
+}
+
+.producto-mini{
+    padding:8px;
+    margin-bottom:6px;
+
+    border:1px solid #eee;
+    border-radius:8px;
+}
