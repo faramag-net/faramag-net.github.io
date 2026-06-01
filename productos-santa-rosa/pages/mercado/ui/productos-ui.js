@@ -118,6 +118,15 @@ function mostrarResumenProducto(
             presentacion
         );
 
+    if(!resumen){
+
+    alert(
+        "Este producto no tiene historial registrado."
+    );
+
+    return;
+}
+
     const detalle =
         document.getElementById(
             "detalleProducto"
