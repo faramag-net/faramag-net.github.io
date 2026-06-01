@@ -28,6 +28,11 @@ import {
 }
 from "./productos-ui.js";
 
+import {
+    coincideBusqueda
+}
+from "../modules/busqueda.js";
+
 export function inicializarClientesUI(){
     setAbrirCliente(
     abrirCliente
@@ -64,20 +69,22 @@ function renderClientes(filtro = "") {
             "listaClientes"
         );
 
-    const clientes =
-        getClientes()
-            .filter(cliente =>
-                `
-                    ${cliente.nombre || ""}
-                    ${cliente.encargado || ""}
-                    ${cliente.telefono || ""}
-                    ${cliente.direccion || ""}
-                `
-                .toLowerCase()
-                .includes(
-                    filtro.toLowerCase()
-                )
+ const clientes =
+    getClientes()
+        .filter(cliente => {
+
+            const productos =
+                getProductosCliente(
+                    cliente.id
+                );
+
+            return coincideBusqueda(
+                cliente,
+                productos,
+                filtro
             );
+
+        });
 
     lista.innerHTML = "";
 
