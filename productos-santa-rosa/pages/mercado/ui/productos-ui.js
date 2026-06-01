@@ -118,13 +118,14 @@ function mostrarResumenProducto(
             presentacion
         );
 
-    if(!resumen) return;
-
-    document
-        .getElementById(
+    const detalle =
+        document.getElementById(
             "detalleProducto"
-        )
-        .innerHTML = `
+        );
+    
+    if(!detalle) return;
+        
+        detalle.innerHTML = `
 
         <div class="producto-resumen">
 
