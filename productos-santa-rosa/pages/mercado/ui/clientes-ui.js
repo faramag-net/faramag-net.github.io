@@ -87,6 +87,7 @@ function renderClientes(filtro = "") {
         );
         
         lista.innerHTML += `
+        
             <div
                 class="card-cliente"
                 data-id="${cliente.id}"
@@ -138,17 +139,82 @@ function renderClientes(filtro = "") {
                     ${
                         productos.length
                             ? productos.map(producto => `
-                                <div class="producto-mini">
-            
-                                    <strong>
-                                        ${producto.producto}
-                                    </strong>
-            
-                                    <span>
-                                        ${producto.presentacion}
-                                    </span>
-            
-                                </div>
+                            
+                        <div class="producto-mini">
+                        
+                            <div class="producto-header">
+                        
+                                <span class="producto-expand">
+                                    ▶
+                                </span>
+                        
+                                <strong>
+                                    ${producto.producto}
+                                </strong>
+                        
+                                <span>
+                                    ${producto.presentacion}
+                                </span>
+                        
+                            </div>
+                        
+                            <div class="producto-body">
+                            
+                                ${
+                                    (() => {
+                            
+                                        const resumen =
+                                            getResumenProducto(
+                                                producto.producto,
+                                                producto.presentacion
+                                            );
+                            
+                                        if(!resumen){
+                            
+                                            return `
+                                                <p>
+                                                    Sin historial registrado
+                                                </p>
+                                            `;
+                            
+                                        }
+                            
+                                        return `
+                            
+                                            <h5>
+                                                Últimos 7 días
+                                            </h5>
+                            
+                                            <p>
+                                                Mínimo:
+                                                $${resumen.minimo}
+                                            </p>
+                            
+                                            <p>
+                                                Máximo:
+                                                $${resumen.maximo}
+                                            </p>
+                            
+                                            <p>
+                                                Promedio:
+                                                $${resumen.promedio}
+                                            </p>
+                            
+                                            <p>
+                                                Observaciones:
+                                                ${resumen.observaciones}
+                                            </p>
+                            
+                                        `;
+                            
+                                    })()
+                                }
+                            
+                            </div>
+                        
+                        </div>
+
+                        
                             `).join("")
                             : `
                                 <p>
@@ -166,6 +232,7 @@ function renderClientes(filtro = "") {
 
     });
 
+    
     document
         .querySelectorAll(".card-cliente")
         .forEach(card => {
@@ -214,6 +281,42 @@ function renderClientes(filtro = "") {
             );
 
         });
+
+    document
+    .querySelectorAll(".producto-header")
+    .forEach(header => {
+
+        header.addEventListener(
+            "click",
+            (e) => {
+
+                e.stopPropagation();
+
+                const card =
+                    header.closest(
+                        ".producto-mini"
+                    );
+
+                card.classList.toggle(
+                    "expanded"
+                );
+
+                const icono =
+                    header.querySelector(
+                        ".producto-expand"
+                    );
+
+                icono.textContent =
+                    card.classList.contains(
+                        "expanded"
+                    )
+                        ? "▼"
+                        : "▶";
+
+            }
+        );
+
+    });
 
 }
 
