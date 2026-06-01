@@ -62,20 +62,20 @@ function renderClientes(filtro = "") {
             "listaClientes"
         );
 
-const clientes =
-    getClientes()
-        .filter(cliente =>
-            `
-                ${cliente.nombre || ""}
-                ${cliente.encargado || ""}
-                ${cliente.telefono || ""}
-                ${cliente.direccion || ""}
-            `
-            .toLowerCase()
-            .includes(
-                filtro.toLowerCase()
-            )
-        );
+    const clientes =
+        getClientes()
+            .filter(cliente =>
+                `
+                    ${cliente.nombre || ""}
+                    ${cliente.encargado || ""}
+                    ${cliente.telefono || ""}
+                    ${cliente.direccion || ""}
+                `
+                .toLowerCase()
+                .includes(
+                    filtro.toLowerCase()
+                )
+            );
 
     lista.innerHTML = "";
 
@@ -86,15 +86,45 @@ const clientes =
                 class="card-cliente"
                 data-id="${cliente.id}"
             >
-                <h3>${cliente.nombre}</h3>
 
-                <p>
-                    ${cliente.encargado || ""}
-                </p>
+                <div class="cliente-header">
 
-                <p>
-                    ${cliente.telefono || ""}
-                </p>
+                    <span class="expand-icon">
+                        ▶
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            ${cliente.nombre}
+                        </h3>
+
+                        <p>
+                            ${cliente.encargado || ""}
+                        </p>
+
+                        <p>
+                            ${cliente.telefono || ""}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="cliente-body">
+
+                    <p>
+                        Dirección:
+                        ${cliente.direccion || ""}
+                    </p>
+
+                    <p>
+                        Comentarios:
+                        ${cliente.comentarios || ""}
+                    </p>
+
+                </div>
+
             </div>
         `;
 
@@ -109,6 +139,42 @@ const clientes =
                 () => abrirCliente(
                     card.dataset.id
                 )
+            );
+
+        });
+
+    document
+        .querySelectorAll(".cliente-header")
+        .forEach(header => {
+
+            header.addEventListener(
+                "click",
+                (e) => {
+
+                    e.stopPropagation();
+
+                    const card =
+                        header.closest(
+                            ".card-cliente"
+                        );
+
+                    card.classList.toggle(
+                        "expanded"
+                    );
+
+                    const icono =
+                        header.querySelector(
+                            ".expand-icon"
+                        );
+
+                    icono.textContent =
+                        card.classList.contains(
+                            "expanded"
+                        )
+                            ? "▼"
+                            : "▶";
+
+                }
             );
 
         });
@@ -309,22 +375,14 @@ function nuevoCliente(){
         prompt("Dirección");
 
     crearCliente({
-
         nombre,
-
         encargado,
-
         telefono,
-
         direccion
-
     });
-
-    renderClientes();
-    abrirCliente(
-    cliente.id
-);
     
+    renderClientes();
+        
 }
 
 function editarClienteUI(id){
