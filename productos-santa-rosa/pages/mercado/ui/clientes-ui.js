@@ -94,35 +94,36 @@ function renderClientes(filtro = "") {
                     </span>
 
                     <div>
-
-                        <h3>
+                    
+                        <h3 class="cliente-nombre">
                             ${cliente.nombre}
                         </h3>
-
-                        <p>
+                    
+                        <p class="cliente-encargado">
                             ${cliente.encargado || ""}
                         </p>
-
-                        <p>
-                            ${cliente.telefono || ""}
-                        </p>
-
+                    
                     </div>
 
                 </div>
 
                 <div class="cliente-body">
-
+                
+                    <p>
+                        Teléfono:
+                        ${cliente.telefono || ""}
+                    </p>
+                
                     <p>
                         Dirección:
                         ${cliente.direccion || ""}
                     </p>
-
+                
                     <p>
                         Comentarios:
-                        ${cliente.comentarios || ""}
+                        ${cliente.comentarios || "Sin comentarios"}
                     </p>
-
+                
                 </div>
 
             </div>
