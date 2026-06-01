@@ -9,8 +9,10 @@ import {
 } from "../modules/clientes.js";
 
 import {
-    getProductosCliente
+    getProductosCliente,
+    getResumenProducto
 }
+    
 from "../modules/productos.js";
 
 import {
