@@ -52,12 +52,12 @@
 }
 
 .cliente-body{
-    display:none;
+    display:none !important;
     margin-top:12px;
     padding-top:12px;
     border-top:1px solid #eee;
 }
 
 .card-cliente.expanded .cliente-body{
-    display:block;
+    display:block !important;
 }
