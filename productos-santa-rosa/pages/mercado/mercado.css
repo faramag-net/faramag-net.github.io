@@ -138,27 +138,4 @@
     gap:10px;
 }
 
-@media (max-width: 768px) {
 
-    .mercado-header{
-        display:flex;
-        flex-direction:column;
-        gap:12px;
-    }
-
-    #btnNuevoCliente{
-        width:100% !important;
-        height:56px !important;
-        font-size:18px !important;
-        padding:12px !important;
-    }
-
-    #buscarCliente{
-        width:100% !important;
-        height:56px !important;
-        font-size:18px !important;
-        padding:12px !important;
-        box-sizing:border-box;
-    }
-
-}
