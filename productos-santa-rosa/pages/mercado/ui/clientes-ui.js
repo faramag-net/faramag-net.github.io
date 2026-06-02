@@ -531,29 +531,21 @@ function abrirCliente(id){
 
 function nuevoCliente(){
 
-    const nombre =
-        prompt("Nombre cliente");
+    mostrarFormularioCliente(
+        datos => {
 
-    if(!nombre) return;
+            if(!datos.nombre)
+                return;
 
-    const encargado =
-        prompt("Encargado");
+            crearCliente(
+                datos
+            );
 
-    const telefono =
-        prompt("Teléfono");
+            renderClientes();
 
-    const direccion =
-        prompt("Dirección");
+        }
+    );
 
-    crearCliente({
-        nombre,
-        encargado,
-        telefono,
-        direccion
-    });
-    
-    renderClientes();
-        
 }
 
 function editarClienteUI(id){
