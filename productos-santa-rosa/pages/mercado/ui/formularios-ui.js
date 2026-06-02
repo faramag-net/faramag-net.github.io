@@ -97,3 +97,112 @@ export function mostrarFormularioCliente(
         };
 
 }
+
+export function mostrarFormularioProducto(
+    datosIniciales = {},
+    onGuardar
+){
+
+    const modal =
+        document.getElementById(
+            "modalContainer"
+        );
+
+    modal.innerHTML = `
+
+        <div class="modal-overlay">
+
+            <div class="modal">
+
+                <h3>
+                    Producto Observado
+                </h3>
+
+                <input
+                    id="productoNombre"
+                    placeholder="Producto"
+                    value="${datosIniciales.producto || ""}"
+                >
+
+                <input
+                    id="productoPresentacion"
+                    placeholder="Presentación"
+                    value="${datosIniciales.presentacion || ""}"
+                >
+
+                <input
+                    id="productoPrecio"
+                    type="number"
+                    step="0.01"
+                    placeholder="Precio"
+                    value="${datosIniciales.precio || ""}"
+                >
+
+                <input
+                    id="productoComentarios"
+                    placeholder="Comentarios"
+                    value="${datosIniciales.comentarios || ""}"
+                >
+
+                <div class="modal-actions">
+
+                    <button id="guardarProducto">
+                        Guardar
+                    </button>
+
+                    <button id="cancelarProducto">
+                        Cancelar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+    document
+        .getElementById(
+            "cancelarProducto"
+        )
+        .onclick = () =>
+            modal.innerHTML = "";
+
+    document
+        .getElementById(
+            "guardarProducto"
+        )
+        .onclick = () => {
+
+            onGuardar({
+
+                producto:
+                    document.getElementById(
+                        "productoNombre"
+                    ).value,
+
+                presentacion:
+                    document.getElementById(
+                        "productoPresentacion"
+                    ).value,
+
+                precio:
+                    Number(
+                        document.getElementById(
+                            "productoPrecio"
+                        ).value
+                    ),
+
+                comentarios:
+                    document.getElementById(
+                        "productoComentarios"
+                    ).value
+
+            });
+
+            modal.innerHTML = "";
+
+        };
+
+}
