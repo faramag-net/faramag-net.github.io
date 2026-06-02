@@ -33,6 +33,11 @@ import {
 }
 from "./formularios-ui.js";
 
+console.log(
+    "mostrarFormularioCliente:",
+    mostrarFormularioCliente
+);
+
 import {
     coincideBusqueda
 }
