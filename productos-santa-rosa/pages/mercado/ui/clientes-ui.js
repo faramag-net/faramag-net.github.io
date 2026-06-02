@@ -29,6 +29,11 @@ import {
 from "./productos-ui.js";
 
 import {
+    mostrarFormularioCliente
+}
+from "./formularios-ui.js";
+
+import {
     coincideBusqueda
 }
 from "../modules/busqueda.js";
