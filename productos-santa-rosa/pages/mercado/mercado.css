@@ -4,10 +4,9 @@
 
 @media (max-width:768px){
 
-    .mercado-header{
-        flex-direction:column;
-        align-items:stretch;
-    }
+.mercado-header{
+    display:block;
+}
 
     #btnNuevoCliente{
         width:100%;
@@ -131,11 +130,5 @@
     display:block;
 }
 
-.mercado-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-}
 
 
