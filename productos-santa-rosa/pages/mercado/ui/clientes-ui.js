@@ -542,6 +542,7 @@ function abrirCliente(id){
 function nuevoCliente(){
 
     mostrarFormularioCliente(
+        {},
         datos => {
 
             if(!datos.nombre)
@@ -563,45 +564,24 @@ function editarClienteUI(id){
     const cliente =
         getClienteById(id);
 
-    const nombre =
-        prompt(
-            "Nombre",
-            cliente.nombre
-        );
+    if(!cliente) return;
 
-    if(!nombre) return;
+    mostrarFormularioCliente(
+        cliente,
+        datos => {
 
-    const encargado =
-        prompt(
-            "Encargado",
-            cliente.encargado || ""
-        );
+            editarCliente(
+                id,
+                datos
+            );
 
-    const telefono =
-        prompt(
-            "Teléfono",
-            cliente.telefono || ""
-        );
+            renderClientes();
 
-    const direccion =
-        prompt(
-            "Dirección",
-            cliente.direccion || ""
-        );
+            abrirCliente(id);
 
-    editarCliente(
-        id,
-        {
-            nombre,
-            encargado,
-            telefono,
-            direccion
         }
     );
 
-    renderClientes();
-
-    abrirCliente(id);
 }
 
 function eliminarClienteUI(id){
