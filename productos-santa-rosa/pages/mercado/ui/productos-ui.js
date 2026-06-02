@@ -13,32 +13,28 @@ import {
 }
 from "./shared-ui.js";
 
+import {
+    mostrarFormularioProducto
+}
+from "./formularios-ui.js";
+
 function nuevoProducto(clienteId){
 
-    const producto =
-        prompt("Producto");
+    mostrarFormularioProducto(
+        {},
+        datos => {
 
-    if(!producto) return;
+            agregarProducto(
+                clienteId,
+                datos
+            );
 
-    const presentacion =
-        prompt("Presentación");
+            refrescarCliente(
+                clienteId
+            );
 
-    const precio =
-        prompt("Precio");
-
-    agregarProducto({
-
-        clienteId,
-
-        producto,
-
-        presentacion,
-
-        precio
-
-    });
-    
-    refrescarCliente(clienteId);
+        }
+    );
 }
 
 function editarProductoUI(
@@ -54,38 +50,24 @@ function editarProductoUI(
             p => p.id === productoId
         );
 
-    const nombre =
-        prompt(
-            "Producto",
-            producto.producto
-        );
+    if(!producto) return;
 
-    if(!nombre) return;
+    mostrarFormularioProducto(
+        producto,
+        datos => {
 
-    const presentacion =
-        prompt(
-            "Presentación",
-            producto.presentacion
-        );
+            editarProducto(
+                productoId,
+                datos
+            );
 
-    const precio =
-        prompt(
-            "Precio",
-            producto.precio
-        );
+            refrescarCliente(
+                clienteId
+            );
 
-    editarProducto(
-        productoId,
-        {
-            producto: nombre,
-            presentacion,
-            precio
         }
     );
 
-
-refrescarCliente(clienteId);
-    
 }
 
 function eliminarProductoUI(
