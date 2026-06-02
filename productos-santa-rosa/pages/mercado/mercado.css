@@ -4,9 +4,9 @@
 
 @media (max-width:768px){
 
-.mercado-header{
-    display:block;
-}
+    .mercado-header{
+        display:block;
+    }
 
     #btnNuevoCliente{
         width:100%;
@@ -16,9 +16,19 @@
 
     #buscarCliente{
         width:100%;
-        min-height:48px;
-        font-size:16px;
+        height:56px;
+        font-size:18px;
         box-sizing:border-box;
+    }
+
+    .mercado-toolbar{
+        flex-direction:column;
+    }
+
+    #btnNuevoCliente{
+        width:100%;
+        height:56px;
+        font-size:18px;
     }
 
 }
@@ -130,5 +140,27 @@
     display:block;
 }
 
+.mercado-toolbar{
+    display:flex;
+    gap:12px;
+}
 
+#buscarCliente{
+    flex:1;
+    height:48px;
+
+    padding:0 16px;
+
+    border-radius:8px;
+    border:1px solid #ddd;
+}
+
+#btnNuevoCliente{
+    width:180px;
+    height:48px;
+    flex-shrink:0;
+
+    border-radius:8px;
+    cursor:pointer;
+}
 
