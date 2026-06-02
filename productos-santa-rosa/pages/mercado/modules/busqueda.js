@@ -36,7 +36,6 @@ const palabras =
         }
     `);
     
-    .toLowerCase();
 
     return palabras.every(
         palabra =>
