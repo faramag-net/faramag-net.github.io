@@ -1,3 +1,8 @@
+import {
+    normalizarTexto
+}
+from "./utils.js";
+
 export function coincideBusqueda(
     cliente,
     productos,
@@ -8,13 +13,15 @@ export function coincideBusqueda(
         return true;
     }
 
-    const palabras =
+const palabras =
+    normalizarTexto(
         filtro
-            .toLowerCase()
-            .split(/\s+/)
-            .filter(Boolean);
+    )
+    .split(/\s+/)
+    .filter(Boolean);
 
-    const textoCliente = `
+    const textoCliente = 
+        normalizarTexto(`
         ${cliente.nombre || ""}
         ${cliente.encargado || ""}
         ${cliente.telefono || ""}
@@ -27,7 +34,8 @@ export function coincideBusqueda(
                 `)
                 .join(" ")
         }
-    `
+    `);
+    
     .toLowerCase();
 
     return palabras.every(
