@@ -1,4 +1,5 @@
 export function mostrarFormularioCliente(
+    datosIniciales = {},
     onGuardar
 ){
 
@@ -20,21 +21,25 @@ export function mostrarFormularioCliente(
                 <input
                     id="nombreCliente"
                     placeholder="Nombre"
+                    value="${datosIniciales.nombre || ""}"
                 >
 
                 <input
                     id="encargadoCliente"
                     placeholder="Encargado"
+                    value="${datosIniciales.encargado || ""}"
                 >
 
                 <input
                     id="telefonoCliente"
                     placeholder="Teléfono"
+                    value="${datosIniciales.telefono || ""}"
                 >
 
                 <input
                     id="direccionCliente"
                     placeholder="Dirección"
+                    value="${datosIniciales.direccion || ""}"
                 >
 
                 <div class="modal-actions">
