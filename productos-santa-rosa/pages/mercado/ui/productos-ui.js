@@ -24,10 +24,13 @@ function nuevoProducto(clienteId){
         {},
         datos => {
 
-            agregarProducto(
+            agregarProducto({
+
                 clienteId,
-                datos
-            );
+            
+                ...datos
+            
+            });
 
             refrescarCliente(
                 clienteId
