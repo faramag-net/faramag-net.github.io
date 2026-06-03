@@ -481,7 +481,12 @@ this.addHistory({
   }
   
   static saveMercadoHistory(data) {
-  
+
+    console.log(
+        "Guardando historial:",
+        data
+    );
+    
       return this.set(
           DB_KEYS.MERCADO_HISTORY,
           data
