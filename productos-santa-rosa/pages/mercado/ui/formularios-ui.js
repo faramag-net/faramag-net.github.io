@@ -60,6 +60,11 @@ export function mostrarFormularioCliente(
                     value="${datosIniciales.direccion || ""}"
                 >
 
+                <textarea
+                    id="comentariosCliente"
+                    placeholder="Comentarios"
+                >${datosIniciales.comentarios || ""}</textarea>
+
                 <div class="modal-actions">
 
                     <button id="guardarCliente">
@@ -135,25 +140,30 @@ document
 
             onGuardar({
 
-                nombre:
-                    document.getElementById(
-                        "nombreCliente"
-                    ).value,
+    nombre:
+        document.getElementById(
+            "nombreCliente"
+        ).value,
 
-                encargado:
-                    document.getElementById(
-                        "encargadoCliente"
-                    ).value,
+    encargado:
+        document.getElementById(
+            "encargadoCliente"
+        ).value,
 
-                telefono:
-                    document.getElementById(
-                        "telefonoCliente"
-                    ).value,
+    telefono:
+        document.getElementById(
+            "telefonoCliente"
+        ).value,
 
-                direccion:
-                    document.getElementById(
-                        "direccionCliente"
-                    ).value
+    direccion:
+        document.getElementById(
+            "direccionCliente"
+        ).value,
+
+    comentarios:
+        document.getElementById(
+            "comentariosCliente"
+        ).value
 
             });
 
