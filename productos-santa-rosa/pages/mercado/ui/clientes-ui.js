@@ -402,37 +402,49 @@ function renderHistorial(){
                     movimientos
                         .map(m => `
 
-                            <div>
-
-                                ${new Date(
-                                    m.fecha
-                                ).toLocaleString()}
-
-                                |
-
-                                ${m.tipo || ""}
-
-                                |
-
-                                ${m.cliente || ""}
-
-                                |
-
-                                ${m.encargado || ""}
-
-                                |
-
-                                ${m.producto || ""}
-
-                                |
-
-                                ${m.presentacion || ""}
-
-                                |
-
-                                ${m.precio || ""}
-
-                            </div>
+                        <div>
+                        
+                            ${new Date(
+                                m.fecha
+                            ).toLocaleString()}
+                        
+                            |
+                        
+                            ${m.tipo || "*"}
+                        
+                            |
+                        
+                            ${m.cliente || "*"}
+                        
+                            |
+                        
+                            ${m.encargado || "*"}
+                        
+                            |
+                        
+                            ${m.telefono || "*"}
+                        
+                            |
+                        
+                            ${m.producto || "*"}
+                        
+                            |
+                        
+                            ${m.presentacion || "*"}
+                        
+                            |
+                        
+                            ${m.precio || "*"}
+                        
+                            |
+                        
+                            ${m.direccion || "*"}
+                        
+                            |
+                        
+                            ${m.comentarios || "*"}
+                        
+                        </div>
 
                         `)
                         .join("")
