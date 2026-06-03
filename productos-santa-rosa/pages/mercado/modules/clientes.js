@@ -57,6 +57,15 @@ export function crearCliente(data) {
     encargado:
         nuevoCliente.encargado,
 
+    telefono:
+        nuevoCliente.telefono,
+
+    producto:"*",
+
+    presentacion:"*",
+
+    precio:"*",
+
     direccion:
         nuevoCliente.direccion,
 
@@ -88,6 +97,8 @@ export function editarCliente(id, cambios) {
 
     registrarMovimiento({
 
+registrarMovimiento({
+
     tipo:"✎C",
 
     cliente:
@@ -95,6 +106,15 @@ export function editarCliente(id, cambios) {
 
     encargado:
         clientes[index].encargado,
+
+    telefono:
+        clientes[index].telefono,
+
+    producto:"*",
+
+    presentacion:"*",
+
+    precio:"*",
 
     direccion:
         clientes[index].direccion,
@@ -121,19 +141,29 @@ export function eliminarCliente(id) {
 
     registrarMovimiento({
 
-        tipo:"-C",
+    tipo:"-C",
 
-        cliente:
-            cliente.nombre,
+    cliente:
+        cliente.nombre,
 
-        encargado:
-            cliente.encargado,
+    encargado:
+        cliente.encargado,
 
-        direccion:
-            cliente.direccion,
+    telefono:
+        cliente.telefono,
 
-        comentarios:
-            cliente.comentarios
+    producto:"*",
+
+    presentacion:"*",
+
+    precio:"*",
+
+    direccion:
+        cliente.direccion,
+
+    comentarios:
+        cliente.comentarios
+
 
     });
 
