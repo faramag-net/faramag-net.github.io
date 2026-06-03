@@ -363,7 +363,7 @@ function renderClientes(filtro = "") {
 
 }
 
-function renderHistorial(){
+ffunction renderHistorial(){
 
     const movimientos =
         getMovimientos();
@@ -373,22 +373,76 @@ function renderHistorial(){
             "historialMercado"
         )
         .innerHTML = `
-        
-        <div class="card-cliente">
 
-            <div class="cliente-header">
+        <details class="card-cliente">
 
-                <span class="expand-icon">
-                    ▶
-                </span>
-                
+            <summary class="cliente-header">
+
                 Historial (${movimientos.length})
+
+            </summary>
+
+            <div style="padding:10px;">
+
+                <button>
+                    Importar
+                </button>
+
+                <button>
+                    Exportar
+                </button>
+
+                <button>
+                    Eliminar
+                </button>
+
+                <hr>
+
+                ${
+                    movimientos
+                        .map(m => `
+
+                            <div>
+
+                                ${new Date(
+                                    m.fecha
+                                ).toLocaleString()}
+
+                                |
+
+                                ${m.tipo || ""}
+
+                                |
+
+                                ${m.cliente || ""}
+
+                                |
+
+                                ${m.encargado || ""}
+
+                                |
+
+                                ${m.producto || ""}
+
+                                |
+
+                                ${m.presentacion || ""}
+
+                                |
+
+                                ${m.precio || ""}
+
+                            </div>
+
+                        `)
+                        .join("")
+                }
 
             </div>
 
-        </div>
+        </details>
 
-        `;
+    `;
 }
 
 function abrirCliente(id){
