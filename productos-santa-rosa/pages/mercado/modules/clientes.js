@@ -1,5 +1,10 @@
 import LocalDB from "../../../core/storage/local-db.js";
 
+import {
+    registrarMovimiento
+}
+from "./historial.js";
+
 export function getClientes() {
     return LocalDB.getClients();
 }
@@ -42,6 +47,24 @@ export function crearCliente(data) {
 
     LocalDB.saveClients(clientes);
 
+    registrarMovimiento({
+
+    tipo:"+C",
+
+    cliente:
+        nuevoCliente.nombre,
+
+    encargado:
+        nuevoCliente.encargado,
+
+    direccion:
+        nuevoCliente.direccion,
+
+    comentarios:
+        nuevoCliente.comentarios
+
+});
+    
     return nuevoCliente;
 }
 
@@ -63,15 +86,64 @@ export function editarCliente(id, cambios) {
 
     LocalDB.saveClients(clientes);
 
+    registrarMovimiento({
+
+    tipo:"✎C",
+
+    cliente:
+        clientes[index].nombre,
+
+    encargado:
+        clientes[index].encargado,
+
+    direccion:
+        clientes[index].direccion,
+
+    comentarios:
+        clientes[index].comentarios
+
+});
+
     return clientes[index];
 }
 
 export function eliminarCliente(id) {
 
-    const clientes = LocalDB.getClients();
+    const clientes =
+        LocalDB.getClients();
+
+    const cliente =
+        clientes.find(
+            c => c.id === id
+        );
+
+    if(!cliente) return;
+
+    registrarMovimiento({
+
+        tipo:"-C",
+
+        cliente:
+            cliente.nombre,
+
+        encargado:
+            cliente.encargado,
+
+        direccion:
+            cliente.direccion,
+
+        comentarios:
+            cliente.comentarios
+
+    });
 
     const nuevosClientes =
-        clientes.filter(c => c.id !== id);
+        clientes.filter(
+            c => c.id !== id
+        );
 
-    LocalDB.saveClients(nuevosClientes);
+    LocalDB.saveClients(
+        nuevosClientes
+    );
+
 }
