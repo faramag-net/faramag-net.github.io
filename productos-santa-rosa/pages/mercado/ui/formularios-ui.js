@@ -1,7 +1,22 @@
 import {
+    getClientes
+}
+from "../modules/clientes.js";
+
+import {
     getProductos
 }
 from "../modules/productos.js";
+
+import {
+    normalizarTexto
+}
+from "../modules/utils.js";
+
+import {
+    normalizarTexto
+}
+from "../modules/utils.js";
 
 export function mostrarFormularioCliente(
     datosIniciales = {},
@@ -68,7 +83,47 @@ export function mostrarFormularioCliente(
 
     `;
 
+const clientes =
+    getClientes();
 
+const mapaClientes =
+    new Map();
+
+clientes.forEach(cliente => {
+
+    const clave =
+        normalizarTexto(
+            cliente.nombre
+        );
+
+    if(!mapaClientes.has(clave)){
+
+        mapaClientes.set(
+            clave,
+            cliente.nombre
+        );
+
+    }
+
+});
+    
+console.log(
+    "Clientes sugeridos:",
+    [...mapaClientes.values()]
+);
+    
+document
+    .getElementById(
+        "clientesExistentes"
+    )
+    .innerHTML =
+        [...mapaClientes.values()]
+            .map(nombre => `
+                <option
+                    value="${nombre}"
+                >
+            `)
+            .join("");
     
     document
         .getElementById(
