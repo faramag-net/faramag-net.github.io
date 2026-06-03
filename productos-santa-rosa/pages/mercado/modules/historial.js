@@ -24,9 +24,16 @@ export function registrarMovimiento(
         ...movimiento
 
     });
-
+    
+console.log(
+    "Historial actual:",
+    historial
+);
+    
     LocalDB.saveMercadoHistory(
         historial
+
+        
     );
 
 }
