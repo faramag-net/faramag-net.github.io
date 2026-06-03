@@ -25,9 +25,12 @@ export function mostrarFormularioCliente(
 
                 <input
                     id="nombreCliente"
+                    list="clientesExistentes"
                     placeholder="Nombre"
                     value="${datosIniciales.nombre || ""}"
                 >
+                
+                <datalist id="clientesExistentes"></datalist>
 
                 <input
                     id="encargadoCliente"
