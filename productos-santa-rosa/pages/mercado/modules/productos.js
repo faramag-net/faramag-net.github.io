@@ -80,6 +80,41 @@ export function agregarProducto(data) {
 
 });
 
+    const cliente =
+    LocalDB.getClients()
+        .find(
+            c =>
+                c.id ===
+                nuevoProducto.clienteId
+        );
+
+registrarMovimiento({
+
+    tipo:"+P",
+
+    cliente:
+        cliente?.nombre || "*",
+
+    encargado:"*",
+
+    telefono:"*",
+
+    producto:
+        nuevoProducto.producto,
+
+    presentacion:
+        nuevoProducto.presentacion,
+
+    precio:
+        nuevoProducto.precio,
+
+    direccion:"*",
+
+    comentarios:
+        nuevoProducto.comentarios || "*"
+
+});
+    
     return nuevoProducto;
 }
 
@@ -126,6 +161,45 @@ registrarHistorial({
 
 });
 
+    const cliente =
+    LocalDB.getClients()
+        .find(
+            c =>
+                c.id ===
+                productos[index]
+                    .clienteId
+        );
+
+registrarMovimiento({
+
+    tipo:"✎P",
+
+    cliente:
+        cliente?.nombre || "*",
+
+    encargado:"*",
+
+    telefono:"*",
+
+    producto:
+        productos[index]
+            .producto,
+
+    presentacion:
+        productos[index]
+            .presentacion,
+
+    precio:
+        productos[index]
+            .precio,
+
+    direccion:"*",
+
+    comentarios:
+        productos[index]
+            .comentarios || "*"
+
+});
 
     return productos[index];
 }
@@ -135,6 +209,48 @@ export function eliminarProducto(id) {
     const productos =
         LocalDB.getClientProducts();
 
+    const producto =
+        productos.find(
+            p => p.id === id
+        );
+
+    if(!producto) return;
+
+    const cliente =
+        LocalDB.getClients()
+            .find(
+                c =>
+                    c.id ===
+                    producto.clienteId
+            );
+
+    registrarMovimiento({
+
+        tipo:"-P",
+
+        cliente:
+            cliente?.nombre || "*",
+
+        encargado:"*",
+
+        telefono:"*",
+
+        producto:
+            producto.producto,
+
+        presentacion:
+            producto.presentacion,
+
+        precio:
+            producto.precio,
+
+        direccion:"*",
+
+        comentarios:
+            producto.comentarios || "*"
+
+    });
+
     const nuevosProductos =
         productos.filter(
             p => p.id !== id
@@ -143,6 +259,7 @@ export function eliminarProducto(id) {
     LocalDB.saveClientProducts(
         nuevosProductos
     );
+
 }
 
 export function registrarHistorial(data){
