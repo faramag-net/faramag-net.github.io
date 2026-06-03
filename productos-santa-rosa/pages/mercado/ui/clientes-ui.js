@@ -363,7 +363,7 @@ function renderClientes(filtro = "") {
 
 }
 
-ffunction renderHistorial(){
+function renderHistorial(){
 
     const movimientos =
         getMovimientos();
