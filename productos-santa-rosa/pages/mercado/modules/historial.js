@@ -29,16 +29,18 @@ export function registrarMovimiento(
     });
     
 console.log(
-    "Historial actual:",
-    historial
+    "Antes de guardar"
 );
     
     LocalDB.saveMercadoHistory(
         historial
-
-        
     );
 
+console.log(
+    "Leído después de guardar:",
+    LocalDB.getMercadoHistory()
+);
+    
 }
 
 export function getMovimientos(){
