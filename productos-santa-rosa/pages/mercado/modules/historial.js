@@ -4,6 +4,11 @@ export function registrarMovimiento(
     movimiento
 ){
 
+    console.log(
+    "Movimiento registrado",
+    movimiento
+);
+
     const historial =
         LocalDB.getMercadoHistory() || [];
 
