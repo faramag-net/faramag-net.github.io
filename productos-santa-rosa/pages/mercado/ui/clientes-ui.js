@@ -374,9 +374,9 @@ function renderHistorial(){
         )
         .innerHTML = `
 
-        <details class="card-cliente">
+        <details class="card-historial">
 
-            <summary class="cliente-header">
+            <summary class="historial-header">
 
                 Historial (${movimientos.length})
 
