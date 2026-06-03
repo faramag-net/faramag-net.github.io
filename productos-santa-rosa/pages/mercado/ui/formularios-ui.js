@@ -60,6 +60,25 @@ export function mostrarFormularioCliente(
                     value="${datosIniciales.direccion || ""}"
                 >
 
+                <button
+                    type="button"
+                    id="btnUbicacion"
+                >
+                    📍 Obtener ubicación actual
+                </button>
+                
+                <input
+                    type="hidden"
+                    id="latitudCliente"
+                    value="${datosIniciales.latitud || ""}"
+                >
+                
+                <input
+                    type="hidden"
+                    id="longitudCliente"
+                    value="${datosIniciales.longitud || ""}"
+                >
+
                 <textarea
                     id="comentariosCliente"
                     placeholder="Comentarios"
@@ -83,6 +102,68 @@ export function mostrarFormularioCliente(
 
     `;
 
+ document
+    .getElementById(
+        "btnUbicacion"
+    )
+    .onclick = () => {
+
+        navigator.geolocation
+            .getCurrentPosition(
+
+                posicion => {
+
+                    const lat =
+                        posicion.coords.latitude;
+
+                    const lng =
+                        posicion.coords.longitude;
+
+                    document
+                        .getElementById(
+                            "latitudCliente"
+                        )
+                        .value = lat;
+
+                    document
+                        .getElementById(
+                            "longitudCliente"
+                        )
+                        .value = lng;
+
+                    fetch(
+                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+                    )
+                    .then(
+                        r => r.json()
+                    )
+                    .then(
+                        data => {
+
+                            document
+                                .getElementById(
+                                    "direccionCliente"
+                                )
+                                .value =
+                                data.display_name || "";
+
+                        }
+                    );
+
+                },
+
+                error => {
+
+                    alert(
+                        "No fue posible obtener la ubicación"
+                    );
+
+                }
+
+            );
+
+    };            
+    
 const clientes =
     getClientes();
 
@@ -159,7 +240,17 @@ document
         document.getElementById(
             "direccionCliente"
         ).value,
+                
+    latitud:
+    document.getElementById(
+        "latitudCliente"
+    ).value,
 
+    longitud:
+    document.getElementById(
+        "longitudCliente"
+    ).value,
+                
     comentarios:
         document.getElementById(
             "comentariosCliente"
@@ -242,6 +333,8 @@ export function mostrarFormularioProducto(
         </div>
 
     `;
+
+   
     const productos =
     getProductos();
 
