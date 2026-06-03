@@ -1,5 +1,10 @@
 import LocalDB from "../../../core/storage/local-db.js";
 
+import {
+    registrarMovimiento
+}
+from "./historial.js";
+
 export function getProductosCliente(clienteId) {
 
     return LocalDB
