@@ -209,3 +209,26 @@
         display:flex;
         gap:10px;
     }
+
+.card-historial{
+
+    background:white;
+
+    border-radius:14px;
+
+    padding:12px;
+
+    margin-bottom:12px;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,.08);
+
+}
+
+.historial-header{
+
+    cursor:pointer;
+
+    font-weight:600;
+
+}
