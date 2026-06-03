@@ -13,11 +13,6 @@ import {
 }
 from "../modules/utils.js";
 
-import {
-    normalizarTexto
-}
-from "../modules/utils.js";
-
 export function mostrarFormularioCliente(
     datosIniciales = {},
     onGuardar
