@@ -20,6 +20,13 @@ export function getProductoById(id) {
         );
 }
 
+export function getProductos(){
+
+    return LocalDB
+        .getClientProducts();
+
+}
+
 export function agregarProducto(data) {
 
     const productos =
