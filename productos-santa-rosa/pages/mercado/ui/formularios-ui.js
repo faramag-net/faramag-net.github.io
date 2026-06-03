@@ -187,12 +187,7 @@ clientes.forEach(cliente => {
     }
 
 });
-    
-console.log(
-    "Clientes sugeridos:",
-    [...mapaClientes.values()]
-);
-    
+       
 document
     .getElementById(
         "clientesExistentes"
