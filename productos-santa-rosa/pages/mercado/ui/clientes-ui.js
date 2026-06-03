@@ -38,6 +38,11 @@ import {
 }
 from "../modules/busqueda.js";
 
+import {
+    getMovimientos
+}
+from "../modules/historial.js";
+
 export function inicializarClientesUI(){
     setAbrirCliente(
     abrirCliente
