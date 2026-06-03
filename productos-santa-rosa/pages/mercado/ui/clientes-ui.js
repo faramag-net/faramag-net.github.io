@@ -63,7 +63,8 @@ export function inicializarClientesUI(){
                     e.target.value
                 )
         );
-
+    
+    renderHistorial();
     renderClientes();
 }
 
@@ -355,6 +356,34 @@ function renderClientes(filtro = "") {
 
     });
 
+}
+
+function renderHistorial(){
+
+    const movimientos =
+        getMovimientos();
+
+    document
+        .getElementById(
+            "historialMercado"
+        )
+        .innerHTML = `
+        
+        <div class="card-cliente">
+
+            <div class="cliente-header">
+
+                <span class="expand-icon">
+                    ▶
+                </span>
+                
+                Historial (${movimientos.length})
+
+            </div>
+
+        </div>
+
+        `;
 }
 
 function abrirCliente(id){
