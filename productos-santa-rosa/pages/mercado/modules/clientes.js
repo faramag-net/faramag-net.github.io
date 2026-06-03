@@ -97,8 +97,6 @@ export function editarCliente(id, cambios) {
 
     registrarMovimiento({
 
-registrarMovimiento({
-
     tipo:"✎C",
 
     cliente:
