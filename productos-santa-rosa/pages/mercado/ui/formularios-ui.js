@@ -1,3 +1,8 @@
+import {
+    getProductos
+}
+from "../modules/productos.js";
+
 export function mostrarFormularioCliente(
     datosIniciales = {},
     onGuardar
@@ -60,6 +65,8 @@ export function mostrarFormularioCliente(
 
     `;
 
+
+    
     document
         .getElementById(
             "cancelarCliente"
@@ -124,16 +131,22 @@ export function mostrarFormularioProducto(
                 </h3>
 
                 <input
-                    id="productoNombre"
-                    placeholder="Producto"
-                    value="${datosIniciales.producto || ""}"
-                >
+                        id="productoNombre"
+                        list="productosExistentes"
+                        placeholder="Producto"
+                        value="${datosIniciales.producto || ""}"
+                    >
+                    
+                    <datalist id="productosExistentes"></datalist>
 
                 <input
-                    id="productoPresentacion"
-                    placeholder="Presentación"
-                    value="${datosIniciales.presentacion || ""}"
-                >
+                        id="productoPresentacion"
+                        list="presentacionesExistentes"
+                        placeholder="Presentación"
+                        value="${datosIniciales.presentacion || ""}"
+                    >
+                    
+                    <datalist id="presentacionesExistentes"></datalist>
 
                 <input
                     id="productoPrecio"
@@ -166,7 +179,58 @@ export function mostrarFormularioProducto(
         </div>
 
     `;
+    const productos =
+    getProductos();
 
+    console.log(
+    "Productos",
+    productos
+    );
+    
+    const nombresProductos =
+    [
+        ...new Set(
+            productos.map(
+                p => p.producto
+            )
+        )
+    ];
+
+document
+    .getElementById(
+        "productosExistentes"
+    )
+    .innerHTML =
+        nombresProductos
+            .map(nombre => `
+                <option
+                    value="${nombre}"
+                >
+            `)
+            .join("");
+
+    const presentaciones =
+    [
+        ...new Set(
+            productos.map(
+                p => p.presentacion
+            )
+        )
+    ];
+
+document
+    .getElementById(
+        "presentacionesExistentes"
+    )
+    .innerHTML =
+        presentaciones
+            .map(presentacion => `
+                <option
+                    value="${presentacion}"
+                >
+            `)
+            .join("");
+    
     document
         .getElementById(
             "cancelarProducto"
