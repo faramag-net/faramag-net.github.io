@@ -11,7 +11,7 @@ const DB_KEYS = {
   VISITS: "psr_visits",
   SETTINGS: "psr_settings",
   HISTORY: "psr_history",
-  MERCADO_HISTORY: "psr_mercado_history"
+  MERCADO_HISTORY: "psr_mercado_history",
 };
 
 class LocalDB {
@@ -469,7 +469,6 @@ this.addHistory({
             DB_KEYS.CLIENT_HISTORY,
             JSON.stringify(data)
         );
-    }
   
 } 
 
@@ -487,6 +486,8 @@ this.addHistory({
           DB_KEYS.MERCADO_HISTORY,
           data
       );
+
+}
 
 }
 
