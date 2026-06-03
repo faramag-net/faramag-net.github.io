@@ -11,6 +11,7 @@ const DB_KEYS = {
   VISITS: "psr_visits",
   SETTINGS: "psr_settings",
   HISTORY: "psr_history",
+  MERCADO_HISTORY: "psr_mercado_history",
 };
 
 class LocalDB {
@@ -472,6 +473,22 @@ this.addHistory({
   
 } 
 
+  static getMercadoHistory() {
+  
+      return this.get(
+          DB_KEYS.MERCADO_HISTORY
+      );
+  
+  }
+  
+  static saveMercadoHistory(data) {
+  
+      return this.set(
+          DB_KEYS.MERCADO_HISTORY,
+          data
+      );
+
+}
 
 export default LocalDB;
 export { DB_KEYS };
