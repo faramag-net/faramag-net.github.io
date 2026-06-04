@@ -232,3 +232,26 @@
     font-weight:600;
 
 }
+
+.historial-row{
+
+    white-space: nowrap;
+
+    overflow-x: auto;
+
+    padding: 4px 0;
+
+    border-bottom:
+        1px solid #eee;
+
+}
+
+.historial-header-row{
+
+    font-weight: bold;
+
+    margin-bottom: 8px;
+
+    white-space: nowrap;
+
+}
