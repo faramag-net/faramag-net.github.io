@@ -65,4 +65,30 @@ export function eliminarHistorial(){
 
 }
 
+export function importarHistorial(
+    archivo
+){
 
+    const lector =
+        new FileReader();
+
+    lector.onload = e => {
+
+        const datos =
+            JSON.parse(
+                e.target.result
+            );
+
+        LocalDB.saveMercadoHistory(
+            datos
+        );
+
+        location.reload();
+
+    };
+
+    lector.readAsText(
+        archivo
+    );
+
+}
