@@ -384,15 +384,15 @@ function renderHistorial(){
 
             <div style="padding:10px;">
 
-                <button>
+                <button id="btnImportarHistorial">
                     Importar
                 </button>
-
-                <button>
+                
+                <button id="btnExportarHistorial">
                     Exportar
                 </button>
-
-                <button>
+                
+                <button id="btnEliminarHistorial">
                     Eliminar
                 </button>
 
@@ -455,6 +455,66 @@ function renderHistorial(){
         </details>
 
     `;
+    
+    document
+    .getElementById(
+        "btnEliminarHistorial"
+    )
+    .onclick = () => {
+
+        const confirmar =
+            confirm(
+                "¿Eliminar historial completo?"
+            );
+
+        if(!confirmar)
+            return;
+
+        eliminarHistorial();
+
+        renderHistorial();
+
+    };
+
+    document
+    .getElementById(
+        "btnExportarHistorial"
+    )
+    .onclick = () => {
+
+        exportarHistorial();
+
+    };
+
+    document
+    .getElementById(
+        "btnImportarHistorial"
+    )
+    .onclick = () => {
+
+        const input =
+            document.createElement(
+                "input"
+            );
+
+        input.type =
+            "file";
+
+        input.accept =
+            ".json";
+
+        input.onchange =
+            e => {
+
+                importarHistorial(
+                    e.target.files[0]
+                );
+
+            };
+
+        input.click();
+
+    };
 }
 
 function abrirCliente(id){
