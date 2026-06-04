@@ -398,11 +398,17 @@ function renderHistorial(){
 
                 <hr>
 
+                <div class="historial-header-row">
+                
+                    Fecha | Tipo | Cliente | Enc | Tel | Producto | Presentacion | $ | Dirección | Comentarios
+                
+                </div>
+
                 ${
                     movimientos
                         .map(m => `
 
-                        <div>
+                        <div class="historial-row">
                         
                             ${new Date(
                                 m.fecha
