@@ -39,7 +39,10 @@ import {
 from "../modules/busqueda.js";
 
 import {
-    getMovimientos
+    getMovimientos,
+    eliminarHistorial,
+    exportarHistorial,
+    importarHistorial
 }
 from "../modules/historial.js";
 
