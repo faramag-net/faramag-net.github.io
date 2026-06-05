@@ -1,3 +1,6 @@
+import LocalDB
+from "../../core/storage/local-db.js";
+
 const btnHistorial =
     document.getElementById("toggleHistorial");
 
