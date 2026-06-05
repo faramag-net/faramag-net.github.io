@@ -1,6 +1,12 @@
 import LocalDB
 from "../../core/storage/local-db.js";
 
+console.log("LOCALDB CARGADO");
+
+console.log(LocalDB);
+
+console.log(LocalDB.getInsumos());
+
 const btnHistorial =
     document.getElementById("toggleHistorial");
 
