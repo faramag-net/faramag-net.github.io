@@ -12,6 +12,7 @@ const DB_KEYS = {
   SETTINGS: "psr_settings",
   HISTORY: "psr_history",
   MERCADO_HISTORY: "psr_mercado_history",
+  INSUMOS: "psr_insumos"
 };
 
 class LocalDB {
@@ -494,6 +495,14 @@ this.addHistory({
 
 }
 
+}
+
+static getInsumos() {
+    return this.get(this.KEYS.INSUMOS);
+}
+
+static saveInsumos(data) {
+    this.save(this.KEYS.INSUMOS, data);
 }
 
 export default LocalDB;
