@@ -33,7 +33,10 @@ btnHistorial.addEventListener("click", () => {
 
 function guardarInsumo() {
 
-        console.log("BOTON GUARDAR FUNCIONA");
+console.log(localStorage);
+    console.log(
+    localStorage.getItem("psr_insumos")
+);
     
     const insumos =
         LocalDB.getInsumos();
@@ -99,10 +102,9 @@ function guardarInsumo() {
     insumos.push(nuevoInsumo);
 
     LocalDB.saveInsumos(insumos);
-
-    console.log(
-        "INSUMO GUARDADO",
-        nuevoInsumo
+        console.log("DESPUES DE GUARDAR");
+        console.log(LocalDB.getInsumos());
+    
     );
 
 }
