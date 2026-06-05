@@ -494,16 +494,16 @@ this.addHistory({
       );
 
 }
-
-}
-
-static getInsumos() {
-    return this.get(this.KEYS.INSUMOS);
-}
-
-static saveInsumos(data) {
-    this.save(this.KEYS.INSUMOS, data);
-}
+  
+  static getInsumos() {
+      return this.get(DB_KEYS.INSUMOS);
+  }
+  
+  static saveInsumos(data) {
+      return this.set(DB_KEYS.INSUMOS, data);
+  }
+  
+  }
 
 export default LocalDB;
 export { DB_KEYS };
