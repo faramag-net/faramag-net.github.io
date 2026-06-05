@@ -104,7 +104,5 @@ console.log(localStorage);
     LocalDB.saveInsumos(insumos);
         console.log("DESPUES DE GUARDAR");
         console.log(LocalDB.getInsumos());
-    
-    );
 
 }
