@@ -50,12 +50,20 @@
 
             <div class="form-group">
                 <label>Producto</label>
-                <input type="text" id="producto">
+                <input
+                    type="text"
+                    id="producto"
+                    list="productosList"
+                >
             </div>
 
             <div class="form-group">
                 <label>Presentación</label>
-                <input type="text" id="presentacion">
+               <input
+                type="text"
+                id="presentacion"
+                list="presentacionesList"
+            >
             </div>
 
         </div>
@@ -64,7 +72,11 @@
 
             <div class="form-group">
                 <label>Tienda</label>
-                <input type="text" id="tienda">
+                <input
+                    type="text"
+                    id="tienda"
+                    list="tiendasList"
+                >
             </div>
 
             <div class="form-group">
@@ -142,7 +154,10 @@
             ▶ Historial (0)
         </button>
 
-        <div id="historialContainer">
+       <div
+            id="historialContainer"
+            style="display:none;"
+        >
 
             <div class="historial-tools">
 
@@ -191,8 +206,16 @@
 
 </div>
 
-<script type="module" src="./insumos.js"></script>
 
+    <datalist id="productosList"></datalist>
+    
+    <datalist id="presentacionesList"></datalist>
+    
+    <datalist id="tiendasList"></datalist>
+    
+    <script type="module" src="./insumos.js"></script>
+    
+    
 </body>
 
 </html>
