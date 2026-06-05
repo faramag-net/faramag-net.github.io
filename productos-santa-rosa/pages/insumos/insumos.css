@@ -1,1 +1,177 @@
+.insumos-page{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+}
 
+.insumos-header{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.insumos-header h1{
+    margin:0;
+}
+
+.insumos-header p{
+    margin-top:6px;
+    color:#666;
+}
+
+.kpis{
+    display:flex;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.kpi-card{
+    flex:1;
+
+    background:white;
+
+    border-radius:14px;
+
+    padding:16px;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,.08);
+
+    display:flex;
+    flex-direction:column;
+}
+
+.kpi-icon{
+    font-size:22px;
+}
+
+.kpi-label{
+    margin-top:8px;
+    font-size:13px;
+    color:#666;
+}
+
+.kpi-card strong{
+    margin-top:6px;
+    font-size:18px;
+}
+
+.insumos-form{
+    background:white;
+
+    border-radius:14px;
+
+    padding:16px;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,.08);
+
+    margin-bottom:20px;
+}
+
+.form-row{
+    display:flex;
+    gap:12px;
+}
+
+.form-group{
+    flex:1;
+
+    display:flex;
+    flex-direction:column;
+
+    margin-bottom:12px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+
+    padding:10px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    width:100%;
+}
+
+#comentarios{
+    min-height:80px;
+    resize:vertical;
+}
+
+.acciones{
+    display:flex;
+    gap:12px;
+}
+
+.acciones button{
+    flex:1;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:12px;
+
+    cursor:pointer;
+}
+
+.historial{
+    margin-top:20px;
+}
+
+#toggleHistorial{
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+}
+
+.tabla-wrapper{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,
+td{
+
+    font-size:12px;
+
+    padding:6px;
+
+    border-bottom:1px solid #eee;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    max-width:100px;
+}
+
+@media(max-width:768px){
+
+    .kpis{
+        flex-direction:column;
+    }
+
+    .form-row{
+        flex-direction:column;
+    }
+
+    .acciones{
+        flex-direction:column;
+    }
+
+}
