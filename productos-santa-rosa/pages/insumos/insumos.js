@@ -33,11 +33,6 @@ btnHistorial.addEventListener("click", () => {
 
 function guardarInsumo() {
 
-console.log(localStorage);
-    console.log(
-    localStorage.getItem("psr_insumos")
-);
-    
     const insumos =
         LocalDB.getInsumos();
 
@@ -102,7 +97,5 @@ console.log(localStorage);
     insumos.push(nuevoInsumo);
 
     LocalDB.saveInsumos(insumos);
-        console.log("DESPUES DE GUARDAR");
-        console.log(LocalDB.getInsumos());
 
 }
