@@ -6,6 +6,11 @@ const btnExportar =
         "btnExportar"
     );
 
+const btnGeolocalizar =
+    document.getElementById(
+        "btnGeolocalizar"
+    );
+
 const btnImportar =
     document.getElementById(
         "btnImportar"
@@ -52,6 +57,11 @@ btnImportar.addEventListener(
 fileImportar.addEventListener(
     "change",
     importarInsumos
+);
+
+btnGeolocalizar.addEventListener(
+    "click",
+    obtenerUbicacion
 );
 
 buscarHistorial.addEventListener(
@@ -162,9 +172,11 @@ function guardarInsumo() {
                 .getElementById("comentarios")
                 .value,
 
-        latitud: "",
+        latitud:
+            latitudActual,
         
-        longitud: "",
+        longitud:
+            longitudActual,
         
         direccion:
             document
@@ -282,7 +294,8 @@ function limpiarFormulario() {
     document.getElementById("comentarios").value = "";
     document.getElementById("direccion").value = "";
     comprador.value = "Martha";
-
+    latitudActual = "";
+    longitudActual = "";    
     otroCompradorContainer.style.display =
         "none";
 }
@@ -493,5 +506,80 @@ function eliminarInsumos() {
     actualizarKPIs();
 
     actualizarDatalists();
+
+}
+
+function obtenerUbicacion() {
+
+    if (!navigator.geolocation) {
+
+        alert(
+            "Geolocalización no soportada"
+        );
+
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        posicion => {
+
+            latitudActual =
+                posicion.coords.latitude;
+
+            longitudActual =
+                posicion.coords.longitude;
+
+            obtenerDireccion(
+                latitudActual,
+                longitudActual
+            );
+
+        },
+
+        error => {
+
+            alert(
+                "No fue posible obtener la ubicación"
+            );
+
+            console.error(error);
+
+        }
+
+    );
+
+}
+
+async function obtenerDireccion(
+    latitud,
+    longitud
+) {
+
+    try {
+
+        const respuesta =
+            await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitud}&lon=${longitud}`
+            );
+
+        const datos =
+            await respuesta.json();
+
+        document.getElementById(
+            "direccion"
+        ).value =
+            datos.display_name || "";
+
+    } catch(error){
+
+        console.error(error);
+
+        document.getElementById(
+            "direccion"
+        ).value =
+            "Dirección no encontrada";
+
+    }
 
 }
