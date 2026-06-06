@@ -191,3 +191,25 @@ td{
     }
 
 }
+
+@media (max-width: 480px) {
+
+    .kpi-card{
+
+        padding: 8px;
+
+    }
+
+    .kpi-label{
+
+        font-size: 11px;
+
+    }
+
+    .kpi-card strong{
+
+        font-size: 14px;
+
+    }
+
+}
