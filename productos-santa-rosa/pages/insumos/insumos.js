@@ -1,6 +1,37 @@
 import LocalDB
 from "../../core/storage/local-db.js";
 
+const buscarHistorial =
+    document.getElementById(
+        "buscarHistorial"
+    );
+
+buscarHistorial.addEventListener(
+    "input",
+    renderHistorial
+);
+
+const comprador =
+    document.getElementById("comprador");
+
+const otroCompradorContainer =
+    document.getElementById(
+        "otroCompradorContainer"
+    );
+
+comprador.addEventListener(
+    "change",
+    () => {
+
+        otroCompradorContainer.style.display =
+            comprador.value === "Otro"
+                ? "block"
+                : "none";
+
+    }
+);
+
+
 const btnGuardar =
     document.getElementById("btnGuardar");
 
@@ -60,6 +91,13 @@ function guardarInsumo() {
                 .getElementById("comprador")
                 .value,
 
+        compradorNombre:
+            document
+                .getElementById(
+                    "compradorNombre"
+                )
+                .value,
+        
         contacto:
             document
                 .getElementById("contacto")
@@ -101,6 +139,7 @@ function guardarInsumo() {
 
     renderHistorial();
     actualizarKPIs();
+    actualizarDatalists();
     limpiarFormulario();
     
 }
@@ -115,9 +154,29 @@ function renderHistorial() {
     const insumos =
         LocalDB.getInsumos();
 
+    const textoBusqueda =
+    buscarHistorial.value
+        .toLowerCase()
+        .trim();
+
     tabla.innerHTML = "";
 
-    insumos.forEach(insumo => {
+    [...insumos]
+    .filter(insumo => {
+
+        if (!textoBusqueda) {
+            return true;
+        }
+
+        return Object.values(insumo)
+            .join(" ")
+            .toLowerCase()
+            .includes(textoBusqueda);
+
+    })
+        
+    .reverse()
+    .forEach(insumo => {
 
         tabla.innerHTML += `
             <tr>
@@ -126,7 +185,13 @@ function renderHistorial() {
                 <td>${insumo.presentacion || ""}</td>
                 <td>$${insumo.total || 0}</td>
                 <td>${insumo.tienda || ""}</td>
-                <td>${insumo.comprador || ""}</td>
+                <td>
+                    ${
+                        insumo.comprador === "Otro"
+                            ? insumo.compradorNombre
+                            : insumo.comprador
+                    }
+                </td>
                 <td>${insumo.contacto || ""}</td>
                 <td>${insumo.longitud || ""}</td>
                 <td>${insumo.latitud || ""}</td>
@@ -151,6 +216,7 @@ function formatearFecha(fecha) {
 
 renderHistorial();
 actualizarKPIs();
+actualizarDatalists();
 
 function actualizarContadorHistorial() {
 
@@ -172,9 +238,13 @@ function limpiarFormulario() {
     document.getElementById("contacto").value = "";
     document.getElementById("cantidad").value = "";
     document.getElementById("total").value = "";
+    document.getElementById("compradorNombre").value = "";
     document.getElementById("comentarios").value = "";
     document.getElementById("direccion").value = "";
+    comprador.value = "Martha";
 
+    otroCompradorContainer.style.display =
+        "none";
 }
 
 function actualizarKPIs() {
@@ -219,5 +289,60 @@ function actualizarKPIs() {
 
     document.getElementById("kpiMartha").textContent =
         `$${totalMartha.toFixed(2)}`;
+
+}
+
+function actualizarDatalists() {
+
+    const insumos =
+        LocalDB.getInsumos();
+
+    const productos =
+        [...new Set(
+            insumos
+                .map(i => i.producto)
+                .filter(Boolean)
+        )];
+
+    const presentaciones =
+        [...new Set(
+            insumos
+                .map(i => i.presentacion)
+                .filter(Boolean)
+        )];
+
+    const tiendas =
+        [...new Set(
+            insumos
+                .map(i => i.tienda)
+                .filter(Boolean)
+        )];
+
+    document.getElementById(
+        "productosList"
+    ).innerHTML =
+        productos
+            .map(p =>
+                `<option value="${p}">`
+            )
+            .join("");
+
+    document.getElementById(
+        "presentacionesList"
+    ).innerHTML =
+        presentaciones
+            .map(p =>
+                `<option value="${p}">`
+            )
+            .join("");
+
+    document.getElementById(
+        "tiendasList"
+    ).innerHTML =
+        tiendas
+            .map(t =>
+                `<option value="${t}">`
+            )
+            .join("");
 
 }
