@@ -1,3 +1,7 @@
+*{
+    box-sizing:border-box;
+}
+
 .insumos-page{
     max-width: 1200px;
     margin: 0 auto;
@@ -160,55 +164,29 @@ td{
     max-width:100px;
 }
 
-@media (max-width: 768px) {
-
-    .kpis{
-
-        display: grid;
-
-        grid-template-columns: repeat(3, 1fr);
-
-        gap: 8px;
-
-    }
+@media (max-width:768px){
 
     .kpi-card{
 
-        min-width: 0;
-
-        padding: 10px;
+        padding:8px;
 
     }
 
-    .form-row{
+    .kpi-icon{
 
-        display: grid;
-
-        grid-template-columns: 1fr 1fr;
-
-        gap: 10px;
-
-    }
-
-}
-
-@media (max-width: 480px) {
-
-    .kpi-card{
-
-        padding: 8px;
+        font-size:18px;
 
     }
 
     .kpi-label{
 
-        font-size: 11px;
+        font-size:10px;
 
     }
 
     .kpi-card strong{
 
-        font-size: 14px;
+        font-size:13px;
 
     }
 
