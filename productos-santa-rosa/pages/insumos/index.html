@@ -167,9 +167,9 @@
                     id="buscarHistorial"
                 >
 
-                <button>📥 Importar</button>
-                <button>📤 Exportar</button>
-                <button>🗑 Eliminar</button>
+                <button id="btnImportar">📥 Importar</button>
+                <button id="btnExportar">📤 Exportar</button>
+                <button id="btnEliminar">🗑 Eliminar</button>
 
             </div>
 
@@ -206,6 +206,12 @@
 
 </div>
 
+    <input
+    type="file"
+    id="fileImportar"
+    accept=".json"
+    hidden
+>
 
     <datalist id="productosList"></datalist>
     
