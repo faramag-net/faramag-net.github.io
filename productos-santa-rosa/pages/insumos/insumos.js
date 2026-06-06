@@ -44,6 +44,9 @@ const otroCompradorContainer =
         "otroCompradorContainer"
     );
 
+let latitudActual = "";
+let longitudActual = "";
+
 btnExportar.addEventListener(
     "click",
     exportarInsumos
