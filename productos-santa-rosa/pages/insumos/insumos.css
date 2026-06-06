@@ -160,18 +160,34 @@ td{
     max-width:100px;
 }
 
-@media(max-width:768px){
+@media (max-width: 768px) {
 
     .kpis{
-        flex-direction:column;
+
+        display: grid;
+
+        grid-template-columns: repeat(3, 1fr);
+
+        gap: 8px;
+
+    }
+
+    .kpi-card{
+
+        min-width: 0;
+
+        padding: 10px;
+
     }
 
     .form-row{
-        flex-direction:column;
-    }
 
-    .acciones{
-        flex-direction:column;
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 10px;
+
     }
 
 }
