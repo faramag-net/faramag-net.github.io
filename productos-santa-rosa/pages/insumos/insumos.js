@@ -1,15 +1,35 @@
 import LocalDB
 from "../../core/storage/local-db.js";
 
+const btnExportar =
+    document.getElementById(
+        "btnExportar"
+    );
+
+const btnImportar =
+    document.getElementById(
+        "btnImportar"
+    );
+
+const fileImportar =
+    document.getElementById(
+        "fileImportar"
+    );
+
+const btnEliminar =
+    document.getElementById(
+        "btnEliminar"
+    );
+
+btnEliminar.addEventListener(
+    "click",
+    eliminarInsumos
+);
+
 const buscarHistorial =
     document.getElementById(
         "buscarHistorial"
     );
-
-buscarHistorial.addEventListener(
-    "input",
-    renderHistorial
-);
 
 const comprador =
     document.getElementById("comprador");
@@ -18,6 +38,26 @@ const otroCompradorContainer =
     document.getElementById(
         "otroCompradorContainer"
     );
+
+btnExportar.addEventListener(
+    "click",
+    exportarInsumos
+);
+
+btnImportar.addEventListener(
+    "click",
+    () => fileImportar.click()
+);
+
+fileImportar.addEventListener(
+    "change",
+    importarInsumos
+);
+
+buscarHistorial.addEventListener(
+    "input",
+    renderHistorial
+);
 
 comprador.addEventListener(
     "change",
@@ -343,6 +383,115 @@ function actualizarDatalists() {
             .map(t =>
                 `<option value="${t}">`
             )
+
             .join("");
+
+}
+
+function exportarInsumos() {
+
+    const insumos =
+        LocalDB.getInsumos();
+
+    const blob = new Blob(
+        [
+            JSON.stringify(
+                insumos,
+                null,
+                2
+            )
+        ],
+        {
+            type:
+                "application/json"
+        }
+    );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const enlace =
+        document.createElement("a");
+
+    enlace.href = url;
+
+    enlace.download =
+        `insumos_${
+            new Date()
+                .toISOString()
+                .split("T")[0]
+        }.json`;
+
+    enlace.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+function importarInsumos(event) {
+
+    const archivo =
+        event.target.files[0];
+
+    if (!archivo) return;
+
+    const lector =
+        new FileReader();
+
+    lector.onload = () => {
+
+        try {
+
+            const datos =
+                JSON.parse(
+                    lector.result
+                );
+
+            LocalDB.saveInsumos(
+                datos
+            );
+
+            renderHistorial();
+            actualizarKPIs();
+            actualizarDatalists();
+
+            alert(
+                "Importación completada"
+            );
+
+        } catch {
+
+            alert(
+                "Archivo inválido"
+            );
+
+        }
+
+    };
+
+    lector.readAsText(
+        archivo
+    );
+
+}
+
+function eliminarInsumos() {
+
+    const confirmar =
+        confirm(
+            "¿Eliminar todo el historial?"
+        );
+
+    if (!confirmar) {
+        return;
+    }
+
+    LocalDB.saveInsumos([]);
+
+    renderHistorial();
+
+    actualizarKPIs();
+
+    actualizarDatalists();
 
 }
