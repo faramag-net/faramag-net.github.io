@@ -118,13 +118,13 @@ function renderStock(){
             <span>
 
                 ${icono}
-                ${producto.nombre}
+                ${stock}
 
             </span>
 
             <span>
-
-                ${stock}
+                
+                ${producto.nombre}
 
             </span>
 
