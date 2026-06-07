@@ -113,22 +113,23 @@ function renderStock(){
 
         contenedor.innerHTML += `
 
-        <div class="stock-card ${clase}">
-
-            <span>
-
-                ${icono}
-                ${stock}
-
-            </span>
-
-            <span>
-                
-                ${producto.nombre}
-
-            </span>
-
-        </div>
+            <div class="stock-card ${clase}">
+            
+                <span>
+            
+                    ${icono}
+            
+                    <strong>
+                        ${stock}
+                    </strong>
+            
+                    <span class="stock-nombre">
+                        ${producto.nombre}
+                    </span>
+            
+                </span>
+            
+            </div>
 
         `;
 
