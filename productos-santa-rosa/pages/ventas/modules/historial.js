@@ -26,13 +26,63 @@ ventas.forEach((venta,index)=>{
             <td>$${Number(venta.ganancia || 0).toFixed(2)}</td>
             <td>${venta.fecha}</td>
 
+            <td>
+
+                <button
+                    class="btnEliminarVenta"
+                    data-index="${index}"
+                >
+                    ❌
+                </button>
+                
+            </td>
+    
         </tr>
 
         `;
 
     });
 
+        document
+        .querySelectorAll(
+            ".btnEliminarVenta"
+        )
+        .forEach(btn => {
+
+            btn.onclick = () => {
+
+                const confirmar =
+                    confirm(
+                        "¿Eliminar venta?"
+                    );
+
+                if(!confirmar)
+                    return;
+
+                const ventas =
+                    LocalDB.getSales();
+
+                ventas.splice(
+                    Number(
+                        btn.dataset.index
+                    ),
+                    1
+                );
+
+                LocalDB.saveSales(
+                    ventas
+                );
+
+                renderTablaVentas();
+
+                actualizarKPIs();
+
+            };
+
+        });
+
 }
+
 
 export function actualizarKPIs(){
 
