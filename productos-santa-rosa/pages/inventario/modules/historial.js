@@ -12,8 +12,46 @@ export function renderTabla(){
     const movimientos =
     LocalDB.getHistory();
 
-        movimientos.forEach((movimiento)=>{
+        movimientos.forEach((movimiento,index)=>{
 
+        document
+            .querySelectorAll(
+                ".btnEliminarMovimiento"
+            )
+            .forEach(btn => {
+        
+                btn.onclick = () => {
+        
+                    const confirmar =
+                        confirm(
+                            "¿Eliminar movimiento?"
+                        );
+        
+                    if(!confirmar)
+                        return;
+        
+                    const movimientos =
+                        LocalDB.getHistory();
+                    
+                    movimientos.splice(
+                        Number(
+                            btn.dataset.index
+                        ),
+                        1
+                    );
+                    
+                    LocalDB.saveHistory(
+                        movimientos
+                    );
+                    
+                    renderTabla();
+                    
+                    actualizarResumen();
+        
+                };
+        
+            });
+            
         tabla.innerHTML += `
 
         <tr>
@@ -28,6 +66,18 @@ export function renderTabla(){
 
             <td>${movimiento.fecha}</td>
 
+            <td>
+
+                <button
+                    class="btnEliminarMovimiento"
+                    data-index="${index}"
+                    title="Eliminar movimiento"
+                >
+                    🗑️
+                </button>
+        
+            </td>      
+                
         </tr>
 
         `;
