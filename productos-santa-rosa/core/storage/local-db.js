@@ -298,7 +298,11 @@ static saveMovements(movements) {
   static getHistory() {
     return this.get(DB_KEYS.HISTORY);
   }
-
+  
+  static getHistory() {
+    return this.get(DB_KEYS.HISTORY);
+}
+  
   static clearHistory() {
 
     this.set(
