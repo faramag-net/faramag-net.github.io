@@ -13,8 +13,40 @@ export function renderTabla(){
     LocalDB.getHistory();
 
         movimientos.forEach((movimiento,index)=>{
+           
+        tabla.innerHTML += `
 
-        document
+        <tr>
+
+            <td>${movimiento.tipo}</td>
+
+            <td>${movimiento.producto}</td>
+
+            <td>${movimiento.cantidad}</td>
+
+            <td>${movimiento.stock || 0}</td>
+
+            <td>${movimiento.fecha}</td>
+
+            <td>
+
+                <button
+                    class="btnEliminarMovimiento"
+                    data-index="${index}"
+                    title="Eliminar movimiento"
+                >
+                    🗑️
+                </button>
+        
+            </td>      
+                
+        </tr>
+
+        `;
+
+    });
+    
+                document
             .querySelectorAll(
                 ".btnEliminarMovimiento"
             )
@@ -51,39 +83,7 @@ export function renderTabla(){
                 };
         
             });
-            
-        tabla.innerHTML += `
-
-        <tr>
-
-            <td>${movimiento.tipo}</td>
-
-            <td>${movimiento.producto}</td>
-
-            <td>${movimiento.cantidad}</td>
-
-            <td>${movimiento.stock || 0}</td>
-
-            <td>${movimiento.fecha}</td>
-
-            <td>
-
-                <button
-                    class="btnEliminarMovimiento"
-                    data-index="${index}"
-                    title="Eliminar movimiento"
-                >
-                    🗑️
-                </button>
-        
-            </td>      
-                
-        </tr>
-
-        `;
-
-    });
-
+    
 }
 
 export function actualizarResumen(){
