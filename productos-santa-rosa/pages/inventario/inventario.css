@@ -240,7 +240,7 @@ h1{
 
 .btnEliminarMovimiento{
 
-    background: none;
+    background: transparent;
 
     border: none;
 
@@ -248,18 +248,18 @@ h1{
 
     margin: 0;
 
+    width: 18px;
+
+    height: 18px;
+
+    font-size: 12px;
+
     cursor: pointer;
-
-    font-size: none;
-
-    line-height: 1;
-
-    opacity: .5;
 
 }
 
-.btnEliminarMovimiento:hover{
+#tablaInventario td{
 
-    opacity: 1;
+    padding: 4px 8px;
 
 }
