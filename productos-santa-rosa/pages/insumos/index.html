@@ -111,6 +111,15 @@
                 <label>Cantidad</label>
                 <input type="number" id="cantidad">
             </div>
+            
+         <div class="form-group">
+            <label>Precio Unitario</label>
+            <input
+                type="number"
+                id="precio"
+                step="0.01"
+            >
+        </div>
 
             <div class="form-group">
                 <label>Total</label>
@@ -118,6 +127,25 @@
             </div>
 
         </div>
+        
+        <div class="form-group">
+            <label>Diferencia</label>
+            <input
+                type="text"
+                id="diferencia"
+                readonly
+            >
+        </div>
+
+    <div class="form-group">
+        <label>&nbsp;</label>
+        <button
+            type="button"
+            id="btnRecalcular"
+        >
+            ↺ Recalcular
+        </button>
+    </div>
 
         <div class="form-group">
             <label>Comentarios</label>
@@ -131,7 +159,7 @@
                 id="direccion"
             >
         </div>
-
+                   
         <div class="acciones">
 
             <button id="btnGeolocalizar">
@@ -144,6 +172,7 @@
 
         </div>
 
+       
     </section>
 
     <!-- HISTORIAL -->
@@ -181,7 +210,10 @@
                             <th>Fecha</th>
                             <th>Producto</th>
                             <th>Present.</th>
+                            <th>Cant.</th>
+                            <th>Precio</th>
                             <th>Total</th>
+                            <th>Diferencia</th>
                             <th>Tienda</th>
                             <th>Comprador</th>
                             <th>Contacto</th>
@@ -189,6 +221,7 @@
                             <th>Lat.</th>
                             <th>Dirección</th>
                             <th>Comentarios</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
 
