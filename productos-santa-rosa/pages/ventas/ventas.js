@@ -89,7 +89,9 @@ function renderStock(){
         );
 
     const stock =
-        itemInventario?.stock || 0;
+        LocalDB.getCalculatedStock(
+            producto.id
+        );
 
         let clase = "";
         let icono = "";
