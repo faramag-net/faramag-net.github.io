@@ -156,8 +156,7 @@ static deleteProduct(id) {
 
         inventory[index].stock += quantity;
 
-        inventory[index].stockBase += quantity;
-      
+     
         if (inventory[index].stock < 0) {
 
             console.warn(
@@ -173,7 +172,6 @@ static deleteProduct(id) {
         id: crypto.randomUUID(),
         productId,
         stock: quantity,
-        stockBase: quantity,
         updatedAt:
             new Date().toISOString(),
     });
@@ -275,11 +273,6 @@ const product =
     };
 
     // descontar stock automáticamente
-    if (sale.items && Array.isArray(sale.items)) {
-      sale.items.forEach((item) => {
-        this.updateStock(item.productId, -item.quantity);
-      });
-    }
 
     sales.push(newSale);
 
@@ -293,7 +286,7 @@ this.addHistory({
 
    cantidad: sale.cantidad,
 
-   stock: this.getProductStock(
+   stock: this.getCalculatedStock(
        sale.items?.[0]?.productId
    ),
 
