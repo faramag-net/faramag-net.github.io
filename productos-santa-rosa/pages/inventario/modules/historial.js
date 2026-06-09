@@ -34,7 +34,7 @@ export function renderTabla(){
                     data-index="${index}"
                     title="Eliminar Movimiento"
                 >
-                    🗑
+                    ❌
                 </button>
         
             </td>     
