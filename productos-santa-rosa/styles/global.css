@@ -113,6 +113,31 @@ button{
 
 }
 
+.panel input,
+.panel select{
+
+    padding:4px 8px;
+
+    margin:2px 0;
+
+    font-size:14px;
+
+    min-height:28px;
+
+}
+
+.panel button{
+
+    padding:2px 8px;
+
+    margin:0;
+
+    font-size:13px;
+
+    min-height:24px;
+
+}
+
 /* BOTONES */
 
 button{
