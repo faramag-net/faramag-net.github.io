@@ -32,7 +32,7 @@ export function renderTabla(){
                 <button
                     class="btnEliminarMovimiento"
                     data-index="${index}"
-                    title=""
+                    title="Eliminar Movimiento"
                 >
                     🗑
                 </button>
