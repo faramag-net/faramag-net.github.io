@@ -142,15 +142,6 @@ h1{
 
 }
 
-.acciones-inventario button{
-
-    margin:0;
-
-    min-height:28px;
-    
-    font-size:13px;
-}
-
 @media(max-width:768px){
 
     .acciones-inventario{
