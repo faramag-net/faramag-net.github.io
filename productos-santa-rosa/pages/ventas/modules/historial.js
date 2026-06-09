@@ -72,9 +72,7 @@ ventas.forEach((venta,index)=>{
                 LocalDB.saveSales(
                     ventas
                 );
-
-                LocalDB.rebuildInventoryFromSales();
-                
+               
                 renderTablaVentas();
 
                 actualizarKPIs();
