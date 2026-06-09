@@ -26,10 +26,6 @@ const btnEliminar =
         "btnEliminar"
     );
 
-btnEliminar.addEventListener(
-    "click",
-    eliminarInsumos
-);
 
 const buscarHistorial =
     document.getElementById(
@@ -46,6 +42,11 @@ const otroCompradorContainer =
 
 let latitudActual = "";
 let longitudActual = "";
+
+btnEliminar.addEventListener(
+    "click",
+    eliminarInsumos
+);
 
 btnExportar.addEventListener(
     "click",
@@ -101,6 +102,8 @@ const historialContainer =
 
 let abierto = false;
 
+let insumoEditando = null;
+
 btnHistorial.addEventListener("click", () => {
 
     abierto = !abierto;
@@ -114,6 +117,84 @@ btnHistorial.addEventListener("click", () => {
 
 function guardarInsumo() {
 
+    if(insumoEditando){
+
+    const insumos =
+        LocalDB.getInsumos();
+
+    const index =
+        insumos.findIndex(
+            i => i.id === insumoEditando
+        );
+
+    if(index !== -1){
+
+        insumos[index] = {
+
+            ...insumos[index],
+
+            producto:
+                document.getElementById("producto").value,
+
+            presentacion:
+                document.getElementById("presentacion").value,
+
+            tienda:
+                document.getElementById("tienda").value,
+
+            comprador:
+                document.getElementById("comprador").value,
+
+            compradorNombre:
+                document.getElementById("compradorNombre").value,
+
+            contacto:
+                document.getElementById("contacto").value,
+
+            cantidad:
+                Number(
+                    document.getElementById("cantidad").value
+                ),
+
+            total:
+                Number(
+                    document.getElementById("total").value
+                ),
+
+            comentarios:
+                document.getElementById("comentarios").value,
+
+            direccion:
+                document.getElementById("direccion").value,
+
+            latitud:
+                latitudActual,
+
+            longitud:
+                longitudActual
+
+        };
+
+        LocalDB.saveInsumos(
+            insumos
+        );
+
+        insumoEditando = null;
+
+        document.getElementById(
+            "btnGuardar"
+        ).textContent =
+            "💾 Guardar";
+
+        renderHistorial();
+        actualizarKPIs();
+        actualizarDatalists();
+        limpiarFormulario();
+
+        return;
+    }
+}
+    
     const insumos =
         LocalDB.getInsumos();
 
@@ -252,6 +333,23 @@ function renderHistorial() {
                 <td>${insumo.latitud || ""}</td>
                 <td>${insumo.direccion || ""}</td>
                 <td>${insumo.comentarios || ""}</td>
+
+                <td>
+                    <button
+                        class="btn-editar"
+                        onclick="editarInsumo('${insumo.id}')"
+                    >
+                        ✏️
+                    </button>
+                
+                    <button
+                        class="btn-eliminar"
+                        onclick="eliminarInsumo('${insumo.id}')"
+                    >
+                        🗑️
+                    </button>
+                </td>
+                
             </tr>
         `;
 
@@ -584,5 +682,93 @@ async function obtenerDireccion(
             "Dirección no encontrada";
 
     }
+
+}
+
+window.eliminarInsumo = function(id){
+
+    const confirmar =
+        confirm(
+            "¿Eliminar este registro?"
+        );
+
+    if(!confirmar){
+        return;
+    }
+
+    const insumos =
+        LocalDB.getInsumos();
+
+    const actualizados =
+        insumos.filter(
+            insumo => insumo.id !== id
+        );
+
+    LocalDB.saveInsumos(
+        actualizados
+    );
+
+    renderHistorial();
+    actualizarKPIs();
+    actualizarDatalists();
+
+}
+
+window.editarInsumo = function(id){
+
+    const insumos =
+        LocalDB.getInsumos();
+
+    const insumo =
+        insumos.find(
+            i => i.id === id
+        );
+
+    if(!insumo){
+        return;
+    }
+
+    insumoEditando = id;
+
+    document.getElementById("producto").value =
+        insumo.producto || "";
+
+    document.getElementById("presentacion").value =
+        insumo.presentacion || "";
+
+    document.getElementById("tienda").value =
+        insumo.tienda || "";
+
+    document.getElementById("contacto").value =
+        insumo.contacto || "";
+
+    document.getElementById("cantidad").value =
+        insumo.cantidad || "";
+
+    document.getElementById("total").value =
+        insumo.total || "";
+
+    document.getElementById("comentarios").value =
+        insumo.comentarios || "";
+
+    document.getElementById("direccion").value =
+        insumo.direccion || "";
+
+    document.getElementById("comprador").value =
+        insumo.comprador || "Martha";
+
+    document.getElementById("compradorNombre").value =
+        insumo.compradorNombre || "";
+
+    latitudActual =
+        insumo.latitud || "";
+
+    longitudActual =
+        insumo.longitud || "";
+
+    document.getElementById(
+        "btnGuardar"
+    ).textContent =
+        "💾 Actualizar";
 
 }
