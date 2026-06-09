@@ -191,14 +191,67 @@ const product =
   }
 
   static getProductStock(productId) {
-    const inventory = this.getInventory();
-
-    const item = inventory.find(
-      (item) => item.productId === productId
-    );
-
-    return item ? item.stock : 0;
+  
+      const inventory =
+          this.getInventory();
+  
+      const item =
+          inventory.find(
+              item =>
+                  item.productId === productId
+          );
+  
+      return item
+          ? item.stock
+          : 0;
+  
   }
+
+  static getCalculatedStock(productId){
+
+    const inventario =
+        this.getInventory();
+
+    const ventas =
+        this.getSales();
+
+    const itemInventario =
+        inventario.find(
+            item =>
+                item.productId === productId
+        );
+
+    const stockInventario =
+        itemInventario
+            ? itemInventario.stock
+            : 0;
+
+    let vendido = 0;
+
+    ventas.forEach(venta => {
+
+        if(!venta.items){
+            return;
+        }
+
+        venta.items.forEach(item => {
+
+            if(
+                item.productId === productId
+            ){
+
+                vendido +=
+                    item.quantity;
+
+            }
+
+        });
+
+    });
+
+    return stockInventario - vendido;
+
+}
 
   // =========================
   // Sales
@@ -570,6 +623,7 @@ this.addHistory({
     this.saveInventory(rebuilt);
 
 }*/
+
   
   }
 
