@@ -111,7 +111,7 @@ export function actualizarResumen(){
         let estado = "✅ OK";
         
         const stock =
-        LocalDB.getProductStock(
+        LocalDB.getCalculatedStock(
         producto.id
         );
         
