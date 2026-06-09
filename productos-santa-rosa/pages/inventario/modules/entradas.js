@@ -83,9 +83,9 @@ LocalDB.updateStock(
 );
 
 const stockActual =
-    LocalDB.getProductStock(
-        producto.id
-    );
+    LocalDB.getCalculatedStock(
+    producto.id
+);
 
 LocalDB.addHistory({
 
@@ -129,10 +129,10 @@ export function renderTablaProductos(){
     LocalDB.getProducts()
     .forEach(producto=>{
 
-        const stock =
-        LocalDB.getProductStock(
-            producto.id
-        );
+    const stock =
+    LocalDB.getCalculatedStock(
+    producto.id
+    );
 
         let estado = "OK";
 
