@@ -27,8 +27,17 @@ export function renderTabla(){
             <td>${movimiento.stock || 0}</td>
 
             <td>${movimiento.fecha}</td>
-
-
+            
+            <td>
+                <button
+                    class="btnEliminarMovimiento"
+                    data-index="${index}"
+                    title=""
+                >
+                    🗑
+                </button>
+        
+            </td>     
                 
         </tr>
 
