@@ -78,8 +78,6 @@ export function importarVentas(event){
             datos.ventas || []
         );
 
-        LocalDB.rebuildInventoryFromSales();
-
         renderTablaVentas();
 
         actualizarKPIs();
