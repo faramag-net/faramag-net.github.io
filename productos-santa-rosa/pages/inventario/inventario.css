@@ -240,7 +240,7 @@ h1{
 
 .btnEliminarMovimiento{
 
-    background: transparent;
+    background: none;
 
     border: none;
 
@@ -248,9 +248,9 @@ h1{
 
     margin: 0;
 
-    width: 18px;
+    width: 12px;
 
-    height: 18px;
+    height: 12px;
 
     font-size: 12px;
 
