@@ -518,7 +518,7 @@ this.addHistory({
       return this.set(DB_KEYS.INSUMOS, data);
   }
 
-  static rebuildInventoryFromSales() {
+ /* static rebuildInventoryFromSales() {
 
     const inventory =
         this.getInventory();
@@ -569,7 +569,7 @@ this.addHistory({
 
     this.saveInventory(rebuilt);
 
-}
+}*/
   
   }
 
