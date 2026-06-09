@@ -190,4 +190,14 @@ td{
 
     }
 
-}
+    }
+    
+    .dif-positiva{
+        color:#d32f2f;
+        font-weight:bold;
+    }
+    
+    .dif-negativa{
+        color:#2e7d32;
+        font-weight:bold;
+    }
