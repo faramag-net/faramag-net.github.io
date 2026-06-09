@@ -912,4 +912,21 @@ function calcularDiferencia(){
             ? `+${diferencia.toFixed(2)}`
             : diferencia.toFixed(2);
 
+    const diferenciaInput =
+        document.getElementById(
+            "diferencia"
+        );
+    
+    diferenciaInput.value =
+        diferencia > 0
+            ? `+${diferencia.toFixed(2)}`
+            : diferencia.toFixed(2);
+    
+    diferenciaInput.className =
+        diferencia > 0
+            ? "dif-positiva"
+            : diferencia < 0
+                ? "dif-negativa"
+                : "";                        
+
 }
