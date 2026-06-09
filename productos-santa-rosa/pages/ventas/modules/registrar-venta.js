@@ -126,7 +126,7 @@ export function registrarVenta(){
     }
 
     const stockActual =
-    LocalDB.getProductStock(
+    LocalDB.getCalculatedStock(
         producto.id
     );
     
