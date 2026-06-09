@@ -156,6 +156,8 @@ static deleteProduct(id) {
 
         inventory[index].stock += quantity;
 
+        inventory[index].stockBase += quantity;
+      
         if (inventory[index].stock < 0) {
 
             console.warn(
@@ -166,12 +168,16 @@ static deleteProduct(id) {
 
       inventory[index].updatedAt = new Date().toISOString();
     } else {
+      
       inventory.push({
         id: crypto.randomUUID(),
         productId,
         stock: quantity,
-        updatedAt: new Date().toISOString(),
-      });
+        stockBase: quantity,
+        updatedAt:
+            new Date().toISOString(),
+    });
+      
     }
 
     this.saveInventory(inventory);
@@ -511,6 +517,59 @@ this.addHistory({
   static saveInsumos(data) {
       return this.set(DB_KEYS.INSUMOS, data);
   }
+
+  static rebuildInventoryFromSales() {
+
+    const inventory =
+        this.getInventory();
+
+    const sales =
+        this.getSales();
+
+    const rebuilt =
+        inventory.map(item => ({
+            ...item,
+            stockBase:
+                item.stockBase ??
+                item.stock
+        }));
+
+    rebuilt.forEach(item => {
+
+        item.stock =
+            item.stockBase;
+
+    });
+
+    sales.forEach(sale => {
+
+        if(!sale.items){
+            return;
+        }
+
+        sale.items.forEach(itemVenta => {
+
+            const inv =
+                rebuilt.find(
+                    i =>
+                    i.productId ===
+                    itemVenta.productId
+                );
+
+            if(inv){
+
+                inv.stock -=
+                    itemVenta.quantity;
+
+            }
+
+        });
+
+    });
+
+    this.saveInventory(rebuilt);
+
+}
   
   }
 
