@@ -40,8 +40,39 @@ const otroCompradorContainer =
         "otroCompradorContainer"
     );
 
+const cantidadInput =
+    document.getElementById("cantidad");
+
+const precioInput =
+    document.getElementById("precio");
+
+const totalInput =
+    document.getElementById("total");
+
+cantidadInput.addEventListener(
+    "input",
+    recalcularTotal
+);
+
+precioInput.addEventListener(
+    "input",
+    recalcularTotal
+);
+
+totalInput.addEventListener(
+    "input",
+    () => {
+
+        totalModificadoManualmente = true;
+
+        calcularDiferencia();
+
+    }
+);
+
 let latitudActual = "";
 let longitudActual = "";
+let totalModificadoManualmente = false;
 
 btnEliminar.addEventListener(
     "click",
@@ -72,6 +103,28 @@ buscarHistorial.addEventListener(
     "input",
     renderHistorial
 );
+
+document
+    .getElementById("btnRecalcular")
+    .addEventListener(
+        "click",
+        () => {
+
+            totalModificadoManualmente = false;
+
+            const cantidad =
+                Number(cantidadInput.value) || 0;
+
+            const precio =
+                Number(precioInput.value) || 0;
+
+            totalInput.value =
+                (cantidad * precio).toFixed(2);
+
+            calcularDiferencia();
+
+        }
+    );
 
 comprador.addEventListener(
     "change",
@@ -155,10 +208,20 @@ function guardarInsumo() {
                 Number(
                     document.getElementById("cantidad").value
                 ),
-
+            
+            precio:
+                Number(
+                    document.getElementById("precio").value
+                ),
+            
             total:
                 Number(
                     document.getElementById("total").value
+                ),
+
+            diferencia:
+                Number(
+                    document.getElementById("diferencia").value
                 ),
 
             comentarios:
@@ -243,11 +306,24 @@ function guardarInsumo() {
                     .getElementById("cantidad")
                     .value
             ),
+        
+        precio:
+            Number(
+                document.getElementById("precio")
+                .value
+            ),
 
         total:
             Number(
                 document
                     .getElementById("total")
+                    .value
+            ),
+        
+        diferencia:
+            Number(
+                document
+                    .getElementById("diferencia")
                     .value
             ),
 
@@ -319,7 +395,16 @@ function renderHistorial() {
                 <td>${formatearFecha(insumo.fecha)}</td>
                 <td>${insumo.producto || ""}</td>
                 <td>${insumo.presentacion || ""}</td>
-                <td>$${insumo.total || 0}</td>
+                <td>${insumo.cantidad || 0}</td>
+                <td>$${(insumo.precio || 0).toFixed(2)}</td>
+                <td>$${(insumo.total || 0).toFixed(2)}</td>
+                <td>
+                    ${
+                        Number(insumo.diferencia || 0) > 0
+                            ? `+$${Number(insumo.diferencia).toFixed(2)}`
+                            : `$${Number(insumo.diferencia || 0).toFixed(2)}`
+                    }
+                </td>
                 <td>${insumo.tienda || ""}</td>
                 <td>
                     ${
@@ -390,7 +475,9 @@ function limpiarFormulario() {
     document.getElementById("tienda").value = "";
     document.getElementById("contacto").value = "";
     document.getElementById("cantidad").value = "";
+    document.getElementById("precio").value = "";
     document.getElementById("total").value = "";
+    document.getElementById("diferencia").value = "";
     document.getElementById("compradorNombre").value = "";
     document.getElementById("comentarios").value = "";
     document.getElementById("direccion").value = "";
@@ -399,6 +486,7 @@ function limpiarFormulario() {
     longitudActual = "";    
     otroCompradorContainer.style.display =
         "none";
+    totalModificadoManualmente = false;
 }
 
 function actualizarKPIs() {
@@ -744,6 +832,9 @@ window.editarInsumo = function(id){
 
     document.getElementById("cantidad").value =
         insumo.cantidad || "";
+    
+    document.getElementById("precio").value =
+        insumo.precio || "";
 
     document.getElementById("total").value =
         insumo.total || "";
@@ -766,9 +857,59 @@ window.editarInsumo = function(id){
     longitudActual =
         insumo.longitud || "";
 
+    calcularDiferencia();
+    
     document.getElementById(
         "btnGuardar"
     ).textContent =
         "💾 Actualizar";
+
+}
+
+function recalcularTotal(){
+
+    const cantidad =
+        Number(cantidadInput.value) || 0;
+
+    const precio =
+        Number(precioInput.value) || 0;
+
+    const totalCalculado =
+        cantidad * precio;
+
+    if(!totalModificadoManualmente){
+    
+        totalInput.value =
+            totalCalculado.toFixed(2);
+    
+    }
+
+    calcularDiferencia();
+
+}
+
+function calcularDiferencia(){
+
+    const cantidad =
+        Number(cantidadInput.value) || 0;
+
+    const precio =
+        Number(precioInput.value) || 0;
+
+    const totalEsperado =
+        cantidad * precio;
+
+    const totalReal =
+        Number(totalInput.value) || 0;
+
+    const diferencia =
+        totalReal - totalEsperado;
+
+    document.getElementById(
+        "diferencia"
+    ).value =
+        diferencia > 0
+            ? `+${diferencia.toFixed(2)}`
+            : diferencia.toFixed(2);
 
 }
