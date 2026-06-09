@@ -44,7 +44,7 @@ export function agregarComanda(){
     }
     
     const stockActual =
-    LocalDB.getProductStock(
+    LocalDB.getCalculatedStock(
         producto.id
     );
     
