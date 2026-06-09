@@ -205,41 +205,66 @@ const product =
   
   }
 
-  static getCalculatedStock(productId){
+static getCalculatedStock(productId){
 
-    const inventario =
-        this.getInventory();
+    const producto =
+        this.getProducts()
+        .find(
+            p => p.id === productId
+        );
+
+    if(!producto){
+        return 0;
+    }
+
+    let stock = 0;
+
+    const historial =
+        this.getHistory();
+
+    historial.forEach(item => {
+
+        if(
+            item.producto !== producto.nombre
+        ){
+            return;
+        }
+
+        switch(item.tipo){
+
+            case "ALTA PRODUCTO":
+            case "ENTRADA":
+
+                stock += item.cantidad;
+                break;
+
+            case "MERMA":
+            case "CORTESIA":
+
+                stock += item.cantidad;
+                break;
+
+            case "ELIMINAR PRODUCTO":
+
+                stock = 0;
+                break;
+
+        }
+
+    });
 
     const ventas =
         this.getSales();
 
-    const itemInventario =
-        inventario.find(
-            item =>
-                item.productId === productId
-        );
-
-    const stockInventario =
-        itemInventario
-            ? itemInventario.stock
-            : 0;
-
-    let vendido = 0;
-
     ventas.forEach(venta => {
 
-        if(!venta.items){
-            return;
-        }
-
-        venta.items.forEach(item => {
+        venta.items?.forEach(item => {
 
             if(
                 item.productId === productId
             ){
 
-                vendido +=
-                    item.quantity;
+                stock -= item.quantity;
 
             }
 
@@ -247,7 +272,7 @@ const product =
 
     });
 
-    return stockInventario - vendido;
+    return stock;
 
 }
 
