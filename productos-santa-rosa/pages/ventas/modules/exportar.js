@@ -78,6 +78,8 @@ export function importarVentas(event){
             datos.ventas || []
         );
 
+        // LocalDB.rebuildInventoryFromSales();
+        
         renderTablaVentas();
 
         actualizarKPIs();
@@ -105,7 +107,9 @@ export function cerrarCorte(){
     }
 
     LocalDB.saveSales([]);
-
+    
+// LocalDB.rebuildInventoryFromSales();
+    
     renderTablaVentas();
 
     actualizarKPIs();
