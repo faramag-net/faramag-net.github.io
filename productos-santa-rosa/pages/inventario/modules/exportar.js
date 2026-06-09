@@ -112,6 +112,8 @@ try {
             datos.ventas || []
         );
 
+        LocalDB.rebuildInventoryFromSales();
+        
         actualizarResumen();
 
         renderTabla();
