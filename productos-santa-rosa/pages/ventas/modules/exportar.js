@@ -106,8 +106,6 @@ export function cerrarCorte(){
 
     LocalDB.saveSales([]);
 
-    LocalDB.rebuildInventoryFromSales();
-
     renderTablaVentas();
 
     actualizarKPIs();
