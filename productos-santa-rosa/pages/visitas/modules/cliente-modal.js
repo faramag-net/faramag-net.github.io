@@ -315,27 +315,6 @@ guardarBtn.onclick = () => {
         
 }
 
-    function renderCobranzaTab(){
-
-    const container =
-        document.getElementById(
-            "clienteTabContent"
-        );
-
-    container.innerHTML = `
-
-        <h3>
-            Cobranza
-        </h3>
-
-        <p>
-            Saldo pendiente:
-            $${cliente.saldo || 0}
-        </p>
-
-    `;
-}
-
     function renderPedidosTab(){
 
     const container =
