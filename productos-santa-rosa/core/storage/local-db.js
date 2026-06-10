@@ -235,14 +235,16 @@ static getCalculatedStock(productId){
 
             case "ALTA PRODUCTO":
             case "ENTRADA":
+            case "CONSIGNACION_ENTRADA":
 
                 stock += item.cantidad;
                 break;
 
             case "MERMA":
             case "CORTESIA":
+            case "CONSIGNACION_SALIDA":
 
-                stock += item.cantidad;
+                stock -= item.cantidad;
                 break;
 
             case "ELIMINAR PRODUCTO":
