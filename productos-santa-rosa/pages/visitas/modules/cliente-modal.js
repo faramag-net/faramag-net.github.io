@@ -498,28 +498,40 @@ function renderConsignacionTab(){
         );
 
     if(activa){
-
+    
         container.innerHTML = `
-
+    
             <h3>
                 Consignación Activa
             </h3>
-
+    
             <p>
                 Fecha:
                 ${activa.fecha}
             </p>
-
+    
             <button
                 id="recogerBtn"
             >
                 Recoger Producto
             </button>
-
+    
         `;
-
+    
+        document
+        .getElementById(
+            "recogerBtn"
+        )
+        .onclick = () => {
+    
+            renderRecogerProducto(
+                activa
+            );
+    
+        };
+    
         return;
-
+    
     }
 
     container.innerHTML = `
@@ -699,6 +711,12 @@ function renderConsignacionTab(){
         renderConsignacionTab();
     
     };
+}
+
+    function renderRecogerProducto(
+    consignacion
+){
+    ...
 }
     
 }
