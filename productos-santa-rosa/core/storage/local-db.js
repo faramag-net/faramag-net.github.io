@@ -643,8 +643,6 @@ static deleteClientProduct(id){
 
 }
    
-  }
-
 static saveConsignations(
     consignaciones
 ){
@@ -695,6 +693,8 @@ static getActiveConsignation(
                 "ACTIVA"
 
         );
+
+}
 
 }
 
