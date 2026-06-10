@@ -804,9 +804,9 @@ function renderConsignacionTab(){
         }
 
         <button
-            id="continuarCierreBtn"
+            id="cerrarConsignacionBtn"
         >
-            Continuar
+            Cerrar Consignación
         </button>
 
     `;
@@ -844,6 +844,119 @@ function renderConsignacionTab(){
         };
 
     });
+
+    document
+.getElementById(
+    "cerrarConsignacionBtn"
+)
+.onclick = () => {
+
+    const inputs =
+        document.querySelectorAll(
+            ".cantidad-devuelta"
+        );
+
+    const productos =
+        LocalDB.getProducts();
+
+    inputs.forEach(input => {
+
+        const productId =
+            input.dataset.productid;
+
+        const entregado =
+            Number(
+                input.dataset.entregado
+            );
+
+        const devuelto =
+            Number(
+                input.value
+            );
+
+        const vendido =
+            entregado -
+            devuelto;
+
+        const producto =
+            productos.find(
+                p =>
+                p.id === productId
+            );
+
+        if(devuelto > 0){
+
+            LocalDB.updateStock(
+                productId,
+                devuelto
+            );
+
+        }
+
+        if(vendido > 0){
+
+            const precio =
+                producto.precio;
+
+            const total =
+                vendido * precio;
+
+            LocalDB.createSale({
+
+                producto:
+                    producto.nombre,
+
+                cliente:
+                    cliente.nombre,
+
+                cantidad:
+                    vendido,
+
+                precio,
+
+                costo:
+                    producto.costo,
+
+                total,
+
+                ganancia:
+                    total -
+                    (
+                        vendido *
+                        producto.costo
+                    ),
+
+                items:[
+                    {
+                        productId,
+                        quantity:
+                            vendido,
+                        price:
+                            precio
+                    }
+                ],
+
+                fecha:
+                    new Date()
+                    .toLocaleString()
+
+            });
+
+        }
+
+    });
+
+    LocalDB.closeConsignation(
+        consignacion.id
+    );
+
+    showToast(
+        "Consignación cerrada"
+    );
+
+    renderConsignacionTab();
+
+};
 
 }
    
