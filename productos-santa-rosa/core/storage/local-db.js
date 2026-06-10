@@ -619,7 +619,7 @@ static getProductsByClient(
 
 }
 
-static removeClientProduct(
+static deleteClientProduct(
     id
 ){
 
