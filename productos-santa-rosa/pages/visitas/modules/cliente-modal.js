@@ -713,10 +713,138 @@ function renderConsignacionTab(){
     };
 }
 
-    function renderRecogerProducto(
-    consignacion
-){
-    ...
+    function renderRecogerProducto(consignacion){
+
+    const container =
+        document.getElementById(
+            "clienteTabContent"
+        );
+
+    const productos =
+        LocalDB.getProducts();
+
+    container.innerHTML = `
+
+        <h3>
+            Recoger Producto
+        </h3>
+
+        ${
+
+            consignacion.items.map(
+                item => {
+
+                    const producto =
+                        productos.find(
+                            p =>
+                            p.id ===
+                            item.productId
+                        );
+
+                    return `
+
+                        <div
+                            class="recoger-item"
+                        >
+
+                            <h4>
+                                ${
+                                    producto?.nombre
+                                }
+                            </h4>
+
+                            <p>
+
+                                Entregado:
+
+                                ${
+                                    item.cantidadEntregada
+                                }
+
+                            </p>
+
+                            <label>
+
+                                Devuelto
+
+                            </label>
+
+                            <input
+                                type="number"
+                                min="0"
+                                max="${item.cantidadEntregada}"
+                                value="0"
+                                class="cantidad-devuelta"
+                                data-productid="${item.productId}"
+                                data-entregado="${item.cantidadEntregada}"
+                            >
+
+                            <p>
+
+                                Vendido:
+
+                                <span
+                                    class="vendido-preview"
+                                >
+                                    ${
+                                        item.cantidadEntregada
+                                    }
+                                </span>
+
+                            </p>
+
+                        </div>
+
+                    `;
+
+                }
+
+            ).join("")
+
+        }
+
+        <button
+            id="continuarCierreBtn"
+        >
+            Continuar
+        </button>
+
+    `;
+
+    document
+    .querySelectorAll(
+        ".cantidad-devuelta"
+    )
+    .forEach(input => {
+
+        input.oninput = () => {
+
+            const entregado =
+                Number(
+                    input.dataset.entregado
+                );
+
+            const devuelto =
+                Number(
+                    input.value
+                );
+
+            const vendido =
+                entregado -
+                devuelto;
+
+            input
+                .parentElement
+                .querySelector(
+                    ".vendido-preview"
+                )
+                .textContent =
+                vendido;
+
+        };
+
+    });
+
 }
-    
+   
 }
