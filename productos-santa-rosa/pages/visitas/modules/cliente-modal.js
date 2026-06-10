@@ -492,15 +492,132 @@ function renderConsignacionTab(){
             "clienteTabContent"
         );
 
+    const activa =
+        LocalDB.getActiveConsignation(
+            clienteId
+        );
+
+    if(activa){
+
+        container.innerHTML = `
+
+            <h3>
+                Consignación Activa
+            </h3>
+
+            <p>
+                Fecha:
+                ${activa.fecha}
+            </p>
+
+            <button
+                id="recogerBtn"
+            >
+                Recoger Producto
+            </button>
+
+        `;
+
+        return;
+
+    }
+
     container.innerHTML = `
 
         <h3>
             Consignación
         </h3>
 
-        <p>
-            En construcción...
-        </p>
+        <button
+            id="nuevaEntregaBtn"
+        >
+            Nueva Entrega
+        </button>
+
+    `;
+
+    document
+    .getElementById(
+        "nuevaEntregaBtn"
+    )
+    .onclick = () => {
+
+        renderNuevaEntrega();
+
+    };
+
+}
+
+    function renderNuevaEntrega(){
+
+        console.log(
+        "Asignados",
+        asignados
+        );
+        
+    const container =
+        document.getElementById(
+            "clienteTabContent"
+        );
+
+    const productos =
+        LocalDB.getProducts();
+
+    const asignados =
+        LocalDB.getProductsByClient(
+            clienteId
+        );
+
+    container.innerHTML = `
+
+        <h3>
+            Nueva Entrega
+        </h3>
+
+        ${
+
+            asignados.map(item => {
+
+                const producto =
+                    productos.find(
+                        p =>
+                        p.id ===
+                        item.productoId
+                    );
+
+                return `
+
+                    <div>
+
+                        <label>
+
+                            ${
+                                producto?.nombre
+                            }
+
+                        </label>
+
+                        <input
+                            type="number"
+                            min="0"
+                            value="0"
+                            class="cantidad-consignacion"
+                            data-productid="${producto.id}"
+                        >
+
+                    </div>
+
+                `;
+
+            }).join("")
+
+        }
+
+        <button
+            id="guardarEntregaBtn"
+        >
+            Guardar Entrega
+        </button>
 
     `;
 }
