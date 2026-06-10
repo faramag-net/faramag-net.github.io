@@ -549,12 +549,7 @@ function renderConsignacionTab(){
 }
 
     function renderNuevaEntrega(){
-
-        console.log(
-        "Asignados",
-        asignados
-        );
-        
+       
     const container =
         document.getElementById(
             "clienteTabContent"
@@ -567,7 +562,12 @@ function renderConsignacionTab(){
         LocalDB.getProductsByClient(
             clienteId
         );
-
+        
+        console.log(
+        "Asignados",
+        asignados
+        );
+        
     container.innerHTML = `
 
         <h3>
