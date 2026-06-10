@@ -612,7 +612,7 @@ function renderConsignacionTab(){
                             min="0"
                             value="0"
                             class="cantidad-consignacion"
-                            data-productid="${producto.id}"
+                            data-productid="${producto?.id || ''}"
                         >
 
                     </div>
