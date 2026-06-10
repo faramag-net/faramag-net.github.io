@@ -369,6 +369,16 @@ function renderProductosTab(){
 
                 asignados.map(item => {
 
+                    console.log(
+                    "Producto buscado",
+                    item.productoId
+                );
+                
+                console.log(
+                    "Productos",
+                    productos
+                );
+
                     const producto =
                         productos.find(
                             p =>
