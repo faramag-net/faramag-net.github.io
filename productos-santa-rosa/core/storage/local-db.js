@@ -589,60 +589,54 @@ this.addHistory({
       return this.set(DB_KEYS.INSUMOS, data);
   }
 
- /* static rebuildInventoryFromSales() {
+static addClientProduct(data){
 
-    const inventory =
-        this.getInventory();
+    const productos =
+        this.getClientProducts();
 
-    const sales =
-        this.getSales();
-
-    const rebuilt =
-        inventory.map(item => ({
-            ...item,
-            stockBase:
-                item.stockBase ??
-                item.stock
-        }));
-
-    rebuilt.forEach(item => {
-
-        item.stock =
-            item.stockBase;
-
+    productos.push({
+        id: crypto.randomUUID(),
+        ...data
     });
 
-    sales.forEach(sale => {
+    this.saveClientProducts(
+        productos
+    );
 
-        if(!sale.items){
-            return;
-        }
+}
 
-        sale.items.forEach(itemVenta => {
+static getProductsByClient(
+    clienteId
+){
 
-            const inv =
-                rebuilt.find(
-                    i =>
-                    i.productId ===
-                    itemVenta.productId
-                );
+    return this
+        .getClientProducts()
+        .filter(
+            p =>
+                p.clienteId ===
+                clienteId
+        );
 
-            if(inv){
+}
 
-                inv.stock -=
-                    itemVenta.quantity;
+static removeClientProduct(
+    id
+){
 
-            }
+    const productos =
+        this.getClientProducts();
 
-        });
+    const filtrados =
+        productos.filter(
+            p => p.id !== id
+        );
 
-    });
+    this.saveClientProducts(
+        filtrados
+    );
 
-    this.saveInventory(rebuilt);
-
-}*/
-
-  
+}
+   
   }
 
 export default LocalDB;
