@@ -696,6 +696,37 @@ static getActiveConsignation(
 
 }
 
+  static closeConsignation(
+    consignacionId
+){
+
+    const consignaciones =
+        this.getConsignations();
+
+    const index =
+        consignaciones.findIndex(
+            c =>
+                c.id ===
+                consignacionId
+        );
+
+    if(index < 0){
+        return;
+    }
+
+    consignaciones[index].estado =
+        "CERRADA";
+
+    consignaciones[index].fechaCierre =
+        new Date()
+        .toISOString();
+
+    this.saveConsignations(
+        consignaciones
+    );
+
+}
+  
 }
 
 export default LocalDB;
