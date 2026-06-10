@@ -674,17 +674,34 @@ function renderConsignacionTab(){
     
         }
     
-        items.forEach(item => {
-    
-            LocalDB.updateStock(
-    
-                item.productId,
-    
-                -item.cantidadEntregada
-    
-            );
-    
-        });
+items.forEach(item => {
+
+    const producto =
+        LocalDB.getProducts()
+        .find(
+            p =>
+                p.id ===
+                item.productId
+        );
+
+    LocalDB.addHistory({
+
+        tipo:
+            "CONSIGNACION_SALIDA",
+
+        producto:
+            producto.nombre,
+
+        cantidad:
+            item.cantidadEntregada,
+
+        fecha:
+            new Date()
+            .toLocaleString()
+
+    });
+
+});
     
         LocalDB.addConsignation({
     
@@ -885,12 +902,24 @@ function renderConsignacionTab(){
             );
 
         if(devuelto > 0){
-
-            LocalDB.updateStock(
-                productId,
-                devuelto
-            );
-
+        
+            LocalDB.addHistory({
+        
+                tipo:
+                    "CONSIGNACION_ENTRADA",
+        
+                producto:
+                    producto.nombre,
+        
+                cantidad:
+                    devuelto,
+        
+                fecha:
+                    new Date()
+                    .toLocaleString()
+        
+            });
+        
         }
 
         if(vendido > 0){
