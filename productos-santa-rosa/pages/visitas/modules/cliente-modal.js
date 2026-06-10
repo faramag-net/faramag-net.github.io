@@ -375,12 +375,7 @@ function renderProductosTab(){
                             p.id ===
                             item.productoId
                         );
-                    
-                    console.log(
-                        "Producto encontrado",
-                        producto
-                    );
-                    
+                   
                     return `
 
                         <div
@@ -568,11 +563,6 @@ function renderConsignacionTab(){
             clienteId
         );
         
-        console.log(
-        "Asignados",
-        asignados
-        );
-        
     container.innerHTML = `
 
         <h3>
@@ -625,6 +615,90 @@ function renderConsignacionTab(){
         </button>
 
     `;
+
+            document
+    .getElementById(
+        "guardarEntregaBtn"
+    )
+    .onclick = () => {
+    
+        const inputs =
+            document.querySelectorAll(
+                ".cantidad-consignacion"
+            );
+    
+        const items = [];
+    
+        inputs.forEach(input => {
+    
+            const cantidad =
+                Number(
+                    input.value
+                );
+    
+            if(cantidad <= 0){
+                return;
+            }
+    
+            items.push({
+    
+                productId:
+                    input.dataset.productid,
+    
+                cantidadEntregada:
+                    cantidad
+    
+            });
+    
+        });
+    
+        if(!items.length){
+    
+            showToast(
+                "Ingresa cantidades"
+            );
+    
+            return;
+    
+        }
+    
+        items.forEach(item => {
+    
+            LocalDB.updateStock(
+    
+                item.productId,
+    
+                -item.cantidadEntregada
+    
+            );
+    
+        });
+    
+        LocalDB.addConsignation({
+    
+            id:
+                crypto.randomUUID(),
+    
+            clienteId,
+    
+            fecha:
+                new Date()
+                .toLocaleString(),
+    
+            estado:
+                "ACTIVA",
+    
+            items
+    
+        });
+    
+        showToast(
+            "Consignación creada"
+        );
+    
+        renderConsignacionTab();
+    
+    };
 }
     
 }
