@@ -696,9 +696,7 @@ static getActiveConsignation(
 
 }
 
-  static closeConsignation(
-    consignacionId
-){
+  static closeConsignation(consignacionId){
 
     const consignaciones =
         this.getConsignations();
