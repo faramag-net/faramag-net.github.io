@@ -112,6 +112,11 @@ export function registrarVenta(){
         document.getElementById("cantidad").value
     );
 
+    const precio =
+    Number(
+        document.getElementById("precio").value
+    );
+    
     const producto =
     productos.find(
         p => p.nombre === nombre
@@ -146,7 +151,7 @@ export function registrarVenta(){
 
     
     const subtotal =
-    cantidad * producto.precio;
+    cantidad * precio;
 
     const ganancia =
     subtotal - (cantidad * producto.costo);
@@ -159,7 +164,7 @@ LocalDB.createSale({
 
     cantidad,
 
-    precio: producto.precio,
+    precio,
 
     costo: producto.costo,
 
@@ -171,7 +176,7 @@ LocalDB.createSale({
         {
             productId: producto.id,
             quantity: cantidad,
-            price: producto.precio
+            price: precio
         }
     ],
 
