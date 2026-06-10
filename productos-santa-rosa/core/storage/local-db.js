@@ -619,9 +619,7 @@ static getProductsByClient(
 
 }
 
-static deleteClientProduct(
-    id
-){
+static deleteClientProduct(id){
 
     const productos =
         this.getClientProducts();
