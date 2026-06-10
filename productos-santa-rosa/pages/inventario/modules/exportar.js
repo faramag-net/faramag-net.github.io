@@ -110,10 +110,8 @@ try {
 
         LocalDB.saveSales(
             datos.ventas || []
-        );
-        
-      // LocalDB.rebuildInventoryFromSales();
-        
+        );       
+       
         actualizarResumen();
 
         renderTabla();
