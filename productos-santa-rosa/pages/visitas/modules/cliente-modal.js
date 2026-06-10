@@ -84,19 +84,19 @@ export function openClienteModal(clienteId){
                     VISITAS
                 </button>
 
-                <button
-                    class="tab-btn"
-                    data-tab="cobranza"
-                >
-                    COBRANZA
-                </button>
-
-                <button
-                    class="tab-btn"
-                    data-tab="pedidos"
-                >
-                    PEDIDOS
-                </button>
+            <button
+                class="tab-btn"
+                data-tab="productos"
+            >
+                PRODUCTOS
+            </button>
+            
+            <button
+                class="tab-btn"
+                data-tab="consignacion"
+            >
+                CONSIGNACIÓN
+            </button>
 
             </div>
 
@@ -151,14 +151,14 @@ setTimeout(() => {
                 renderVisitasTab();
             }
 
-            if(tab === "cobranza"){
-
-                renderCobranzaTab();
+            if(tab === "productos"){
+            
+                renderProductosTab();
             }
-
-            if(tab === "pedidos"){
-
-                renderPedidosTab();
+            
+            if(tab === "consignacion"){
+            
+                renderConsignacionTab();
             }
 
         };
@@ -182,11 +182,6 @@ setTimeout(() => {
 
         <p>
             📍 ${cliente.direccion || "-"}
-        </p>
-
-        <p>
-            💵 Saldo:
-            $${cliente.saldo || 0}
         </p>
 
     `;
@@ -315,7 +310,181 @@ guardarBtn.onclick = () => {
         
 }
 
-    function renderPedidosTab(){
+function renderProductosTab(){
+
+    const container =
+        document.getElementById(
+            "clienteTabContent"
+        );
+
+    const productos =
+        LocalDB.getProducts();
+
+    const asignados =
+        LocalDB.getProductsByClient(
+            clienteId
+        );
+
+    container.innerHTML = `
+
+        <h3>
+            Productos Cliente
+        </h3>
+
+        <div class="form-producto-cliente">
+
+            <select id="productoCliente">
+
+                ${
+                    productos.map(
+                        p => `
+                        <option
+                            value="${p.id}"
+                        >
+                            ${p.nombre}
+                        </option>
+                        `
+                    ).join("")
+                }
+
+            </select>
+
+            <button
+                id="agregarProductoCliente"
+            >
+                Agregar
+            </button>
+
+        </div>
+
+        <hr>
+
+        <div id="listaProductosCliente">
+
+            ${
+                asignados.length
+
+                ?
+
+                asignados.map(item => {
+
+                    const producto =
+                        productos.find(
+                            p =>
+                            p.id ===
+                            item.productoId
+                        );
+
+                    return `
+
+                        <div
+                            class="producto-cliente-item"
+                        >
+
+                            <strong>
+
+                                ${
+                                    producto?.nombre
+                                    || "Producto"
+                                }
+
+                            </strong>
+
+                            <button
+                                class="eliminar-producto-cliente"
+                                data-id="${item.id}"
+                            >
+                                ❌
+                            </button>
+
+                        </div>
+
+                    `;
+
+                }).join("")
+
+                :
+
+                `
+                <p>
+                    Sin productos asignados
+                </p>
+                `
+
+            }
+
+        </div>
+
+    `;
+    
+    document
+    .getElementById(
+        "agregarProductoCliente"
+    )
+    .onclick = () => {
+    
+        const productoId =
+            document.getElementById(
+                "productoCliente"
+            ).value;
+    
+        const existe =
+    asignados.find(
+        p =>
+            p.productoId ===
+            productoId
+    );
+
+        if(existe){
+        
+            showToast(
+                "Producto ya agregado"
+            );
+        
+            return;
+        }
+        
+        LocalDB.addClientProduct({
+    
+            clienteId,
+    
+            productoId,
+   
+        });
+
+        showToast(
+            "Producto agregado"
+        );
+        
+        renderProductosTab();
+    
+        };
+
+    document
+    .querySelectorAll(
+        ".eliminar-producto-cliente"
+    )
+    .forEach(btn => {
+    
+        btn.onclick = () => {
+    
+            LocalDB.deleteClientProduct(
+                btn.dataset.id            
+            );
+
+            showToast(
+                "Producto eliminado"
+            );
+    
+            renderProductosTab();
+    
+        };
+    
+    });
+    
+    }
+
+function renderConsignacionTab(){
 
     const container =
         document.getElementById(
@@ -325,11 +494,11 @@ guardarBtn.onclick = () => {
     container.innerHTML = `
 
         <h3>
-            Pedidos
+            Consignación
         </h3>
 
         <p>
-            Próximamente...
+            En construcción...
         </p>
 
     `;
