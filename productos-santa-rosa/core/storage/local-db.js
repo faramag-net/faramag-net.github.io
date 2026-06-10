@@ -259,21 +259,27 @@ static getCalculatedStock(productId){
     const ventas =
         this.getSales();
 
-    ventas.forEach(venta => {
+ventas.forEach(venta => {
 
-        venta.items?.forEach(item => {
+    if(
+        venta.consignacion
+    ){
+        return;
+    }
 
-            if(
-                item.productId === productId
-            ){
+    venta.items?.forEach(item => {
 
-                stock -= item.quantity;
+        if(
+            item.productId === productId
+        ){
 
-            }
+            stock -= item.quantity;
 
-        });
+        }
 
     });
+
+});
 
     return stock;
 
