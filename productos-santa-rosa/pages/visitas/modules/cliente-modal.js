@@ -967,7 +967,9 @@ items.forEach(item => {
 
                 fecha:
                     new Date()
-                    .toLocaleString()
+                    .toLocaleString(),
+                
+                consignacion: true
 
             });
 
