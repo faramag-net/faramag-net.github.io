@@ -12,7 +12,8 @@ const DB_KEYS = {
   SETTINGS: "psr_settings",
   HISTORY: "psr_history",
   MERCADO_HISTORY: "psr_mercado_history",
-  INSUMOS: "psr_insumos"
+  INSUMOS: "psr_insumos",
+  CONSIGNATIONS:"psr_consignations"
 };
 
 class LocalDB {
@@ -632,10 +633,70 @@ static deleteClientProduct(id){
     this.saveClientProducts(
         filtrados
     );
+}
+
+  static getConsignations(){
+
+    return this.get(
+        DB_KEYS.CONSIGNATIONS
+    ) || [];
 
 }
    
   }
+
+static saveConsignations(
+    consignaciones
+){
+
+    this.set(
+
+        DB_KEYS.CONSIGNATIONS,
+
+        consignaciones
+
+    );
+
+}
+
+static addConsignation(
+    consignacion
+){
+
+    const consignaciones =
+        this.getConsignations();
+
+    consignaciones.push(
+        consignacion
+    );
+
+    this.saveConsignations(
+        consignaciones
+    );
+
+}
+
+static getActiveConsignation(
+    clienteId
+){
+
+    return this
+        .getConsignations()
+        .find(
+
+            c =>
+
+                c.clienteId ===
+                clienteId
+
+                &&
+
+                c.estado ===
+                "ACTIVA"
+
+        );
+
+}
 
 export default LocalDB;
 export { DB_KEYS };
