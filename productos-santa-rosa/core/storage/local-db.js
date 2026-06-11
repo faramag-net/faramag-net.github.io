@@ -688,11 +688,14 @@ static getSuggestedPrice(
             p => p.id === productId
         );
   
-console.log(producto);
+console.log(
+    "PRODUCTO ENCONTRADO",
+    producto
+);
   
-    return Number(
-        producto?.price || 0
-    );
+      return Number(
+          producto?.precio || 0
+      );
 
 }
   
