@@ -687,7 +687,9 @@ static getSuggestedPrice(
         .find(
             p => p.id === productId
         );
-
+  
+console.log(producto);
+  
     return Number(
         producto?.price || 0
     );
