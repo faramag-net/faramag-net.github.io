@@ -628,6 +628,72 @@ static getProductsByClient(
 
 }
 
+static getSuggestedPrice(
+    clienteId,
+    productId
+){
+
+    const sales =
+        this.getSales();
+
+    const ventas =
+        sales
+        .filter(sale => {
+
+            if(!sale.items){
+                return false;
+            }
+
+            const contieneProducto =
+                sale.items.some(
+                    item =>
+                        item.productId ===
+                        productId
+                );
+
+            return (
+                sale.clienteId === clienteId &&
+                contieneProducto
+            );
+
+        })
+        .sort(
+            (a,b) =>
+                new Date(b.createdAt) -
+                new Date(a.createdAt)
+        );
+
+    if(ventas.length){
+
+        const item =
+            ventas[0].items.find(
+                i =>
+                    i.productId ===
+                    productId
+            );
+
+        if(item?.price){
+
+            return Number(
+                item.price
+            );
+
+        }
+
+    }
+
+    const producto =
+        this.getProducts()
+        .find(
+            p => p.id === productId
+        );
+
+    return Number(
+        producto?.price || 0
+    );
+
+}
+  
 static deleteClientProduct(id){
 
     const productos =
