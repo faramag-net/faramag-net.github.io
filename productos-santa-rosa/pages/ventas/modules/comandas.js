@@ -168,6 +168,16 @@ comanda.forEach(item => {
 
     if(!producto) return;
 
+                console.log(
+                "PRECIO CONSIGNACION",
+                item.precio
+            );
+            
+            console.log(
+                "ITEM COMPLETO",
+                item
+            );
+    
     LocalDB.createSale({
 
         producto: item.producto,
