@@ -298,6 +298,12 @@ ventas.forEach(venta => {
   }
 
   static createSale(sale) {
+
+  console.log(
+    "VENTA GUARDADA",
+    sale
+);
+    
     const sales = this.getSales();
 
     const newSale = {
