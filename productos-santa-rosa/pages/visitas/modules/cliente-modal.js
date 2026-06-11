@@ -669,14 +669,24 @@ function renderConsignacionTab(){
                 return;
             }
     
+            const precioInput =
+                document.querySelector(
+                    `.precio-consignacion[data-productid="${input.dataset.productid}"]`
+                );
+            
             items.push({
-    
+            
                 productId:
                     input.dataset.productid,
-    
+            
                 cantidadEntregada:
-                    cantidad
-    
+                    cantidad,
+            
+                precio:
+                    Number(
+                        precioInput.value
+                    )
+            
             });
     
         });
@@ -719,7 +729,9 @@ items.forEach(item => {
     });
 
 });
-    
+
+        console.log(items);
+        
         LocalDB.addConsignation({
     
             id:
@@ -941,7 +953,15 @@ items.forEach(item => {
 
         if(vendido > 0){
 
+            const itemConsignado =
+                consignacion.items.find(
+                    i =>
+                        i.productId ===
+                        productId
+                );
+            
             const precio =
+                itemConsignado?.precio ??
                 producto.precio;
 
             const total =
