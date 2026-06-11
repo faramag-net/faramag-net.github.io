@@ -604,14 +604,31 @@ function renderConsignacionTab(){
 
                         </label>
 
+                        <label>Cantidad</label>
+                        
                         <input
                             type="number"
                             min="0"
+                            step="0.01"
                             value="0"
                             class="cantidad-consignacion"
                             data-productid="${producto?.id || ''}"
                         >
+                        
+                        <label>Precio</label>
 
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value="${LocalDB.getSuggestedPrice(
+                                cliente.id,
+                                producto.id
+                            )}"
+                            class="precio-consignacion"
+                            data-productid="${producto?.id || ''}"
+                        >
+                        
                     </div>
 
                 `;
