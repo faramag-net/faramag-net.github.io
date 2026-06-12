@@ -670,46 +670,41 @@ function renderConsignacionTab(){
                         item.productoId
                     );
 
-                return `
+return `
 
-                    <div>
+    <div class="producto-row">
 
-                        <label>
+        <span
+            class="producto-nombre"
+            title="${producto?.nombre}"
+        >
+            ${producto?.nombre}
+        </span>
 
-                            ${
-                                producto?.nombre
-                            }
+        <input
+            type="number"
+            min="0"
+            step="0.01"
+            value="0"
+            class="cantidad-consignacion"
+            data-productid="${producto?.id || ''}"
+        >
 
-                        </label>
+        <input
+            type="number"
+            min="0"
+            step="0.01"
+            value="${LocalDB.getSuggestedPrice(
+                cliente.id,
+                producto.id
+            )}"
+            class="precio-consignacion"
+            data-productid="${producto?.id || ''}"
+        >
 
-                        <label>Cantidad</label>
-                        
-                        <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value="0"
-                            class="cantidad-consignacion"
-                            data-productid="${producto?.id || ''}"
-                        >
-                        
-                        <label>Precio</label>
+    </div>
 
-                        <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value="${LocalDB.getSuggestedPrice(
-                                cliente.id,
-                                producto.id
-                            )}"
-                            class="precio-consignacion"
-                            data-productid="${producto?.id || ''}"
-                        >
-                        
-                    </div>
-
-                `;
+`;
 
             }).join("")
 
