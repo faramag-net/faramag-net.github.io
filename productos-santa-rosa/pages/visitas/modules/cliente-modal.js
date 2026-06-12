@@ -931,23 +931,23 @@ container.innerHTML = `
         ".cantidad-devuelta"
     )
     .forEach(input => {
-
+    
         input.oninput = () => {
-
+    
             const entregado =
                 Number(
                     input.dataset.entregado
                 );
-
+    
             const devuelto =
                 Number(
                     input.value
                 );
-
+    
             const vendido =
                 entregado -
                 devuelto;
-
+    
             input
                 .parentElement
                 .querySelector(
@@ -955,9 +955,9 @@ container.innerHTML = `
                 )
                 .textContent =
                 vendido;
-
+    
         };
-
+    
     });
 
     document
