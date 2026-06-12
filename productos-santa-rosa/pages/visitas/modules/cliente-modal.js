@@ -82,21 +82,21 @@ export function openClienteModal(clienteId){
                     class="tab-btn"
                     data-tab="visitas"
                 >
-                    VISITAS
+                    VIS
                 </button>
 
             <button
                 class="tab-btn"
                 data-tab="productos"
             >
-                PRODUCTOS
+                PROD
             </button>
             
             <button
                 class="tab-btn"
                 data-tab="consignacion"
             >
-                CONSIGNACIÓN
+                CONSI
             </button>
 
             </div>
@@ -866,75 +866,61 @@ items.forEach(item => {
                             item.productId
                         );
 
-                    return `
-
-                        <div
-                            class="recoger-item"
-                        >
-
-                            <h4>
-                                ${
-                                    producto?.nombre
-                                }
-                            </h4>
-
-                            <p>
-
-                                Entregado:
-
-                                ${
-                                    item.cantidadEntregada
-                                }
-
-                            </p>
-
-                            <label>
-
-                                Devuelto
-
-                            </label>
-
-                            <input
-                                type="number"
-                                min="0"
-                                max="${item.cantidadEntregada}"
-                                value="0"
-                                class="cantidad-devuelta"
-                                data-productid="${item.productId}"
-                                data-entregado="${item.cantidadEntregada}"
-                            >
-
-                            <p>
-
-                                Vendido:
-
-                                <span
-                                    class="vendido-preview"
-                                >
-                                    ${
-                                        item.cantidadEntregada
-                                    }
-                                </span>
-
-                            </p>
-
-                        </div>
-
-                    `;
-
-                }
-
-            ).join("")
-
-        }
-
-        <button
-            id="cerrarConsignacionBtn"
-        >
-            Cerrar Consignación
-        </button>
-
-    `;
+        return `
+        
+            <div
+                class="recoger-row"
+            >
+        
+                <span
+                    class="producto-nombre"
+                >
+                    ${
+                        producto?.nombre
+                    }
+                </span>
+        
+                <span>
+        
+                    E:${
+                        item.cantidadEntregada
+                    }
+        
+                </span>
+        
+                <span>
+        
+                    D:
+        
+                </span>
+        
+                <input
+                    type="number"
+                    min="0"
+                    max="${item.cantidadEntregada}"
+                    value="0"
+                    class="cantidad-devuelta"
+                    data-productid="${item.productId}"
+                    data-entregado="${item.cantidadEntregada}"
+                >
+        
+                <span>
+        
+                    V:
+        
+                    <span
+                        class="vendido-preview"
+                    >
+                        ${
+                            item.cantidadEntregada
+                        }
+                    </span>
+        
+                </span>
+        
+            </div>
+        
+        `;
 
     document
     .querySelectorAll(
