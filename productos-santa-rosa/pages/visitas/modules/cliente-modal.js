@@ -848,79 +848,83 @@ items.forEach(item => {
     const productos =
         LocalDB.getProducts();
 
-    container.innerHTML = `
+container.innerHTML = `
 
-        <h3>
-            Recoger Producto
-        </h3>
+    <h3>
+        Recoger Producto
+    </h3>
 
-        ${
+    ${
 
-            consignacion.items.map(
-                item => {
+        consignacion.items.map(
+            item => {
 
-                    const producto =
-                        productos.find(
-                            p =>
+                const producto =
+                    productos.find(
+                        p =>
                             p.id ===
                             item.productId
-                        );
+                    );
 
-        return `
-        
-            <div
-                class="recoger-row"
-            >
-        
-                <span
-                    class="producto-nombre"
-                >
-                    ${
-                        producto?.nombre
-                    }
-                </span>
-        
-                <span>
-        
-                    E:${
-                        item.cantidadEntregada
-                    }
-        
-                </span>
-        
-                <span>
-        
-                    D:
-        
-                </span>
-        
-                <input
-                    type="number"
-                    min="0"
-                    max="${item.cantidadEntregada}"
-                    value="0"
-                    class="cantidad-devuelta"
-                    data-productid="${item.productId}"
-                    data-entregado="${item.cantidadEntregada}"
-                >
-        
-                <span>
-        
-                    V:
-        
-                    <span
-                        class="vendido-preview"
+                return `
+
+                    <div
+                        class="recoger-row"
                     >
-                        ${
-                            item.cantidadEntregada
-                        }
-                    </span>
-        
-                </span>
-        
-            </div>
-        
-        `;
+
+                        <span
+                            class="producto-nombre"
+                        >
+                            ${producto?.nombre}
+                        </span>
+
+                        <span>
+                            E:${item.cantidadEntregada}
+                        </span>
+
+                        <span>
+                            D:
+                        </span>
+
+                        <input
+                            type="number"
+                            min="0"
+                            max="${item.cantidadEntregada}"
+                            value="0"
+                            class="cantidad-devuelta"
+                            data-productid="${item.productId}"
+                            data-entregado="${item.cantidadEntregada}"
+                        >
+
+                        <span>
+
+                            V:
+
+                            <span
+                                class="vendido-preview"
+                            >
+                                ${item.cantidadEntregada}
+                            </span>
+
+                        </span>
+
+                    </div>
+
+                `;
+
+            }
+
+        ).join("")
+
+    }
+
+    <button
+        id="cerrarConsignacionBtn"
+    >
+        Cerrar Consignación
+    </button>
+
+`;
 
     document
     .querySelectorAll(
