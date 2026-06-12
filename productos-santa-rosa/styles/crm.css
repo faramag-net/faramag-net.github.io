@@ -167,11 +167,17 @@ body{
 .cliente-modal{
 
     display:flex;
+
     flex-direction:column;
+
     width:min(95vw, 700px);
+
     gap:20px;
+
     max-height:85vh;
-    overflow-y:auto;
+
+    overflow:hidden;
+
 }
 
 .cliente-header{
@@ -195,19 +201,7 @@ body{
     overflow-x:auto;
 
     scrollbar-width:none;
-
-    position:sticky;
-
-    top:0;
-
-    z-index:20;
-
-    background:white;
-
-    padding:8px 0;
-
-    border-bottom:1px solid #ddd;
-
+  
 }
 
 .tabs::-webkit-scrollbar{
@@ -266,6 +260,11 @@ body{
     flex-direction:column;
 
     gap:12px;
+
+    overflow-y:auto;
+
+    flex:1;
+
 }
 
 .form-visita{
