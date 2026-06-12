@@ -174,7 +174,19 @@ setTimeout(() => {
         document.getElementById(
             "clienteTabContent"
         );
+        
+    const ventasCliente =
+        LocalDB.getSales()
+        .filter(
+            sale =>
+                sale.cliente ===
+                cliente.nombre
+        )
+        .slice()
+        .reverse()
+        .slice(0,10);
 
+        
     container.innerHTML = `
 
         <p>
@@ -185,7 +197,73 @@ setTimeout(() => {
             📍 ${cliente.direccion || "-"}
         </p>
 
+                <h3>
+    Últimas Compras
+</h3>
+
+<table class="mini-history">
+
+    <thead>
+
+        <tr>
+
+            <th>Fecha</th>
+
+            <th>Producto</th>
+
+            <th>Cant.</th>
+
+            <th>Precio</th>
+
+            <th>Total</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        ${
+            ventasCliente.length
+            ?
+            ventasCliente.map(v => `
+
+                <tr>
+
+                    <td>${v.fecha}</td>
+
+                    <td>${v.producto}</td>
+
+                    <td>${v.cantidad}</td>
+
+                    <td>$${Number(v.precio).toFixed(2)}</td>
+
+                    <td>$${Number(v.total).toFixed(2)}</td>
+
+                </tr>
+
+            `).join("")
+            :
+            `
+                <tr>
+
+                    <td colspan="5">
+
+                        Sin compras registradas
+
+                    </td>
+
+                </tr>
+            `
+        }
+
+    </tbody>
+
+</table>
+ 
     `;
+      
+       
 }
 
     function renderVisitasTab(){
