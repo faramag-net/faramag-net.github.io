@@ -168,7 +168,7 @@ body{
 
     display:flex;
     flex-direction:column;
-
+    width:min(95vw, 700px);
     gap:20px;
 }
 
@@ -185,16 +185,29 @@ body{
 
     display:flex;
 
-    gap:10px;
+    gap:4px;
 
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
+
+    overflow-x:auto;
+
+    scrollbar-width:none;
+
+}
+
+.tabs::-webkit-scrollbar{
+
+    display:none;
+
 }
 
 .tab-btn{
 
-    border:none;
+     flex:none;
 
-    padding:10px 16px;
+    min-width:60px;
+
+    border:none;
 
     border-radius:10px;
 
@@ -202,7 +215,12 @@ body{
 
     background:#f1f5f9;
 
+    padding:8px 4px;
+
+    font-size:12px;
+
     transition:.2s;
+
 }
 
 .tab-btn:hover{
@@ -326,17 +344,13 @@ body{
 
     flex:1;
 
-    min-width:0;
-
-    max-width:20ch;
+    min-width:120px;
 
     overflow:hidden;
 
     white-space:nowrap;
 
     text-overflow:ellipsis;
-
-    font-size:13px;
 
 }
 
@@ -373,5 +387,31 @@ body{
     white-space:nowrap;
 
     text-overflow:ellipsis;
+
+}
+
+.precio-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:2px;
+
+}
+
+.precio-box span{
+
+    font-size:13px;
+
+    font-weight:bold;
+
+}
+
+.precio-consignacion{
+
+    width:60px;
+
+    text-align:center;
 
 }
