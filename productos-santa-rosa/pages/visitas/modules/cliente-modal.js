@@ -690,6 +690,10 @@ return `
             data-productid="${producto?.id || ''}"
         >
 
+    <div class="precio-box">
+
+        <span>$</span>
+        
         <input
             type="number"
             min="0"
@@ -703,6 +707,8 @@ return `
         >
 
     </div>
+
+</div>
 
 `;
 
