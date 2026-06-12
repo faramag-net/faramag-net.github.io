@@ -205,6 +205,10 @@ body{
 
     flex:none;
 
+    width:auto;
+
+    margin:0;
+    
     min-width:70px;
 
     padding:8px 10px;
