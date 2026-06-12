@@ -203,29 +203,28 @@ body{
 
 .tab-btn{
 
-     flex:none;
+    flex:none;
 
-    min-width:60px;
+    min-width:70px;
 
-    border:none;
+    padding:8px 10px;
+
+    border:1px solid red !important;
 
     border-radius:10px;
 
     cursor:pointer;
 
-    background:#f1f5f9;
+    background:#e5e7eb;
 
-    padding:8px 4px;
+    color:#111827;
 
     font-size:12px;
 
-    transition:.2s;
+    font-weight:600;
 
-}
+    white-space:nowrap;
 
-.tab-btn:hover{
-
-    transform:translateY(-2px);
 }
 
 .tab-btn.active{
@@ -233,6 +232,12 @@ body{
     background:#111827;
 
     color:white;
+
+}
+
+.tab-btn:hover{
+
+    transform:translateY(-2px);
 }
 
 .cliente-content{
