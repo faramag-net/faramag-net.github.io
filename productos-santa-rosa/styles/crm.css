@@ -196,6 +196,18 @@ body{
 
     scrollbar-width:none;
 
+    position:sticky;
+
+    top:0;
+
+    z-index:20;
+
+    background:white;
+
+    padding:8px 0;
+
+    border-bottom:1px solid #ddd;
+
 }
 
 .tabs::-webkit-scrollbar{
