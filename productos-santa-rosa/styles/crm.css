@@ -451,3 +451,44 @@ body{
     flex:none;
 
 }
+
+.recoger-row{
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(120px,1fr)
+        auto
+        auto
+        60px
+        auto;
+
+    align-items:center;
+
+    gap:6px;
+
+    margin-bottom:8px;
+
+}
+
+.recoger-row input{
+
+    width:60px !important;
+
+    margin:0 !important;
+
+    text-align:center;
+
+}
+
+.recoger-row .producto-nombre{
+
+    font-weight:600;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+}
