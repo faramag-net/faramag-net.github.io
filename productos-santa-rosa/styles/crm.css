@@ -274,3 +274,38 @@ body{
 
     margin-bottom:12px;
 }
+
+.mini-history{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:10px;
+
+    font-size:12px;
+
+}
+
+.mini-history th,
+.mini-history td{
+
+    border:1px solid #ddd;
+
+    padding:6px;
+
+    text-align:left;
+
+}
+
+.mini-history th{
+
+    background:#f5f5f5;
+
+}
+
+.mini-history tbody tr:nth-child(even){
+
+    background:#fafafa;
+
+}
