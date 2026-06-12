@@ -309,3 +309,69 @@ body{
     background:#fafafa;
 
 }
+
+.producto-row{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:4px;
+
+    margin-bottom:4px;
+
+}
+
+.producto-nombre{
+
+    flex:1;
+
+    min-width:0;
+
+    max-width:20ch;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+    font-size:13px;
+
+}
+
+.producto-row input{
+
+    width:60px;
+
+    padding:4px;
+
+    text-align:center;
+
+}
+
+.producto-cliente-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+.producto-cliente-item strong{
+
+    flex:1;
+
+    min-width:0;
+
+    max-width:20ch;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+}
