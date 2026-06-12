@@ -178,7 +178,8 @@ body{
 
     justify-content:space-between;
 
-    align-items:center;
+    align-items:flex-start;
+
 }
 
 .tabs{
@@ -434,5 +435,19 @@ body{
     width:60px;
 
     text-align:center;
+
+}
+
+.eliminar-producto-cliente{
+
+    width:48px !important;
+
+    height:48px;
+
+    padding:0;
+
+    margin:0;
+
+    flex:none;
 
 }
