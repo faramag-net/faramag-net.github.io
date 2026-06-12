@@ -170,6 +170,8 @@ body{
     flex-direction:column;
     width:min(95vw, 700px);
     gap:20px;
+    max-height:85vh;
+    overflow-y:auto;
 }
 
 .cliente-header{
@@ -440,15 +442,13 @@ body{
 
 .eliminar-producto-cliente{
 
-    width:48px !important;
+    width:auto !important;
 
-    height:48px;
+    min-width:36px;
 
-    padding:0;
+    height:36px;
 
-    margin:0;
-
-    flex:none;
+    padding:0 10px;
 
 }
 
