@@ -2,31 +2,17 @@ import LocalDB from "../../core/storage/local-db.js";
 
 export function renderDashboardVisitas(){
 
-    const clientes =
-        LocalDB.getClients();
-
-    const visitas =
-        LocalDB.getVisits();
-
-    const pendientes =
-        clientes.filter(
-            cliente =>
-                cliente.saldo > 0
-        );
-
-    const visitasPendientes =
-        visitas.filter(
-            visita =>
-                visita.status === "pending"
-        );
+    const metrics =
+        LocalDB.getDashboardMetrics();
 
     document.getElementById(
-        "clientesPendientes"
+        "montoVendido"
     ).innerText =
-        pendientes.length;
+        `$${metrics.totalSalesToday.toFixed(2)}`;
 
     document.getElementById(
         "visitasPendientes"
     ).innerText =
-        visitasPendientes.length;
+        metrics.pendingVisits;
+
 }
