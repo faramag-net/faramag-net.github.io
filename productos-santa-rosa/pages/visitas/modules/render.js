@@ -59,10 +59,6 @@ function clienteCard(
             📍 ${cliente.direccion || "-"}
         </p>
 
-        <p style="color:${color}">
-            Saldo: $${cliente.saldo || 0}
-        </p>
-
         <small>
             ${estado}
         </small>
