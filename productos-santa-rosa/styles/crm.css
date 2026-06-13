@@ -539,3 +539,29 @@ body{
     font-weight:bold;
 
 }
+
+.clientes-toolbar{
+
+    display:flex;
+
+    gap:8px;
+
+    align-items:center;
+
+}
+
+.clientes-toolbar input{
+
+    flex:1 !important;
+
+    width:auto !important;
+
+}
+
+.clientes-toolbar select{
+
+    width:220px !important;
+
+    flex:none !important;
+
+}
