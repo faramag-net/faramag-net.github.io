@@ -65,14 +65,14 @@
 
 .crm-dashboard{
 
-    display: grid;
+    display:grid;
 
-    grid-template-columns:
-        repeat(auto-fit,minmax(220px,1fr));
+    grid-template-columns:1fr 1fr;
 
-    gap: 16px;
+    gap:10px;
 
-    margin-bottom: 20px;
+    margin-bottom:12px;
+
 }
 
 .crm-container{
@@ -506,37 +506,25 @@ body{
 
 .kpi-card{
 
-    padding:12px;
+    min-height:80px !important;
 
-    min-height:90px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    align-items:center;
-
-    text-align:center;
+    padding:10px !important;
 
 }
 
 .kpi-card h3{
 
-    margin:0;
+    font-size:14px;
 
-    font-size:16px;
+    margin:0;
 
 }
 
 .kpi-card p{
 
-    margin-top:8px;
+    font-size:22px;
 
-    font-size:28px;
-
-    font-weight:bold;
+    margin-top:4px;
 
 }
 
