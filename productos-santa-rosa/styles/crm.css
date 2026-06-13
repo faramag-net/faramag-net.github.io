@@ -65,13 +65,35 @@
 
 .crm-dashboard{
 
-    display:grid;
+    display:grid !important;
 
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:1fr 1fr !important;
 
-    gap:10px;
+    gap:8px !important;
 
-    margin-bottom:12px;
+}
+
+.crm-dashboard .card{
+
+    padding:10px !important;
+
+    min-height:80px !important;
+
+}
+
+.crm-dashboard .card h3{
+
+    font-size:14px !important;
+
+    margin:0 !important;
+
+}
+
+.crm-dashboard .card p{
+
+    font-size:22px !important;
+
+    margin-top:4px !important;
 
 }
 
