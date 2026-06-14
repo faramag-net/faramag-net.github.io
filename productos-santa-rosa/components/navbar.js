@@ -42,6 +42,12 @@ export function crearNavbar(){
 
             </a>
 
+            <a href="/productos-santa-rosa/pages/visitas">
+
+                🛒 INSUMOS
+
+            </a>
+
         </div>
 
     </nav>
