@@ -8,10 +8,17 @@
     <title>Insumos</title>
 
     <link rel="stylesheet" href="./insumos.css">
+
+        <link
+    rel="stylesheet"
+    href="../../components/navbar.css">
+    
 </head>
 
 <body>
 
+         <div id="navbar"></div>
+    
 <div class="insumos-page">
 
     <!-- HEADER -->
@@ -250,6 +257,20 @@
     <datalist id="presentacionesList"></datalist>
     
     <datalist id="tiendasList"></datalist>
+
+    <script type="module">
+
+import {
+    crearNavbar
+}
+from "../../components/navbar.js";
+
+document
+.getElementById("navbar")
+.innerHTML =
+crearNavbar();
+
+</script> 
     
     <script type="module" src="./insumos.js"></script>
     
