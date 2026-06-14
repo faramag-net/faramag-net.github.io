@@ -21,9 +21,15 @@
     href="../../styles/crm.css"
 />
 
+<link
+    rel="stylesheet"
+    href="../../components/navbar.css">
+    
 </head>
 
 <body>
+
+<div id="navbar"></div>
     
 <div class="crm-dashboard">
 
@@ -113,6 +119,20 @@
     src="./index.js">
 </script>
 
+            <script type="module">
+            
+            import {
+                crearNavbar
+            }
+            from "../../components/navbar.js";
+            
+            document
+            .getElementById("navbar")
+            .innerHTML =
+            crearNavbar();
+            
+            </script> 
+    
     </body>
 
 </html>
