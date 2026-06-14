@@ -489,7 +489,7 @@ static saveClients(clients) {
 static addClient(client) {
 
     const clients =
-        this.getClients();
+        this.getRouteClients();
 
     const newClient = {
 
@@ -515,24 +515,29 @@ static addClient(client) {
 
     clients.push(newClient);
 
-    this.saveClients(clients);
+    this.saveRouteClients(
+        clients
+    );
 
-this.addHistory({
+    this.addHistory({
 
-    tipo: "CLIENT_CREATED",
+        tipo: "CLIENT_CREATED",
 
-    producto: newClient.nombre,
+        producto: newClient.nombre,
 
-    cantidad: 0,
+        cantidad: 0,
 
-    stock: 0,
+        stock: 0,
 
-    fecha: new Date().toLocaleString(),
+        fecha:
+            new Date()
+            .toLocaleString(),
 
-    metadata: newClient
+        metadata:
+            newClient
 
-});
-  
+    });
+
     return newClient;
 }
   
