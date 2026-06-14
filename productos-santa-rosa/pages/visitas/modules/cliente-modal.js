@@ -15,7 +15,7 @@ from "../../../components/toast.js";
 export function openClienteModal(clienteId){
 
     const cliente =
-        LocalDB.getClients()
+        LocalDB.getRouteClients()
         .find(c => c.id === clienteId);
 
     if(!cliente) return;
