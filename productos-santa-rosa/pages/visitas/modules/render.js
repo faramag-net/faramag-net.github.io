@@ -10,7 +10,7 @@ const container =
 if(!container) return;
 
 let clientes =
-    LocalDB.getClients();
+    LocalDB.getRouteClients();
 
 const textoBusqueda =
     document
