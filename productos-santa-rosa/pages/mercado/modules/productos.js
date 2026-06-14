@@ -86,7 +86,7 @@ export function agregarProducto(data) {
 });
 
     const cliente =
-    LocalDB.getClients()
+    LocalDB.getMarketClients()
         .find(
             c =>
                 c.id ===
@@ -167,7 +167,7 @@ registrarHistorial({
 });
 
     const cliente =
-    LocalDB.getClients()
+    LocalDB.getMarketClients()
         .find(
             c =>
                 c.id ===
@@ -222,7 +222,7 @@ export function eliminarProducto(id) {
     if(!producto) return;
 
     const cliente =
-        LocalDB.getClients()
+        LocalDB.getMarketClients()
             .find(
                 c =>
                     c.id ===
