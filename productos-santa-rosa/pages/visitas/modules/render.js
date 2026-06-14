@@ -9,8 +9,15 @@ export function renderClientes() {
 
     if(!container) return;
 
-    const clientes =
-        LocalDB.getClients();
+let clientes =
+    LocalDB.getClients();
+
+const textoBusqueda =
+    document
+        .getElementById("buscarCliente")
+        ?.value
+        ?.toLowerCase()
+        ?.trim() || "";
 
     container.innerHTML = "";
 
