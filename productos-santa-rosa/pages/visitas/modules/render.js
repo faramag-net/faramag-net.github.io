@@ -135,17 +135,30 @@ function clienteCard(
 
     return `
 
-    <div class="card-cliente">
+return `
 
-        <h3>
-            ${cliente.nombre}
-        </h3>
+<div class="card-cliente">
+
+    <button
+        class="btn-eliminar-cliente"
+        onclick="
+            eliminarClienteConfirm(
+                '${cliente.id}'
+            )
+        "
+    >
+        ✕
+    </button>
+
+    <h3>
+        ${cliente.nombre}
+    </h3>
 
         <p>
             📞 ${cliente.telefono || "-"}
         </p>
 
-        <p>
+        <p class="direccion">
             📍 ${cliente.direccion || "-"}
         </p>
 
