@@ -591,3 +591,23 @@ body{
     font-size:14px !important;
 
 }
+
+@media(max-width:768px){
+
+    .clientes-toolbar{
+
+        display:grid;
+
+        grid-template-columns: 1fr 120px;
+
+        gap:6px;
+
+    }
+
+    .clientes-toolbar select{
+
+        width:120px !important;
+
+    }
+
+}
