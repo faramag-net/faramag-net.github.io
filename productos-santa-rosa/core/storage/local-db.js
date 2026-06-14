@@ -6,6 +6,8 @@ const DB_KEYS = {
   INVENTORY: "psr_inventory",
   SALES: "psr_sales",
   CLIENTS: "psr_clients",
+  MARKET_CLIENTS: "psr_market_clients",
+  ROUTE_CLIENTS: "psr_route_clients",
   CLIENT_PRODUCTS: "psr_client_products",
   CLIENT_HISTORY: "psr_client_history",
   VISITS: "psr_visits",
@@ -807,6 +809,44 @@ static getActiveConsignation(
     this.saveConsignations(
         consignaciones
     );
+
+}
+
+  static getMarketClients() {
+
+return this.get(
+    DB_KEYS.MARKET_CLIENTS
+);
+
+}
+
+static saveMarketClients(
+clients
+) {
+
+return this.set(
+    DB_KEYS.MARKET_CLIENTS,
+    clients
+);
+
+}
+
+static getRouteClients() {
+
+return this.get(
+    DB_KEYS.ROUTE_CLIENTS
+);
+
+}
+
+static saveRouteClients(
+clients
+) {
+
+return this.set(
+    DB_KEYS.ROUTE_CLIENTS,
+    clients
+);
 
 }
   
