@@ -32,6 +32,28 @@ window.verVisitas =
 window.openClienteModal =
     openClienteModal;
 
+window.openCrearClienteModal = () => {
+
+    const form =
+        document.querySelector(
+            ".form-cliente"
+        );
+
+    if(!form){
+        return;
+    }
+
+    const visible =
+        getComputedStyle(form)
+        .display !== "none";
+
+    form.style.display =
+        visible
+        ? "none"
+        : "grid";
+
+};
+
 renderClientes();
 renderDashboardVisitas();
 
