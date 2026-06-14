@@ -11,8 +11,11 @@ export function getClientes() {
 
 export function getClienteById(id) {
     return LocalDB
-        .getClients()
-        .find(cliente => cliente.id === id);
+        .getMarketClients()
+        .find(
+            cliente =>
+                cliente.id === id
+        );
 }
 
 export function crearCliente(data) {
