@@ -135,7 +135,6 @@ function clienteCard(
 
     return `
 
-return `
 
 <div class="card-cliente">
 
