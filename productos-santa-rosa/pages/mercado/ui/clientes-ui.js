@@ -531,6 +531,16 @@ function abrirCliente(id){
     const cliente =
         getClienteById(id);
 
+    console.log(
+    "ID",
+    id
+);
+
+console.log(
+    "CLIENTE",
+    cliente
+);
+
     const detalle =
         document.getElementById(
             "detalleCliente"
