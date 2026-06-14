@@ -6,7 +6,7 @@ import {
 from "./historial.js";
 
 export function getClientes() {
-    return LocalDB.getClients();
+    return LocalDB.getMarketClients();
 }
 
 export function getClienteById(id) {
@@ -17,7 +17,7 @@ export function getClienteById(id) {
 
 export function crearCliente(data) {
 
-    const clientes = LocalDB.getClients();
+    const clientes = LocalDB.getMarketClients();
 
     const nuevoCliente = {
         id: crypto.randomUUID(),
@@ -45,7 +45,7 @@ export function crearCliente(data) {
 
     clientes.push(nuevoCliente);
 
-    LocalDB.saveClients(clientes);
+    LocalDB.saveMarketClients(clientes);
 
     registrarMovimiento({
 
@@ -79,7 +79,7 @@ export function crearCliente(data) {
 
 export function editarCliente(id, cambios) {
 
-    const clientes = LocalDB.getClients();
+    const clientes = LocalDB.getMarketClients();
 
     const index = clientes.findIndex(
         c => c.id === id
@@ -93,7 +93,7 @@ export function editarCliente(id, cambios) {
         updatedAt: new Date().toISOString()
     };
 
-    LocalDB.saveClients(clientes);
+    LocalDB.saveMarketClients(clientes);
 
     registrarMovimiento({
 
@@ -128,7 +128,7 @@ export function editarCliente(id, cambios) {
 export function eliminarCliente(id) {
 
     const clientes =
-        LocalDB.getClients();
+        LocalDB.getMarketClients();
 
     const cliente =
         clientes.find(
@@ -170,7 +170,7 @@ export function eliminarCliente(id) {
             c => c.id !== id
         );
 
-    LocalDB.saveClients(
+    LocalDB.saveMarketClients(
         nuevosClientes
     );
 
