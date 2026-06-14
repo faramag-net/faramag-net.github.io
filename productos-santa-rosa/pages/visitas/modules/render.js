@@ -2,37 +2,120 @@ import LocalDB from "../../../core/storage/local-db.js";
 
 export function renderClientes() {
 
-    const container =
-        document.getElementById(
-            "listaClientes"
-        );
+const container =
+    document.getElementById(
+        "listaClientes"
+    );
 
-    if(!container) return;
+if(!container) return;
 
 let clientes =
     LocalDB.getClients();
 
 const textoBusqueda =
     document
-        .getElementById("buscarCliente")
+        .getElementById(
+            "buscarCliente"
+        )
         ?.value
         ?.toLowerCase()
         ?.trim() || "";
 
+const filtro =
+    document
+        .getElementById(
+            "filtroConsignacion"
+        )
+        ?.value || "todos";
+
+if(textoBusqueda){
+
+    clientes =
+        clientes.filter(cliente => {
+
+            const productosCliente =
+                LocalDB.getProductsByClient(
+                    cliente.id
+                );
+
+            const productosTexto =
+                productosCliente
+                .map(p => {
+
+                    const producto =
+                        LocalDB
+                        .getProducts()
+                        .find(
+                            prod =>
+                                prod.id ===
+                                p.productoId
+                        );
+
+                    return producto?.nombre || "";
+
+                })
+                .join(" ");
+
+            const searchable = `
+                ${cliente.nombre || ""}
+                ${cliente.telefono || ""}
+                ${cliente.direccion || ""}
+                ${productosTexto}
+            `.toLowerCase();
+
+            return searchable.includes(
+                textoBusqueda
+            );
+
+        });
+
+}
+
+if(filtro !== "todos"){
+
+    clientes =
+        clientes.filter(cliente => {
+
+            const abierta =
+                LocalDB.getActiveConsignation(
+                    cliente.id
+                );
+
+            if(filtro === "abierta"){
+                return !!abierta;
+            }
+
+            if(filtro === "cerrada"){
+                return !abierta;
+            }
+
+            return true;
+
+        });
+
+}   
+    
     container.innerHTML = "";
 
     clientes.forEach(cliente => {
 
-        let estado = "✅ OK";
+let estado = "✅ OK";
 
-        let color = "#28a745";
+let color = "#28a745";
 
-        if(cliente.saldo > 0){
+if(
+LocalDB.getActiveConsignation(
+cliente.id
+)
+){
 
-            estado = "💰 PENDIENTE";
+estado =
+    "🔴 Consignación Activa";
 
-            color = "#dc3545";
-        }
+color =
+    "#dc3545";
+
+}
 
         container.innerHTML +=
             clienteCard(
