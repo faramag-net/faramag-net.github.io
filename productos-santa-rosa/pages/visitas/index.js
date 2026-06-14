@@ -34,3 +34,21 @@ window.openClienteModal =
 
 renderClientes();
 renderDashboardVisitas();
+
+document
+.getElementById(
+"buscarCliente"
+)
+?.addEventListener(
+"input",
+renderClientes
+);
+
+document
+.getElementById(
+"filtroConsignacion"
+)
+?.addEventListener(
+"change",
+renderClientes
+);
