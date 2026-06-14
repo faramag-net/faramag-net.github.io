@@ -6,7 +6,7 @@ export function actualizarSeguimiento(
 ){
 
     const clientes =
-        LocalDB.getClients();
+        LocalDB.getRouteClients();
 
     const updated =
         clientes.map(cliente => {
