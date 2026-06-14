@@ -1,3 +1,6 @@
+import LocalDB
+from "../../core/storage/local-db.js";
+
 import {
     crearCliente
 }
@@ -51,6 +54,31 @@ window.openCrearClienteModal = () => {
         visible
         ? "none"
         : "grid";
+
+};
+
+window.eliminarClienteConfirm =
+    (clienteId) => {
+
+    if(
+        !confirm(
+            "¿Eliminar cliente?"
+        )
+    ){
+        return;
+    }
+
+    const clientes =
+        LocalDB.getRouteClients()
+        .filter(
+            c => c.id !== clienteId
+        );
+
+    LocalDB.saveRouteClients(
+        clientes
+    );
+
+    renderClientes();
 
 };
 
