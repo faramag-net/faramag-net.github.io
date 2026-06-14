@@ -28,7 +28,9 @@ export function actualizarSeguimiento(
             return cliente;
         });
 
-    LocalDB.saveClients(updated);
+    LocalDB.saveRouteClients(
+    updated
+    );
 
     return true;
 }
