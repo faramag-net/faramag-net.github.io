@@ -1,6 +1,11 @@
 import LocalDB
 from "../../core/storage/local-db.js";
 
+alert(
+    "MAPA JS CARGADO"
+);
+
+
 const mapa =
     L.map("mapa")
     .setView(
@@ -39,6 +44,11 @@ const clientes =
             "psr_route_clients"
         )
     ) || [];
+
+alert(
+    "Clientes: " +
+    clientes.length
+);
 
 clientes.forEach(cliente => {
 
