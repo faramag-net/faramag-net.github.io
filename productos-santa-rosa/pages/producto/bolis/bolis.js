@@ -17,7 +17,7 @@ const productos = [
     nombre: "Coco",
     precio: 22,
     imagen: "../../../../imagenes/bolicoco.png",
-    mensaje: "Quiero boli de Chocolate"
+    mensaje: "Quiero boli de Coco"
   },
 
     {
@@ -56,14 +56,21 @@ const productos = [
   },
 
   {
-    nombre: "Tropical",
+    nombre: "Mango",
+    precio: 20,
+    imagen: "../../../../imagenes/bolimango.png",
+    mensaje: "Quiero boli de Mango"
+  },
+
+  {
+    nombre: "Oasis",
     precio: 20,
     imagen: "../../../../imagenes/bolioasis.png",
     mensaje: "Quiero boli Oasis"
   },
 
-  {
-    nombre: "Tropical",
+    {
+    nombre: "Oreo",
     precio: 20,
     imagen: "../../../../imagenes/bolioreo.png",
     mensaje: "Quiero boli Oreo"
