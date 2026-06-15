@@ -1,31 +1,74 @@
 const productos = [
   {
-    nombre: "Beso de Angel",
-    precio: 20,
+    nombre: "Beso de Ángel",
+    precio: 22,
     imagen: "../../../../imagenes/bolibeso.png",
     mensaje: "Quiero boli de Beso de Angel"
   },
 
   {
+    nombre: "Mango Chamoy",
+    precio: 20,
+    imagen: "../../../../imagenes/bolimangochamoy.png",
+    mensaje: "Quiero boli de Mango Chamoy"
+  },
+
+  {
+    nombre: "Coco",
+    precio: 22,
+    imagen: "../../../../imagenes/bolicoco.png",
+    mensaje: "Quiero boli de Chocolate"
+  },
+
+    {
     nombre: "Fresa",
-    precio: 20,
-    imagen: "../../../../imagenes/bfresa.jpg",
-    mensaje: "Quiero boli de fresa"
+    precio: 22,
+    imagen: "../../../../imagenes/bolifresa.png",
+    mensaje: "Quiero boli de Fresa"
   },
 
   {
-    nombre: "Chocolate",
+    nombre: "Tropical",
     precio: 20,
-    imagen: "../../../../imagenes/bchocolate.jpg",
-    mensaje: "Quiero boli de chocolate"
+    imagen: "../../../../imagenes/bolitropical.png",
+    mensaje: "Quiero boli Tropical"
   },
 
   {
-    nombre: "Limón",
+    nombre: "Frutos Rojos",
+    precio: 22,
+    imagen: "../../../../imagenes/bolifrutos.png",
+    mensaje: "Quiero boli Frutos Rojos"
+  },
+
+  {
+    nombre: "Mamey",
+    precio: 22,
+    imagen: "../../../../imagenes/bolimamey.png",
+    mensaje: "Quiero boli de Mamey"
+  },
+
+  {
+    nombre: "Choco Nutella",
+    precio: 22,
+    imagen: "../../../../imagenes/bolinuetlla.png",
+    mensaje: "Quiero boli Choco Nutella"
+  },
+
+  {
+    nombre: "Tropical",
     precio: 20,
-    imagen: "../../../../imagenes/blimon.jpg",
-    mensaje: "Quiero boli de limón"
+    imagen: "../../../../imagenes/bolioasis.png",
+    mensaje: "Quiero boli Oasis"
+  },
+
+  {
+    nombre: "Tropical",
+    precio: 20,
+    imagen: "../../../../imagenes/bolioreo.png",
+    mensaje: "Quiero boli Oreo"
   }
+ 
 ];
 
 const grid = document.getElementById("grid");
