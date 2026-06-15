@@ -47,6 +47,13 @@ export function crearNavbar(){
                 🛒 Insumos
 
             </a>
+            
+            <a href="../mapa/">
+            
+                🗺️ Mapa
+                
+            </a>
+
 
         </div>
 
