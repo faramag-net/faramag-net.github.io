@@ -49,7 +49,9 @@ clientes.forEach(cliente => {
         return;
     }
 
-    L.marker([
+L.circleMarker(
+
+    [
 
         Number(
             cliente.latitud
@@ -59,7 +61,26 @@ clientes.forEach(cliente => {
             cliente.longitud
         )
 
-    ])
+    ],
+
+    {
+
+        radius:8,
+
+        fillColor:"#ff0000",
+
+        color:"#ff0000",
+
+        weight:1,
+
+        opacity:1,
+
+        fillOpacity:.8
+
+    }
+
+)
+        
     .addTo(mapa)
 
     .bindPopup(`
