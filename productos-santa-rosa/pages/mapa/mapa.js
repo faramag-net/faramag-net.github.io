@@ -102,3 +102,18 @@ L.circleMarker(
     `);
 
 });
+
+setTimeout(() => {
+
+    mapa.invalidateSize();
+
+}, 500);
+
+console.log(
+    "Clientes con GPS:",
+    clientes.filter(
+        c =>
+            c.latitud &&
+            c.longitud
+    ).length
+);
