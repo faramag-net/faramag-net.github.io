@@ -79,6 +79,25 @@
         placeholder="Dirección"
     >
 
+    <input
+    id="clienteLatitud"
+    type="hidden"
+>
+    
+    <input
+        id="clienteLongitud"
+        type="hidden"
+    >
+    
+    <button
+        type="button"
+        onclick="obtenerUbicacion()"
+    >
+    
+        📍 Obtener ubicación
+    
+    </button>
+    
     <button onclick="crearCliente()">
 
         Guardar Cliente
