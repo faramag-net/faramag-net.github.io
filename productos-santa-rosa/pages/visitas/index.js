@@ -59,9 +59,7 @@ window.openCrearClienteModal = () => {
 
 window.obtenerUbicacion = () => {
 
-    if(
-        !navigator.geolocation
-    ){
+    if(!navigator.geolocation){
 
         alert(
             "Geolocalización no soportada"
@@ -73,29 +71,59 @@ window.obtenerUbicacion = () => {
     navigator.geolocation
     .getCurrentPosition(
 
-        pos => {
+        async pos => {
+
+            const lat =
+                pos.coords.latitude;
+
+            const lon =
+                pos.coords.longitude;
 
             document
             .getElementById(
                 "clienteLatitud"
             )
-            .value =
-                pos.coords.latitude;
+            .value = lat;
 
             document
             .getElementById(
                 "clienteLongitud"
             )
-            .value =
-                pos.coords.longitude;
+            .value = lon;
 
-            alert(
-                "Ubicación capturada"
-            );
+            try{
+
+                const response =
+                    await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+                    );
+
+                const data =
+                    await response.json();
+
+                document
+                .getElementById(
+                    "clienteDireccion"
+                )
+                .value =
+                    data.display_name || "";
+
+            }
+            catch(error){
+
+                console.error(
+                    error
+                );
+
+                alert(
+                    "No se pudo obtener la dirección"
+                );
+
+            }
 
         },
 
-        err => {
+        () => {
 
             alert(
                 "No se pudo obtener ubicación"
@@ -104,8 +132,11 @@ window.obtenerUbicacion = () => {
         },
 
         {
+
             enableHighAccuracy:true,
+
             timeout:10000
+
         }
 
     );
