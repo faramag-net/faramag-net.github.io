@@ -62,3 +62,55 @@ body {
   text-decoration: none;
   font-weight: bold;
 }
+
+.modal-imagen{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.9);
+
+    z-index:9999;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:20px;
+
+}
+
+.modal-imagen img{
+
+    max-width:95%;
+
+    max-height:95%;
+
+    border-radius:12px;
+
+}
+
+#cerrarModal{
+
+    position:absolute;
+
+    top:20px;
+
+    right:25px;
+
+    color:white;
+
+    font-size:40px;
+
+    cursor:pointer;
+
+}
+
+.producto img{
+
+    cursor:pointer;
+
+}
