@@ -57,6 +57,61 @@ window.openCrearClienteModal = () => {
 
 };
 
+window.obtenerUbicacion = () => {
+
+    if(
+        !navigator.geolocation
+    ){
+
+        alert(
+            "Geolocalización no soportada"
+        );
+
+        return;
+    }
+
+    navigator.geolocation
+    .getCurrentPosition(
+
+        pos => {
+
+            document
+            .getElementById(
+                "clienteLatitud"
+            )
+            .value =
+                pos.coords.latitude;
+
+            document
+            .getElementById(
+                "clienteLongitud"
+            )
+            .value =
+                pos.coords.longitude;
+
+            alert(
+                "Ubicación capturada"
+            );
+
+        },
+
+        err => {
+
+            alert(
+                "No se pudo obtener ubicación"
+            );
+
+        },
+
+        {
+            enableHighAccuracy:true,
+            timeout:10000
+        }
+
+    );
+
+};
+
 window.eliminarClienteConfirm =
     (clienteId) => {
 
