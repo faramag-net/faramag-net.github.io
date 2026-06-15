@@ -1,9 +1,9 @@
 const productos = [
   {
-    nombre: "Mango",
+    nombre: "Beso de Angel",
     precio: 20,
-    imagen: "../../../../imagenes/bcafe.jpg",
-    mensaje: "Quiero boli de mango"
+    imagen: "../../../../imagenes/bolibeso.png",
+    mensaje: "Quiero boli de Beso de Angel"
   },
 
   {
