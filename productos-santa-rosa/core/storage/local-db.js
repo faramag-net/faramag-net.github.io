@@ -501,6 +501,10 @@ static addClient(client) {
 
         direccion: client.direccion || "",
 
+        latitud: client.latitud || null,
+
+        longitud: client.longitud || null,
+
         notas: client.notas || "",
 
         saldo: client.saldo || 0,
