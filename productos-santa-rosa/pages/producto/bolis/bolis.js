@@ -1,42 +1,34 @@
 const productos = [
+
+  // LECHOSOS
   {
     nombre: "Beso de Ángel",
     precio: 22,
+    tipo: "leche",
     imagen: "../../../../imagenes/bolibeso.png",
     mensaje: "Quiero boli de Beso de Angel"
   },
 
   {
-    nombre: "Mango Chamoy",
-    precio: 20,
-    imagen: "../../../../imagenes/bolimangochamoy.png",
-    mensaje: "Quiero boli de Mango Chamoy"
-  },
-
-  {
     nombre: "Coco",
     precio: 22,
+    tipo: "leche",
     imagen: "../../../../imagenes/bolicoco.png",
     mensaje: "Quiero boli de Coco"
   },
 
-    {
+  {
     nombre: "Fresa",
     precio: 22,
+    tipo: "leche",
     imagen: "../../../../imagenes/bolifresa.png",
     mensaje: "Quiero boli de Fresa"
   },
 
   {
-    nombre: "Tropical",
-    precio: 20,
-    imagen: "../../../../imagenes/bolitropical.png",
-    mensaje: "Quiero boli Tropical"
-  },
-
-  {
     nombre: "Frutos Rojos",
     precio: 22,
+    tipo: "leche",
     imagen: "../../../../imagenes/bolifrutos.png",
     mensaje: "Quiero boli Frutos Rojos"
   },
@@ -44,6 +36,7 @@ const productos = [
   {
     nombre: "Mamey",
     precio: 22,
+    tipo: "leche",
     imagen: "../../../../imagenes/bolimamey.png",
     mensaje: "Quiero boli de Mamey"
   },
@@ -51,13 +44,40 @@ const productos = [
   {
     nombre: "Choco Nutella",
     precio: 22,
+    tipo: "leche",
     imagen: "../../../../imagenes/bolinuetlla.png",
     mensaje: "Quiero boli Choco Nutella"
   },
 
   {
+    nombre: "Oreo",
+    precio: 22,
+    tipo: "leche",
+    imagen: "../../../../imagenes/bolioreo.png",
+    mensaje: "Quiero boli Oreo"
+  },
+
+  // HIELO
+  {
+    nombre: "Mango Chamoy",
+    precio: 20,
+    tipo: "hielo",
+    imagen: "../../../../imagenes/bolimangochamoy.png",
+    mensaje: "Quiero boli de Mango Chamoy"
+  },
+
+  {
+    nombre: "Tropical",
+    precio: 20,
+    tipo: "hielo",
+    imagen: "../../../../imagenes/bolitropical.png",
+    mensaje: "Quiero boli Tropical"
+  },
+
+  {
     nombre: "Mango",
     precio: 20,
+    tipo: "hielo",
     imagen: "../../../../imagenes/bolimango.png",
     mensaje: "Quiero boli de Mango"
   },
@@ -65,40 +85,55 @@ const productos = [
   {
     nombre: "Oasis",
     precio: 20,
+    tipo: "hielo",
     imagen: "../../../../imagenes/bolioasis.png",
     mensaje: "Quiero boli Oasis"
-  },
-
-    {
-    nombre: "Oreo",
-    precio: 20,
-    imagen: "../../../../imagenes/bolioreo.png",
-    mensaje: "Quiero boli Oreo"
   }
- 
+
 ];
 
-const grid = document.getElementById("grid");
+const contenido = document.getElementById("contenido");
 
-productos.forEach(producto => {
+function crearSeccion(titulo, lista) {
 
-  const card = document.createElement("div");
+  const h2 = document.createElement("h2");
+  h2.textContent = titulo;
 
-  card.classList.add("producto");
+  const grid = document.createElement("div");
+  grid.className = "grid";
 
-  card.innerHTML = `
-    <img src="${producto.imagen}" alt="${producto.nombre}">
+  lista.forEach(producto => {
 
-    <p>${producto.nombre} - $${producto.precio}</p>
+    const card = document.createElement("div");
 
-    <a class="btn"
-       href="https://wa.me/5212225655003?text=${encodeURIComponent(producto.mensaje)}"
-       target="_blank">
+    card.classList.add("producto");
 
-       Pedir por WhatsApp
-    </a>
-  `;
+    card.innerHTML = `
+      <img src="${producto.imagen}" alt="${producto.nombre}">
 
-  grid.appendChild(card);
+      <p>${producto.nombre} - $${producto.precio}</p>
 
-});
+      <a class="btn"
+         href="https://wa.me/5212225655003?text=${encodeURIComponent(producto.mensaje)}"
+         target="_blank">
+         Pedir por WhatsApp
+      </a>
+    `;
+
+    grid.appendChild(card);
+
+  });
+
+  contenido.appendChild(h2);
+  contenido.appendChild(grid);
+}
+
+crearSeccion(
+  "🧊 Bolis de Hielo Refrescantes",
+  productos.filter(p => p.tipo === "hielo")
+);
+
+crearSeccion(
+  "🥛 Bolis de Leche Cremosos",
+  productos.filter(p => p.tipo === "leche")
+);
