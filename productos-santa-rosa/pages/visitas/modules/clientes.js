@@ -26,6 +26,16 @@ export function crearCliente() {
         document.getElementById(
             "clienteDireccion"
         ).value;
+    
+    const latitud =
+    document.getElementById(
+        "clienteLatitud"
+    ).value;
+
+    const longitud =
+    document.getElementById(
+        "clienteLongitud"
+    ).value;
 
     if(!nombre){
 
@@ -36,11 +46,19 @@ export function crearCliente() {
 
     LocalDB.addClient({
 
-        nombre,
-        telefono,
-        direccion,
-        saldo: 0,
-        notas: ""
+    nombre,
+
+    telefono,
+
+    direccion,
+
+    latitud,
+
+    longitud,
+
+    saldo:0,
+
+    notas:""
 
     });
     renderClientes();
