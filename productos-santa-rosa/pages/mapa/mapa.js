@@ -1,11 +1,6 @@
 import LocalDB
 from "../../core/storage/local-db.js";
 
-alert(
-    "MAPA JS CARGADO"
-);
-
-
 const mapa =
     L.map("mapa")
     .setView(
@@ -45,11 +40,6 @@ const clientes =
         )
     ) || [];
 
-alert(
-    "Clientes: " +
-    clientes.length
-);
-
 clientes.forEach(cliente => {
 
     if(
@@ -59,37 +49,17 @@ clientes.forEach(cliente => {
         return;
     }
 
-L.circleMarker(
+L.marker([
 
-    [
+    Number(
+        cliente.latitud
+    ),
 
-        Number(
-            cliente.latitud
-        ),
+    Number(
+        cliente.longitud
+    )
 
-        Number(
-            cliente.longitud
-        )
-
-    ],
-
-    {
-
-        radius:8,
-
-        fillColor:"#ff0000",
-
-        color:"#ff0000",
-
-        weight:1,
-
-        opacity:1,
-
-        fillOpacity:.8
-
-    }
-
-)
+])
         
     .addTo(mapa)
 
@@ -112,18 +82,32 @@ L.circleMarker(
     `);
 
 });
+                 
+    const puntos =
 
-setTimeout(() => {
+    clientes
 
-    mapa.invalidateSize();
-
-}, 500);
-
-console.log(
-    "Clientes con GPS:",
-    clientes.filter(
+    .filter(
         c =>
             c.latitud &&
             c.longitud
-    ).length
-);
+    )
+
+    .map(c => [
+
+        Number(c.latitud),
+
+        Number(c.longitud)
+
+    ]);
+
+if(puntos.length){
+
+    mapa.fitBounds(
+        puntos
+    );
+
+}
+                
+
+
