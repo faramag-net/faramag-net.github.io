@@ -137,3 +137,42 @@ crearSeccion(
   "🥛 Bolis de Leche Cremosos",
   productos.filter(p => p.tipo === "leche")
 );
+
+const modal =
+    document.getElementById("modalImagen");
+
+const imagenGrande =
+    document.getElementById("imagenGrande");
+
+const cerrarModal =
+    document.getElementById("cerrarModal");
+
+document.addEventListener("click", e => {
+
+    if(e.target.matches(".producto img")){
+
+        imagenGrande.src =
+            e.target.src;
+
+        modal.style.display =
+            "flex";
+    }
+
+});
+
+cerrarModal.addEventListener("click", () => {
+
+    modal.style.display =
+        "none";
+
+});
+
+modal.addEventListener("click", e => {
+
+    if(e.target === modal){
+
+        modal.style.display =
+            "none";
+    }
+
+});
