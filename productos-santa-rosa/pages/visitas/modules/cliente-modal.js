@@ -568,7 +568,8 @@ function renderEditarConsignacion(
 ){
 
     console.log(
-        consignacion
+        "ITEMS",
+        consignacion.items
     );
 
 }
