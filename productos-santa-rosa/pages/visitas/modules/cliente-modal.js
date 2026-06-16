@@ -575,42 +575,81 @@ function renderConsignacionTab(){
             clienteId
         );
 
-    if(activa){
-    
-        container.innerHTML = `
-    
-            <h3>
-                Consignación Activa
-            </h3>
-    
-            <p>
-                Fecha:
-                ${activa.fecha}
-            </p>
-    
-            <button
-                id="recogerBtn"
-            >
-                Recoger Producto
-            </button>
-    
-        `;
-    
-        document
-        .getElementById(
-            "recogerBtn"
-        )
-        .onclick = () => {
-    
-            renderRecogerProducto(
-                activa
-            );
-    
-        };
-    
-        return;
-    
-    }
+if(activa){
+
+    const monto =
+        activa.items.reduce(
+            (total,item)=>
+                total +
+                (
+                    Number(
+                        item.cantidadEntregada || 0
+                    )
+                    *
+                    Number(
+                        item.precio || 0
+                    )
+                ),
+            0
+        );
+
+    container.innerHTML = `
+        <h3>
+            Consignación Activa
+        </h3>
+
+        <p>
+            Fecha:
+            ${activa.fecha}
+        </p>
+
+        <p>
+            Monto consignado:
+            <strong>
+                $${monto.toFixed(2)}
+            </strong>
+        </p>
+
+        <button
+            id="editarConsignacionBtn"
+        >
+            Editar
+        </button>
+
+        <button
+            id="recogerBtn"
+        >
+            Recoger Producto
+        </button>
+    `;
+
+    document
+    .getElementById(
+        "editarConsignacionBtn"
+    )
+    .onclick = () => {
+
+        renderEditarConsignacion(
+            activa
+        );
+
+    };
+
+    document
+    .getElementById(
+        "recogerBtn"
+    )
+    .onclick = () => {
+
+        renderRecogerProducto(
+            activa
+        );
+
+    };
+
+    return;
+
+}
 
     container.innerHTML = `
 
