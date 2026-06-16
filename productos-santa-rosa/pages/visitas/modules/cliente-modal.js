@@ -752,6 +752,16 @@ function renderEditarConsignacion(
     consignaciones[index] =
         consignacion;
 
+console.log(
+    "CONSIGNACION MODIFICADA",
+    consignacion
+);
+
+console.log(
+    "TODAS",
+    consignaciones
+);
+    
     LocalDB.saveConsignations(
         consignaciones
     );
