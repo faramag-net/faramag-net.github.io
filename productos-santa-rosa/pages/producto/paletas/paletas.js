@@ -57,7 +57,7 @@ const productos = [
     tipo: "leche",
     activo: true,
     descripcion: "Chocolate y avellana en cada mordida",
-    imagen: "../../../../imagenes/paletanuetlla.png",
+    imagen: "../../../../imagenes/paletanutella.png",
     mensaje: "Quiero paleta Choco Nutella"
   },
 
