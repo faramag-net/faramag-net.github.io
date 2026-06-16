@@ -563,6 +563,16 @@ function renderProductosTab(){
     
     }
 
+function renderEditarConsignacion(
+    consignacion
+){
+
+    console.log(
+        consignacion
+    );
+
+}
+
 function renderConsignacionTab(){
 
     const container =
