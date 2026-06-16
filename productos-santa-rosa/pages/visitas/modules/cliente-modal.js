@@ -567,10 +567,84 @@ function renderEditarConsignacion(
     consignacion
 ){
 
-    console.log(
-        "ITEMS",
-        consignacion.items
-    );
+    const container =
+        document.getElementById(
+            "clienteTabContent"
+        );
+
+    const productos =
+        LocalDB.getProducts();
+
+    container.innerHTML = `
+
+        <h3>
+            Editar Consignación
+        </h3>
+
+        ${
+            consignacion.items.map(item => {
+
+                const producto =
+                    productos.find(
+                        p =>
+                            p.id ===
+                            item.productId
+                    );
+
+                return `
+
+                    <div
+                        class="producto-row"
+                    >
+
+                        <span>
+                            ${
+                                producto?.nombre
+                                || "Producto"
+                            }
+                        </span>
+
+                        <input
+                            type="number"
+                            min="0"
+                            value="${
+                                item.cantidadEntregada
+                            }"
+                        >
+
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value="${
+                                item.precio
+                            }"
+                        >
+
+                    </div>
+
+                `;
+
+            }).join("")
+        }
+
+        <button
+            id="volverConsignacionBtn"
+        >
+            Volver
+        </button>
+
+    `;
+
+    document
+    .getElementById(
+        "volverConsignacionBtn"
+    )
+    .onclick = () => {
+
+        renderConsignacionTab();
+
+    };
 
 }
 
