@@ -610,6 +610,10 @@ function renderEditarConsignacion(
                             value="${
                                 item.cantidadEntregada
                             }"
+                            class="cantidad-editar-consignacion"
+                            data-productid="${
+                                item.productId
+                            }"
                         >
 
                         <input
@@ -629,6 +633,12 @@ function renderEditarConsignacion(
         }
 
         <button
+            id="guardarEdicionConsignacionBtn"
+        >
+            Guardar Cambios
+        </button>
+        
+        <button
             id="volverConsignacionBtn"
         >
             Volver
@@ -636,6 +646,124 @@ function renderEditarConsignacion(
 
     `;
 
+    
+    document
+.getElementById(
+    "guardarEdicionConsignacionBtn"
+)
+.onclick = () => {
+
+    const cantidades =
+        document.querySelectorAll(
+            ".cantidad-editar-consignacion"
+        );
+
+    const productos =
+        LocalDB.getProducts();
+
+    cantidades.forEach(input => {
+
+        const productId =
+            input.dataset.productid;
+
+        const nuevaCantidad =
+            Number(input.value);
+
+        const itemOriginal =
+            consignacion.items.find(
+                item =>
+                    item.productId ===
+                    productId
+            );
+
+        const cantidadOriginal =
+            itemOriginal.cantidadEntregada;
+
+        const diferencia =
+            nuevaCantidad -
+            cantidadOriginal;
+
+        const producto =
+            productos.find(
+                p =>
+                    p.id ===
+                    productId
+            );
+
+        if(diferencia > 0){
+
+            LocalDB.addHistory({
+
+                tipo:
+                    "CONSIGNACION_SALIDA",
+
+                producto:
+                    producto.nombre,
+
+                cantidad:
+                    diferencia,
+
+                fecha:
+                    new Date()
+                    .toLocaleString()
+
+            });
+
+        }
+
+        if(diferencia < 0){
+
+            LocalDB.addHistory({
+
+                tipo:
+                    "CONSIGNACION_ENTRADA",
+
+                producto:
+                    producto.nombre,
+
+                cantidad:
+                    Math.abs(
+                        diferencia
+                    ),
+
+                fecha:
+                    new Date()
+                    .toLocaleString()
+
+            });
+
+        }
+
+        itemOriginal.cantidadEntregada =
+            nuevaCantidad;
+
+    });
+
+    const consignaciones =
+        LocalDB.getConsignations();
+
+    const index =
+        consignaciones.findIndex(
+            c =>
+                c.id ===
+                consignacion.id
+        );
+
+    consignaciones[index] =
+        consignacion;
+
+    LocalDB.saveConsignations(
+        consignaciones
+    );
+
+    showToast(
+        "Consignación actualizada"
+    );
+
+    renderConsignacionTab();
+
+};
+    
     document
     .getElementById(
         "volverConsignacionBtn"
