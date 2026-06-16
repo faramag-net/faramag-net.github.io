@@ -1,72 +1,208 @@
 const productos = [
 
+  // LECHOSOS
   {
-    nombre: "Kiwi",
-    precio: 20,
-    imagen: "../../../../imagenes/kiwi.png",
-    mensaje: "Quiero paleta de kiwi"
+    nombre: "Beso de Ángel",
+    precio: 22,
+    tipo: "leche",
+    activo: true,
+    descripcion: "Cereza con trozos de Nuez, arandanos y coco",
+    imagen: "../../../../imagenes/paletabeso.png",
+    mensaje: "Quiero paleta de Beso de Angel"
   },
 
   {
-    nombre: "Naranja",
-    precio: 20,
-    imagen: "../../../../imagenes/naranja.png",
-    mensaje: "Quiero paleta de naranja"
+    nombre: "Coco",
+    precio: 22,
+    tipo: "leche",
+    activo: true,
+    descripcion: "",
+    imagen: "../../../../imagenes/paletacoco.png",
+    mensaje: "Quiero paleta de Coco"
   },
 
   {
-    nombre: "Toronja",
-    precio: 20,
-    imagen: "../../../../imagenes/toronja.png",
-    mensaje: "Quiero paleta de toronja"
+    nombre: "Fresa",
+    precio: 22,
+    tipo: "leche",
+    activo: true,
+    descripcion: "Con trozos de fresa",
+    imagen: "../../../../imagenes/paletafresa.png",
+    mensaje: "Quiero paleta de Fresa"
   },
 
   {
-    nombre: "Limón",
-    precio: 20,
-    imagen: "../../../../imagenes/limon.png",
-    mensaje: "Quiero paleta de limón"
+    nombre: "Frutos Rojos",
+    precio: 22,
+    tipo: "leche",
+    activo: true,
+    descripcion: "",
+    imagen: "../../../../imagenes/paletafrutos.png",
+    mensaje: "Quiero paleta Frutos Rojos"
   },
 
   {
-    nombre: "Piña",
-    precio: 20,
-    imagen: "../../../../imagenes/pinia.png",
-    mensaje: "Quiero paleta de piña"
+    nombre: "Mamey",
+    precio: 22,
+    tipo: "leche",
+    activo: true,
+    descripcion: "",
+    imagen: "../../../../imagenes/paletamamey.png",
+    mensaje: "Quiero paleta de Mamey"
   },
 
   {
-    nombre: "Sandía",
+    nombre: "Choco Nutella",
+    precio: 22,
+    tipo: "leche",
+    activo: true,
+    descripcion: "Chocolate y avellana en cada mordida",
+    imagen: "../../../../imagenes/paletanuetlla.png",
+    mensaje: "Quiero paleta Choco Nutella"
+  },
+
+  {
+    nombre: "Oreo",
+    precio: 22,
+    tipo: "leche",
+    activo: true,
+    descripcion: "",
+    imagen: "../../../../imagenes/paletaoreo.png",
+    mensaje: "Quiero paleta Oreo"
+  },
+
+  // HIELO
+  {
+    nombre: "Mango Chamoy",
     precio: 20,
-    imagen: "../../../../imagenes/sandia.png",
-    mensaje: "Quiero paleta de sandía"
+    tipo: "hielo",
+    activo: true,
+    descripcion: "Con pulpa y trozos de mango",
+    imagen: "../../../../imagenes/paletamangochamoy.png",
+    mensaje: "Quiero paleta de Mango Chamoy"
+  },
+
+  {
+    nombre: "Tropical",
+    precio: 20,
+    tipo: "hielo",
+    activo: true,
+    descripcion: "Refrescante mezcla de frutas tropicales",
+    imagen: "../../../../imagenes/paletatropical.png",
+    mensaje: "Quiero paleta Tropical"
+  },
+
+  {
+    nombre: "Mango",
+    precio: 20,
+    tipo: "hielo",
+    activo: true,
+    descripcion: "Con pulpa y trozos de mango",
+    imagen: "../../../../imagenes/paletamango.png",
+    mensaje: "Quiero paleta de Mango"
+  },
+
+  {
+    nombre: "Oasis",
+    precio: 20,
+    tipo: "hielo",
+    activo: true,
+    descripcion: "Refrescante mezcla de fresa, naranja y papaya",
+    imagen: "../../../../imagenes/paletaoasis.png",
+    mensaje: "Quiero paleta Oasis"
   }
 
 ];
 
-const grid = document.getElementById("grid");
+const contenido = document.getElementById("contenido");
 
-productos.forEach(producto => {
+function crearSeccion(titulo, lista) {
 
-  const card = document.createElement("div");
+  const h2 = document.createElement("h2");
+  h2.textContent = titulo;
 
-  card.classList.add("producto");
+  h2.className = "categoria-titulo";
 
-  card.innerHTML = `
-  
-    <img src="${producto.imagen}" alt="${producto.nombre}">
+  h2.textContent = titulo;
 
-    <p>${producto.nombre} - $${producto.precio}</p>
+  const grid = document.createElement("div");
+  grid.className = "grid";
 
-    <a class="btn"
-       href="https://wa.me/5212225655003?text=${encodeURIComponent(producto.mensaje)}"
-       target="_blank">
+  lista.forEach(producto => {
 
-       Pedir por WhatsApp
+    const card = document.createElement("div");
 
-    </a>
-  `;
+    card.classList.add("producto");
 
-  grid.appendChild(card);
+    card.innerHTML = `
+      <img src="${producto.imagen}" alt="${producto.nombre}">
+
+      <p>${producto.nombre} - $${producto.precio}</p>
+
+      <p class="descripcion">
+        ${producto.descripcion}
+      </p>
+      
+      <a class="btn"
+         href="https://wa.me/5212225655003?text=${encodeURIComponent(producto.mensaje)}"
+         target="_blank">
+         Pedir por WhatsApp
+      </a>
+    `;
+
+    grid.appendChild(card);
+
+  });
+
+  contenido.appendChild(h2);
+  contenido.appendChild(grid);
+}
+
+crearSeccion(
+  "🧊 Paletas de Agua Refrescantes",
+  productos.filter(p => p.tipo === "hielo" && p.activo)
+);
+
+crearSeccion(
+  "🥛 Paletas de Leche Cremosas",
+  productos.filter(p => p.tipo === "leche" && p.activo)
+);
+
+const modal =
+    document.getElementById("modalImagen");
+
+const imagenGrande =
+    document.getElementById("imagenGrande");
+
+const cerrarModal =
+    document.getElementById("cerrarModal");
+
+document.addEventListener("click", e => {
+
+    if(e.target.matches(".producto img")){
+
+        imagenGrande.src =
+            e.target.src;
+
+        modal.style.display =
+            "flex";
+    }
+
+});
+
+cerrarModal.addEventListener("click", () => {
+
+    modal.style.display =
+        "none";
+
+});
+
+modal.addEventListener("click", e => {
+
+    if(e.target === modal){
+
+        modal.style.display =
+            "none";
+    }
 
 });
