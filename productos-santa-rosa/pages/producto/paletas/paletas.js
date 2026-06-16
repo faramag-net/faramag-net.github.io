@@ -35,7 +35,7 @@ const productos = [
     nombre: "Frutos Rojos",
     precio: 22,
     tipo: "leche",
-    activo: true,
+    activo: false,
     descripcion: "",
     imagen: "../../../../imagenes/paletafrutos.png",
     mensaje: "Quiero paleta Frutos Rojos"
@@ -76,7 +76,7 @@ const productos = [
     nombre: "Mango Chamoy",
     precio: 20,
     tipo: "hielo",
-    activo: true,
+    activo: false,
     descripcion: "Con pulpa y trozos de mango",
     imagen: "../../../../imagenes/paletamangochamoy.png",
     mensaje: "Quiero paleta de Mango Chamoy"
@@ -96,7 +96,7 @@ const productos = [
     nombre: "Mango",
     precio: 20,
     tipo: "hielo",
-    activo: true,
+    activo: false,
     descripcion: "Con pulpa y trozos de mango",
     imagen: "../../../../imagenes/paletamango.png",
     mensaje: "Quiero paleta de Mango"
