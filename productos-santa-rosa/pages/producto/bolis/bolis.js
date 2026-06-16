@@ -5,7 +5,7 @@ const productos = [
     nombre: "Beso de Ángel",
     precio: 22,
     tipo: "leche",
-    activo: false,
+    activo: true,
     descripcion: "Cereza con trozos de Nuez, arandanos y coco",
     imagen: "../../../../imagenes/bolibeso.png",
     mensaje: "Quiero boli de Beso de Angel"
@@ -15,7 +15,7 @@ const productos = [
     nombre: "Coco",
     precio: 22,
     tipo: "leche",
-    activo: false,
+    activo: true,
     descripcion: "",
     imagen: "../../../../imagenes/bolicoco.png",
     mensaje: "Quiero boli de Coco"
@@ -25,7 +25,7 @@ const productos = [
     nombre: "Fresa",
     precio: 22,
     tipo: "leche",
-    activo: false,
+    activo: true,
     descripcion: "Con trozos de fresa",
     imagen: "../../../../imagenes/bolifresa.png",
     mensaje: "Quiero boli de Fresa"
@@ -35,7 +35,7 @@ const productos = [
     nombre: "Frutos Rojos",
     precio: 22,
     tipo: "leche",
-    activo: false,
+    activo: true,
     descripcion: "",
     imagen: "../../../../imagenes/bolifrutos.png",
     mensaje: "Quiero boli Frutos Rojos"
@@ -45,7 +45,7 @@ const productos = [
     nombre: "Mamey",
     precio: 22,
     tipo: "leche",
-    activo: false,
+    activo: true,
     descripcion: "",
     imagen: "../../../../imagenes/bolimamey.png",
     mensaje: "Quiero boli de Mamey"
@@ -55,7 +55,7 @@ const productos = [
     nombre: "Choco Nutella",
     precio: 22,
     tipo: "leche",
-    activo: false,
+    activo: true,
     descripcion: "Chocolate y avellana en cada mordida",
     imagen: "../../../../imagenes/bolinuetlla.png",
     mensaje: "Quiero boli Choco Nutella"
@@ -65,7 +65,7 @@ const productos = [
     nombre: "Oreo",
     precio: 22,
     tipo: "leche",
-    activo: false,
+    activo: true,
     descripcion: "",
     imagen: "../../../../imagenes/bolioreo.png",
     mensaje: "Quiero boli Oreo"
@@ -76,7 +76,7 @@ const productos = [
     nombre: "Mango Chamoy",
     precio: 20,
     tipo: "hielo",
-    activo: false,
+    activo: true,
     descripcion: "Con pulpa y trozos de mango",
     imagen: "../../../../imagenes/bolimangochamoy.png",
     mensaje: "Quiero boli de Mango Chamoy"
@@ -86,7 +86,7 @@ const productos = [
     nombre: "Tropical",
     precio: 20,
     tipo: "hielo",
-    activo: false,
+    activo: true,
     descripcion: "Refrescante mezcla de frutas tropicales",
     imagen: "../../../../imagenes/bolitropical.png",
     mensaje: "Quiero boli Tropical"
@@ -96,7 +96,7 @@ const productos = [
     nombre: "Mango",
     precio: 20,
     tipo: "hielo",
-    activo: false,
+    activo: true,
     descripcion: "Con pulpa y trozos de mango",
     imagen: "../../../../imagenes/bolimango.png",
     mensaje: "Quiero boli de Mango"
@@ -106,7 +106,7 @@ const productos = [
     nombre: "Oasis",
     precio: 20,
     tipo: "hielo",
-    activo: false,
+    activo: true,
     descripcion: "Refrescante mezcla de fresa, naranja y papaya",
     imagen: "../../../../imagenes/bolioasis.png",
     mensaje: "Quiero boli Oasis"
