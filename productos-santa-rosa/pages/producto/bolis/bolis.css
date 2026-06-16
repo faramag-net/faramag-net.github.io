@@ -128,3 +128,25 @@ body {
     text-shadow: 2px 2px 4px rgba(0,0,0,.5);
 
 }
+
+.descripcion{
+
+    font-size:14px;
+
+    color:#f5f5f5;
+
+    margin:8px 0;
+
+    min-height:35px;
+
+    opacity:.95;
+
+}
+
+.nombre{
+
+    font-weight:bold;
+
+    margin-top:10px;
+
+}
