@@ -99,6 +99,10 @@ function crearSeccion(titulo, lista) {
   const h2 = document.createElement("h2");
   h2.textContent = titulo;
 
+  h2.className = "categoria-titulo";
+
+  h2.textContent = titulo;
+
   const grid = document.createElement("div");
   grid.className = "grid";
 
@@ -129,7 +133,7 @@ function crearSeccion(titulo, lista) {
 }
 
 crearSeccion(
-  "🧊 Bolis de Hielo Refrescantes",
+  "🧊 Bolis de Agua Refrescantes",
   productos.filter(p => p.tipo === "hielo")
 );
 
