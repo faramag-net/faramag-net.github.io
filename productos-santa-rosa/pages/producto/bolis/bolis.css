@@ -16,7 +16,7 @@ body {
 }
 
 /* GRID */
-.grid {
+.grid{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 20px;
@@ -112,5 +112,19 @@ body {
 .producto img{
 
     cursor:pointer;
+
+}
+
+.categoria-titulo{
+
+    margin-top: 30px;
+
+    margin-bottom: 10px;
+
+    font-size: 28px;
+
+    color: white;
+
+    text-shadow: 2px 2px 4px rgba(0,0,0,.5);
 
 }
