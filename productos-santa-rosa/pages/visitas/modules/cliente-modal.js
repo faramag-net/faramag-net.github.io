@@ -753,8 +753,21 @@ function renderEditarConsignacion(
         consignacion;
 
 console.log(
-    "CONSIGNACION MODIFICADA",
-    consignacion
+    "ITEMS MODIFICADOS",
+    JSON.stringify(
+        consignacion.items,
+        null,
+        2
+    )
+);
+
+    console.log(
+    "ITEMS GUARDADOS",
+    JSON.stringify(
+        consignaciones[index].items,
+        null,
+        2
+    )
 );
 
 console.log(
