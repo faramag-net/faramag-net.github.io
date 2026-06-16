@@ -620,9 +620,9 @@ function renderEditarConsignacion(
                             type="number"
                             min="0"
                             step="0.01"
-                            value="${
-                                item.precio
-                            }"
+                            value="${item.precio}"
+                            class="precio-editar-consignacion"
+                            data-productid="${item.productId}"
                         >
 
                     </div>
@@ -736,9 +736,20 @@ function renderEditarConsignacion(
 
         itemOriginal.cantidadEntregada =
             nuevaCantidad;
+           
+        const precioInput =
+            document.querySelector(
+                `.precio-editar-consignacion[data-productid="${productId}"]`
+            );
+        
+        itemOriginal.precio =
+            Number(
+                precioInput.value
+            );
+          
+        });
 
-    });
-
+    
     const consignaciones =
         LocalDB.getConsignations();
 
@@ -751,30 +762,7 @@ function renderEditarConsignacion(
 
     consignaciones[index] =
         consignacion;
-
-console.log(
-    "ITEMS MODIFICADOS",
-    JSON.stringify(
-        consignacion.items,
-        null,
-        2
-    )
-);
-
-    console.log(
-    "ITEMS GUARDADOS",
-    JSON.stringify(
-        consignaciones[index].items,
-        null,
-        2
-    )
-);
-
-console.log(
-    "TODAS",
-    consignaciones
-);
-    
+  
     LocalDB.saveConsignations(
         consignaciones
     );
