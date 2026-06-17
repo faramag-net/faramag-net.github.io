@@ -959,7 +959,11 @@ if(activa){
         "recogerBtn"
     )
     .onclick = () => {
-    
+
+console.log(
+    "CLICK RECOGER"
+);
+        
         if(
             !confirm(
                 "¿Seguro que deseas cerrar la consignación? Se registrarán ventas y devoluciones."
@@ -1174,9 +1178,7 @@ items.forEach(item => {
     });
 
 });
-
-        console.log(items);
-        
+       
         LocalDB.addConsignation({
     
             id:
