@@ -679,6 +679,7 @@ document
 .getElementById(
     "agregarProductoConsignaBtn"
 )
+    
 .onclick = () => {
 
     const productId =
@@ -686,45 +687,38 @@ document
             "nuevoProductoConsigna"
         ).value;
 
-    const cantidad =
-        Number(
-            document.getElementById(
-                "nuevaCantidadConsigna"
-            ).value
-        );
-
-    const precio =
-        Number(
-            document.getElementById(
-                "nuevoPrecioConsigna"
-            ).value
-        );
-
     const existe =
-    consignacion.items.some(
-        item =>
-            item.productId ===
-            productId
-    );
+        consignacion.items.some(
+            item =>
+                item.productId ===
+                productId
+        );
 
     if(existe){
-    
+
         showToast(
             "El producto ya existe en la consignación"
         );
-    
+
         return;
-    
+
     }
+
+    const producto =
+        productos.find(
+            p =>
+                p.id ===
+                productId
+        );
 
     consignacion.items.push({
 
         productId,
 
-        cantidadEntregada:
-            cantidad,
+        cantidadEntregada: 0,
 
-        precio
+        precio:
+            producto?.precio || 0
 
     });
 
