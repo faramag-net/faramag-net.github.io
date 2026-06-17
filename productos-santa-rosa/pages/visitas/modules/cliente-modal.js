@@ -667,21 +667,6 @@ function renderEditarConsignacion(
     }
 </select>
 
-<input
-    id="nuevaCantidadConsigna"
-    type="number"
-    min="1"
-    placeholder="Cantidad"
->
-
-<input
-    id="nuevoPrecioConsigna"
-    type="number"
-    min="0"
-    step="0.01"
-    placeholder="Precio"
->
-
 <button
     id="agregarProductoConsignaBtn"
 >
