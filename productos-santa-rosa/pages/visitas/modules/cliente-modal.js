@@ -643,8 +643,94 @@ function renderEditarConsignacion(
         >
             Volver
         </button>
+        
+        <hr>
+        
+        <h4>
+            Agregar producto
+        </h4>
+        
+        <select
+            id="nuevoProductoConsigna"
+        >
+        
+    ${
+        productos.map(producto => `
 
-    `;
+            <option
+                value="${producto.id}"
+            >
+                ${producto.nombre}
+            </option>
+
+        `).join("")
+    }
+</select>
+
+<input
+    id="nuevaCantidadConsigna"
+    type="number"
+    min="1"
+    placeholder="Cantidad"
+>
+
+<input
+    id="nuevoPrecioConsigna"
+    type="number"
+    min="0"
+    step="0.01"
+    placeholder="Precio"
+>
+
+<button
+    id="agregarProductoConsignaBtn"
+>
+    Agregar
+</button>
+
+`;
+
+document
+.getElementById(
+    "agregarProductoConsignaBtn"
+)
+.onclick = () => {
+
+    const productId =
+        document.getElementById(
+            "nuevoProductoConsigna"
+        ).value;
+
+    const cantidad =
+        Number(
+            document.getElementById(
+                "nuevaCantidadConsigna"
+            ).value
+        );
+
+    const precio =
+        Number(
+            document.getElementById(
+                "nuevoPrecioConsigna"
+            ).value
+        );
+
+    consignacion.items.push({
+
+        productId,
+
+        cantidadEntregada:
+            cantidad,
+
+        precio
+
+    });
+
+    renderEditarConsignacion(
+        consignacion
+    );
+
+};
 
     
     document
