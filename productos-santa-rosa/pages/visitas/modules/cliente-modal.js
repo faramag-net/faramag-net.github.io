@@ -546,6 +546,14 @@ function renderProductosTab(){
     .forEach(btn => {
     
         btn.onclick = () => {
+
+                    if(
+            !confirm(
+                "¿Seguro que deseas eliminar este producto del cliente?"
+                )
+            ){
+                return;
+            }
     
             LocalDB.deleteClientProduct(
                 btn.dataset.id            
@@ -951,11 +959,19 @@ if(activa){
         "recogerBtn"
     )
     .onclick = () => {
-
+    
+        if(
+            !confirm(
+                "¿Seguro que deseas cerrar la consignación? Se registrarán ventas y devoluciones."
+            )
+        ){
+            return;
+        }
+    
         renderRecogerProducto(
             activa
         );
-
+    
     };
 
     return;
