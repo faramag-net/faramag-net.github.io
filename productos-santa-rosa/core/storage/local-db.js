@@ -300,12 +300,7 @@ ventas.forEach(venta => {
   }
 
   static createSale(sale) {
-
-  console.log(
-    "VENTA GUARDADA",
-    sale
-);
-    
+   
     const sales = this.getSales();
 
     const newSale = {
@@ -594,11 +589,6 @@ static addClient(client) {
   }
   
   static saveMercadoHistory(data) {
-
-    console.log(
-        "Guardando historial:",
-        data
-    );
     
       return this.set(
           DB_KEYS.MERCADO_HISTORY,
@@ -704,12 +694,8 @@ static getSuggestedPrice(
         .find(
             p => p.id === productId
         );
-  
-console.log(
-    "PRODUCTO ENCONTRADO",
-    producto
-);
-  
+ 
+ 
       return Number(
           producto?.precio || 0
       );
