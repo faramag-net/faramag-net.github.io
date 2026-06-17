@@ -1334,6 +1334,14 @@ container.innerHTML = `
 )
 .onclick = () => {
 
+        if(
+        !confirm(
+            "¿Seguro que deseas cerrar la consignación?"
+        )
+    ){
+        return;
+    }
+
     const inputs =
         document.querySelectorAll(
             ".cantidad-devuelta"
