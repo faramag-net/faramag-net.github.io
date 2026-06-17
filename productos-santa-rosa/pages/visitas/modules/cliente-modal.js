@@ -715,6 +715,23 @@ document
             ).value
         );
 
+    const existe =
+    consignacion.items.some(
+        item =>
+            item.productId ===
+            productId
+    );
+
+    if(existe){
+    
+        showToast(
+            "El producto ya existe en la consignación"
+        );
+    
+        return;
+    
+    }
+
     consignacion.items.push({
 
         productId,
@@ -835,6 +852,11 @@ document
           
         });
 
+    consignacion.items =
+    consignacion.items.filter(
+        item =>
+            item.cantidadEntregada > 0
+    );
     
     const consignaciones =
         LocalDB.getConsignations();
