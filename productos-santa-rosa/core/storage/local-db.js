@@ -1049,6 +1049,45 @@ static mergeProducts(
     );
 
 }
+
+static mergeClientProducts(
+    importedItems
+){
+
+    const merged =
+        this.mergeById(
+
+            this.getClientProducts(),
+
+            importedItems
+
+        );
+
+    this.saveClientProducts(
+        merged
+    );
+
+}
+
+
+static mergeConsignations(
+    importedItems
+){
+
+    const merged =
+        this.mergeById(
+
+            this.getConsignations(),
+
+            importedItems
+
+        );
+
+    this.saveConsignations(
+            merged
+        );
+
+}
   
 }
 
