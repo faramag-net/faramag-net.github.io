@@ -188,3 +188,35 @@ document
 "change",
 renderClientes
 );
+
+import {
+    exportarJSON,
+    importarJSON
+}
+from "./modules/exportar.js";
+
+document
+.getElementById(
+    "exportarVisitasBtn"
+)
+.onclick =
+    exportarJSON;
+
+document
+.getElementById(
+    "importarVisitasBtn"
+)
+.onclick =
+    () =>
+        document
+        .getElementById(
+            "importarVisitasInput"
+        )
+        .click();
+
+document
+.getElementById(
+    "importarVisitasInput"
+)
+.onchange =
+    importarJSON;
