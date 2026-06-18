@@ -987,29 +987,66 @@ static importBackup(data){
 
 }
 
-static exportBackup(){
+static importBackup(data){
 
-    return {
+    if(data.products){
 
-        version: 1,
+        this.mergeProducts(
+            data.products
+        );
 
-        exportedAt:
-            new Date()
-            .toISOString(),
+    }
 
-        routeClients:
-            this.getRouteClients(),
+    if(data.routeClients){
 
-        visits:
-            this.getVisits(),
+        this.mergeClients(
+            data.routeClients
+        );
 
-        sales:
-            this.getSales(),
+    }
 
-        history:
-            this.getHistory()
+    if(data.visits){
 
-    };
+        this.mergeVisits(
+            data.visits
+        );
+
+    }
+
+    if(data.sales){
+
+        this.mergeSales(
+            data.sales
+        );
+
+    }
+
+    if(data.history){
+
+        this.mergeHistory(
+            data.history
+        );
+
+    }
+
+}
+
+static mergeProducts(
+    importedProducts
+){
+
+    const merged =
+        this.mergeById(
+
+            this.getProducts(),
+
+            importedProducts
+
+        );
+
+    this.saveProducts(
+        merged
+    );
 
 }
   
