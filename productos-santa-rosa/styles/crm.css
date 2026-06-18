@@ -554,15 +554,21 @@ body{
 
     display:flex;
 
+    align-items:center;
+
     gap:6px;
 
     margin-bottom:10px;
+
+    flex-wrap:nowrap;
 
 }
 
 .clientes-toolbar input{
 
     flex:1;
+
+    min-width:0;
 
     height:40px !important;
 
@@ -578,7 +584,7 @@ body{
 
 .clientes-toolbar select{
 
-    width:100px !important;
+     width:90px !important;
 
     height:40px !important;
 
@@ -614,63 +620,27 @@ body{
 
     }
 
-    .clientes-toolbar select{
-
-        width:90px !important;
-
-        min-width:90px;
-
-    }
-
 }
 
-@media(max-width:768px){
+.btn-add-cliente,
+#exportarVisitasBtn,
+#importarVisitasBtn{
 
-    .clientes-toolbar{
+    width:40px !important;
 
-        display:flex;
+    min-width:40px;
 
-        align-items:center;
+    height:40px !important;
 
-        gap:4px;
+    min-height:40px !important;
 
-        flex-wrap:nowrap;
+    padding:0 !important;
 
-    }
+    margin:0 !important;
 
-    .clientes-toolbar input{
+    border-radius:10px;
 
-        flex:1;
-
-        min-width:0;
-
-    }
-
-    .clientes-toolbar select{
-
-        width:90px !important;
-
-        min-width:90px;
-
-    }
-
-}
-
-.btn-add-cliente{
-
-    width:48px !important;
-
-    min-width:48px;
-
-    height:48px;
-
-    padding:0;
-
-    border-radius:12px;
-
-    font-size:24px;
-
-    font-weight:bold;
+    flex-shrink:0;
 
 }
 
