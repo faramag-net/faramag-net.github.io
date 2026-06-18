@@ -22,9 +22,39 @@ const movimientos =
                     a.fecha
                 )
         );
+
+    const filtro =
+        document
+            .getElementById(
+                "buscarHistorial"
+            )
+            ?.value
+            ?.toLowerCase()
+            || "";
     
-   
-        movimientos.forEach((movimiento)=>{
+   const movimientosFiltrados =
+    movimientos.filter(
+        movimiento =>
+
+            movimiento.tipo
+                ?.toLowerCase()
+                .includes(filtro)
+
+            ||
+
+            movimiento.producto
+                ?.toLowerCase()
+                .includes(filtro)
+
+            ||
+
+            movimiento.fecha
+                ?.toLowerCase()
+                .includes(filtro)
+    );
+
+    
+        movimientosFiltrados.forEach((movimiento)=>{
            
         tabla.innerHTML += `
 
@@ -74,18 +104,17 @@ const movimientos =
                         return;
         
                     const movimientos =
-                        [...LocalDB.getHistory()]
-                            .reverse();
+                        LocalDB.getHistory();
                     
-                    movimientos.splice(
-                        Number(
-                            btn.dataset.index
-                        ),
-                        1
-                    );
+                    const actualizados =
+                        movimientos.filter(
+                            item =>
+                                item.id !==
+                                btn.dataset.id
+                        );
                     
                     LocalDB.saveHistory(
-                        movimientos
+                        actualizados
                     );
                     
                     renderTabla();
