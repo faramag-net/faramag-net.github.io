@@ -518,25 +518,6 @@ static addClient(client) {
         clients
     );
 
-    this.addHistory({
-
-        tipo: "CLIENT_CREATED",
-
-        producto: newClient.nombre,
-
-        cantidad: 0,
-
-        stock: 0,
-
-        fecha:
-            new Date()
-            .toLocaleString(),
-
-        metadata:
-            newClient
-
-    });
-
     return newClient;
 }
   
