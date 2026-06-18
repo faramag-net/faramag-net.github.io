@@ -98,19 +98,22 @@ try {
         LocalDB.saveProducts(
             datos.productos || []
         );
-
+        
         LocalDB.saveInventory(
             datos.inventario || []
         );
-
-        LocalDB.set(
-            "psr_history",
+        
+        LocalDB.mergeHistory(
             datos.historial || []
         );
-
-        LocalDB.saveSales(
+        
+        LocalDB.mergeSales(
             datos.ventas || []
-        );       
+        );
+        
+        LocalDB.mergeClients(
+            datos.routeClients || []
+        );   
        
         actualizarResumen();
 
