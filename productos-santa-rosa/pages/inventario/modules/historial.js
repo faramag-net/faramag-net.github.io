@@ -1,6 +1,11 @@
 import LocalDB from "../../../core/storage/local-db.js";
 
 export function renderTabla(){
+    
+    console.log(
+    LocalDB.getHistory()
+        .filter(item => !item.timestamp)
+);
 
     const tabla =
     document.getElementById("tablaInventario");
@@ -9,10 +14,30 @@ export function renderTabla(){
 
     tabla.innerHTML = "";
 
-    const movimientos =
-    LocalDB.getHistory();
-
-        movimientos.forEach((movimiento,index)=>{
+    console.log(
+    "renderTabla",
+    LocalDB.getHistory().length
+);
+    
+const movimientos =
+    [...LocalDB.getHistory()]
+        .sort(
+            (a,b)=>
+                new Date(
+                    b.timestamp ||
+                    b.fecha
+                ) -
+                new Date(
+                    a.timestamp ||
+                    a.fecha
+                )
+        );
+    
+console.log(
+    movimientos.slice(0,20)
+);
+    
+        movimientos.forEach((movimiento)=>{
            
         tabla.innerHTML += `
 
@@ -31,7 +56,7 @@ export function renderTabla(){
             <td>
                 <button
                     class="btnEliminarMovimiento"
-                    data-index="${index}"
+                    data-id="${movimiento.id}"
                     title="Eliminar Movimiento"
                 >
                     ❌
@@ -62,7 +87,8 @@ export function renderTabla(){
                         return;
         
                     const movimientos =
-                        LocalDB.getHistory();
+                        [...LocalDB.getHistory()]
+                            .reverse();
                     
                     movimientos.splice(
                         Number(
