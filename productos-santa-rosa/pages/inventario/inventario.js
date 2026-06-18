@@ -56,3 +56,12 @@ renderTablaProductos();
 actualizarResumen();
 
 renderTabla();
+
+document
+    .getElementById(
+        "buscarHistorial"
+    )
+    ?.addEventListener(
+        "input",
+        renderTabla
+    );
