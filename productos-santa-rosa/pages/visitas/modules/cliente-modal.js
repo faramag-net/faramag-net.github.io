@@ -1032,7 +1032,7 @@ console.log(
         ${
 
             asignados.map(item => {
-
+               
                 const producto =
                     productos.find(
                         p =>
@@ -1040,7 +1040,18 @@ console.log(
                         item.productoId
                     );
 
-return `
+                if(!producto){
+
+                    console.warn(
+                        "Producto no encontrado",
+                        item
+                    );
+                
+                    return "";
+                
+                }
+                
+                    return `
 
     <div class="producto-row">
 
@@ -1070,7 +1081,7 @@ return `
             step="0.01"
             value="${LocalDB.getSuggestedPrice(
                 cliente.id,
-                producto.id
+                producto?.id
             )}"
             class="precio-consignacion"
             data-productid="${producto?.id || ''}"
