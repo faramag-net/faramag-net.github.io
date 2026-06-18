@@ -30,6 +30,8 @@ import {
 }
 from "./modules/exportar.js";
 
+window.LocalDB = LocalDB;
+
 window.agregarProducto =
 agregarProducto;
 
