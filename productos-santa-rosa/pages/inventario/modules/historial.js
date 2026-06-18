@@ -2,23 +2,13 @@ import LocalDB from "../../../core/storage/local-db.js";
 
 export function renderTabla(){
     
-    console.log(
-    LocalDB.getHistory()
-        .filter(item => !item.timestamp)
-);
-
     const tabla =
     document.getElementById("tablaInventario");
 
     if(!tabla) return;
 
     tabla.innerHTML = "";
-
-    console.log(
-    "renderTabla",
-    LocalDB.getHistory().length
-);
-    
+   
 const movimientos =
     [...LocalDB.getHistory()]
         .sort(
@@ -33,10 +23,7 @@ const movimientos =
                 )
         );
     
-console.log(
-    movimientos.slice(0,20)
-);
-    
+   
         movimientos.forEach((movimiento)=>{
            
         tabla.innerHTML += `
