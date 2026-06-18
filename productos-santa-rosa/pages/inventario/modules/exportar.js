@@ -95,7 +95,7 @@ try {
 
 }
         
-        LocalDB.saveProducts(
+        LocalDB.mergeProducts(
             datos.productos || []
         );
         
