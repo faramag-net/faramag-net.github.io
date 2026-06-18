@@ -950,6 +950,68 @@ static mergeClients(
     );
 
 }
+
+static importBackup(data){
+
+    if(data.routeClients){
+
+        this.mergeClients(
+            data.routeClients
+        );
+
+    }
+
+    if(data.visits){
+
+        this.mergeVisits(
+            data.visits
+        );
+
+    }
+
+    if(data.sales){
+
+        this.mergeSales(
+            data.sales
+        );
+
+    }
+
+    if(data.history){
+
+        this.mergeHistory(
+            data.history
+        );
+
+    }
+
+}
+
+static exportBackup(){
+
+    return {
+
+        version: 1,
+
+        exportedAt:
+            new Date()
+            .toISOString(),
+
+        routeClients:
+            this.getRouteClients(),
+
+        visits:
+            this.getVisits(),
+
+        sales:
+            this.getSales(),
+
+        history:
+            this.getHistory()
+
+    };
+
+}
   
 }
 
