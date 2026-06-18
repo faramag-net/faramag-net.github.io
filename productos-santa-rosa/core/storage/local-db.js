@@ -844,6 +844,112 @@ return this.set(
 );
 
 }
+
+  static mergeById(
+    localItems = [],
+    importedItems = []
+){
+
+    const merged = [
+
+        ...localItems,
+
+        ...importedItems
+
+    ];
+
+    return [
+
+        ...new Map(
+
+            merged.map(
+                item => [
+                    item.id,
+                    item
+                ]
+            )
+
+        ).values()
+
+    ];
+
+}
+
+static mergeSales(
+    importedSales
+){
+
+    const merged =
+        this.mergeById(
+
+            this.getSales(),
+
+            importedSales
+
+        );
+
+    this.saveSales(
+        merged
+    );
+
+}
+
+static mergeHistory(
+    importedHistory
+){
+
+    const merged =
+        this.mergeById(
+
+            this.getHistory(),
+
+            importedHistory
+
+        );
+
+    this.saveHistory(
+        merged
+    );
+
+}
+
+static mergeVisits(
+    importedVisits
+){
+
+    const merged =
+        this.mergeById(
+
+            this.getVisits(),
+
+            importedVisits
+
+        );
+
+    this.saveVisits(
+        merged
+    );
+
+}
+
+static mergeClients(
+    importedClients
+){
+
+    const merged =
+        this.mergeById(
+
+            this.getRouteClients(),
+
+            importedClients
+
+        );
+
+    this.saveRouteClients(
+        merged
+    );
+
+}
   
 }
 
