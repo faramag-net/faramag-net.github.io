@@ -578,7 +578,7 @@ body{
 
 .clientes-toolbar select{
 
-    width:140px !important;
+    width:100px !important;
 
     height:40px !important;
 
@@ -596,20 +596,61 @@ body{
 
     .clientes-toolbar{
 
-        display:grid;
+        display:flex;
 
-        grid-template-columns:
-            1fr
-            110px
-            48px;
+        align-items:center;
 
-        gap:6px;
+        gap:4px;
+
+        flex-wrap:nowrap;
+
+    }
+
+    .clientes-toolbar input{
+
+        flex:1;
+
+        min-width:0;
 
     }
 
     .clientes-toolbar select{
 
-        width:110px !important;
+        width:90px !important;
+
+        min-width:90px;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .clientes-toolbar{
+
+        display:flex;
+
+        align-items:center;
+
+        gap:4px;
+
+        flex-wrap:nowrap;
+
+    }
+
+    .clientes-toolbar input{
+
+        flex:1;
+
+        min-width:0;
+
+    }
+
+    .clientes-toolbar select{
+
+        width:90px !important;
+
+        min-width:90px;
 
     }
 
