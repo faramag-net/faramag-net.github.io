@@ -258,3 +258,19 @@ h1{
     font-size: 12px;
 
 }
+
+.input-busqueda-historial{
+
+    width:100%;
+
+    padding:10px 12px;
+
+    margin:12px 0;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    font-size:14px;
+
+}
