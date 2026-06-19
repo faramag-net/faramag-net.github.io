@@ -144,7 +144,7 @@ function crearSeccion(titulo, lista) {
       </p>
       
       <a class="btn"
-         href="https://wa.me/5212225655003?text=${encodeURIComponent(producto.mensaje)}"
+         href="https://wa.me/5216243516893?text=${encodeURIComponent(producto.mensaje)}"
          target="_blank">
          Pedir por WhatsApp
       </a>
