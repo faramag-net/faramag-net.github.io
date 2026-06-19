@@ -3,7 +3,7 @@ const productos = [
   // LECHOSOS
   {
     nombre: "Beso de Ángel",
-    precio: 22,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "Cereza con trozos de Nuez, arandanos y coco",
@@ -13,7 +13,7 @@ const productos = [
 
   {
     nombre: "Coco",
-    precio: 22,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "",
@@ -23,7 +23,7 @@ const productos = [
 
   {
     nombre: "Fresa",
-    precio: 22,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "Con trozos de fresa",
@@ -33,7 +33,7 @@ const productos = [
 
   {
     nombre: "Frutos Rojos",
-    precio: 22,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "",
@@ -43,7 +43,7 @@ const productos = [
 
   {
     nombre: "Mamey",
-    precio: 22,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "",
@@ -53,7 +53,7 @@ const productos = [
 
   {
     nombre: "Choco Nutella",
-    precio: 22,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "Chocolate y avellana en cada mordida",
@@ -63,7 +63,7 @@ const productos = [
 
   {
     nombre: "Oreo",
-    precio: 22,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "",
@@ -74,7 +74,7 @@ const productos = [
   // HIELO
   {
     nombre: "Mango Chamoy",
-    precio: 20,
+    precio: 18,
     tipo: "hielo",
     activo: true,
     descripcion: "Con pulpa y trozos de mango",
@@ -84,7 +84,7 @@ const productos = [
 
   {
     nombre: "Tropical",
-    precio: 20,
+    precio: 18,
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante mezcla de frutas tropicales",
@@ -94,7 +94,7 @@ const productos = [
 
   {
     nombre: "Mango",
-    precio: 20,
+    precio: 18,
     tipo: "hielo",
     activo: true,
     descripcion: "Con pulpa y trozos de mango",
@@ -104,7 +104,7 @@ const productos = [
 
   {
     nombre: "Oasis",
-    precio: 20,
+    precio: 18,
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante mezcla de fresa, naranja y papaya",
