@@ -74,7 +74,7 @@ const productos = [
   // HIELO
   {
     nombre: "Mango Chamoy",
-    precio: 20,
+    precio: 19,
     tipo: "hielo",
     activo: false,
     descripcion: "Con pulpa y trozos de mango",
@@ -84,7 +84,7 @@ const productos = [
 
   {
     nombre: "Tropical",
-    precio: 20,
+    precio: 19,
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante mezcla de frutas tropicales",
@@ -94,7 +94,7 @@ const productos = [
 
   {
     nombre: "Mango",
-    precio: 20,
+    precio: 19,
     tipo: "hielo",
     activo: false,
     descripcion: "Con pulpa y trozos de mango",
@@ -104,7 +104,7 @@ const productos = [
 
   {
     nombre: "Oasis",
-    precio: 20,
+    precio: 19,
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante mezcla de fresa, naranja y papaya",
