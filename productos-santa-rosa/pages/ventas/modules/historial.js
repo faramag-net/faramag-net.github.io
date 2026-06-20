@@ -9,9 +9,58 @@ export function renderTablaVentas(){
 
 tabla.innerHTML = "";
 
-const ventas = LocalDB.getSales();
+const ventas =
+    [...LocalDB.getSales()]
+        .sort(
+            (a,b)=>
+                new Date(
+                    b.timestamp ||
+                    b.fecha
+                ) -
+                new Date(
+                    a.timestamp ||
+                    a.fecha
+                )
+        );
 
-ventas.forEach((venta,index)=>{
+    const filtro =
+    document
+        .getElementById(
+            "buscarVentas"
+        )
+        ?.value
+        ?.toLowerCase()
+        || "";
+
+const ventasFiltradas =
+    ventas.filter(
+        venta =>
+
+            venta.producto
+                ?.toLowerCase()
+                .includes(filtro)
+
+            ||
+
+            venta.cliente
+                ?.toLowerCase()
+                .includes(filtro)
+
+            ||
+
+            venta.fecha
+                ?.toLowerCase()
+                .includes(filtro)
+
+            ||
+
+            String(
+                venta.total || 0
+            ).includes(filtro)
+    );
+    
+    
+    ventasFiltradas.forEach((venta)=>{
 
         tabla.innerHTML += `
 
@@ -30,7 +79,7 @@ ventas.forEach((venta,index)=>{
 
                 <button
                     class="btnEliminarVenta"
-                    data-index="${index}"
+                    data-id="${venta.id}"
                 >
                     ❌
                 </button>
@@ -59,19 +108,19 @@ ventas.forEach((venta,index)=>{
                 if(!confirmar)
                     return;
 
-                const ventas =
-                    LocalDB.getSales();
-
-                ventas.splice(
-                    Number(
-                        btn.dataset.index
-                    ),
-                    1
+            const ventas =
+                LocalDB.getSales();
+            
+            const actualizadas =
+                ventas.filter(
+                    venta =>
+                        venta.id !==
+                        btn.dataset.id
                 );
-
-                LocalDB.saveSales(
-                    ventas
-                );
+            
+            LocalDB.saveSales(
+                actualizadas
+            );
                 
                 renderTablaVentas();
 
