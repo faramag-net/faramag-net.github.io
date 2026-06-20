@@ -62,11 +62,16 @@ if(stockActual <= 0){
 
 }
 
+    const precio =
+        Number(
+            document.getElementById("precio").value
+        );
+
     const subtotal =
-    cantidad * producto.precio;
+        cantidad * precio;
 
     const ganancia =
-    subtotal - (cantidad * producto.costo);
+        subtotal - (cantidad * producto.costo);
 
     comanda.push({
 
@@ -76,7 +81,7 @@ if(stockActual <= 0){
 
         cantidad,
 
-        precio: producto.precio,
+        precio: precio,
 
         costo: producto.costo,
 
