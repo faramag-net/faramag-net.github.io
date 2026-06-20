@@ -11,17 +11,23 @@ tabla.innerHTML = "";
 
 const ventas =
     [...LocalDB.getSales()]
-        .sort(
-            (a,b)=>
+        .sort((a,b)=>{
+
+            const fechaA =
                 new Date(
-                    b.timestamp ||
-                    b.fecha
-                ) -
-                new Date(
-                    a.timestamp ||
+                    a.createdAt ||
                     a.fecha
-                )
-        );
+                ).getTime();
+
+            const fechaB =
+                new Date(
+                    b.createdAt ||
+                    b.fecha
+                ).getTime();
+
+            return fechaB - fechaA;
+
+        });
 
     const filtro =
     document
