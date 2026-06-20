@@ -148,3 +148,12 @@ actualizarSubtotal();
 renderTablaVentas();
 
 actualizarKPIs();
+
+document
+    .getElementById(
+        "buscarVentas"
+    )
+    ?.addEventListener(
+        "input",
+        renderTablaVentas
+    );
