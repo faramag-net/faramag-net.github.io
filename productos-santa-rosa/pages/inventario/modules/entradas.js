@@ -148,11 +148,19 @@ export function renderTablaProductos(){
 
             <td>${producto.nombre}</td>
 
+            <td>$${Number(producto.precio || 0).toFixed(2)}</td>
+
             <td>${stock}</td>
 
             <td>${estado}</td>
 
             <td>
+
+                <button
+                    onclick="editarProducto('${producto.id}')"
+                >
+                    ✏️
+                </button>
 
                 <button
                     onclick="eliminarProductoPorId('${producto.id}')"
@@ -208,5 +216,45 @@ export function eliminarProductoPorId(id){
 
 }
 
+export function editarProducto(id){
+
+    const producto =
+    LocalDB.getProducts()
+    .find(p => p.id === id);
+
+    if(!producto) return;
+
+    const nuevoPrecio =
+    prompt(
+        "Nuevo precio:",
+        producto.precio
+    );
+
+    if(nuevoPrecio === null) return;
+
+    const nuevoCosto =
+    prompt(
+        "Nuevo costo:",
+        producto.costo || 0
+    );
+
+    if(nuevoCosto === null) return;
+
+    LocalDB.updateProduct(id, {
+
+        precio: Number(nuevoPrecio),
+
+        costo: Number(nuevoCosto)
+
+    });
+
+    renderTablaProductos();
+
+    alert("Producto actualizado");
+
+}
+
+window.editarProducto =
+    editarProducto;
 window.eliminarProductoPorId =
     eliminarProductoPorId;
