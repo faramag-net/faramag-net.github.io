@@ -47,6 +47,30 @@ ventas.reduce(
 
 );
 
+const valorInventario =
+productos.reduce(
+
+    (total, producto) => {
+
+        const item =
+        inventario.find(
+            i => i.productId === producto.id
+        );
+
+        const stock =
+        Number(item?.stock || 0);
+
+        const precio =
+        Number(producto.precio || 0);
+
+        return total + (stock * precio);
+
+    },
+
+0
+
+);
+
 /* RENDER */
 
 document
@@ -68,3 +92,8 @@ document
 .getElementById("kpiGanancia")
 .innerText =
 `$${totalGanancia}`;
+
+document
+.getElementById("kpiInventario")
+.innerText =
+`$${valorInventario.toFixed(2)}`;
