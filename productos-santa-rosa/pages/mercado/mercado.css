@@ -9,6 +9,14 @@
 
     @media (max-width:768px){
 
+    .cliente-encargado{
+        display:none;
+    }
+
+    .expand-icon{
+        display:none;
+    }
+        
     .mercado-header{
         display:block;
     }
@@ -46,22 +54,35 @@
     }
 }
 
-    #listaClientes{
-        display:grid;
-        gap:12px;
-    }
+#listaClientes{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:8px;
+
+    margin-top:12px;
+
+}
     
-    .card-cliente{
-        background:#fff;
-        border-radius:12px;
-        padding:12px;
-        margin-bottom:8px;
-    
-        box-shadow:
-            0 2px 8px rgba(0,0,0,.08);
-    
-        transition:.2s;
-    }
+.card-cliente{
+
+    background:#fff;
+
+    border-radius:10px;
+
+    padding:6px;
+
+    min-height:50px;
+
+    margin:0;
+
+    box-shadow:
+        0 1px 4px rgba(0,0,0,.08);
+
+}
     
     .card-cliente:hover{
         transform:translateY(-2px);
@@ -77,11 +98,17 @@
     }
     
     .cliente-header{
+    
         display:flex;
-        gap:10px;
-        padding:10px 12px;
+    
+        justify-content:center;
+    
         align-items:center;
-        cursor:pointer;
+    
+        text-align:center;
+    
+        padding:4px;
+    
     }
     
     .cliente-body{
@@ -96,9 +123,21 @@
     }
     
     .cliente-nombre{
-        margin:0;
-        font-size:15px;
-        line-height:1.1;
+
+    margin:0;
+
+    font-size:11px;
+
+    font-weight:600;
+
+    text-align:center;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
     }
     
     .cliente-encargado{
