@@ -72,47 +72,16 @@ export function inicializarClientesUI(){
                 )
         );
 
+    cargarFiltroProductos();
+    
     const filtro =
-    document.getElementById(
-        "filtroProducto"
-    );
-
-const nombresProductos =
-    [...new Set(
-
-        getClientes()
-            .flatMap(cliente =>
-                getProductosCliente(
-                    cliente.id
-                )
-            )
-            .map(
-                p => p.producto
-            )
-
-    )];
-
-filtro.innerHTML = `
-    <option value="">
-        Todos los productos
-    </option>
-`;
-
-nombresProductos.forEach(
-    nombre => {
-
-        filtro.innerHTML += `
-            <option value="${nombre}">
-                ${nombre}
-            </option>
-        `;
-
-    }
-);
-
-filtro.addEventListener(
-    "change",
-    () => {
+        document.getElementById(
+            "filtroProducto"
+        );
+    
+    filtro.addEventListener(
+        "change",
+        () => {
 
         renderClientes(
             document
@@ -638,8 +607,29 @@ function abrirCliente(id){
             "detalleCliente"
         );
     
-    const productos =
-        getProductosCliente(id);
+let productos =
+    getProductosCliente(id);
+
+const filtroProducto =
+    document
+        .getElementById(
+            "filtroProducto"
+        )
+        ?.value
+        ?.toLowerCase()
+        || "";
+
+if(filtroProducto){
+
+    productos =
+        productos.filter(
+            producto =>
+                producto.producto
+                    ?.toLowerCase()
+                === filtroProducto
+        );
+
+}
     
     detalle.innerHTML = `
     
@@ -818,8 +808,10 @@ function nuevoCliente(){
                 datos
             );
 
-            renderClientes();
+            cargarFiltroProductos();
 
+            renderClientes();
+            
         }
     );
 
@@ -872,5 +864,49 @@ function eliminarClienteUI(id){
 
 export {
     renderClientes,
-    abrirCliente
+    abrirCliente,
+    cargarFiltroProductos
 };
+
+function cargarFiltroProductos(){
+
+    const filtro =
+        document.getElementById(
+            "filtroProducto"
+        );
+
+    const nombresProductos =
+        [...new Set(
+
+            getClientes()
+                .flatMap(cliente =>
+                    getProductosCliente(
+                        cliente.id
+                    )
+                )
+                .map(
+                    p => p.producto?.trim()
+                )
+                .filter(Boolean)
+
+        )];
+
+    filtro.innerHTML = `
+        <option value="">
+            Todos los productos
+        </option>
+    `;
+
+    nombresProductos.forEach(nombre => {
+
+        filtro.innerHTML += `
+            <option
+                value="${nombre.toLowerCase()}"
+            >
+                ${nombre}
+            </option>
+        `;
+
+    });
+
+}
