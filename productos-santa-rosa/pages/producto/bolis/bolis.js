@@ -72,6 +72,17 @@ const productos = [
   },
 
   // HIELO
+
+    {
+    nombre: "Pepino con limón",
+    precio: 18,
+    tipo: "hielo",
+    activo: true,
+    descripcion: "Refrescante mezcla de fresa, naranja y papaya",
+    imagen: "../../../../imagenes/bolilimonpepino.png",
+    mensaje: "Quiero boli Pepino con limón"
+  },
+  
   {
     nombre: "Mango Chamoy",
     precio: 18,
