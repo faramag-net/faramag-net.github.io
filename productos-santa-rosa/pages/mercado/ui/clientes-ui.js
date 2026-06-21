@@ -71,6 +71,59 @@ export function inicializarClientesUI(){
                     e.target.value
                 )
         );
+
+    const filtro =
+    document.getElementById(
+        "filtroProducto"
+    );
+
+const nombresProductos =
+    [...new Set(
+
+        getClientes()
+            .flatMap(cliente =>
+                getProductosCliente(
+                    cliente.id
+                )
+            )
+            .map(
+                p => p.producto
+            )
+
+    )];
+
+filtro.innerHTML = `
+    <option value="">
+        Todos los productos
+    </option>
+`;
+
+nombresProductos.forEach(
+    nombre => {
+
+        filtro.innerHTML += `
+            <option value="${nombre}">
+                ${nombre}
+            </option>
+        `;
+
+    }
+);
+
+filtro.addEventListener(
+    "change",
+    () => {
+
+        renderClientes(
+            document
+                .getElementById(
+                    "buscarCliente"
+                )
+                .value
+        );
+
+    }
+);
     
     renderHistorial();
     renderClientes();
@@ -78,18 +131,20 @@ export function inicializarClientesUI(){
 
 function renderClientes(filtro = "") {
     
-    const filtroProducto =
-        document
-            .getElementById(
-                "filtroProducto"
-            )
-            ?.value || "";
-    
     const lista =
         document.getElementById(
             "listaClientes"
         );
 
+    const filtroProducto =
+    document
+        .getElementById(
+            "filtroProducto"
+        )
+        ?.value
+        ?.toLowerCase()
+        || "";
+    
     const clientes =
         getClientes()
             .filter(cliente => {
@@ -99,16 +154,17 @@ function renderClientes(filtro = "") {
             cliente.id
         );
 
-    if(filtroProducto){
-    
-        productos =
-            productos.filter(
-                producto =>
-                    producto.id ===
-                    filtroProducto
-            );
-    
-    }
+if(filtroProducto){
+
+    productos =
+        productos.filter(
+            producto =>
+                producto.producto
+                    ?.toLowerCase()
+                === filtroProducto
+        );
+
+}
 
     const coincideTexto =
         coincideBusqueda(
@@ -127,30 +183,37 @@ function renderClientes(filtro = "") {
 
     return productos.some(
         producto =>
-            producto.id ===
-            filtroProducto
+            producto.producto
+                ?.toLowerCase()
+            === filtroProducto
     );
 
-});
+    });
 
     lista.innerHTML = "";
     
     const busquedaActiva =
         filtro.trim().length > 0;
     
-    clientes.forEach(cliente => {
+clientes.forEach(cliente => {
         
-    const productos =
+    let productos =
         getProductosCliente(
             cliente.id
         );
 
-        console.log(
-        "CLIENTE",
-        cliente.nombre,
-        productos
-    );
-        
+    if(filtroProducto){
+
+        productos =
+            productos.filter(
+                producto =>
+                    producto.producto
+                        ?.toLowerCase()
+                    === filtroProducto
+            );
+
+    }
+       
         lista.innerHTML += `
         
         <div
