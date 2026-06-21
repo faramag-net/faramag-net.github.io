@@ -274,3 +274,29 @@ h1{
     font-size:14px;
 
 }
+
+.acciones-producto{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+.btn-icono{
+
+    width:36px;
+
+    height:36px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}
