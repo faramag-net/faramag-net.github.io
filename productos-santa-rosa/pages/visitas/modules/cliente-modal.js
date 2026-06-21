@@ -1057,9 +1057,9 @@ console.log(
 
         <span
             class="producto-nombre"
-            title="${producto?.nombre}"
+            title="${producto?.nombre || "[PRODUCTO ELIMINADO]"}"
         >
-            ${producto?.nombre}
+            ${producto?.nombre || "[PRODUCTO ELIMINADO]"}
         </span>
 
         <input
@@ -1254,7 +1254,7 @@ container.innerHTML = `
                         <span
                             class="producto-nombre"
                         >
-                            ${producto?.nombre}
+                            ${producto?.nombre || "[PRODUCTO ELIMINADO]"}
                         </span>
 
                         <span>
@@ -1385,6 +1385,17 @@ container.innerHTML = `
                 p =>
                 p.id === productId
             );
+        
+        if(!producto){
+        
+            console.warn(
+                "Producto huérfano en consignación",
+                productId
+            );
+        
+            return;
+        
+        }
 
         if(devuelto > 0){
         
