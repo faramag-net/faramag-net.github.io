@@ -90,12 +90,6 @@ function renderClientes(filtro = "") {
             "listaClientes"
         );
 
-    console.log(
-    getProductosCliente(
-        clientes[0]?.id
-    )
-    );
-
     const clientes =
         getClientes()
             .filter(cliente => {
@@ -150,6 +144,12 @@ function renderClientes(filtro = "") {
         getProductosCliente(
             cliente.id
         );
+
+        console.log(
+        "CLIENTE",
+        cliente.nombre,
+        productos
+    );
         
         lista.innerHTML += `
         
@@ -569,16 +569,6 @@ function abrirCliente(id){
 
     const cliente =
         getClienteById(id);
-
-    console.log(
-    "ID",
-    id
-);
-
-console.log(
-    "CLIENTE",
-    cliente
-);
 
     const detalle =
         document.getElementById(
