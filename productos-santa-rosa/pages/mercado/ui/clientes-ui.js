@@ -77,28 +77,67 @@ export function inicializarClientesUI(){
 }
 
 function renderClientes(filtro = "") {
-
+    
+    const filtroProducto =
+        document
+            .getElementById(
+                "filtroProducto"
+            )
+            ?.value || "";
+    
     const lista =
         document.getElementById(
             "listaClientes"
         );
 
- const clientes =
-    getClientes()
-        .filter(cliente => {
+    console.log(
+    getProductosCliente(
+        clientes[0]?.id
+    )
+    );
 
-            const productos =
-                getProductosCliente(
-                    cliente.id
-                );
+    const clientes =
+        getClientes()
+            .filter(cliente => {
+    
+    let productos =
+        getProductosCliente(
+            cliente.id
+        );
 
-            return coincideBusqueda(
-                cliente,
-                productos,
-                filtro
+    if(filtroProducto){
+    
+        productos =
+            productos.filter(
+                producto =>
+                    producto.id ===
+                    filtroProducto
             );
+    
+    }
 
-        });
+    const coincideTexto =
+        coincideBusqueda(
+            cliente,
+            productos,
+            filtro
+        );
+
+    if(!coincideTexto){
+        return false;
+    }
+
+    if(!filtroProducto){
+        return true;
+    }
+
+    return productos.some(
+        producto =>
+            producto.id ===
+            filtroProducto
+    );
+
+});
 
     lista.innerHTML = "";
     
