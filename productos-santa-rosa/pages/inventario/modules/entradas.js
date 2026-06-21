@@ -156,17 +156,23 @@ export function renderTablaProductos(){
 
             <td>
 
-                <button
-                    onclick="editarProducto('${producto.id}')"
-                >
-                    ✏️
-                </button>
+    <div class="acciones-producto">
 
-                <button
-                    onclick="eliminarProductoPorId('${producto.id}')"
-                >
-                    🗑
-                </button>
+        <button
+            onclick="editarProducto('${producto.id}')"
+            class="btn-icono"
+        >
+            ✏️
+        </button>
+
+        <button
+            onclick="eliminarProductoPorId('${producto.id}')"
+            class="btn-icono"
+        >
+            🗑️
+        </button>
+
+    </div>
 
             </td>
 
