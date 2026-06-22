@@ -132,23 +132,30 @@ body::before{
 
 .card{
 
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
     background:
         rgba(
             255,
             255,
             255,
-            .88
+            .45
         );
-}
 
     backdrop-filter:
         blur(8px);
 
-    border-radius:32px;
+    border-radius:80px;
 
     padding:30px;
-
-    text-align:center;
 
     box-shadow:
         0 20px 40px
@@ -160,6 +167,7 @@ body::before{
         );
 
     transition:.3s;
+
 }
 
 .card:hover{
