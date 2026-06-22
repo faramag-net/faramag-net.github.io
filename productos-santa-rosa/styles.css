@@ -43,3 +43,29 @@ body{
     font-weight: bold;
 
 }
+
+@media (max-width:768px){
+
+    .card{
+
+        padding:8px;
+
+    }
+
+    .card h3{
+
+        font-size:.8rem;
+
+        margin-bottom:4px;
+
+    }
+
+    .card p{
+
+        font-size:1rem;
+
+        margin:0;
+
+    }
+
+}
