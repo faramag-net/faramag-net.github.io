@@ -115,6 +115,21 @@ ventas.reduce(
 
 );
 
+const totalInsumos =
+    LocalDB.getInsumos()
+    .reduce(
+
+        (total, insumo) =>
+
+            total +
+            Number(
+                insumo.total || 0
+            ),
+
+        0
+
+    );
+
 /* RENDER */
 
 document
@@ -147,3 +162,8 @@ document
 .innerHTML =
 `Inv: ${piezasInventario}<br>
 Vend: ${piezasVendidas}`;
+
+document
+.getElementById("kpiInsumos")
+.innerText =
+`$${totalInsumos.toFixed(2)}`;
