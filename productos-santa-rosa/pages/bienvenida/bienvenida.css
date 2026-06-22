@@ -37,17 +37,7 @@ body::before{
 
     z-index:-1;
 
-}
-
-@media (min-width:1024px){
-
-    body::before{
-
-        background-size:contain;
-
-        background-position:center center;
-
-    }
+    pointer-events:none;
 
 }
 
