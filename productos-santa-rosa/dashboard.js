@@ -4,7 +4,7 @@ const productos =
     LocalDB.getProducts();
 
 const inventario =
-    LocalDB.getInventory();
+    LocalDB.getCalculatedStock()
 
 const ventas =
     LocalDB.getSales();
@@ -15,11 +15,16 @@ const totalProductos =
     productos.length;
 
 const stockBajo =
-inventario.filter(
-    item =>
-        item.stock > 0 &&
-        item.stock <= 5
-);
+productos.filter(producto => {
+
+    const stock =
+    LocalDB.getCalculatedStock(
+        producto.id
+    );
+
+    return stock > 0 && stock <= 5;
+
+});
 
 const totalVentas =
 ventas.reduce(
@@ -52,18 +57,16 @@ productos.reduce(
 
     (total, producto) => {
 
-        const item =
-        inventario.find(
-            i => i.productId === producto.id
+        const stock =
+        LocalDB.getCalculatedStock(
+            producto.id
         );
 
-        const stock =
-        Number(item?.stock || 0);
-
-        const precio =
-        Number(producto.precio || 0);
-
-        return total + (stock * precio);
+        return (
+            total +
+            stock *
+            Number(producto.precio || 0)
+        );
 
     },
 
