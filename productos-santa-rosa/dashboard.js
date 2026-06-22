@@ -22,7 +22,7 @@ productos.filter(producto => {
         producto.id
     );
 
-    return stock > 0 && stock <= 5;
+    return stock > 0 && stock < 5;
 
 });
 
