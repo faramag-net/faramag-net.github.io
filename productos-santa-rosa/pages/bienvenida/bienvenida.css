@@ -12,14 +12,33 @@ body{
         system-ui,
         sans-serif;
 
-    background:
-        linear-gradient(
-            180deg,
-            #f9f6ef,
-            #f3efe6
-        );
-
     color:#24311d;
+
+    background:#f8f4ec;
+
+}
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background-image:
+        url("/imagenes/fondosproductos.png");
+
+    background-repeat:no-repeat;
+
+    background-position:center top;
+
+    background-size:cover;
+
+    z-index:-1;
+
+    pointer-events:none;
+
 }
 
 .landing{
@@ -33,52 +52,10 @@ body{
     position:relative;
 }
 
-.landing::before{
-
-    content:"";
-
-    position:absolute;
-
-    top:-200px;
-    left:-200px;
-
-    width:500px;
-    height:500px;
-
-    border-radius:50%;
-
-    background:
-        radial-gradient(
-            rgba(46,125,50,.25),
-            transparent
-        );
-}
-
-.landing::after{
-
-    content:"";
-
-    position:absolute;
-
-    bottom:-250px;
-    right:-250px;
-
-    width:600px;
-    height:600px;
-
-    border-radius:50%;
-
-    background:
-        radial-gradient(
-            rgba(233,30,99,.18),
-            transparent
-        );
-}
-
 .hero{
 
     text-align:center;
-
+    min-height:45vh;
     padding:
         40px
         20px
@@ -160,8 +137,9 @@ body{
             255,
             255,
             255,
-            .75
+            .88
         );
+}
 
     backdrop-filter:
         blur(8px);
@@ -287,3 +265,15 @@ footer{
     font-weight:600;
 }
 
+
+@media(max-width:768px){
+
+    body::before{
+
+        background-position:center center;
+
+        background-size:cover;
+
+    }
+
+}
