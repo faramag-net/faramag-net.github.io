@@ -74,6 +74,47 @@ productos.reduce(
 
 );
 
+const piezasInventario =
+productos.reduce(
+
+    (total, producto) =>
+
+        total +
+        LocalDB.getCalculatedStock(
+            producto.id
+        ),
+
+    0
+
+);
+
+const piezasVendidas =
+ventas.reduce(
+
+    (total, venta) => {
+
+        const piezas =
+            venta.items?.reduce(
+
+                (sum, item) =>
+
+                    sum +
+                    Number(
+                        item.quantity || 0
+                    ),
+
+                0
+
+            ) || 0;
+
+        return total + piezas;
+
+    },
+
+0
+
+);
+
 /* RENDER */
 
 document
@@ -100,3 +141,9 @@ document
 .getElementById("kpiInventario")
 .innerText =
 `$${valorInventario.toFixed(2)}`;
+
+document
+.getElementById("kpiPiezas")
+.innerHTML =
+`Inv: ${piezasInventario}<br>
+Vend: ${piezasVendidas}`;
