@@ -313,7 +313,7 @@ footer{
 
 .logo-principal{
 
-    width:750px;
+    width:min(800px,90vw);
 
     max-width:90%;
 
