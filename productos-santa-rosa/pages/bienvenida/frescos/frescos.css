@@ -295,6 +295,12 @@ footer{
 
         padding:30px;
     }
+
+    .logo-principal{
+
+        width:320px;
+    }
+    
 }
 
 .header,
@@ -307,7 +313,7 @@ footer{
 
 .logo-principal{
 
-    width:380px;
+    width:550px;
 
     max-width:90%;
 
