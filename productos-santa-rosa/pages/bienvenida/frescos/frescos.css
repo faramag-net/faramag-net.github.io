@@ -204,3 +204,17 @@ footer{
         padding:30px;
     }
 }
+
+body{
+
+    background:
+        url(
+            "/imagenes/fondojitomatelargo.png"
+        );
+
+    background-size:cover;
+
+    background-position:center;
+
+    background-attachment:fixed;
+}
