@@ -106,16 +106,19 @@ body::before{
 }
 
 .hero h1{
-    
-    order:-1;
+
+    color:#1f5a2c;
+
     font-size:
         clamp(
-            2.5rem,
-            5vw,
+            3rem,
+            6vw,
             5rem
         );
 
-    line-height:1.1;
+    font-weight:800;
+
+    line-height:1;
 }
 
 .hero p{
@@ -319,4 +322,60 @@ footer{
             0,
             .08
         );
+}
+
+.hero-contenedor{
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .18
+        );
+
+    backdrop-filter:
+        blur(10px);
+
+    border-radius:40px;
+
+    padding:60px;
+
+    display:grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap:60px;
+
+    box-shadow:
+        0 15px 40px
+        rgba(
+            0,
+            0,
+            0,
+            .08
+        );
+}
+
+.btn-whatsapp{
+
+    display:inline-block;
+
+    margin-top:30px;
+
+    padding:
+        14px
+        30px;
+
+    background:#2e7d32;
+
+    color:white;
+
+    text-decoration:none;
+
+    border-radius:999px;
+
+    font-weight:700;
 }
