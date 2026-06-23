@@ -22,13 +22,26 @@ body{
         system-ui,
         sans-serif;
 
-    background:
-        var(--crema)
-        url("/imagenes/fondojitomatelargo.png")
-        center top
-        no-repeat;
+    background:var(--crema);
+    
+    }
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background-image:
+        url("/imagenes/fondojitomatelargo.png");
 
     background-size:cover;
+
+    background-position:center top;
+
+    z-index:-1;
 }
 
 .header{
@@ -42,6 +55,12 @@ body{
     padding:20px 40px;
 
     background:white;
+    
+    max-width:1400px;
+
+    margin:auto;
+
+    width:100%;
 }
 
 .logo img{
@@ -67,8 +86,6 @@ body{
 
 .hero{
 
-    min-height:100vh;
-
     max-width:1400px;
 
     margin:auto;
@@ -76,23 +93,29 @@ body{
     display:grid;
 
     grid-template-columns:
-        1.2fr
+        1fr
         1fr;
 
     align-items:center;
 
-    gap:80px;
+    gap:60px;
 
     padding:
-        120px
-        80px;
+        80px
+        40px;
 }
 
 .hero h1{
+    
+    order:-1;
+    font-size:
+        clamp(
+            2.5rem,
+            5vw,
+            5rem
+        );
 
-    font-size:4rem;
-
-    color:var(--verde);
+    line-height:1.1;
 }
 
 .hero p{
@@ -113,11 +136,11 @@ body{
 
 .hero-imagen img{
 
-    width:100%;
+    width:520px;
 
-    max-width:700px;
+    max-width:100%;
 
-    height:auto;
+    margin:auto;
 
     display:block;
 }
@@ -217,11 +240,8 @@ footer{
         grid-template-columns:1fr;
 
         padding:30px;
-    }
 
-    .hero h1{
-
-        font-size:2.5rem;
+        text-align:center;
     }
 
     .productos{
@@ -231,9 +251,7 @@ footer{
 }
 
 .header,
-.hero,
-.productos,
-footer{
+.productos{
 
     max-width:1400px;
 
