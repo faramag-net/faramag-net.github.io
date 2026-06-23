@@ -22,7 +22,13 @@ body{
         system-ui,
         sans-serif;
 
-    background:var(--crema);
+    background:
+        var(--crema)
+        url("/imagenes/fondojitomatelargo.png")
+        center top
+        no-repeat;
+
+    background-size:100% auto;
 }
 
 .header{
@@ -61,6 +67,8 @@ body{
 
 .hero{
 
+    min-height:80vh;
+
     display:grid;
 
     grid-template-columns:
@@ -69,9 +77,11 @@ body{
 
     align-items:center;
 
-    gap:40px;
+    gap:60px;
 
-    padding:60px;
+    padding:
+        80px
+        8%;
 }
 
 .hero h1{
@@ -90,11 +100,22 @@ body{
     line-height:1.7;
 }
 
+.hero-imagen{
+
+    display:flex;
+
+    justify-content:center;
+}
+
 .hero-imagen img{
 
     width:100%;
 
-    border-radius:24px;
+    max-width:700px;
+
+    height:auto;
+
+    display:block;
 }
 
 .productos{
@@ -205,16 +226,4 @@ footer{
     }
 }
 
-body{
 
-    background:
-        url(
-            "/imagenes/fondojitomatelargo.png"
-        );
-
-    background-size:cover;
-
-    background-position:center;
-
-    background-attachment:fixed;
-}
