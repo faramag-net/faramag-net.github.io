@@ -28,7 +28,7 @@ body{
         center top
         no-repeat;
 
-    background-size:100% auto;
+    background-size:cover;
 }
 
 .header{
@@ -67,21 +67,25 @@ body{
 
 .hero{
 
-    min-height:80vh;
+    min-height:100vh;
+
+    max-width:1400px;
+
+    margin:auto;
 
     display:grid;
 
     grid-template-columns:
-        1fr
+        1.2fr
         1fr;
 
     align-items:center;
 
-    gap:60px;
+    gap:80px;
 
     padding:
-        80px
-        8%;
+        120px
+        80px;
 }
 
 .hero h1{
