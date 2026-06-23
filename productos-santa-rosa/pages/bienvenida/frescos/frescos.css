@@ -168,9 +168,11 @@ body::before{
             auto-fit,
             minmax(
                 280px,
-                1fr
+                350px
             )
         );
+
+    justify-content:center;
 
     gap:24px;
 }
@@ -278,4 +280,43 @@ footer{
     max-width:90%;
 
     margin-bottom:30px;
+}
+
+.productos-contenedor{
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .28
+        );
+
+    backdrop-filter:
+        blur(14px);
+
+    -webkit-backdrop-filter:
+        blur(14px);
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .35
+        );
+
+    border-radius:32px;
+
+    padding:40px;
+
+    box-shadow:
+        0 15px 40px
+        rgba(
+            0,
+            0,
+            0,
+            .08
+        );
 }
