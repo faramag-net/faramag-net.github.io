@@ -759,6 +759,51 @@ static getActiveConsignation(
 
 }
 
+  static getClientConsignations(
+    clienteId
+){
+
+    return this
+        .getConsignations()
+        .filter(
+            c =>
+                c.clienteId === clienteId
+        )
+        .sort(
+            (a,b)=>
+                new Date(b.fecha) -
+                new Date(a.fecha)
+        );
+
+}
+
+static getActiveConsignations(
+    clienteId
+){
+
+    return this
+        .getConsignations()
+        .filter(
+            c =>
+                c.clienteId === clienteId &&
+                c.estado === "ACTIVA"
+        );
+
+}
+
+static getConsignationById(
+    consignacionId
+){
+
+    return this
+        .getConsignations()
+        .find(
+            c =>
+                c.id === consignacionId
+        );
+
+}
+
   static closeConsignation(consignacionId){
 
     const consignaciones =
