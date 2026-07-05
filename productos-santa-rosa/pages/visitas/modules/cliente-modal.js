@@ -911,6 +911,20 @@ const consignaciones =
         clienteId
     );
 
+                                                                console.log(
+                                                                    "Cliente actual:",
+                                                                    clienteId
+                                                                );
+                                                                
+                                                                console.table(
+                                                                    consignaciones.map(c => ({
+                                                                        id: c.id,
+                                                                        clienteId: c.clienteId,
+                                                                        estado: c.estado,
+                                                                        fecha: c.fecha
+                                                                    }))
+                                                                );
+    
 container.innerHTML = `
 
     <h3>Consignaciones</h3>
@@ -1123,20 +1137,20 @@ document
     
 }
 
-    function renderNuevaEntrega(){
-       
-    const container =
-        document.getElementById(
-            "clienteTabContent"
-        );
-
-    const productos =
-        LocalDB.getProducts();
-
-    const asignados =
-        LocalDB.getProductsByClient(
-            clienteId
-        );
+        function renderNuevaEntrega(){
+           
+        const container =
+            document.getElementById(
+                "clienteTabContent"
+            );
+    
+        const productos =
+            LocalDB.getProducts();
+    
+        const asignados =
+            LocalDB.getProductsByClient(
+                clienteId
+            );
         
     container.innerHTML = `
 
