@@ -575,6 +575,11 @@ function renderEditarConsignacion(
     consignacion
 ){
 
+consignacion =
+    JSON.parse(
+        JSON.stringify(consignacion)
+    );
+    
     const container =
         document.getElementById(
             "clienteTabContent"
@@ -845,28 +850,40 @@ document
             item.cantidadEntregada > 0
     );
     
-    const consignaciones =
-        LocalDB.getConsignations();
+const consignaciones =
+    LocalDB.getConsignations();
 
-    const index =
-        consignaciones.findIndex(
-            c =>
-                c.id ===
-                consignacion.id
-        );
-
-    consignaciones[index] =
-        consignacion;
-  
-    LocalDB.saveConsignations(
-        consignaciones
+const index =
+    consignaciones.findIndex(
+        c =>
+            c.id ===
+            consignacion.id
     );
+
+if(index < 0){
 
     showToast(
-        "Consignación actualizada"
+        "No se encontró la consignación."
     );
 
-    renderConsignacionTab();
+    return;
+
+}
+
+// Reemplazar la consignación editada
+consignaciones[index] =
+    consignacion;
+
+// Guardar el arreglo actualizado
+LocalDB.saveConsignations(
+    consignaciones
+);
+
+showToast(
+    "Consignación actualizada"
+);
+
+renderConsignacionTab();
 
 };
     
@@ -889,123 +906,221 @@ function renderConsignacionTab(){
             "clienteTabContent"
         );
 
-    const activa =
-        LocalDB.getActiveConsignation(
-            clienteId
-        );
+const consignaciones =
+    LocalDB.getClientConsignations(
+        clienteId
+    );
 
-if(activa){
+container.innerHTML = `
 
-    const monto =
-        activa.items.reduce(
-            (total,item)=>
-                total +
-                (
-                    Number(
-                        item.cantidadEntregada || 0
-                    )
-                    *
-                    Number(
-                        item.precio || 0
-                    )
-                ),
-            0
-        );
+    <h3>Consignaciones</h3>
 
-    container.innerHTML = `
-        <h3>
-            Consignación Activa
-        </h3>
+    <button id="nuevaEntregaBtn">
+        Nueva Consignación
+    </button>
+
+    <div id="listaConsignaciones"></div>
+
+`;
+
+document
+.getElementById("nuevaEntregaBtn")
+.onclick = () => {
+
+    renderNuevaEntrega();
+
+};
+
+const lista =
+    document.getElementById(
+        "listaConsignaciones"
+    );
+
+if(!consignaciones.length){
+
+    lista.innerHTML = `
 
         <p>
-            Fecha:
-            ${activa.fecha}
+            Este cliente aún no tiene consignaciones.
         </p>
 
-        <p>
-            Monto consignado:
-            <strong>
-                $${monto.toFixed(2)}
-            </strong>
-        </p>
-
-        <button
-            id="editarConsignacionBtn"
-        >
-            Editar
-        </button>
-
-        <button
-            id="recogerBtn"
-        >
-            Recoger Producto
-        </button>
     `;
-
-    document
-    .getElementById(
-        "editarConsignacionBtn"
-    )
-    .onclick = () => {
-
-        renderEditarConsignacion(
-            activa
-        );
-
-    };
-
-    document
-    .getElementById(
-        "recogerBtn"
-    )
-    .onclick = () => {
-
-console.log(
-    "CLICK RECOGER"
-);
-        
-        if(
-            !confirm(
-                "¿Seguro que deseas cerrar la consignación? Se registrarán ventas y devoluciones."
-            )
-        ){
-            return;
-        }
-    
-        renderRecogerProducto(
-            activa
-        );
-    
-    };
 
     return;
 
 }
 
-    container.innerHTML = `
 
-        <h3>
-            Consignación
-        </h3>
+lista.innerHTML =
+    consignaciones.map(
+        consignacion=>{
 
-        <button
-            id="nuevaEntregaBtn"
-        >
-            Nueva Entrega
-        </button>
+            const monto =
+                consignacion.items.reduce(
 
-    `;
+                    (t,item)=>
 
-    document
-    .getElementById(
-        "nuevaEntregaBtn"
-    )
-    .onclick = () => {
+                        t +
 
-        renderNuevaEntrega();
+                        (
+
+                            Number(
+                                item.cantidadEntregada||0
+                            )
+
+                            *
+
+                            Number(
+                                item.precio||0
+                            )
+
+                        ),
+
+                    0
+
+                );
+
+            return `
+
+            <div
+                class="consignacion-card"
+                data-id="${consignacion.id}"
+            >
+
+                <h4>
+
+                    ${
+                        consignacion.estado==="ACTIVA"
+                        ? "🟢 Consignación Activa"
+                        : "⚫ Consignación Cerrada"
+                    }
+
+                </h4>
+
+                <p>
+
+                    ${consignacion.fecha}
+
+                </p>
+
+                <p>
+
+                    <strong>
+
+                        $${monto.toFixed(2)}
+
+                    </strong>
+
+                </p>
+
+                <p>
+
+                    Productos:
+                    ${consignacion.items.length}
+                
+                </p>
+
+                <div class="acciones">
+
+                    ${
+                        consignacion.estado==="ACTIVA"
+
+                        ?
+
+                        `
+
+                        <button
+                            class="editar-consignacion"
+                            data-id="${consignacion.id}"
+                        >
+                            Editar
+                        </button>
+
+                        <button
+                            class="recoger-consignacion"
+                            data-id="${consignacion.id}"
+                        >
+                            Recoger
+                        </button>
+
+                        `
+
+                        :
+
+                        `
+
+                        <button
+                            class="ver-consignacion"
+                            data-id="${consignacion.id}"
+                        >
+                            Ver
+                        </button>
+
+                        `
+
+                    }
+
+                </div>
+
+            </div>
+
+            `;
+
+        }
+
+    ).join("");
+
+
+document
+.querySelectorAll(
+    ".editar-consignacion"
+)
+.forEach(btn=>{
+
+    btn.onclick=()=>{
+
+        const consignacion =
+            LocalDB.getConsignationById(
+                btn.dataset.id
+            );
+
+        renderEditarConsignacion(
+            consignacion
+        );
 
     };
 
+});
+
+document
+.querySelectorAll(
+    ".recoger-consignacion"
+)
+.forEach(btn=>{
+
+    btn.onclick=()=>{
+
+        if(
+            !confirm(
+                "¿Cerrar esta consignación?"
+            )
+        ){
+            return;
+        }
+
+        const consignacion =
+            LocalDB.getConsignationById(
+                btn.dataset.id
+            );
+
+        renderRecogerProducto(
+            consignacion
+        );
+
+    };
+
+});
+    
 }
 
     function renderNuevaEntrega(){
@@ -1189,7 +1304,11 @@ items.forEach(item => {
     });
 
 });
-       
+                                                                            console.log(
+                                                                        "ANTES",
+                                                                        LocalDB.getConsignations()
+                                                                        );
+        
         LocalDB.addConsignation({
     
             id:
@@ -1207,6 +1326,12 @@ items.forEach(item => {
             items
     
         });
+
+                                                                            console.log(
+                                                                        "DESPUÉS",
+                                                                        LocalDB.getConsignations()
+                                                                    );
+                                                                    
     
         showToast(
             "Consignación creada"
