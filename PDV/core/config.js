@@ -14,9 +14,10 @@ const Config = {
 
     init(){
 
-        Logger.success(
-            "[PDV] Configuración cargada."
-        );
+    Logger.success(
+        "Config",
+        "Configuración cargada."
+    );
 
     }
 

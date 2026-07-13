@@ -14,7 +14,10 @@ const Database = {
 
     init(){
 
-        Logger.success("[PDV] Base de datos inicializada.");
+        Logger.success(
+            "Database",
+            "Base de datos inicializada."
+        );
 
     }
 

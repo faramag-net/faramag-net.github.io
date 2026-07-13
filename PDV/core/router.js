@@ -35,12 +35,11 @@ const Router = {
 
     async load(route){
 
-        Logger.info(
+        Logger.module(
+            "Router",
             `Cargando módulo: ${route}`
         );
-
     }
-
 };
 
 export default Router;

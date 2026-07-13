@@ -43,6 +43,7 @@ const App = {
         );
 
 Logger.success(
+    "App",
     "Aplicación iniciada."
 );
 
