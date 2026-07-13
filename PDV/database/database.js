@@ -8,11 +8,13 @@
  * ==========================================================
  */
 
+import Logger from "./logger.js";
+
 const Database = {
 
     init(){
 
-        console.log("[PDV] Base de datos inicializada.");
+        Logger.success("[PDV] Base de datos inicializada.");
 
     }
 

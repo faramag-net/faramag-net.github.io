@@ -8,6 +8,8 @@
  * ==========================================================
  */
 
+import Logger from "./logger.js";
+
 const Router = {
 
     init(){

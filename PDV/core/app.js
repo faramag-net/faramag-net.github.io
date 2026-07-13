@@ -8,10 +8,11 @@
  * ==========================================================
  */
 
+import APP from "./constants.js";
 import Config from "./config.js";
 import Database from "../database/database.js";
 import Router from "./router.js";
-import APP from "./constants.js";
+import Logger from "./logger.js";
 
 const App = {
 
@@ -19,10 +20,13 @@ const App = {
 
         console.clear();
 
-        console.log("======================================");
-        console.log(APP.NAME);
-        console.log("Versión:", APP.VERSION);
-        console.log("======================================");
+        Logger.line();
+
+        Logger.info(APP.NAME);
+
+        Logger.info(`Versión ${APP.VERSION}`);
+
+        Logger.line();
 
         Config.init();
 
@@ -30,7 +34,9 @@ const App = {
 
         Router.init();
 
-        console.log("[PDV] Aplicación iniciada.");
+Logger.success(
+    "Aplicación iniciada."
+);
 
     }
 

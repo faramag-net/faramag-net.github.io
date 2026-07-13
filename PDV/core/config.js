@@ -8,11 +8,15 @@
  * ==========================================================
  */
 
+import Logger from "./logger.js";
+
 const Config = {
 
     init(){
 
-        console.log("[PDV] Configuración cargada.");
+        Logger.success(
+            "[PDV] Configuración cargada."
+        );
 
     }
 
