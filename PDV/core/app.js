@@ -12,7 +12,7 @@ import APP from "./constants.js";
 import Config from "./config.js";
 import Database from "../database/database.js";
 import Router from "./router.js";
-import Logger from "./logger.js";
+import Logger from "../database/logger.js";
 
 const App = {
 

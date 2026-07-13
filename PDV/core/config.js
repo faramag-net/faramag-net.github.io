@@ -8,7 +8,7 @@
  * ==========================================================
  */
 
-import Logger from "./logger.js";
+import Logger from "../database/logger.js";
 
 const Config = {
 
