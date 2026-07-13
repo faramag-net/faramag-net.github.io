@@ -10,10 +10,10 @@
 
 const Logger = {
 
-    info(message){
+    info(module, message){
 
         console.info(
-            `[PDV] ${message}`
+            `ℹ️ [${module}] ${message}`
         );
 
     },
@@ -26,26 +26,18 @@ const Logger = {
 
     },
 
-    warning(message){
+    warning(module, message){
 
         console.warn(
-            `⚠️ [PDV] ${message}`
+            `⚠️ [${module}] ${message}`
         );
 
     },
 
-    error(message){
+    error(module, message){
 
         console.error(
-            `❌ [PDV] ${message}`
-        );
-
-    },
-
-    module(module, message){
-
-        console.log(
-            `[PDV] [${module}] ${message}`
+            `❌ [${module}] ${message}`
         );
 
     },
