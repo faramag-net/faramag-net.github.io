@@ -8,7 +8,7 @@
  * ==========================================================
  */
 
-import Logger from "../core/logger.js";
+import Logger from "./logger.js";
 
 const Router = {
 

@@ -8,13 +8,15 @@
  * ==========================================================
  */
 
+
+// Core
+import Logger from "./logger.js";
 import APP from "./constants.js";
 import Config from "./config.js";
+import Router from "./router.js";
+
 // Database
 import Database from "../database/database.js";
-import Router from "./router.js";
-// Core
-import Logger from "../core/logger.js";
 
 const App = {
 
