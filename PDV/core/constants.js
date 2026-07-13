@@ -1,19 +1,33 @@
 /**
- * ---------------------------------------------------
+ * ==========================================================
  * PDV
- * Archivo:
- * Descripción:
- * Versión:
- * Autor:
- * ---------------------------------------------------
+ * Archivo: constants.js
+ * Módulo: Core
+ * Descripción: Constantes globales de la aplicación.
+ * Versión: 0.1.0
+ * ==========================================================
  */
 
-const APP = {
+const APP = Object.freeze({
 
-    NAME:"PDV",
+    NAME: "PDV",
 
-    VERSION:"0.1.0",
+    VERSION: "0.1.0",
 
-    AUTHOR:"Ricardo Farabundo Magallón Juan-Qui"
+    AUTHOR: "Familia Magallón Andrade",
 
-};
+    COMPANY: "",
+
+    DB_NAME: "PDV",
+
+    DB_VERSION: 1,
+
+    LANGUAGE: "es-MX",
+
+    THEME: "light",
+
+    CURRENCY: "$"
+
+});
+
+export default APP;
