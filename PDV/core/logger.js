@@ -18,10 +18,10 @@ const Logger = {
 
     },
 
-    success(message){
+    success(module, message){
 
         console.log(
-            `✅ [PDV] ${message}`
+            `✅ [${module}] ${message}`
         );
 
     },
