@@ -8,7 +8,7 @@
  * ==========================================================
  */
 
-import Logger from "./logger.js";
+import Logger from "../core/logger.js";
 
 const Database = {
 

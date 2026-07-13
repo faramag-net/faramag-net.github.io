@@ -5,7 +5,7 @@
  * Módulo: Core
  * Descripción: Administrador de mensajes de la aplicación.
  * Versión: 0.1.0
- * Autor: Familia Magallón Andrade
+ * Autor: Ricardo Farabundo Magallón Juan-Qui
  * ==========================================================
  */
 

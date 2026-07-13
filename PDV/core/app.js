@@ -10,9 +10,11 @@
 
 import APP from "./constants.js";
 import Config from "./config.js";
+// Database
 import Database from "../database/database.js";
 import Router from "./router.js";
-import Logger from "../database/logger.js";
+// Core
+import Logger from "../core/logger.js";
 
 const App = {
 
