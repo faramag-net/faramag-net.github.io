@@ -28,6 +28,7 @@ const Router = {
             document.getElementById("app");
 
         Logger.success(
+            "Router",
             "Router inicializado."
         );
 
@@ -35,10 +36,11 @@ const Router = {
 
     async load(route){
 
-        Logger.module(
+        Logger.info(
             "Router",
             `Cargando módulo: ${route}`
         );
+
     }
 };
 

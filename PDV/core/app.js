@@ -26,9 +26,15 @@ const App = {
 
         Logger.line();
 
-        Logger.info(APP.NAME);
+        Logger.info(
+            "App",
+            APP.NAME
+        );
 
-        Logger.info(`Versión ${APP.VERSION}`);
+        Logger.info(
+            "App",
+            `Versión ${APP.VERSION}`
+        );
 
         Logger.line();
 
