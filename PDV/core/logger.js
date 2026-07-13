@@ -3,9 +3,8 @@
  * PDV
  * Archivo: logger.js
  * Módulo: Core
- * Descripción: Administrador de mensajes de la aplicación.
+ * Descripción: Administrador de mensajes del sistema.
  * Versión: 0.1.0
- * Autor: Ricardo Farabundo Magallón Juan-Qui
  * ==========================================================
  */
 
@@ -13,25 +12,41 @@ const Logger = {
 
     info(message){
 
-        console.info(`[PDV] ${message}`);
+        console.info(
+            `[PDV] ${message}`
+        );
 
     },
 
     success(message){
 
-        console.log(`✅ ${message}`);
+        console.log(
+            `✅ [PDV] ${message}`
+        );
 
     },
 
     warning(message){
 
-        console.warn(`⚠️ ${message}`);
+        console.warn(
+            `⚠️ [PDV] ${message}`
+        );
 
     },
 
     error(message){
 
-        console.error(`❌ ${message}`);
+        console.error(
+            `❌ [PDV] ${message}`
+        );
+
+    },
+
+    module(module, message){
+
+        console.log(
+            `[PDV] [${module}] ${message}`
+        );
 
     },
 

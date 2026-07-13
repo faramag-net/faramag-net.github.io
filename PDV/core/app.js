@@ -38,6 +38,10 @@ const App = {
 
         Router.init();
 
+        Router.load(
+            "dashboard"
+        );
+
 Logger.success(
     "Aplicación iniciada."
 );
