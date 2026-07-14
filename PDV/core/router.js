@@ -11,19 +11,17 @@
 // Core
 import Logger from "./logger.js";
 
+import Shell
+from "../components/shell/shell.js";
+
 import Registry
 from "../modules/registry.js";
 
 const Router = {
 
-    container: null,
-
     styleElement: null,
 
     init() {
-
-        this.container =
-            document.getElementById("app");
 
         this.styleElement =
             document.getElementById(
@@ -92,8 +90,9 @@ async load(route) {
         const html =
             await response.text();
 
-        this.container.innerHTML =
-            html;
+        Shell.setContent(
+            html
+        );
 
         this.styleElement.href =
             `modules/${route}/module.css`;
