@@ -5,12 +5,14 @@
  * Archivo: shell.css
  * Módulo: Shell
  * Descripción: Contenedor principal de la aplicación.
- * Versión: 0.5.2
+ * Versión: 0.6.1
  * ==========================================================
  */
 
 
 #shell{
+
+    display:flex;
 
     width:100%;
 
@@ -18,10 +20,36 @@
 
 }
 
+#sidebar{
+
+    width:260px;
+
+}
+
+#workspace{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+#navbar{
+
+    height:64px;
+
+}
+
 #content{
 
-    width:100%;
+    flex:1;
 
-    min-height:100vh;
+}
+
+#statusbar{
+
+    height:30px;
 
 }
