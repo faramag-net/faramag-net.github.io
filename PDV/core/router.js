@@ -17,8 +17,13 @@ const Router = {
 
         routes: {
 
-            dashboard:
-                "modules/dashboard/dashboard.html"
+            dashboard: {
+
+                html: "modules/dashboard/dashboard.html",
+                css: "modules/dashboard/dashboard.css",
+                js: "modules/dashboard/dashboard.js"
+
+            }
 
         },
 
