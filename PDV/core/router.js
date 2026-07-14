@@ -4,7 +4,7 @@
  * Archivo: router.js
  * Módulo: Core
  * Descripción: Administración de rutas.
- * Versión: 0.4.0
+ * Versión: 0.5.0
  * ==========================================================
  */
 
@@ -130,6 +130,13 @@ const Router = {
 
             this.styleElement.href =
                 module.css;
+
+            const script =
+                await import(
+                    `../${module.js}`
+                );
+
+            script.default.init();
 
             Logger.success(
                 "Router",

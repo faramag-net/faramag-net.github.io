@@ -12,12 +12,18 @@ import Logger from "../../core/logger.js";
 
 const Dashboard = {
 
-    init() {
+init() {
 
-        Logger.success(
-            "Dashboard",
-            "Dashboard iniciado."
-        );
+    Logger.success(
+        "Dashboard",
+        "Dashboard iniciado."
+    );
+
+    this.events();
+
+},
+
+    events() {
 
     },
 
