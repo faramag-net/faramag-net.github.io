@@ -22,6 +22,9 @@ const Router = {
 
     init() {
 
+        this.container =
+            document.getElementById("app");
+
         this.styleElement =
             document.getElementById(
                 "module-style"
