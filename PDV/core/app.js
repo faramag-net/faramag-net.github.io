@@ -20,7 +20,7 @@ import Database from "../database/database.js";
 
 const App = {
 
-    init(){
+    async init(){
 
         console.clear();
 
