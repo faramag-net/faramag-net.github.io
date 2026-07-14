@@ -15,6 +15,8 @@ const Router = {
 
     container: null,
 
+    styleElement: null,
+
         routes: {
 
             dashboard: {
@@ -31,6 +33,30 @@ const Router = {
 
         this.container =
             document.getElementById("app");
+
+        this.styleElement =
+            document.getElementById(
+                "module-style"
+            );
+
+        if (!this.styleElement) {
+
+            this.styleElement =
+                document.createElement(
+                    "link"
+                );
+
+            this.styleElement.rel =
+                "stylesheet";
+
+            this.styleElement.id =
+                "module-style";
+
+            document.head.appendChild(
+                this.styleElement
+            );
+
+        }
 
         Logger.success(
             "Router",
@@ -92,6 +118,9 @@ const Router = {
 
             this.container.innerHTML =
                 html;
+            
+            this.styleElement.href =
+                module.css;
 
             Logger.success(
                 "Router",
