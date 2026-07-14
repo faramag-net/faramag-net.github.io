@@ -46,8 +46,22 @@ const Router = {
             `Cargando módulo: ${route}`
         );
 
-        const path =
+        const module =
             this.routes[route];
+
+        if (!module) {
+
+            Logger.error(
+                "Router",
+                `La ruta "${route}" no existe.`
+            );
+
+            return;
+
+        }
+
+        const path =
+            module.html;
 
         if (!path) {
 
