@@ -15,12 +15,12 @@ const Router = {
 
     container: null,
 
-    routes: {
+        routes: {
 
-        dashboard:
-            "../modules/dashboard/dashboard.html"
+            dashboard:
+                "modules/dashboard/dashboard.html"
 
-    },
+        },
 
     init() {
 
