@@ -14,6 +14,7 @@ import Logger from "./logger.js";
 import APP from "./constants.js";
 import Config from "./config.js";
 import Router from "./router.js";
+import Shell from "../components/shell/shell.js";
 
 // Database
 import Database from "../database/database.js";
@@ -44,7 +45,9 @@ const App = {
 
         Router.init();
 
-        Router.load(
+        await Shell.init();
+
+        await Router.load(
             "dashboard"
         );
 

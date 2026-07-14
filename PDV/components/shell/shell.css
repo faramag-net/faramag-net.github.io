@@ -1,0 +1,27 @@
+
+/**
+ * ==========================================================
+ * PDV
+ * Archivo: shell.css
+ * Módulo: Shell
+ * Descripción: Contenedor principal de la aplicación.
+ * Versión: 0.5.2
+ * ==========================================================
+ */
+
+
+#shell{
+
+    width:100%;
+
+    min-height:100vh;
+
+}
+
+#content{
+
+    width:100%;
+
+    min-height:100vh;
+
+}
