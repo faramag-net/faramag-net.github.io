@@ -10,14 +10,14 @@
 
 export default {
 
-    name: "dashboard",
+    id: "dashboard",
 
-    version: "0.4.0",
+    title: "Dashboard",
 
-    html: "modules/dashboard/dashboard.html",
+    icon: "home",
 
-    css: "modules/dashboard/dashboard.css",
+    menu: true,
 
-    js: "modules/dashboard/dashboard.js"
+    order: 1
 
 };

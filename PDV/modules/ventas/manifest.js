@@ -10,14 +10,14 @@
 
 export default {
 
-    name: "ventas",
+    id: "ventas",
 
-    version: "0.4.0",
+    title: "Ventas",
 
-    html: "modules/ventas/ventas.html",
+    icon: "home",
 
-    css: "modules/ventas/ventas.css",
+    menu: true,
 
-    js: "modules/ventas/ventas.js"
+    order: 1
 
 };

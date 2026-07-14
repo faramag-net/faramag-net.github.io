@@ -10,14 +10,14 @@
 
 export default {
 
-    name: "inventario",
+    id: "inventario",
 
-    version: "0.4.0",
+    title: "Inventario",
 
-    html: "modules/inventario/inventario.html",
+    icon: "home",
 
-    css: "modules/inventario/inventario.css",
+    menu: true,
 
-    js: "modules/inventario/inventario.js"
+    order: 1
 
 };

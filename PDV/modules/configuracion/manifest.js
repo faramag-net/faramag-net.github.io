@@ -10,14 +10,14 @@
 
 export default {
 
-    name: "configuracion",
+    id: "configuracion",
 
-    version: "0.4.0",
+    title: "Configuración",
 
-    html: "modules/configuracion/configuracion.html",
+    icon: "home",
 
-    css: "modules/configuracion/configuracion.css",
+    menu: true,
 
-    js: "modules/configuracion/configuracion.js"
+    order: 1
 
 };

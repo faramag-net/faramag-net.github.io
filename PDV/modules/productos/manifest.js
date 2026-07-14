@@ -10,14 +10,14 @@
 
 export default {
 
-    name: "productos",
+    id: "productos",
 
-    version: "0.4.0",
+    title: "Productos",
 
-    html: "modules/productos/productos.html",
+    icon: "home",
 
-    css: "modules/productos/productos.css",
+    menu: true,
 
-    js: "modules/productos/productos.js"
+    order: 1
 
 };

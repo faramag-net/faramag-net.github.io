@@ -10,14 +10,14 @@
 
 export default {
 
-    name: "caja",
+    id: "caja",
 
-    version: "0.4.0",
+    title: "Caja",
 
-    html: "modules/caja/caja.html",
+    icon: "home",
 
-    css: "modules/caja/caja.css",
+    menu: true,
 
-    js: "modules/caja/caja.js"
+    order: 1
 
 };

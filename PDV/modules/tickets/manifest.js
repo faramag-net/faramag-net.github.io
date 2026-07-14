@@ -10,14 +10,14 @@
 
 export default {
 
-    name: "tickets",
+    id: "tickets",
 
-    version: "0.4.0",
+    title: "Tickets",
 
-    html: "modules/tickets/tickets.html",
+    icon: "home",
 
-    css: "modules/tickets/tickets.css",
+    menu: true,
 
-    js: "modules/tickets/tickets.js"
+    order: 1
 
 };
