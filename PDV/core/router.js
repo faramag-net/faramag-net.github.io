@@ -4,7 +4,7 @@
  * Archivo: router.js
  * Módulo: Core
  * Descripción: Administración de rutas.
- * Versión: 0.2.0
+ * Versión: 0.4.0
  * ==========================================================
  */
 
@@ -19,13 +19,26 @@ const Router = {
 
         routes: {
 
-            dashboard: {
+            dashboard:
+                "modules/dashboard/manifest.js",
 
-                html: "modules/dashboard/dashboard.html",
-                css: "modules/dashboard/dashboard.css",
-                js: "modules/dashboard/dashboard.js"
+            productos:
+                "modules/productos/manifest.js",
 
-            }
+            ventas:
+                "modules/ventas/manifest.js",
+
+            inventario:
+                "modules/inventario/manifest.js",
+
+            caja:
+                "modules/caja/manifest.js",
+
+            tickets:
+                "modules/tickets/manifest.js",
+
+            configuracion:
+                "modules/configuracion/manifest.js"
 
         },
 
@@ -72,24 +85,10 @@ const Router = {
             `Cargando módulo: ${route}`
         );
 
-        const module =
+        const manifestPath =
             this.routes[route];
 
-        if (!module) {
-
-            Logger.error(
-                "Router",
-                `La ruta "${route}" no existe.`
-            );
-
-            return;
-
-        }
-
-        const path =
-            module.html;
-
-        if (!path) {
+        if (!manifestPath) {
 
             Logger.error(
                 "Router",
@@ -102,8 +101,18 @@ const Router = {
 
         try {
 
+            const manifest =
+                await import(
+                    `../${manifestPath}`
+                );
+
+            const module =
+                manifest.default;
+
             const response =
-                await fetch(path);
+                await fetch(
+                    module.html
+                );
 
             if (!response.ok) {
 
@@ -118,7 +127,7 @@ const Router = {
 
             this.container.innerHTML =
                 html;
-            
+
             this.styleElement.href =
                 module.css;
 
