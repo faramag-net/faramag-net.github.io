@@ -3,8 +3,8 @@
  * PDV
  * Archivo: manifest.js
  * Módulo: productos
- * Descripción: Configuración del módulo productos.
- * Versión: 0.4.0
+ * Descripción: Administración del catálogo de productos.
+ * Versión: 0.6.2
  * ==========================================================
  */
 
@@ -23,6 +23,10 @@ export default {
 
     order: 2,
 
-    version: "0.6.2"
+    enabled: true,
+
+    version: "0.6.2",
+
+    author: "Ricardo Farabundo Magallón Juan-Qui"
 
 };

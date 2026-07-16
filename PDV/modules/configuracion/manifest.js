@@ -4,25 +4,29 @@
  * Archivo: manifest.js
  * Módulo: configuracion
  * Descripción: Parámetros generales del sistema.
- * Versión: 0.4.0
+ * Versión: 0.6.2
  * ==========================================================
  */
 
 export default {
 
-id: "configuracion",
+    id: "configuracion",
 
-title: "Configuración",
+    title: "Configuración",
 
-description:
-    "Parámetros generales del sistema.",
+    description:
+        "Parámetros generales del sistema.",
 
-icon: "settings",
+    icon: "settings",
 
-menu: true,
+    menu: true,
 
-order: 7,
+    order: 7,
 
-    version: "0.6.2"
+    enabled: true,
+
+    version: "0.6.2",
+
+    author: "Ricardo Farabundo Magallón Juan-Qui"
 
 };

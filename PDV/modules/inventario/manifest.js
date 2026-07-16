@@ -4,25 +4,29 @@
  * Archivo: manifest.js
  * Módulo: inventario
  * Descripción: Control de existencias.
- * Versión: 0.4.0
+ * Versión: 0.6.2
  * ==========================================================
  */
 
 export default {
 
-id: "inventario",
+    id: "inventario",
 
-title: "Inventario",
+    title: "Inventario",
 
-description:
-    "Control de existencias.",
+    description:
+        "Control de existencias.",
 
-icon: "warehouse",
+    icon: "warehouse",
 
-menu: true,
+    menu: true,
 
-order: 4,
+    order: 4,
 
-    version: "0.6.2"
+    enabled: true,
+
+    version: "0.6.2",
+
+    author: "Ricardo Farabundo Magallón Juan-Qui"
 
 };

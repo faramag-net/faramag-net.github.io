@@ -23,6 +23,10 @@ export default {
 
     order: 5,
 
-    version: "0.6.2"
+    enabled: true,
+
+    version: "0.6.2",
+
+    author: "Ricardo Farabundo Magallón Juan-Qui"
 
 };

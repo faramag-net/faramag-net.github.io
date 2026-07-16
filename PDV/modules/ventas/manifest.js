@@ -4,7 +4,7 @@
  * Archivo: manifest.js
  * Módulo: ventas
  * Descripción: Registro y consulta de ventas.
- * Versión: 0.4.0
+ * Versión: 0.6.2
  * ==========================================================
  */
 
@@ -23,6 +23,10 @@ export default {
 
     order: 3,
     
-    version: "0.6.2"
+    enabled: true,
+
+    version: "0.6.2",
+
+    author: "Ricardo Farabundo Magallón Juan-Qui"
 
 };

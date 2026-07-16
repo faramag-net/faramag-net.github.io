@@ -4,7 +4,7 @@
  * Archivo: manifest.js
  * Módulo: tickets
  * Descripción: Consulta e impresión de tickets.
- * Versión: 0.4.0
+ * Versión: 0.6.2
  * ==========================================================
  */
 
@@ -23,6 +23,10 @@ export default {
 
     order: 6,
 
-    version: "0.6.2"
+    enabled: true,
+
+    version: "0.6.2",
+
+    author: "Ricardo Farabundo Magallón Juan-Qui"
 
 };
