@@ -43,7 +43,7 @@ const Sidebar = {
                 "#sidebar-menu"
             );
 
-        this.menu.innerHTML = "";
+        this.menu.replaceChildren();
 
         modules.forEach(
 
@@ -71,10 +71,16 @@ const Sidebar = {
                 "button"
             );
 
+        button.type =
+            "button";
+        
+        button.className =
+            "sidebar-button";
+
         button.textContent =
             module.title;
 
-        button.dataset.module =
+        button.dataset.route =
             module.id;
 
         return button;
