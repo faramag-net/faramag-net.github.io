@@ -85,7 +85,7 @@ const Shell = {
         const Sidebar =
             (
                 await import(
-                    "./sidebar/sidebar.js"
+                    "../sidebar/sidebar.js"
                 )
             ).default;
 
