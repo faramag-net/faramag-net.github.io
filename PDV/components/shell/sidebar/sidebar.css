@@ -1,0 +1,41 @@
+/**
+ * ==========================================================
+ * PDV
+ * Archivo: sidebar.css
+ * Descripción: Estilos para el menú principal.
+ * Versión: 0.6.3
+ * ==========================================================
+ */
+
+
+.sidebar{
+
+    display:flex;
+
+    flex-direction:column;
+
+    height:100%;
+
+}
+
+.sidebar-header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    height:var(
+        --navbar-height
+    );
+
+    font-weight:bold;
+
+}
+
+#sidebar-menu{
+
+    flex:1;
+
+}
