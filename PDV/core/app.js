@@ -4,7 +4,7 @@
  * Archivo: app.js
  * Módulo: Core
  * Descripción: Inicialización del sistema.
- * Versión: 0.1.0
+ * Versión: 0.6.4
  * ==========================================================
  */
 
@@ -46,6 +46,16 @@ const App = {
         Router.init();
 
         await Shell.init();
+
+        Shell.onNavigate =
+
+        async (route) => {
+
+            await Router.load(
+                route
+            );
+
+        };
 
         await Router.load(
             "dashboard"
