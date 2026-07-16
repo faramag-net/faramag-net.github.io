@@ -28,10 +28,56 @@ const Sidebar = {
             "Sidebar",
             "Sidebar inicializado."
         );
+        
+        await this.render();
 
     },
 
     async render(){
+
+        const modules =
+            await ModulesService.getMenu();
+
+        this.menu =
+            this.container.querySelector(
+                "#sidebar-menu"
+            );
+
+        this.menu.innerHTML = "";
+
+        modules.forEach(
+
+            module => {
+
+                const item =
+                    this.createMenuItem(
+                        module
+                    );
+
+                this.menu.append(
+                    item
+                );
+
+            }
+
+        );
+
+    },
+
+    createMenuItem(module) {
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+        button.textContent =
+            module.title;
+
+        button.dataset.module =
+            module.id;
+
+        return button;
 
     },
 

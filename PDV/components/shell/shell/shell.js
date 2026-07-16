@@ -4,7 +4,7 @@
  * Archivo: shell.js
  * Módulo: Shell
  * Descripción: Contenedor principal de la aplicación.
- * Versión: 0.5.2
+ * Versión: 0.6.3
  * ==========================================================
  */
 
@@ -40,14 +40,58 @@ const Shell = {
         app.innerHTML =
             html;
 
+        Logger.success(
+            "Shell",
+            "Shell inicializado."
+        );
+
+        await this.loadSidebar();
+
         this.container =
             document.getElementById(
                 "content"
             );
 
+    },
+
+    async loadSidebar() {
+
+        const response =
+            await fetch(
+                "components/shell/sidebar/sidebar.html"
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                response.status
+            );
+
+        }
+
+        const html =
+            await response.text();
+
+        const container =
+            document.getElementById(
+                "sidebar"
+            );
+
+        container.innerHTML =
+            html;
+
+        const Sidebar =
+            await import(
+                "./sidebar/sidebar.js"
+            );
+
+        await Sidebar.default.init(
+            container
+        );
+
         Logger.success(
             "Shell",
-            "Shell inicializado."
+            "Sidebar cargado."
         );
 
     },
@@ -58,6 +102,8 @@ const Shell = {
             html;
 
     }
+
+
 
 };
 
