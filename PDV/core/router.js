@@ -4,7 +4,7 @@
  * Archivo: router.js
  * Módulo: Core
  * Descripción: Administración de rutas.
- * Versión: 0.5.1
+ * Versión: 0.6.4
  * ==========================================================
  */
 
@@ -108,14 +108,21 @@ async load(route) {
                 )
             ).default;
 
-        if (this.currentModule) {
+        if (
 
-        Logger.info(
-            "Router",
-            "Liberando módulo anterior."
-        );
+            this.currentModule &&
+            this.currentModule.destroy
 
-    }
+        ) {
+
+            Logger.info(
+                "Router",
+                "Destruyendo módulo anterior."
+            );
+
+            await this.currentModule.destroy();
+
+        }
 
         this.currentModule =
             Module;

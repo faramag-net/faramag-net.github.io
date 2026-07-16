@@ -3,39 +3,37 @@
  * PDV
  * Archivo: dashboard.js
  * Módulo: Dashboard
- * Descripción: Lógica del Dashboard.
- * Versión: 0.6.2
+ * Descripción: Panel principal e indicadores del sistema.
+ * Versión: 0.6.4
  * ==========================================================
  */
 
-//core
+// Core
 import Logger from "../../core/logger.js";
-
-//services
-import ModulesService
-from "../../services/modules.service.js";
 
 const Dashboard = {
 
-async init() {
+    async init() {
 
-    const modules =
-        await ModulesService.getMenu();
+        Logger.success(
+            "Dashboard",
+            "Módulo iniciado."
+        );
 
-    Logger.success(
-        "Dashboard",
-        "Dashboard iniciado."
-    );
+        this.events();
 
-    this.events();
-
-},
+    },
 
     events() {
 
     },
 
-    destroy() {
+    async destroy() {
+
+        Logger.info(
+            "Dashboard",
+            "Módulo destruido."
+        );
 
     }
 
