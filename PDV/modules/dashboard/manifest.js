@@ -3,8 +3,8 @@
  * PDV
  * Archivo: manifest.js
  * Módulo: Dashboard
- * Descripción: Configuración del módulo Dashboard.
- * Versión: 0.4.0
+ * Descripción: Panel principal del sistema.
+ * Versión: 0.6.2
  * ==========================================================
  */
 
@@ -14,10 +14,15 @@ export default {
 
     title: "Dashboard",
 
-    icon: "home",
+    description:
+        "Panel principal del sistema.",
+
+    icon: "dashboard",
 
     menu: true,
 
-    order: 1
+    order: 1,
+
+    version: "0.6.2"
 
 };

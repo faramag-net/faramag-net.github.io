@@ -1,9 +1,34 @@
 /**
- * ---------------------------------------------------
+ * ==========================================================
  * PDV
- * Archivo:
- * Descripción:
- * Versión:
- * Autor:
- * ---------------------------------------------------
+ * Archivo: variables.css
+ * Descripción: Variables globales de la aplicación.
+ * Versión: 0.6.1
+ * ==========================================================
  */
+
+:root{
+
+    /* Shell */
+
+    --sidebar-expanded-width:260px;
+
+    --sidebar-collapsed-width:72px;
+
+    --navbar-height:56px;
+
+    --statusbar-height:28px;
+
+    /* Espaciado */
+
+    --spacing-xs:4px;
+
+    --spacing-sm:8px;
+
+    --spacing-md:16px;
+
+    --spacing-lg:24px;
+
+    --spacing-xl:32px;
+
+}

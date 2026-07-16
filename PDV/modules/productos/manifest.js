@@ -14,10 +14,15 @@ export default {
 
     title: "Productos",
 
-    icon: "home",
+    description:
+        "Administración del catálogo de productos.",
+
+    icon: "inventory",
 
     menu: true,
 
-    order: 1
+    order: 2,
+
+    version: "0.6.2"
 
 };

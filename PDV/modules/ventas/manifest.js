@@ -3,7 +3,7 @@
  * PDV
  * Archivo: manifest.js
  * Módulo: ventas
- * Descripción: Configuración del módulo Ventas.
+ * Descripción: Registro y consulta de ventas.
  * Versión: 0.4.0
  * ==========================================================
  */
@@ -14,10 +14,15 @@ export default {
 
     title: "Ventas",
 
-    icon: "home",
+    description:
+        "Registro y consulta de ventas.",
+
+    icon: "point_of_sale",
 
     menu: true,
 
-    order: 1
+    order: 3,
+    
+    version: "0.6.2"
 
 };

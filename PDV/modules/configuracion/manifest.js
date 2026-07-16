@@ -3,21 +3,26 @@
  * PDV
  * Archivo: manifest.js
  * Módulo: configuracion
- * Descripción: Configuración del módulo Configuración.
+ * Descripción: Parámetros generales del sistema.
  * Versión: 0.4.0
  * ==========================================================
  */
 
 export default {
 
-    id: "configuracion",
+id: "configuracion",
 
-    title: "Configuración",
+title: "Configuración",
 
-    icon: "home",
+description:
+    "Parámetros generales del sistema.",
 
-    menu: true,
+icon: "settings",
 
-    order: 1
+menu: true,
+
+order: 7,
+
+    version: "0.6.2"
 
 };

@@ -3,21 +3,26 @@
  * PDV
  * Archivo: manifest.js
  * Módulo: inventario
- * Descripción: Configuración del módulo Inventario.
+ * Descripción: Control de existencias.
  * Versión: 0.4.0
  * ==========================================================
  */
 
 export default {
 
-    id: "inventario",
+id: "inventario",
 
-    title: "Inventario",
+title: "Inventario",
 
-    icon: "home",
+description:
+    "Control de existencias.",
 
-    menu: true,
+icon: "warehouse",
 
-    order: 1
+menu: true,
+
+order: 4,
+
+    version: "0.6.2"
 
 };

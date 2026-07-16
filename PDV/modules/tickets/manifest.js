@@ -3,7 +3,7 @@
  * PDV
  * Archivo: manifest.js
  * Módulo: tickets
- * Descripción: Configuración del módulo Tickets.
+ * Descripción: Consulta e impresión de tickets.
  * Versión: 0.4.0
  * ==========================================================
  */
@@ -14,10 +14,15 @@ export default {
 
     title: "Tickets",
 
-    icon: "home",
+    description:
+        "Consulta e impresión de tickets.",
+
+    icon: "receipt",
 
     menu: true,
 
-    order: 1
+    order: 6,
+
+    version: "0.6.2"
 
 };

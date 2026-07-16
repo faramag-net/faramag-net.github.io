@@ -3,8 +3,8 @@
  * PDV
  * Archivo: manifest.js
  * Módulo: caja
- * Descripción: Configuración del módulo Caja.
- * Versión: 0.4.0
+ * Descripción: Administración de Caja.
+ * Versión: 0.6.2
  * ==========================================================
  */
 
@@ -14,10 +14,15 @@ export default {
 
     title: "Caja",
 
-    icon: "home",
+    description:
+        "Administración de caja.",
+
+    icon: "payments",
 
     menu: true,
 
-    order: 1
+    order: 5,
+
+    version: "0.6.2"
 
 };
