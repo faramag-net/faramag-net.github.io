@@ -12,7 +12,7 @@
 import Logger from "./logger.js";
 
 import Shell
-from "../components/shell/shell.js";
+from "../components/shell/shell/shell.js";
 
 import Registry
 from "../modules/registry.js";

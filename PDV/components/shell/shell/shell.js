@@ -20,7 +20,7 @@ const Shell = {
 
         const response =
             await fetch(
-                "components/shell/shell.html"
+                "components/shell/shell/shell.html"
             );
 
         if (!response.ok) {

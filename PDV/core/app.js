@@ -14,7 +14,7 @@ import Logger from "./logger.js";
 import APP from "./constants.js";
 import Config from "./config.js";
 import Router from "./router.js";
-import Shell from "../components/shell/shell.js";
+import Shell from "../components/shell/shell/shell.js";
 
 // Database
 import Database from "../database/database.js";
