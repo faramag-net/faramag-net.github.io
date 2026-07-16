@@ -19,7 +19,11 @@ from "../modules/registry.js";
 
 const Router = {
 
+    container: null,
+
     styleElement: null,
+
+    currentModule: null,
 
     init() {
 
@@ -97,12 +101,26 @@ async load(route) {
         this.styleElement.href =
             `modules/${route}/module.css`;
 
-        const script =
-            await import(
-                `../modules/${route}/module.js`
-            );
+        const Module =
+            (
+                await import(
+                    `../modules/${route}/module.js`
+                )
+            ).default;
 
-        script.default.init();
+        if (this.currentModule) {
+
+        Logger.info(
+            "Router",
+            "Liberando módulo anterior."
+        );
+
+    }
+
+        this.currentModule =
+            Module;
+
+        await this.currentModule.init();
 
         Logger.success(
             "Router",
