@@ -22,10 +22,6 @@ async init() {
     const modules =
         await ModulesService.getMenu();
 
-    Logger.table(
-        modules
-    );
-
     Logger.success(
         "Dashboard",
         "Dashboard iniciado."
