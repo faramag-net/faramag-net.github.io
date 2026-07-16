@@ -19,6 +19,10 @@ const Sidebar = {
 
     menu: null,
 
+    onSelect: null,
+
+    selected: null,
+
     async init(container){
 
         this.container =
@@ -29,6 +33,9 @@ const Sidebar = {
             "Sidebar inicializado."
         );
         
+        this.selected =
+            "dashboard";
+
         await this.render();
 
     },
@@ -51,7 +58,9 @@ const Sidebar = {
 
                 const item =
                     this.createMenuItem(
-                        module
+                        module,
+                        module.id ===
+                        this.selected
                     );
 
                 this.menu.append(
@@ -61,10 +70,13 @@ const Sidebar = {
             }
 
         );
-
+        
     },
 
-    createMenuItem(module) {
+    createMenuItem(
+        module,
+        active
+    ) {
 
         const button =
             document.createElement(
@@ -73,15 +85,41 @@ const Sidebar = {
 
         button.type =
             "button";
-        
+
         button.className =
             "sidebar-button";
+
+        if (active) {
+
+            button.classList.add(
+                "active"
+            );
+
+        }
 
         button.textContent =
             module.title;
 
         button.dataset.route =
             module.id;
+
+        button.addEventListener(
+
+            "click",
+
+            (event) => {
+
+                this.select(
+
+                    event.currentTarget
+                        .dataset
+                        .route
+
+                );
+
+            }
+
+        );
 
         return button;
 
@@ -99,7 +137,23 @@ const Sidebar = {
 
     },
 
-    select(id){
+    async select(id) {
+
+        this.selected =
+            id;
+
+        await this.render();
+
+        Logger.info(
+            "Sidebar",
+            `Seleccionado: ${id}`
+        );
+
+        if (this.onSelect) {
+
+            this.onSelect(id);
+
+        }
 
     }
 

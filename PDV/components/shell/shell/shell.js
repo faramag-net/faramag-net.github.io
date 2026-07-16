@@ -14,6 +14,8 @@ const Shell = {
 
     container: null,
 
+    onNavigate: null,
+
     async init() {
 
         const response =
@@ -81,13 +83,29 @@ const Shell = {
             html;
 
         const Sidebar =
-            await import(
-                "./sidebar/sidebar.js"
-            );
+            (
+                await import(
+                    "./sidebar/sidebar.js"
+                )
+            ).default;
 
-        await Sidebar.default.init(
+        await Sidebar.init(
             container
         );
+
+        Sidebar.onSelect =
+
+            (route) => {
+
+                if (this.onNavigate) {
+
+                    this.onNavigate(
+                        route
+                    );
+
+                }
+
+            };
 
         Logger.success(
             "Shell",
