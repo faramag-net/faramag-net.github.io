@@ -4,7 +4,7 @@
  * Archivo: router.js
  * Módulo: Core
  * Descripción: Administración de rutas.
- * Versión: 0.6.4
+ * Versión: 0.6.5
  * ==========================================================
  */
 
@@ -58,25 +58,78 @@ const Router = {
 
     },
 
-async load(route) {
+    async load(route) {
 
-    Logger.info(
-        "Router",
-        `Cargando módulo: ${route}`
-    );
-
-    if (!Registry.includes(route)) {
-
-        Logger.error(
+        Logger.info(
             "Router",
-            `El módulo "${route}" no está registrado.`
+            `Cargando módulo: ${route}`
         );
 
-        return;
+        if (!Registry.includes(route)) {
 
-    }
+            Logger.error(
+                "Router",
+                `El módulo "${route}" no está registrado.`
+            );
 
-    try {
+            return;
+
+        }
+
+        try {
+
+            await this.loadHtml(route);
+
+            this.loadCss(route);
+
+            const Module =
+                await this.loadScript(route);
+
+            await this.destroyCurrentModule();
+
+            await this.startModule(Module);
+
+            Logger.success(
+                "Router",
+                `Módulo "${route}" cargado correctamente.`
+            );
+
+        }
+
+        catch (error) {
+
+            Logger.error(
+                "Router",
+                `No fue posible cargar "${route}".`
+            );
+
+            console.error(error);
+
+        }
+
+    },
+
+    async destroyCurrentModule() {
+
+        if (
+
+            this.currentModule &&
+            this.currentModule.destroy
+
+        ) {
+
+            Logger.info(
+                "Router",
+                "Destruyendo módulo anterior."
+            );
+
+            await this.currentModule.destroy();
+
+        }
+
+    },
+
+    async loadHtml(route) {
 
         const response =
             await fetch(
@@ -98,56 +151,33 @@ async load(route) {
             html
         );
 
+    },
+
+    loadCss(route) {
+
         this.styleElement.href =
             `modules/${route}/module.css`;
 
-        const Module =
-            (
-                await import(
-                    `../modules/${route}/module.js`
-                )
-            ).default;
+    },
 
-        if (
+    async loadScript(route) {
 
-            this.currentModule &&
-            this.currentModule.destroy
+        return (
+            await import(
+                `../modules/${route}/module.js`
+            )
+        ).default;
 
-        ) {
+    },
 
-            Logger.info(
-                "Router",
-                "Destruyendo módulo anterior."
-            );
-
-            await this.currentModule.destroy();
-
-        }
+    async startModule(Module) {
 
         this.currentModule =
             Module;
 
         await this.currentModule.init();
 
-        Logger.success(
-            "Router",
-            `Módulo "${route}" cargado correctamente.`
-        );
-
     }
-
-    catch (error) {
-
-        Logger.error(
-            "Router",
-            `No fue posible cargar "${route}".`
-        );
-
-        console.error(error);
-
-    }
-
-}
 
 };
 
