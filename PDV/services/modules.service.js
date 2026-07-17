@@ -3,7 +3,7 @@
  * PDV
  * Archivo: modules.service.js
  * Descripción: Administración de módulos.
- * Versión: 0.6.2
+ * Versión: 0.6.5
  * ==========================================================
  */
 
@@ -17,7 +17,23 @@ from "../modules/registry.js";
 
 const ModulesService = {
 
+//==================================================
+// Estado
+//==================================================
+
+cache: null,
+
+//==================================================
+// Métodos públicos
+//==================================================
+
 async getAll() {
+
+    if (this.cache) {
+
+        return this.cache;
+
+    }
 
     const modules =
         await Promise.all(
@@ -59,14 +75,17 @@ async getAll() {
     const result =
         modules.filter(Boolean);
 
+    this.cache =
+        result;
+
     Logger.success(
         "ModulesService",
         `${result.length} módulos cargados.`
     );
 
-    return result;
+    return this.cache;
 
-},
+    },
 
 
 async getMenu() {
