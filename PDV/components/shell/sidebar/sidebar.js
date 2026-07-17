@@ -3,7 +3,7 @@
  * PDV
  * Archivo: sidebar.js
  * Descripción: Menú principal.
- * Versión: 0.6.3
+ * Versión: 0.6.5
  * ==========================================================
  */
 
@@ -15,6 +15,10 @@ from "../../../services/modules.service.js";
 
 const Sidebar = {
 
+//==================================================
+// Estado
+//==================================================
+
     container: null,
 
     menu: null,
@@ -22,6 +26,10 @@ const Sidebar = {
     onSelect: null,
 
     selected: null,
+
+//==================================================
+// Inicialización
+//==================================================
 
     async init(container){
 
@@ -40,38 +48,45 @@ const Sidebar = {
 
     },
 
-    async render(){
+//==================================================
+// Métodos públicos
+//==================================================
 
-        const modules =
-            await ModulesService.getMenu();
+    async select(id) {
 
-        this.menu =
-            this.container.querySelector(
-                "#sidebar-menu"
-            );
+        this.selected =
+            id;
 
-        this.menu.replaceChildren();
+        await this.render();
 
-        modules.forEach(
-
-            module => {
-
-                const item =
-                    this.createMenuItem(
-                        module,
-                        module.id ===
-                        this.selected
-                    );
-
-                this.menu.append(
-                    item
-                );
-
-            }
-
+        Logger.info(
+            "Sidebar",
+            `Seleccionado: ${id}`
         );
-        
+
+        if (this.onSelect) {
+
+            this.onSelect(id);
+
+        }
+
     },
+
+    expand(){
+
+    },
+
+    collapse(){
+
+    },
+
+    toggle(){
+
+    },
+
+//==================================================
+// Métodos privados
+//==================================================
 
     createMenuItem(
         module,
@@ -125,37 +140,38 @@ const Sidebar = {
 
     },
 
-    expand(){
+    async render(){
 
-    },
+        const modules =
+            await ModulesService.getMenu();
 
-    collapse(){
+        this.menu =
+            this.container.querySelector(
+                "#sidebar-menu"
+            );
 
-    },
+        this.menu.replaceChildren();
 
-    toggle(){
+        modules.forEach(
 
-    },
+            module => {
 
-    async select(id) {
+                const item =
+                    this.createMenuItem(
+                        module,
+                        module.id ===
+                        this.selected
+                    );
 
-        this.selected =
-            id;
+                this.menu.append(
+                    item
+                );
 
-        await this.render();
+            }
 
-        Logger.info(
-            "Sidebar",
-            `Seleccionado: ${id}`
         );
-
-        if (this.onSelect) {
-
-            this.onSelect(id);
-
-        }
-
-    }
+        
+    },
 
 };
 
