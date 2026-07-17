@@ -4,7 +4,7 @@
  * Archivo: shell.js
  * Módulo: Shell
  * Descripción: Contenedor principal de la aplicación.
- * Versión: 0.6.3
+ * Versión: 0.6.5
  * ==========================================================
  */
 
@@ -12,27 +12,22 @@ import Logger from "../../../core/logger.js";
 
 const Shell = {
 
+//==================================================
+// Estado
+//==================================================
+
     container: null,
 
     onNavigate: null,
 
+//==================================================
+// Inicialización
+//==================================================
+
     async init() {
 
-        const response =
-            await fetch(
-                "components/shell/shell/shell.html"
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                response.status
-            );
-
-        }
-
         const html =
-            await response.text();
+            await this.loadHtml();
 
         const app =
             document.getElementById(
@@ -55,6 +50,10 @@ const Shell = {
             );
 
     },
+
+//==================================================
+// Métodos privados
+//==================================================
 
     async loadSidebar() {
 
@@ -119,9 +118,26 @@ const Shell = {
         this.container.innerHTML =
             html;
 
-    }
+    },
 
+    async loadHtml() {
 
+        const response =
+            await fetch(
+                "components/shell/shell/shell.html"
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                response.status
+            );
+
+        }
+
+        return await response.text();
+
+    },
 
 };
 
