@@ -4,7 +4,7 @@
  * Archivo: app.js
  * Módulo: Core
  * Descripción: Inicialización del sistema.
- * Versión: 0.6.4
+ * Versión: 0.6.5
  * ==========================================================
  */
 
@@ -21,7 +21,30 @@ import Database from "../database/database.js";
 
 const App = {
 
+//==================================================
+// Inicialización
+//==================================================
+
     async init(){
+
+        this.showBanner();
+
+        await this.initializeCore();
+
+        await this.startApplication();
+
+        Logger.success(
+            "App",
+            "Aplicación iniciada."
+        );
+
+    },
+
+//==================================================
+// Métodos privados
+//==================================================
+
+    showBanner() {
 
         console.clear();
 
@@ -39,6 +62,10 @@ const App = {
 
         Logger.line();
 
+    },
+
+    async initializeCore() {
+
         Config.init();
 
         Database.init();
@@ -46,6 +73,10 @@ const App = {
         Router.init();
 
         await Shell.init();
+
+    },
+
+    async startApplication() {
 
         Shell.onNavigate =
 
@@ -61,12 +92,7 @@ const App = {
             "dashboard"
         );
 
-Logger.success(
-    "App",
-    "Aplicación iniciada."
-);
-
-    }
+    },
 
 };
 
