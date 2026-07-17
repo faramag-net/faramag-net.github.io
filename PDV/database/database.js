@@ -4,7 +4,7 @@
  * Archivo: database.js
  * Módulo: Database
  * Descripción: Administración de la base de datos local.
- * Versión: 0.1.0
+ * Versión: 0.6.5
  * ==========================================================
  */
 
