@@ -211,3 +211,35 @@ Regla 35. Antes de optimizar, validar
 Primero hacer que una funcionalidad funcione correctamente.
 
 Después refactorizar y optimizar.
+
+
+Regla 36. No refactorizar código estable sin una razón funcional.
+
+Es muy fácil caer en:
+
+"Podemos hacerlo más elegante."
+
+Pero eso hace perder semanas.
+
+La regla sería:
+
+Si funciona, es claro y no impide nuevas funcionalidades, no se modifica.
+
+Y una última regla
+Regla 37. Cada Sprint debe terminar con algo demostrable.
+
+No importa cuántas clases se escriban.
+
+Lo importante es poder decir:
+
+"Ya puedo registrar un artículo."
+
+Después:
+
+"Ya puedo editar un artículo."
+
+Después:
+
+"Ya puedo registrar movimientos."
+
+Esas son evidencias de avance.
