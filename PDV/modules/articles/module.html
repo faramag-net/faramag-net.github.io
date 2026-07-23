@@ -7,3 +7,212 @@
  * Autor:
  * ---------------------------------------------------
  */
+
+
+<section class="articles">
+
+    <header class="module-header">
+
+        <h1>Artículos</h1>
+
+        <p>
+            Administración del catálogo de artículos.
+        </p>
+
+    </header>
+
+    <main class="module-content">
+
+        <section class="card">
+
+            <header class="card-header">
+
+                <h2>Nuevo artículo</h2>
+
+            </header>
+
+            <form
+                id="articleForm"
+                autocomplete="off">
+
+                <div class="form-grid">
+
+                <div class="field">
+
+                    <label for="articleCode">
+
+                        Código *
+
+                    </label>
+
+                    <input
+                        id="articleCode"
+                        type="text">
+
+                </div>
+
+                <div class="field">
+
+                    <label for="articleName">
+
+                        Nombre *
+
+                    </label>
+
+                    <input
+                        id="articleName"
+                        type="text">
+
+                </div>
+
+                <div class="field">
+
+                    <label
+                        for="articleDescription">
+
+                        Descripción
+
+                    </label>
+
+                    <textarea
+                        id="articleDescription"
+                        rows="3">
+                    </textarea>
+
+                </div>
+
+                <div class="field">
+
+                    <label
+                        for="articleType">
+
+                        Tipo
+
+                    </label>
+
+                    <select
+                        id="articleType">
+
+                        <option
+                            value="INVENTORY">
+
+                            Inventariable
+
+                        </option>
+
+                        <option
+                            value="PREPARED">
+
+                            Preparado
+
+                        </option>
+
+                        <option
+                            value="SERVICE">
+
+                            Servicio
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="field">
+
+                    <label
+                        for="articlePurchasePrice">
+
+                        Precio compra
+
+                    </label>
+
+                    <input
+                        id="articlePurchasePrice"
+                        type="number"
+                        step="0.01">
+
+                </div>
+
+                <div class="field">
+
+                    <label
+                        for="articleSalePrice">
+
+                        Precio venta *
+
+                    </label>
+
+                    <input
+                        id="articleSalePrice"
+                        type="number"
+                        step="0.01">
+
+                </div>
+
+                </div>
+
+                <footer class="form-actions">
+
+                    <button
+                        id="btnSaveArticle"
+                        type="button">
+
+                        Guardar artículo
+
+                    </button>
+
+                </footer>
+            
+                </form>
+
+        </section>
+
+        <section class="card">
+
+            <header class="card-header">
+
+                <h2>
+
+                    Lista de artículos
+
+                </h2>
+
+            </header>
+
+            <div class="table-container">
+
+                <table
+                    id="articlesTable">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Código</th>
+
+                            <th>Nombre</th>
+
+                            <th>Tipo</th>
+
+                            <th>Precio</th>
+
+                            <th>Estado</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</section>

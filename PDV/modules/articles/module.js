@@ -13,18 +13,53 @@ import Logger from "../../core/logger.js";
 
 const Articles = {
 
+    elements: {},
+
     async init() {
 
         Logger.success(
             "Articles",
             "Módulo iniciado."
-        );
+        );        
+
+        this.cache();
 
         this.events();
+
+        await this.load();
+
+    },
+
+    cache() {
+
+        this.elements = {
+
+            btnSaveArticle:
+                document.getElementById(
+                    "btnSaveArticle"
+                )
+
+        };
 
     },
 
     events() {
+
+            this.elements.btnSaveArticle
+        .addEventListener(
+            "click",
+            () => {
+
+                console.log(
+                    "Guardar artículo"
+                );
+
+            }
+        );
+
+    },
+
+    async load() {
 
     },
 

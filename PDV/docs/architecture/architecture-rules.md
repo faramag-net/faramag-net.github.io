@@ -243,3 +243,51 @@ Después:
 "Ya puedo registrar movimientos."
 
 Esas son evidencias de avance.
+
+Regla 38. Cada nueva funcionalidad debe atravesar todas las capas de la arquitectura.
+
+Es decir, nunca implementaremos algo "rápido" saltándonos una capa.
+
+Cada funcionalidad seguirá siempre este recorrido:
+
+Regla 39. No escribimos código sin antes definir el comportamiento esperado.
+
+Regla 40. Nunca usar eventos HTML (onclick, onchange, etc.). Todos los eventos se registran desde JavaScript mediante addEventListener().
+
+Regla 41. Todo módulo debe seguir el mismo ciclo de vida.
+
+Regla 42. El HTML debe expresar la estructura del documento, no solo la apariencia.
+
+Correcto:
+
+<header>
+
+<section>
+
+<form>
+
+<main>
+
+<footer>
+
+Incorrecto:
+
+<div>
+
+<div>
+
+<div>
+
+<div>
+
+
+Regla 43. Primero funcional, después atractivo.
+
+En esta versión el CSS solo debe:
+
+Dar separación entre secciones.
+Hacer legible el formulario.
+Hacer legible la tabla.
+Verse correctamente en móvil y escritorio.
+
+Nada de colores definitivos, animaciones o efectos. Eso vendrá cuando el módulo ya funcione.
