@@ -40,4 +40,18 @@ La arquitectura queda estable y comienza la v0.7.0.
 
 ## v0.7.0
 
-- Definición del Modelo Producto.
+Agregado
+
+- Modelo de Dominio.
+- Arquitectura del Dominio.
+- Lenguaje Ubicuo.
+- Principios del Dominio.
+
+Modificado
+
+- Cambio de Producto a Artículo.
+- Cambio del enfoque de módulos a agregados del dominio.
+
+Resultado
+
+El dominio queda oficialmente congelado antes de comenzar la implementación.

@@ -10,14 +10,41 @@
 
 import Logger from "../core/logger.js";
 
+import LocalStorage
+    from "./storage/local-storage.js";
+
 const Database = {
 
-    init(){
+    init() {
 
         Logger.success(
             "Database",
             "Base de datos inicializada."
         );
+
+    },
+
+    get(key) {
+
+        return LocalStorage.get(key);
+
+    },
+
+    set(key, value) {
+
+        LocalStorage.set(key, value);
+
+    },
+
+    remove(key) {
+
+        LocalStorage.remove(key);
+
+    },
+
+    exists(key) {
+
+        return LocalStorage.exists(key);
 
     }
 
