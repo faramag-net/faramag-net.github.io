@@ -3,7 +3,7 @@
  * PDV
  * Archivo: manifest.js
  * Módulo: articles
- * Descripción: Administración del catálogo de productos.
+ * Descripción: Administración del catálogo de Artículos.
  * Versión: 0.8.0
  * ==========================================================
  */
