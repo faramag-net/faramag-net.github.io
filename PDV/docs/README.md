@@ -1,0 +1,3 @@
+# PDV
+
+PDV es una plataforma modular para la administración de negocios, diseñada para adaptarse a distintos tipos de comercio, como tiendas, restaurantes, farmacias, talleres y otros establecimientos. El proyecto se desarrolla bajo una arquitectura escalable, donde el dominio del negocio permanece independiente de la interfaz y de la tecnología utilizada, permitiendo evolucionar el sistema sin comprometer su estabilidad.

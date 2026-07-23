@@ -2,20 +2,20 @@
  * ==========================================================
  * PDV
  * Archivo: manifest.js
- * Módulo: productos
+ * Módulo: articles
  * Descripción: Administración del catálogo de productos.
- * Versión: 0.6.2
+ * Versión: 0.8.0
  * ==========================================================
  */
 
 export default {
 
-    id: "productos",
+    id: "articles",
 
-    title: "Productos",
+    title: "Artículos",
 
     description:
-        "Administración del catálogo de productos.",
+        "Administración del catálogo de artículos.",
 
     icon: "inventory",
 

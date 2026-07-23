@@ -1,22 +1,22 @@
 /**
  * ==========================================================
  * PDV
- * Archivo: productos.js
- * Módulo: Productos
- * Descripción: Administración del catálogo de productos.
- * Versión: 0.6.4
+ * Archivo: module.js
+ * Módulo: Articles
+ * Descripción: Administración del catálogo de artículos.
+ * Versión: 0.8.0
  * ==========================================================
  */
 
 // Core
 import Logger from "../../core/logger.js";
 
-const Productos = {
+const Articles = {
 
     async init() {
 
         Logger.success(
-            "Productos",
+            "Articles",
             "Módulo iniciado."
         );
 
@@ -31,7 +31,7 @@ const Productos = {
     async destroy() {
 
         Logger.info(
-            "Productos",
+            "Articles",
             "Módulo destruido."
         );
 
@@ -39,4 +39,4 @@ const Productos = {
 
 };
 
-export default Productos;
+export default Articles;

@@ -10,10 +10,18 @@
 
  # TODO v0.7.0
 
-## Modelo Producto
+☑ Modelo Dominio
 
-- [ ] Definir atributos
-- [ ] Definir reglas
-- [ ] Definir identificadores
-- [ ] Definir categorías
-- [ ] Revisar documentación
+☑ Arquitectura
+
+☑ Lenguaje Ubicuo
+
+☐ Casos de Uso
+
+☐ Eventos
+
+☐ Servicios
+
+☐ Persistencia
+
+☐ Revisión Final
