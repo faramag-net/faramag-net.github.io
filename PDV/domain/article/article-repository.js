@@ -18,34 +18,10 @@ export default class ArticleRepository {
 
     }
 
-    findById(id) {
-
-        throw new Error(
-            "findById() no implementado."
-        );
-
-    }
-
     findAll() {
 
         throw new Error(
             "findAll() no implementado."
-        );
-
-    }
-
-    update(article) {
-
-        throw new Error(
-            "update() no implementado."
-        );
-
-    }
-
-    delete(id) {
-
-        throw new Error(
-            "delete() no implementado."
         );
 
     }
