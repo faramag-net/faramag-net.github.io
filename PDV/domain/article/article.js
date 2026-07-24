@@ -12,33 +12,25 @@ export default class Article {
 
     constructor(data = {}) {
 
-        this.id = data.id ?? crypto.randomUUID();
+        this.id = data.id ?? null;
 
         this.code = data.code ?? "";
-        this.barcode = data.barcode ?? "";
 
         this.name = data.name ?? "";
         this.description = data.description ?? "";
-
-        this.categoryId = data.categoryId ?? null;
-        this.brand = data.brand ?? "";
 
         this.type = data.type ?? "INVENTORY";
 
         this.purchasePrice = data.purchasePrice ?? 0;
         this.salePrice = data.salePrice ?? 0;
 
-        this.inventoryControlled =
-            data.inventoryControlled ?? true;
+        this.active = data.active ?? true;
 
-        this.active =
-            data.active ?? true;
+        this.createdAt = data.createdAt ?? new Date().toISOString();
 
-        this.createdAt =
-            data.createdAt ?? new Date().toISOString();
+        this.updatedAt = data.updatedAt ?? new Date().toISOString();
 
-        this.updatedAt =
-            data.updatedAt ?? new Date().toISOString();
+        this.validate();
 
     }
 
@@ -60,10 +52,10 @@ export default class Article {
 
         }
 
-        if (this.salePrice < 0) {
+        if (this.salePrice <= 0) {
 
             throw new Error(
-                "El precio de venta no puede ser negativo."
+                "El precio de venta debe ser mayor que cero."
             );
 
         }
@@ -117,23 +109,15 @@ export default class Article {
 
             code: this.code,
 
-            barcode: this.barcode,
-
             name: this.name,
 
             description: this.description,
-
-            categoryId: this.categoryId,
-
-            brand: this.brand,
 
             type: this.type,
 
             purchasePrice: this.purchasePrice,
 
             salePrice: this.salePrice,
-
-            inventoryControlled: this.inventoryControlled,
 
             active: this.active,
 
