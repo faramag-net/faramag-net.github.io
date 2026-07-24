@@ -21,9 +21,13 @@ export default class CreateArticle {
     execute(data) {
 
         const article =
-            new Article(data);
+            new Article({
 
-        article.validate();
+                ...data,
+
+                id: crypto.randomUUID()
+
+            });
 
         this.repository.save(article);
 
