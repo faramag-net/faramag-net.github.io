@@ -55,23 +55,83 @@ const Articles = {
 
     cache() {
 
-        this.elements = {
+    this.elements = {
 
-            btnSaveArticle:
-                document.getElementById(
-                    "btnSaveArticle"
-                )
+        articleCode:
+            document.getElementById(
+                "articleCode"
+            ),
 
-        };
+        articleName:
+            document.getElementById(
+                "articleName"
+            ),
+
+        articleDescription:
+            document.getElementById(
+                "articleDescription"
+            ),
+
+        articleType:
+            document.getElementById(
+                "articleType"
+            ),
+
+        articlePurchasePrice:
+            document.getElementById(
+                "articlePurchasePrice"
+            ),
+
+        articleSalePrice:
+            document.getElementById(
+                "articleSalePrice"
+            ),
+
+        btnSaveArticle:
+            document.getElementById(
+                "btnSaveArticle"
+            )
+
+    };
 
     },
 
     events() {
 
-            this.elements.btnSaveArticle
+    this.elements.btnSaveArticle
         .addEventListener(
             "click",
             () => {
+
+                createArticle.execute({
+
+                    code:
+                        this.elements.articleCode.value,
+
+                    name:
+                        this.elements.articleName.value,
+
+                    description:
+                        this.elements.articleDescription.value,
+
+                    type:
+                        this.elements.articleType.value,
+
+                    purchasePrice:
+                        Number(
+                            this.elements.articlePurchasePrice.value
+                        ),
+
+                    salePrice:
+                        Number(
+                            this.elements.articleSalePrice.value
+                        )
+
+                });
+
+                console.log(
+                    getArticles.execute()
+                );
 
             }
         );
