@@ -2,52 +2,56 @@
  * ==========================================================
  * PDV
  * Archivo: local-article-repository.js
- * Módulo: Infrastructure / Repositories / Local
+ * Módulo: Infrastructure / Repository
  * Descripción: Repositorio local de artículos.
  * Versión: 0.8.0
  * ==========================================================
  */
 
-import ArticleRepository
-    from "../../../domain/article/article-repository.js";
-
 import Article
-    from "../../../domain/article/article.js";
+    from "../../domain/article/article.js";
+
+import ArticleRepository
+    from "../../domain/article/article-repository.js";
 
 import Database
-    from "../../../database/database.js";
+    from "../../database/database.js";
 
 import DB_KEYS
-    from "../../../database/db-keys.js";
+    from "../../database/db-keys.js";
 
 export default class LocalArticleRepository
     extends ArticleRepository {
 
-        findAll() {
+    save(article) {
 
-            const data =
-                Database.get(DB_KEYS.ARTICLES) ?? [];
+        const articles =
+            Database.get(
+                DB_KEYS.ARTICLES
+            ) ?? [];
 
-            return data.map(
-                item => new Article(item)
-            );
+        articles.push(
+            article.toJSON()
+        );
 
-        }
+        Database.set(
+            DB_KEYS.ARTICLES,
+            articles
+        );
 
-        save(article) {
+    }
 
-            const articles =
-                Database.get(DB_KEYS.ARTICLES) ?? [];
+    findAll() {
 
-            articles.push(
-                article.toJSON()
-            );
+        const articles =
+            Database.get(
+                DB_KEYS.ARTICLES
+            ) ?? [];
 
-            Database.set(
-                DB_KEYS.ARTICLES,
-                articles
-            );
+        return articles.map(
+            data => new Article(data)
+        );
 
-        }
+    }
 
 }
