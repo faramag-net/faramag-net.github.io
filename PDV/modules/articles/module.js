@@ -11,6 +11,29 @@
 // Core
 import Logger from "../../core/logger.js";
 
+import CreateArticle
+    from "../../domain/article/use-cases/create-article.js";
+
+import GetArticles
+    from "../../domain/article/use-cases/get-articles.js";
+
+import LocalArticleRepository
+    from "../../infrastructure/repositories/local/local-article-repository.js";
+
+
+const repository =
+    new LocalArticleRepository();
+
+const createArticle =
+    new CreateArticle(
+        repository
+    );
+
+const getArticles =
+    new GetArticles(
+        repository
+    );
+
 const Articles = {
 
     elements: {},
@@ -20,7 +43,7 @@ const Articles = {
         Logger.success(
             "Articles",
             "Módulo iniciado."
-        );        
+        );
 
         this.cache();
 
@@ -49,10 +72,6 @@ const Articles = {
         .addEventListener(
             "click",
             () => {
-
-                console.log(
-                    "Guardar artículo"
-                );
 
             }
         );
