@@ -8,17 +8,17 @@
  * ==========================================================
  */
 
-import Article
-    from "../../domain/article/article.js";
-
 import ArticleRepository
-    from "../../domain/article/article-repository.js";
+    from "../../../domain/article/article-repository.js";
+
+import Article
+    from "../../../domain/article/article.js";
 
 import Database
-    from "../../database/database.js";
+    from "../../../database/database.js";
 
 import DB_KEYS
-    from "../../database/db-keys.js";
+    from "../../../database/db-keys.js";
 
 export default class LocalArticleRepository
     extends ArticleRepository {
