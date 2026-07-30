@@ -103,6 +103,12 @@ const Articles = {
             "click",
             () => {
 
+                console.log(
+                    JSON.stringify(
+                        this.elements.articleDescription.value
+                    )
+                );
+
                 createArticle.execute({
 
                     code:
