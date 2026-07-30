@@ -106,13 +106,19 @@ const Articles = {
                 createArticle.execute({
 
                     code:
-                        this.elements.articleCode.value,
+                        this.elements.articleCode
+                            .value
+                            .trim(),
 
                     name:
-                        this.elements.articleName.value,
+                        this.elements.articleName
+                            .value
+                            .trim(),
 
                     description:
-                        this.elements.articleDescription.value,
+                        this.elements.articleDescription
+                            .value
+                            .trim(),
 
                     type:
                         this.elements.articleType.value,
