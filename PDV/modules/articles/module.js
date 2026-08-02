@@ -279,9 +279,23 @@ const Articles = {
                 this.editingArticle =
                     article;
 
-                console.log(
-                    this.editingArticle
-                );
+                this.elements.articleCode.value =
+                    article.code;
+
+                this.elements.articleName.value =
+                    article.name;
+
+                this.elements.articleDescription.value =
+                    article.description;
+
+                this.elements.articleType.value =
+                    article.type;
+
+                this.elements.articlePurchasePrice.value =
+                    article.purchasePrice;
+
+                this.elements.articleSalePrice.value =
+                    article.salePrice;
 
             }
         );
