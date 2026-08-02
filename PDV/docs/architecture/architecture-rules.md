@@ -300,3 +300,17 @@ Regla 45. La documentación oficial se actualiza únicamente al finalizar una ve
 Las versiones intermedias (0.x) pueden generar notas de desarrollo, pero la documentación oficial de arquitectura y del proyecto solo se actualiza cuando se completa una versión mayor (1.0, 2.0, 3.0, etc.).
 
 Esto garantiza que la documentación siempre describa un estado estable, completamente funcional y validado.
+
+Regla 46. Mantener la coherencia técnica del proyecto.
+
+Una solución técnicamente válida no debe incorporarse si rompe el estilo de implementación ya establecido en el proyecto.
+
+Antes de introducir una nueva técnica, patrón o API, debe evaluarse si es coherente con la arquitectura y con el código existente.
+
+Ejemplos:
+
+Si el proyecto registra eventos mediante addEventListener(), no utilizar eventos HTML (onclick, onchange, etc.).
+Si el proyecto construye el DOM mediante createElement(), appendChild() y textContent, no generar interfaces utilizando innerHTML.
+Si existe una forma establecida de resolver un problema, debe mantenerse mientras no exista una razón técnica de peso para cambiarla.
+
+El objetivo es que cualquier desarrollador perciba el proyecto como si hubiera sido escrito por una sola persona.
