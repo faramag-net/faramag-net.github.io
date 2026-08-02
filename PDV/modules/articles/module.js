@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Articles
  * Descripción: Administración del catálogo de artículos.
- * Versión: 0.8.0
+ * Versión: 0.9.0
  * ==========================================================
  */
 
@@ -19,7 +19,9 @@ import GetArticles
 
 import LocalArticleRepository
     from "../../infrastructure/repositories/local/local-article-repository.js";
-
+    
+import UpdateArticle
+    from "../../domain/article/use-cases/update-article.js";
 
 const repository =
     new LocalArticleRepository();
@@ -34,9 +36,16 @@ const getArticles =
         repository
     );
 
+const updateArticle =
+    new UpdateArticle(
+        repository
+    );
+
 const Articles = {
 
     elements: {},
+
+    editingArticle: null,
 
     async init() {
 
@@ -109,37 +118,56 @@ const Articles = {
                     )
                 );
 
-                createArticle.execute({
+        const data = {
 
-                    code:
-                        this.elements.articleCode
-                            .value
-                            .trim(),
+            code:
+                this.elements.articleCode
+                    .value
+                    .trim(),
 
-                    name:
-                        this.elements.articleName
-                            .value
-                            .trim(),
+            name:
+                this.elements.articleName
+                    .value
+                    .trim(),
 
-                    description:
-                        this.elements.articleDescription
-                            .value
-                            .trim(),
+            description:
+                this.elements.articleDescription
+                    .value
+                    .trim(),
 
-                    type:
-                        this.elements.articleType.value,
+            type:
+                this.elements.articleType.value,
 
-                    purchasePrice:
-                        Number(
-                            this.elements.articlePurchasePrice.value
-                        ),
+            purchasePrice:
+                Number(
+                    this.elements.articlePurchasePrice.value
+                ),
 
-                    salePrice:
-                        Number(
-                            this.elements.articleSalePrice.value
-                        )
+            salePrice:
+                Number(
+                    this.elements.articleSalePrice.value
+                )
 
-                });
+        };
+
+
+        if (this.editingArticle === null) {
+
+            createArticle.execute(data);
+
+        } else {
+
+            updateArticle.execute(
+
+                this.editingArticle.id,
+
+                data
+
+            );
+
+            this.editingArticle = null;
+
+        }
 
                 console.log(
                     getArticles.execute()
