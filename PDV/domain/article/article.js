@@ -94,6 +94,32 @@ export default class Article {
 
     }
 
+    update(data) {
+
+        this.code =
+            data.code ?? this.code;
+
+        this.name =
+            data.name ?? this.name;
+
+        this.description =
+            data.description ?? this.description;
+
+        this.type =
+            data.type ?? this.type;
+
+        this.purchasePrice =
+            data.purchasePrice ?? this.purchasePrice;
+
+        this.salePrice =
+            data.salePrice ?? this.salePrice;
+
+        this.validate();
+
+        this.touch();
+
+    }
+    
     touch() {
 
         this.updatedAt =
