@@ -226,6 +226,7 @@ La regla sería:
 Si funciona, es claro y no impide nuevas funcionalidades, no se modifica.
 
 Y una última regla
+
 Regla 37. Cada Sprint debe terminar con algo demostrable.
 
 No importa cuántas clases se escriban.
@@ -291,3 +292,5 @@ Hacer legible la tabla.
 Verse correctamente en móvil y escritorio.
 
 Nada de colores definitivos, animaciones o efectos. Eso vendrá cuando el módulo ya funcione.
+
+Regla 44. Una mejora de arquitectura no es válida si retrasa la entrega de una funcionalidad sin aportar un beneficio técnico demostrable.
