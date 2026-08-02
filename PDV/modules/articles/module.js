@@ -117,12 +117,6 @@ const Articles = {
             "click",
             () => {
 
-                console.log(
-                    JSON.stringify(
-                        this.elements.articleDescription.value
-                    )
-                );
-
         const data = {
 
             code:
@@ -309,6 +303,22 @@ const Articles = {
         );
 
         return row;
+
+    },
+
+    clearForm() {
+
+        this.elements.articleCode.value = "";
+
+        this.elements.articleName.value = "";
+
+        this.elements.articleDescription.value = "";
+
+        this.elements.articleType.value = "INVENTORY";
+
+        this.elements.articlePurchasePrice.value = "";
+
+        this.elements.articleSalePrice.value = "";
 
     },
 
