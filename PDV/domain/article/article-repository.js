@@ -4,7 +4,7 @@
  * Archivo: article-repository.js
  * Módulo: Domain / Article
  * Descripción: Contrato del repositorio de artículos.
- * Versión: 0.8.0
+ * Versión: 0.9.0
  * ==========================================================
  */
 
@@ -22,6 +22,22 @@ export default class ArticleRepository {
 
         throw new Error(
             "findAll() no implementado."
+        );
+
+    }
+
+    findById(id) {
+
+        throw new Error(
+            "findById() no implementado."
+        );
+
+    }
+
+    update(article) {
+
+        throw new Error(
+            "update() no implementado."
         );
 
     }
