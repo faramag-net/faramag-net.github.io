@@ -294,3 +294,9 @@ Verse correctamente en móvil y escritorio.
 Nada de colores definitivos, animaciones o efectos. Eso vendrá cuando el módulo ya funcione.
 
 Regla 44. Una mejora de arquitectura no es válida si retrasa la entrega de una funcionalidad sin aportar un beneficio técnico demostrable.
+
+Regla 45. La documentación oficial se actualiza únicamente al finalizar una versión mayor.
+
+Las versiones intermedias (0.x) pueden generar notas de desarrollo, pero la documentación oficial de arquitectura y del proyecto solo se actualiza cuando se completa una versión mayor (1.0, 2.0, 3.0, etc.).
+
+Esto garantiza que la documentación siempre describa un estado estable, completamente funcional y validado.
