@@ -262,6 +262,38 @@ const Articles = {
 
         row.appendChild(status);
 
+        const actions =
+            document.createElement("td");
+
+        const editButton =
+            document.createElement("button");
+
+        editButton.type = "button";
+
+        editButton.textContent = "Editar";
+
+        editButton.addEventListener(
+            "click",
+            () => {
+
+                this.editingArticle =
+                    article;
+
+                console.log(
+                    this.editingArticle
+                );
+
+            }
+        );
+
+        actions.appendChild(
+            editButton
+        );
+
+        row.appendChild(
+            actions
+        );
+
         return row;
 
     },
