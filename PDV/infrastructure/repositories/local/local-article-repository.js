@@ -54,4 +54,52 @@ export default class LocalArticleRepository
 
     }
 
+    findById(id) {
+
+        const articles =
+            Database.get(
+                DB_KEYS.ARTICLES
+            ) ?? [];
+
+        const data =
+            articles.find(
+                article => article.id === id
+            );
+
+        return data
+            ? new Article(data)
+            : null;
+
+    }
+
+    update(article) {
+
+        const articles =
+            Database.get(
+                DB_KEYS.ARTICLES
+            ) ?? [];
+
+        const index =
+            articles.findIndex(
+                item => item.id === article.id
+            );
+
+        if (index === -1) {
+
+            throw new Error(
+                "El artículo no existe."
+            );
+
+        }
+
+        articles[index] =
+            article.toJSON();
+
+        Database.set(
+            DB_KEYS.ARTICLES,
+            articles
+        );
+
+    }
+
 }
