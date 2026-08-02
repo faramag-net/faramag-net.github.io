@@ -99,7 +99,12 @@ const Articles = {
         btnSaveArticle:
             document.getElementById(
                 "btnSaveArticle"
-            )
+            ),
+
+        articlesTableBody:
+            document.getElementById(
+                "articlesTableBody"
+            ),
 
     };
 
@@ -169,16 +174,35 @@ const Articles = {
 
         }
 
-                console.log(
-                    getArticles.execute()
-                );
+            this.renderTable();
 
             }
         );
 
     },
 
+    renderTable() {
+
+        const articles =
+            getArticles.execute();
+
+        this.elements.articlesTableBody.replaceChildren();
+
+        articles.forEach(article => {
+
+            const row =
+                this.createRow(article);
+
+            this.elements.articlesTableBody
+                .appendChild(row);
+
+        });
+
+    },
+
     async load() {
+
+        this.renderTable();
 
     },
 
@@ -189,7 +213,58 @@ const Articles = {
             "Módulo destruido."
         );
 
-    }
+    },
+
+    createRow(article) {
+
+        const row =
+            document.createElement("tr");
+
+        const code =
+            document.createElement("td");
+
+        code.textContent =
+            article.code;
+
+        row.appendChild(code);
+
+        const name =
+            document.createElement("td");
+
+        name.textContent =
+            article.name;
+
+        row.appendChild(name);
+
+        const type =
+            document.createElement("td");
+
+        type.textContent =
+            article.type;
+
+        row.appendChild(type);
+
+        const price =
+            document.createElement("td");
+
+        price.textContent =
+            article.salePrice;
+
+        row.appendChild(price);
+
+        const status =
+            document.createElement("td");
+
+        status.textContent =
+            article.active
+                ? "Activo"
+                : "Inactivo";
+
+        row.appendChild(status);
+
+        return row;
+
+    },
 
 };
 
