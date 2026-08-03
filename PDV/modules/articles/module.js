@@ -26,6 +26,9 @@ import UpdateArticle
 import DeactivateArticle
     from "../../domain/article/use-cases/deactivate-article.js";
 
+import ActivateArticle
+    from "../../domain/article/use-cases/activate-article.js";
+
 
 const repository =
     new LocalArticleRepository();
@@ -47,6 +50,11 @@ const updateArticle =
 
 const deactivateArticle =
     new DeactivateArticle(
+        repository
+    );
+
+const activateArticle =
+    new ActivateArticle(
         repository
     );
 
@@ -309,15 +317,27 @@ const Articles = {
         deactivateButton.type = "button";
 
         deactivateButton.textContent =
-            "Desactivar";
+            article.active
+                ? "Desactivar"
+                : "Activar";
 
         deactivateButton.addEventListener(
             "click",
             () => {
 
-                deactivateArticle.execute(
-                    article.id
-                );
+                if (article.active) {
+
+                    deactivateArticle.execute(
+                        article.id
+                    );
+
+                } else {
+
+                    activateArticle.execute(
+                        article.id
+                    );
+
+                }
 
                 this.renderTable();
 
