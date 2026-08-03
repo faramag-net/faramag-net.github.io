@@ -23,6 +23,10 @@ import LocalArticleRepository
 import UpdateArticle
     from "../../domain/article/use-cases/update-article.js";
 
+import DeactivateArticle
+    from "../../domain/article/use-cases/deactivate-article.js";
+
+
 const repository =
     new LocalArticleRepository();
 
@@ -38,6 +42,11 @@ const getArticles =
 
 const updateArticle =
     new UpdateArticle(
+        repository
+    );
+
+const deactivateArticle =
+    new DeactivateArticle(
         repository
     );
 
@@ -301,6 +310,19 @@ const Articles = {
 
         deactivateButton.textContent =
             "Desactivar";
+
+        deactivateButton.addEventListener(
+            "click",
+            () => {
+
+                deactivateArticle.execute(
+                    article.id
+                );
+
+                this.renderTable();
+
+            }
+        );
 
         actions.appendChild(
             editButton
