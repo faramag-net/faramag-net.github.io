@@ -42,4 +42,12 @@ export default class ArticleRepository {
 
     }
 
+    deactivate(id) {
+
+        throw new Error(
+            "deactivate() no implementado."
+        );
+
+    }
+
 }

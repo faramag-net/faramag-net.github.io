@@ -205,14 +205,6 @@ const Articles = {
 
     },
 
-    async destroy() {
-
-        Logger.info(
-            "Articles",
-            "Módulo destruido."
-        );
-
-    },
 
     createRow(article) {
 
@@ -302,8 +294,20 @@ const Articles = {
             }
         );
 
+        const deactivateButton =
+            document.createElement("button");
+
+        deactivateButton.type = "button";
+
+        deactivateButton.textContent =
+            "Desactivar";
+
         actions.appendChild(
             editButton
+        );
+
+        actions.appendChild(
+            deactivateButton
         );
 
         row.appendChild(
@@ -327,6 +331,15 @@ const Articles = {
         this.elements.articlePurchasePrice.value = "";
 
         this.elements.articleSalePrice.value = "";
+
+    },
+
+    async destroy() {
+
+        Logger.info(
+            "Articles",
+            "Módulo destruido."
+        );
 
     },
 
