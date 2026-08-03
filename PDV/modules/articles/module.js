@@ -168,7 +168,12 @@ const Articles = {
 
         }
 
-            this.renderTable();
+        this.clearForm();
+
+        this.elements.btnSaveArticle.textContent =
+            "Guardar artículo";
+
+        this.renderTable();
 
             }
         );
@@ -290,6 +295,9 @@ const Articles = {
 
                 this.elements.articleSalePrice.value =
                     article.salePrice;
+                
+                this.elements.btnSaveArticle.textContent =
+                    "Actualizar artículo";
 
             }
         );
