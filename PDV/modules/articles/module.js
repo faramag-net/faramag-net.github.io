@@ -134,63 +134,75 @@ const Articles = {
             "click",
             () => {
 
-        const data = {
+                try {
 
-            code:
-                this.elements.articleCode
-                    .value
-                    .trim(),
+                    const data = {
 
-            name:
-                this.elements.articleName
-                    .value
-                    .trim(),
+                        code:
+                            this.elements.articleCode
+                                .value
+                                .trim(),
 
-            description:
-                this.elements.articleDescription
-                    .value
-                    .trim(),
+                        name:
+                            this.elements.articleName
+                                .value
+                                .trim(),
 
-            type:
-                this.elements.articleType.value,
+                        description:
+                            this.elements.articleDescription
+                                .value
+                                .trim(),
 
-            purchasePrice:
-                Number(
-                    this.elements.articlePurchasePrice.value
-                ),
+                        type:
+                            this.elements.articleType.value,
 
-            salePrice:
-                Number(
-                    this.elements.articleSalePrice.value
-                )
+                        purchasePrice:
+                            Number(
+                                this.elements.articlePurchasePrice.value
+                            ),
 
-        };
+                        salePrice:
+                            Number(
+                                this.elements.articleSalePrice.value
+                            )
 
+                    };
 
-        if (this.editingArticle === null) {
+                    if (this.editingArticle === null) {
 
-            createArticle.execute(data);
+                        createArticle.execute(
+                            data
+                        );
 
-        } else {
+                    } else {
 
-            updateArticle.execute(
+                        updateArticle.execute(
 
-                this.editingArticle.id,
+                            this.editingArticle.id,
 
-                data
+                            data
 
-            );
+                        );
 
-            this.editingArticle = null;
+                        this.editingArticle = null;
 
-        }
+                    }
 
-        this.clearForm();
+                    this.clearForm();
 
-        this.elements.btnSaveArticle.textContent =
-            "Guardar artículo";
+                    this.elements.btnSaveArticle.textContent =
+                        "Guardar artículo";
 
-        this.renderTable();
+                    this.renderTable();
+
+                } catch (error) {
+
+                    Logger.error(
+                        "Articles",
+                        error.message
+                    );
+
+                }
 
             }
         );
