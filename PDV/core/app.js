@@ -60,6 +60,11 @@ const App = {
             `Versión ${APP.VERSION}`
         );
 
+        Logger.info(
+            "App",
+            `Build ${APP.BUILD}`
+        );
+
         Logger.line();
 
     },
