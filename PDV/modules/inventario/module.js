@@ -17,6 +17,9 @@ import GetArticles
 import LocalArticleRepository
     from "../../infrastructure/repositories/local/local-article-repository.js";
 
+import CreateMovement
+    from "../../domain/movement/use-cases/create-movement.js";
+
 const Inventario = {
 
     elements: {},
