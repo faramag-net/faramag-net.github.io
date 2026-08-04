@@ -20,6 +20,9 @@ import LocalArticleRepository
 import CreateMovement
     from "../../domain/movement/use-cases/create-movement.js";
 
+import LocalMovementRepository
+    from "../../infrastructure/repositories/local/local-movement-repository.js";
+    
 const Inventario = {
 
     elements: {},
