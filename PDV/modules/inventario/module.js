@@ -22,6 +22,9 @@ import CreateMovement
 
 import LocalMovementRepository
     from "../../infrastructure/repositories/local/local-movement-repository.js";
+
+import GetMovements
+    from "../../domain/movement/use-cases/get-movements.js";
     
 const Inventario = {
 
@@ -197,5 +200,14 @@ const createMovement =
     new CreateMovement(
         movementRepository
     );
+
+const getMovements =
+    new GetMovements(
+        movementRepository
+    );
+
+console.log(
+    getMovements.execute()
+);
     
 export default Inventario;
