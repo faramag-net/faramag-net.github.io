@@ -1,9 +1,171 @@
 /**
  * ---------------------------------------------------
  * PDV
- * Archivo:
- * Descripción:
- * Versión:
- * Autor:
+ * Archivo: module.html
+ * Descripción: Módulo de inventario.
+ * Versión: 0.9.1
+ * Autor: Ricardo Magallón
  * ---------------------------------------------------
  */
+
+<section class="inventory">
+
+    <header class="module-header">
+
+        <h1>Inventario</h1>
+
+        <p>
+            Administración del inventario.
+        </p>
+
+    </header>
+
+    <main class="module-content">
+
+        <section class="card">
+
+            <header class="card-header">
+
+                <h2>
+
+                    Registrar movimiento
+
+                </h2>
+
+            </header>
+
+            <form
+                id="movementForm"
+                autocomplete="off">
+
+                <div class="form-grid">
+
+                    <div class="field">
+
+                        <label
+                            for="movementArticle">
+
+                            Artículo *
+
+                        </label>
+
+                        <select
+                            id="movementArticle">
+
+                        </select>
+
+                    </div>
+
+                    <div class="field">
+
+                        <label
+                            for="movementType">
+
+                            Tipo *
+
+                        </label>
+
+                        <select
+                            id="movementType">
+
+                            <option value="ENTRY">
+
+                                Entrada
+
+                            </option>
+
+                            <option value="EXIT">
+
+                                Salida
+
+                            </option>
+
+                            <option value="ADJUSTMENT">
+
+                                Ajuste
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="field">
+
+                        <label
+                            for="movementQuantity">
+
+                            Cantidad *
+
+                        </label>
+
+                        <input
+                            id="movementQuantity"
+                            type="number"
+                            min="1">
+
+                    </div>
+
+                </div>
+
+                <footer class="form-actions">
+
+                    <button
+                        id="btnSaveMovement"
+                        type="button">
+
+                        Registrar movimiento
+
+                    </button>
+
+                </footer>
+
+            </form>
+
+        </section>
+
+        <section class="card">
+
+            <header class="card-header">
+
+                <h2>
+
+                    Existencias
+
+                </h2>
+
+            </header>
+
+            <div class="table-container">
+
+                <table
+                    id="inventoryTable">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Código</th>
+
+                            <th>Artículo</th>
+
+                            <th>Existencia</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody
+                        id="inventoryTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</section>

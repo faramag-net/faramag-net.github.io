@@ -11,6 +11,12 @@
 // Core
 import Logger from "../../core/logger.js";
 
+import GetArticles
+    from "../../domain/article/use-cases/get-articles.js";
+
+import LocalArticleRepository
+    from "../../infrastructure/repositories/local/local-article-repository.js";
+
 const Inventario = {
 
     async init() {
@@ -38,5 +44,13 @@ const Inventario = {
     }
 
 };
+
+const articleRepository =
+    new LocalArticleRepository();
+
+const getArticles =
+    new GetArticles(
+        articleRepository
+    );
 
 export default Inventario;
