@@ -38,11 +38,43 @@ export default class GetInventory {
 
         return articles.map(article => {
 
+            let stock = 0;
+
+            movements.forEach(movement => {
+
+                if (
+                    movement.articleId !== article.id
+                ) {
+
+                    return;
+
+                }
+
+                switch (movement.type) {
+
+                    case "ENTRY":
+
+                        stock +=
+                            movement.quantity;
+
+                        break;
+
+                    case "EXIT":
+
+                        stock -=
+                            movement.quantity;
+
+                        break;
+
+                }
+
+            });
+
             return {
 
                 article,
 
-                stock: 0
+                stock
 
             };
 
