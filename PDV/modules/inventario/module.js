@@ -25,6 +25,9 @@ import LocalMovementRepository
 
 import GetMovements
     from "../../domain/movement/use-cases/get-movements.js";
+
+import GetInventory
+    from "../../domain/movement/use-cases/get-inventory.js";
     
 const Inventario = {
 
@@ -204,6 +207,15 @@ const createMovement =
 const getMovements =
     new GetMovements(
         movementRepository
+    );
+
+const getInventory =
+    new GetInventory(
+
+        articleRepository,
+
+        movementRepository
+
     );
 
 console.log(
