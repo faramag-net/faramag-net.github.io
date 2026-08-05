@@ -122,6 +122,8 @@ const Inventario = {
                             "Movimiento registrado."
                         );
 
+                        this.renderInventory();
+
                     } catch (error) {
 
                         Logger.error(
@@ -143,6 +145,8 @@ const Inventario = {
     async load() {
 
         this.loadArticles();
+
+        this.renderInventory();
 
     },
 
@@ -173,6 +177,59 @@ const Inventario = {
                 );
 
         });
+
+    },
+
+    renderInventory() {
+
+        const inventory =
+            getInventory.execute();
+
+        this.elements.inventoryTableBody
+            .replaceChildren();
+
+        inventory.forEach(item => {
+
+            const row =
+                this.createRow(item);
+
+            this.elements.inventoryTableBody
+                .appendChild(row);
+
+        });
+
+    },
+
+    createRow(item) {
+
+        const row =
+            document.createElement("tr");
+
+        const code =
+            document.createElement("td");
+
+        code.textContent =
+            item.article.code;
+
+        row.appendChild(code);
+
+        const name =
+            document.createElement("td");
+
+        name.textContent =
+            item.article.name;
+
+        row.appendChild(name);
+
+        const stock =
+            document.createElement("td");
+
+        stock.textContent =
+            item.stock;
+
+        row.appendChild(stock);
+
+        return row;
 
     },
 

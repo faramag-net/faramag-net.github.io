@@ -14,7 +14,7 @@ const APP = Object.freeze({
 
     VERSION: "0.9.1",
 
-    BUILD: "20260804.1941",
+    BUILD: "20260805.1142",
 
     AUTHOR: "Ricardo Magallón",
 
