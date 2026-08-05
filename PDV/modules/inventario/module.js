@@ -207,7 +207,7 @@ const getMovements =
     );
 
 console.log(
-    getMovements.execute()
+    getInventory.execute()
 );
     
 export default Inventario;
