@@ -1,116 +1,26 @@
 const productos = [
 
-  // LECHOSOS
+  // postres
   {
-    nombre: "Beso de Ángel",
-    precio: 22,
+    nombre: "Carlota de Limón",
+    precio: 12,
     tipo: "postres",
     activo: true,
-    descripcion: "Cereza con trozos de Nuez, arandanos y coco",
-    imagen: "../../../../imagenes/paletabeso.png",
+    descripcion: "Adornado con nuez y frutas",
+    imagen: "../../../../imagenes/imagenes/postrecarlota.png",
     mensaje: "Quiero paleta de Beso de Angel"
   },
 
-  {
-    nombre: "Coco",
-    precio: 22,
-    tipo: "leche",
+    {
+    nombre: "Arroz con Leche",
+    precio: 12,
+    tipo: "postres",
     activo: true,
-    descripcion: "",
-    imagen: "../../../../imagenes/paletacoco.png",
-    mensaje: "Quiero paleta de Coco"
+    descripcion: "Adornado con pasas",
+    imagen: "../../../../imagenes/postrearrozconleche.png",
+    mensaje: "Quiero paleta de Beso de Angel"
   },
 
-  {
-    nombre: "Fresa",
-    precio: 22,
-    tipo: "leche",
-    activo: true,
-    descripcion: "Con trozos de fresa",
-    imagen: "../../../../imagenes/paletafresa.png",
-    mensaje: "Quiero paleta de Fresa"
-  },
-
-  {
-    nombre: "Frutos Rojos",
-    precio: 22,
-    tipo: "leche",
-    activo: false,
-    descripcion: "",
-    imagen: "../../../../imagenes/paletafrutos.png",
-    mensaje: "Quiero paleta Frutos Rojos"
-  },
-
-  {
-    nombre: "Mamey",
-    precio: 22,
-    tipo: "leche",
-    activo: true,
-    descripcion: "",
-    imagen: "../../../../imagenes/paletamamey.png",
-    mensaje: "Quiero paleta de Mamey"
-  },
-
-  {
-    nombre: "Choco Nutella",
-    precio: 22,
-    tipo: "leche",
-    activo: true,
-    descripcion: "Chocolate y avellana en cada mordida",
-    imagen: "../../../../imagenes/paletanutella.png",
-    mensaje: "Quiero paleta Choco Nutella"
-  },
-
-  {
-    nombre: "Oreo",
-    precio: 22,
-    tipo: "leche",
-    activo: true,
-    descripcion: "",
-    imagen: "../../../../imagenes/paletaoreo.png",
-    mensaje: "Quiero paleta Oreo"
-  },
-
-  // HIELO
-  {
-    nombre: "Mango Chamoy",
-    precio: 19,
-    tipo: "hielo",
-    activo: false,
-    descripcion: "Con pulpa y trozos de mango",
-    imagen: "../../../../imagenes/paletamangochamoy.png",
-    mensaje: "Quiero paleta de Mango Chamoy"
-  },
-
-  {
-    nombre: "Tropical",
-    precio: 19,
-    tipo: "hielo",
-    activo: true,
-    descripcion: "Refrescante mezcla de frutas tropicales",
-    imagen: "../../../../imagenes/paletatropical.png",
-    mensaje: "Quiero paleta Tropical"
-  },
-
-  {
-    nombre: "Mango",
-    precio: 19,
-    tipo: "hielo",
-    activo: false,
-    descripcion: "Con pulpa y trozos de mango",
-    imagen: "../../../../imagenes/paletamango.png",
-    mensaje: "Quiero paleta de Mango"
-  },
-
-  {
-    nombre: "Oasis",
-    precio: 19,
-    tipo: "hielo",
-    activo: true,
-    descripcion: "Refrescante mezcla de fresa, naranja y papaya",
-    imagen: "../../../../imagenes/paletaoasis.png",
-    mensaje: "Quiero paleta Oasis"
-  }
 
 ];
 
