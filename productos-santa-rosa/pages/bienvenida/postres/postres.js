@@ -4,7 +4,7 @@ const productos = [
   {
     nombre: "Beso de Ángel",
     precio: 22,
-    tipo: "leche",
+    tipo: "postres",
     activo: true,
     descripcion: "Cereza con trozos de Nuez, arandanos y coco",
     imagen: "../../../../imagenes/paletabeso.png",
@@ -166,6 +166,11 @@ crearSeccion(
 crearSeccion(
   "🥛 Paletas de Leche Cremosas",
   productos.filter(p => p.tipo === "leche" && p.activo)
+);
+
+crearSeccion(
+  "🍰 Postres",
+  productos.filter(p => p.tipo === "postres" && p.activo)
 );
 
 const modal =
