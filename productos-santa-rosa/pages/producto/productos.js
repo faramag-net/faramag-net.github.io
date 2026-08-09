@@ -4,15 +4,22 @@ const categorias = [
     nombre: "Bolis",
     emoji: "🧊",
     clase: "bolis",
-    enlace: "./bolis/index.html"
+    enlace: "./bolis/"
   },
 
   {
     nombre: "Paletas",
     emoji: "🍦",
     clase: "paletas",
-    enlace: "./paletas/index.html"
-  }
+    enlace: "./paletas/"
+  },
+
+    {
+    nombre: "Postres",
+    emoji: "🍰",
+    clase: "postres",
+    enlace: "../bienvenida/postres/"
+  },
 
 ];
 
