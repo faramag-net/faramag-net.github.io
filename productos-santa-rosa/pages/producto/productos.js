@@ -15,10 +15,10 @@ const categorias = [
   },
 
     {
-    nombre: "Postres",
-    emoji: "🍰",
+    nombre: "Inicio",
+    emoji: "🏠",
     clase: "postres",
-    enlace: "../bienvenida/postres/"
+    enlace: "../bienvenida/"
   },
 
 ];
