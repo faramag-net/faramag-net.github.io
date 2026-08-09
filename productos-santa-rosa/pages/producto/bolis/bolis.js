@@ -3,7 +3,7 @@ const productos = [
   // LECHOSOS
   {
     nombre: "Beso de Ángel",
-    precio: 20,
+    precio: 22,
     tipo: "leche",
     activo: true,
     descripcion: "Cereza con trozos de Nuez, arandanos y coco",
@@ -33,7 +33,7 @@ const productos = [
 
   {
     nombre: "Frutos Rojos",
-    precio: 20,
+    precio: 22,
     tipo: "leche",
     activo: true,
     descripcion: "",
@@ -53,7 +53,7 @@ const productos = [
 
   {
     nombre: "Choco Nutella",
-    precio: 20,
+    precio: 24,
     tipo: "leche",
     activo: true,
     descripcion: "Chocolate y avellana en cada mordida",
@@ -63,7 +63,7 @@ const productos = [
 
   {
     nombre: "Oreo",
-    precio: 20,
+    precio: 22,
     tipo: "leche",
     activo: true,
     descripcion: "",

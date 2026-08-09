@@ -13,7 +13,7 @@ const productos = [
 
   {
     nombre: "Coco",
-    precio: 22,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "",
@@ -23,7 +23,7 @@ const productos = [
 
   {
     nombre: "Fresa",
-    precio: 22,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "Con trozos de fresa",
@@ -43,7 +43,7 @@ const productos = [
 
   {
     nombre: "Mamey",
-    precio: 22,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "",
@@ -53,7 +53,7 @@ const productos = [
 
   {
     nombre: "Choco Nutella",
-    precio: 22,
+    precio: 24,
     tipo: "leche",
     activo: true,
     descripcion: "Chocolate y avellana en cada mordida",
@@ -74,9 +74,9 @@ const productos = [
   // HIELO
   {
     nombre: "Mango Chamoy",
-    precio: 19,
+    precio: 18,
     tipo: "hielo",
-    activo: false,
+    activo: true,
     descripcion: "Con pulpa y trozos de mango",
     imagen: "../../../../imagenes/paletamangochamoy.png",
     mensaje: "Quiero paleta de Mango Chamoy"
@@ -84,7 +84,7 @@ const productos = [
 
   {
     nombre: "Tropical",
-    precio: 19,
+    precio: 18,
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante mezcla de frutas tropicales",
@@ -94,9 +94,9 @@ const productos = [
 
   {
     nombre: "Mango",
-    precio: 19,
+    precio: 18,
     tipo: "hielo",
-    activo: false,
+    activo: true,
     descripcion: "Con pulpa y trozos de mango",
     imagen: "../../../../imagenes/paletamango.png",
     mensaje: "Quiero paleta de Mango"
@@ -104,7 +104,7 @@ const productos = [
 
   {
     nombre: "Oasis",
-    precio: 19,
+    precio: 18,
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante mezcla de fresa, naranja y papaya",
