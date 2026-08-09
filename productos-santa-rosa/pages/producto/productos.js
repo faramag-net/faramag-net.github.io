@@ -14,10 +14,17 @@ const categorias = [
     enlace: "./paletas/"
   },
 
-    {
+  {
+    nombre: "Inicio",
+    emoji: "🍰",
+    clase: "postres",
+    enlace: "../bienvenida/postres/"
+  },
+
+  {
     nombre: "Inicio",
     emoji: "🏠",
-    clase: "postres",
+    clase: "inicio",
     enlace: "../bienvenida/"
   },
 

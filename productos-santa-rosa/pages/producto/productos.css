@@ -59,7 +59,11 @@ p {
 }
 
 .postres {
-  background: #bac0cf;
+  background: #db4fa1;
+}
+
+.inicio {
+  background: #4caf50;
 }
 
 /* efecto */
