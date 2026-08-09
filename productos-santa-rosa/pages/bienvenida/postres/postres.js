@@ -69,7 +69,7 @@ function crearSeccion(titulo, lista) {
 }
 
 crearSeccion(
-  "🍰 Postres",
+  "",
   productos.filter(p => p.tipo === "postres" && p.activo)
 );
 
