@@ -3,7 +3,7 @@ const productos = [
   // postres
   {
     nombre: "Carlota de Limón",
-    precio: 18,
+    precio: 20,
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con nuez y frutas",
@@ -12,18 +12,18 @@ const productos = [
   },
 
     {
-    nombre: "Flan Napolitano",
-    precio: 15,
+    nombre: "Flan caramelo en vaso",
+    precio: 18,
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con nuez y un toque de caramelo",
     imagen: "../../../../imagenes/postreflan.png",
-    mensaje: "Quiero Flan Napolitano"
+    mensaje: "Quiero Flan caramelo en vaso"
   },
 
     {
     nombre: "Arroz con Leche",
-    precio: 15,
+    precio: 18,
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con pasas",
@@ -33,7 +33,7 @@ const productos = [
 
     {
     nombre: "Gelatina de mosaico de frutas",
-    precio: 18,
+    precio: 20,
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con Frutas",
@@ -43,7 +43,7 @@ const productos = [
 
     {
     nombre: "Gelatina mosaico en vaso",
-    precio: 15,
+    precio: 18,
     tipo: "postres",
     activo: true,
     descripcion: "delicioso postre en un vaso",
@@ -51,7 +51,15 @@ const productos = [
     mensaje: "Quiero Gelatina Mosaico en Vaso"
   },
 
-
+    {
+    nombre: "Flan Napolitano",
+    precio: 22,
+    tipo: "postres",
+    activo: true,
+    descripcion: "adonado con cajeta o con caramelo",
+    imagen: "../../../../imagenes/postreflannapolitano.jpg",
+    mensaje: "Quiero Flan Napolitano"
+  },
 
 ];
 
