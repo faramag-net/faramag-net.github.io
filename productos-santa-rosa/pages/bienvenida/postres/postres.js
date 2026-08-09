@@ -7,7 +7,7 @@ const productos = [
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con nuez y frutas",
-    imagen: "../../../../imagenes/imagenes/postrecarlota.png",
+    imagen: "../../../../imagenes/postrecarlota.png",
     mensaje: "Quiero paleta de Beso de Angel"
   },
 
@@ -67,16 +67,6 @@ function crearSeccion(titulo, lista) {
   contenido.appendChild(h2);
   contenido.appendChild(grid);
 }
-
-crearSeccion(
-  "🧊 Paletas de Agua Refrescantes",
-  productos.filter(p => p.tipo === "hielo" && p.activo)
-);
-
-crearSeccion(
-  "🥛 Paletas de Leche Cremosas",
-  productos.filter(p => p.tipo === "leche" && p.activo)
-);
 
 crearSeccion(
   "🍰 Postres",
