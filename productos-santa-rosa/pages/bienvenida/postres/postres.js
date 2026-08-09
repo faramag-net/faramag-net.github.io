@@ -53,7 +53,7 @@ const productos = [
 
     {
     nombre: "Flan Napolitano",
-    precio: 22,
+    precio: 25,
     tipo: "postres",
     activo: true,
     descripcion: "adonado con cajeta o con caramelo",
