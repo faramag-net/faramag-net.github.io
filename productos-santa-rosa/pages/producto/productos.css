@@ -58,6 +58,10 @@ p {
   background: #ff4d6d;
 }
 
+.postres {
+  background: #f94dff;
+}
+
 /* efecto */
 .btn:hover {
   transform: scale(1.05);
