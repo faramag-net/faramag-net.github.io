@@ -62,6 +62,16 @@ const productos = [
   },
 
   {
+    nombre: "Chocolate",
+    precio: 24,
+    tipo: "leche",
+    activo: true,
+    descripcion: "",
+    imagen: "../../../../imagenes/bolichocolate.png",
+    mensaje: "Quiero boli Chocolate"
+  },
+
+  {
     nombre: "Oreo",
     precio: 22,
     tipo: "leche",
@@ -84,13 +94,13 @@ const productos = [
   },
   
   {
-    nombre: "Mango Chamoy",
+    nombre: "Mango chile y chamoy",
     precio: 18,
     tipo: "hielo",
     activo: true,
-    descripcion: "Con pulpa y trozos de mango",
+    descripcion: "Picosita con pulpa y trozos de mango",
     imagen: "../../../../imagenes/bolimangochamoy.png",
-    mensaje: "Quiero boli de Mango Chamoy"
+    mensaje: "Quiero boli de Mango con chile y chamoy"
   },
 
   {
@@ -113,6 +123,26 @@ const productos = [
     mensaje: "Quiero boli de Mango"
   },
 
+  {
+    nombre: "Piña",
+    precio: 18,
+    tipo: "hielo",
+    activo: true,
+    descripcion: "Con pulpa de piña",
+    imagen: "../../../../imagenes/bolipina.png",
+    mensaje: "Quiero boli de Piña"
+  },
+
+  {
+    nombre: "Piña con chile y chamoy",
+    precio: 18,
+    tipo: "hielo",
+    activo: true,
+    descripcion: "Picosita y refrescante",
+    imagen: "../../../../imagenes/bolipiñachamoy.png",
+    mensaje: "Quiero boli de Piña con chile y chamoy"
+  },
+  
   {
     nombre: "Oasis",
     precio: 18,

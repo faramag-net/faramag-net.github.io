@@ -62,6 +62,16 @@ const productos = [
   },
 
   {
+    nombre: "Chocolate",
+    precio: 24,
+    tipo: "leche",
+    activo: true,
+    descripcion: "",
+    imagen: "../../../../imagenes/paletachocolate.png",
+    mensaje: "Quiero paleta Chocolate"
+  },
+
+  {
     nombre: "Oreo",
     precio: 22,
     tipo: "leche",
@@ -73,13 +83,13 @@ const productos = [
 
   // HIELO
   {
-    nombre: "Mango Chamoy",
+    nombre: "Mango con chile y chamoy",
     precio: 18,
     tipo: "hielo",
     activo: true,
-    descripcion: "Con pulpa y trozos de mango",
+    descripcion: "Picosita con pulpa y trozos de mango",
     imagen: "../../../../imagenes/paletamangochamoy.png",
-    mensaje: "Quiero paleta de Mango Chamoy"
+    mensaje: "Quiero paleta de Mango con chile y chamoy"
   },
 
   {
@@ -100,6 +110,26 @@ const productos = [
     descripcion: "Con pulpa y trozos de mango",
     imagen: "../../../../imagenes/paletamango.png",
     mensaje: "Quiero paleta de Mango"
+  },
+
+  {
+    nombre: "Piña",
+    precio: 18,
+    tipo: "hielo",
+    activo: true,
+    descripcion: "Con pulpa de piña",
+    imagen: "../../../../imagenes/paletapiñachamoy.png",
+    mensaje: "Quiero paleta de Piña"
+  },
+
+  {
+    nombre: "Piña con chile y chamoy",
+    precio: 18,
+    tipo: "hielo",
+    activo: true,
+    descripcion: "Picosita y refrescante",
+    imagen: "../../../../imagenes/paletapiña.png",
+    mensaje: "Quiero paleta de Piña con chile y chamoy"
   },
 
   {
