@@ -63,7 +63,7 @@ const productos = [
 
   {
     nombre: "Chocolate",
-    precio: 24,
+    precio: 20,
     tipo: "leche",
     activo: true,
     descripcion: "",
