@@ -81,6 +81,16 @@ const productos = [
     mensaje: "Quiero paleta Oreo"
   },
 
+    {
+    nombre: "Frutos Rojos",
+    precio: 22,
+    tipo: "leche",
+    activo: true,
+    descripcion: "Deliciosa mezcla de frutos rojos",
+    imagen: "../../../../imagenes/paletafrutos.png",
+    mensaje: "Quiero paleta Frutos Rojos"
+  },
+
   // HIELO
   {
     nombre: "Mango con chile y chamoy",
