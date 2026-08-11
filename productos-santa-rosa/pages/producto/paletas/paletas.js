@@ -118,7 +118,7 @@ const productos = [
     tipo: "hielo",
     activo: true,
     descripcion: "Con pulpa de piña",
-    imagen: "../../../../imagenes/paletapiñachamoy.png",
+    imagen: "../../../../imagenes/paletapina.png",
     mensaje: "Quiero paleta de Piña"
   },
 
@@ -128,7 +128,7 @@ const productos = [
     tipo: "hielo",
     activo: true,
     descripcion: "Picosita y refrescante",
-    imagen: "../../../../imagenes/paletapiña.png",
+    imagen: "../../../../imagenes/paletapinachamoy.png",
     mensaje: "Quiero paleta de Piña con chile y chamoy"
   },
 
