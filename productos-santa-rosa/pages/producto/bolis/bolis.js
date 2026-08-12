@@ -139,7 +139,7 @@ const productos = [
     tipo: "hielo",
     activo: true,
     descripcion: "Picosita y refrescante",
-    imagen: "../../../../imagenes/bolipiñachamoy.png",
+    imagen: "../../../../imagenes/bolipinachamoy.png",
     mensaje: "Quiero boli de Piña con chile y chamoy"
   },
   
