@@ -88,7 +88,7 @@ const productos = [
     precio: 18,
     tipo: "hielo",
     activo: true,
-    descripcion: "Refrescante mezcla de fresa, naranja y papaya",
+    descripcion: "Refrescante limón con pepino",
     imagen: "../../../../imagenes/bolilimonpepino.png",
     mensaje: "Quiero boli Pepino con limón"
   },

@@ -123,6 +123,17 @@ const productos = [
   },
 
   {
+    nombre: "Pepino con limón",
+    precio: 18,
+    tipo: "hielo",
+    activo: true,
+    descripcion: "Refrescante limón con pepino",
+    imagen: "../../../../imagenes/paletapepino.png",
+    mensaje: "Quiero paleta de Pepino con limón"
+  },
+
+
+  {
     nombre: "Piña",
     precio: 18,
     tipo: "hielo",
