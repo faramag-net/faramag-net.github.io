@@ -4,7 +4,7 @@
  * Archivo: constants.js
  * Módulo: Core
  * Descripción: Constantes globales de la aplicación.
- * Versión: 0.1.0
+ * Versión: 0.9.2
  * ==========================================================
  */
 
@@ -12,9 +12,9 @@ const APP = Object.freeze({
 
     NAME: "PDV",
 
-    VERSION: "0.9.1",
+    VERSION: "0.9.2",
 
-    BUILD: "20260805.1152",
+    BUILD: "20260819.1905",
 
     AUTHOR: "Ricardo Magallón",
 
