@@ -3,8 +3,8 @@
  * PDV
  * Archivo: manifest.js
  * Módulo: caja
- * Descripción: Administración de Caja.
- * Versión: 0.6.2
+ * Descripción: Administración básica de Caja.
+ * Versión: 0.9.3
  * ==========================================================
  */
 
@@ -15,7 +15,7 @@ export default {
     title: "Caja",
 
     description:
-        "Administración de caja.",
+        "Apertura, seguimiento y cierre básico de Caja.",
 
     icon: "payments",
 
@@ -25,7 +25,7 @@ export default {
 
     enabled: true,
 
-    version: "0.6.2",
+    version: "0.9.3",
 
     author: "Ricardo Farabundo Magallón Juan-Qui"
 

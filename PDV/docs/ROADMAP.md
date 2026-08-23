@@ -1,3 +1,18 @@
+# ROADMAP
+
+## Prioridad actual
+
+La prioridad del proyecto es disponer de una aplicación WEB funcional lo antes posible, incluso antes de completar toda la serie 0.9.x.
+
+- Ticket físico: posterior.
+- Ticket virtual: requerido para el primer PDV funcional.
+- Dashboard: básico durante 0.9.x y 1.0; mejoras posteriores.
+- Historial visual completo: puede esperar mientras el flujo operativo principal sea funcional.
+
+## 0.9.3
+
+- Caja básica: apertura, seguimiento de ventas, efectivo esperado y cierre.
+
 /**
  * ---------------------------------------------------
  * PDV

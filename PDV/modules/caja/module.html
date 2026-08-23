@@ -1,9 +1,164 @@
-/**
- * ---------------------------------------------------
- * PDV
- * Archivo:
- * Descripción:
- * Versión:
- * Autor:
- * ---------------------------------------------------
- */
+<!--
+==================================================
+PDV
+Archivo: module.html
+Módulo: Caja
+Versión: 0.9.3
+==================================================
+-->
+
+<section class="cash">
+
+    <header class="module-header">
+
+        <h1>Caja</h1>
+
+        <p>
+            Apertura, seguimiento y cierre básico de Caja.
+        </p>
+
+    </header>
+
+    <main class="module-content cash-layout">
+
+        <section class="card" id="cashOpenCard">
+
+            <header class="card-header">
+
+                <h2>Abrir caja</h2>
+
+            </header>
+
+            <div class="form-grid">
+
+                <div class="field">
+
+                    <label for="cashOpeningAmount">
+                        Monto inicial
+                    </label>
+
+                    <input
+                        id="cashOpeningAmount"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value="0">
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        id="btnOpenCash"
+                        type="button">
+
+                        Abrir caja
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="card" id="cashCurrentCard" hidden>
+
+            <header class="card-header">
+
+                <h2>Caja abierta</h2>
+
+                <strong id="cashStatus">
+                    Abierta
+                </strong>
+
+            </header>
+
+            <div class="cash-summary">
+
+                <div>
+                    <span>Monto inicial</span>
+                    <strong id="cashOpeningDisplay">$0.00</strong>
+                </div>
+
+                <div>
+                    <span>Ventas</span>
+                    <strong id="cashSalesDisplay">$0.00</strong>
+                </div>
+
+                <div>
+                    <span>Efectivo esperado</span>
+                    <strong id="cashExpectedDisplay">$0.00</strong>
+                </div>
+
+            </div>
+
+            <p class="cash-note">
+                Por ahora, las ventas completadas se consideran efectivo.
+            </p>
+
+            <div class="cash-close-form">
+
+                <div class="field">
+
+                    <label for="cashClosingAmount">
+                        Efectivo contado al cierre
+                    </label>
+
+                    <input
+                        id="cashClosingAmount"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value="0">
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        id="btnCloseCash"
+                        type="button">
+
+                        Cerrar caja
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="card" id="cashResultCard" hidden>
+
+            <header class="card-header">
+
+                <h2>Último cierre</h2>
+
+            </header>
+
+            <div class="cash-summary">
+
+                <div>
+                    <span>Esperado</span>
+                    <strong id="cashClosedExpected">$0.00</strong>
+                </div>
+
+                <div>
+                    <span>Contado</span>
+                    <strong id="cashClosedAmount">$0.00</strong>
+                </div>
+
+                <div>
+                    <span>Diferencia</span>
+                    <strong id="cashClosedDifference">$0.00</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</section>

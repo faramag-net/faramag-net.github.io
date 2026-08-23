@@ -1,3 +1,19 @@
+# CHANGELOG
+
+## 0.9.3
+
+### Caja básica
+
+- Se implementó el dominio `Cash`.
+- Se agregó repositorio local de Caja.
+- Se implementaron los casos de uso para abrir, consultar y cerrar Caja.
+- Se agregó apertura con monto inicial.
+- Las ventas completadas posteriores a la apertura se consideran efectivo para este MVP.
+- Se calcula efectivo esperado como monto inicial + ventas.
+- Se permite registrar el efectivo contado al cierre y calcular la diferencia.
+- Se mantiene el historial de sesiones de Caja; no se eliminan cierres anteriores.
+- La impresión física de tickets y los métodos de pago adicionales quedan fuera de esta versión.
+
 /**
  * ---------------------------------------------------
  * PDV
