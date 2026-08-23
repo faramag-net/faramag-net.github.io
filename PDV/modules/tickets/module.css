@@ -1,9 +1,167 @@
 /**
- * ---------------------------------------------------
+ * ==========================================================
  * PDV
- * Archivo:
- * Descripción:
- * Versión:
- * Autor:
- * ---------------------------------------------------
+ * Archivo: module.css
+ * Módulo: Tickets
+ * Versión: 0.9.4
+ * ==========================================================
  */
+
+.tickets-layout {
+
+    display: grid;
+
+    gap: var(--spacing-lg);
+
+}
+
+.ticket-selector-card,
+.ticket-preview-card {
+
+    width: 100%;
+
+}
+
+.ticket-selector-card .field {
+
+    max-width: 520px;
+
+}
+
+.ticket-preview {
+
+    display: flex;
+
+    justify-content: center;
+
+    padding: var(--spacing-md);
+
+}
+
+.ticket {
+
+    width: min(100%, 380px);
+
+    padding: 24px;
+
+    border: 1px solid #d9d9d9;
+
+    background: #fff;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    font-family: Arial, sans-serif;
+
+}
+
+.ticket-header {
+
+    text-align: center;
+
+    padding-bottom: 16px;
+
+    border-bottom: 1px dashed #999;
+
+}
+
+.ticket-header h3 {
+
+    margin: 0 0 6px;
+
+    font-size: 22px;
+
+}
+
+.ticket-header p {
+
+    margin: 3px 0;
+
+    font-size: 13px;
+
+}
+
+.ticket-meta {
+
+    padding: 14px 0;
+
+    border-bottom: 1px dashed #999;
+
+    font-size: 13px;
+
+}
+
+.ticket-meta p {
+
+    margin: 5px 0;
+
+}
+
+.ticket-items {
+
+    width: 100%;
+
+    margin: 14px 0;
+
+    border-collapse: collapse;
+
+    font-size: 13px;
+
+}
+
+.ticket-items th,
+.ticket-items td {
+
+    padding: 7px 3px;
+
+    text-align: left;
+
+}
+
+.ticket-items th:nth-child(2),
+.ticket-items td:nth-child(2),
+.ticket-items th:nth-child(3),
+.ticket-items td:nth-child(3) {
+
+    text-align: right;
+
+}
+
+.ticket-total {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    padding-top: 12px;
+
+    border-top: 1px dashed #999;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+}
+
+.ticket-footer {
+
+    margin-top: 20px;
+
+    padding-top: 14px;
+
+    border-top: 1px dashed #999;
+
+    text-align: center;
+
+    font-size: 12px;
+
+}
+
+.ticket-empty {
+
+    padding: 24px;
+
+    text-align: center;
+
+    color: #666;
+
+}

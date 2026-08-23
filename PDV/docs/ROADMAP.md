@@ -1,3 +1,13 @@
+## Prioridad actual — 0.9.x
+
+La prioridad de la serie 0.9.x es disponer de una aplicación WEB funcional lo antes posible.
+
+- 0.9.2 — Ventas integradas con inventario.
+- 0.9.3 — Caja básica.
+- 0.9.4 — Ticket virtual.
+- Impresión física de tickets: posterior a 1.0.0.
+- Dashboard avanzado: posterior a 1.0.0.
+
 # ROADMAP
 
 ## Prioridad actual

@@ -12,9 +12,9 @@ const APP = Object.freeze({
 
     NAME: "PDV",
 
-    VERSION: "0.9.3",
+    VERSION: "0.9.4",
 
-    BUILD: "20260819.1930",
+    BUILD: "20260822.2026",
 
     AUTHOR: "Ricardo Magallón",
 

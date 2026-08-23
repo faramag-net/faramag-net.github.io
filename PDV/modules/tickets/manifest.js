@@ -2,9 +2,9 @@
  * ==========================================================
  * PDV
  * Archivo: manifest.js
- * Módulo: tickets
- * Descripción: Consulta e impresión de tickets.
- * Versión: 0.6.2
+ * Módulo: Tickets
+ * Descripción: Consulta y visualización de tickets virtuales.
+ * Versión: 0.9.4
  * ==========================================================
  */
 
@@ -15,7 +15,7 @@ export default {
     title: "Tickets",
 
     description:
-        "Consulta e impresión de tickets.",
+        "Consulta y visualización de tickets virtuales.",
 
     icon: "receipt",
 
@@ -25,7 +25,7 @@ export default {
 
     enabled: true,
 
-    version: "0.6.2",
+    version: "0.9.4",
 
     author: "Ricardo Farabundo Magallón Juan-Qui"
 

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.9.4 — Ticket virtual
+
+- Se incorporó la visualización de tickets virtuales a partir de las ventas completadas.
+- El módulo Tickets consulta las transacciones existentes y no crea una segunda fuente de verdad.
+- Se puede seleccionar una venta y visualizar su ticket con fecha, artículos, cantidades y total.
+- No se incorpora todavía impresión física.
+
 ## 0.9.3
 
 ### Caja básica
