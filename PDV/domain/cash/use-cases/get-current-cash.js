@@ -4,7 +4,7 @@
  * Archivo: get-current-cash.js
  * Módulo: Domain / Cash / Use Case
  * Descripción: Obtiene la Caja abierta y calcula su saldo esperado.
- * Versión: 0.9.9
+ * Versión: 0.9.10
  * ==========================================================
  */
 
@@ -42,15 +42,22 @@ export default class GetCurrentCash {
             );
 
         const refundsTotal = transactions
-            .filter(transaction =>
-                transaction.returnCashId === cash.id
-            )
             .reduce(
                 (total, transaction) =>
-                    total + Number(transaction.returnedAmount ?? 0),
+                    total +
+                    (Array.isArray(transaction.returnOperations)
+                        ? transaction.returnOperations
+                            .filter(operation => operation.cashId === cash.id)
+                            .reduce((operationTotal, operation) =>
+                                operationTotal + Number(operation.amount ?? 0), 0)
+                        : (transaction.returnCashId === cash.id
+                            ? Number(transaction.returnedAmount ?? 0)
+                            : 0)),
                 0
             );
 
+        // Se conserva el cálculo de cancelaciones únicamente para registros
+        // históricos creados antes de eliminar Cancelar del flujo de Ventas.
         const cancellationsTotal = transactions
             .filter(transaction =>
                 transaction.cancelCashId === cash.id

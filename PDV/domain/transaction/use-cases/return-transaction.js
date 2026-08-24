@@ -3,8 +3,8 @@
  * PDV
  * Archivo: return-transaction.js
  * Módulo: Domain / Transaction / Use Case
- * Descripción: Registra una devolución TOTAL de una venta.
- * Versión: 0.9.9
+ * Descripción: Registra una devolución parcial o total de una venta.
+ * Versión: 0.9.10
  * ==========================================================
  */
 
@@ -28,7 +28,7 @@ export default class ReturnTransaction {
 
     }
 
-    execute(transactionId) {
+    execute(transactionId, returnItems) {
 
         const transaction =
             this.transactionRepository.findById(transactionId);
@@ -38,11 +38,13 @@ export default class ReturnTransaction {
         }
 
         if (transaction.status !== TRANSACTION_STATUS.COMPLETED) {
-            throw new Error("Solo una venta completada puede tener devoluciones.");
+            throw new Error(
+                "Solo una venta completada puede tener devoluciones."
+            );
         }
 
-        if (transaction.hasReturns()) {
-            throw new Error("La venta ya tiene una devolución registrada.");
+        if (transaction.isFullyReturned()) {
+            throw new Error("La venta ya fue devuelta por completo.");
         }
 
         const currentCash = this.getCurrentCash.execute();
@@ -53,16 +55,44 @@ export default class ReturnTransaction {
             );
         }
 
-        // La devolución es siempre TOTAL: se restituyen todos los artículos
-        // de la venta en una sola operación.
-        transaction.items.forEach(item => {
+        if (!Array.isArray(returnItems) || !returnItems.length) {
+            throw new Error("No se seleccionaron artículos para devolver.");
+        }
 
+        // Validamos toda la operación antes de crear movimientos.
+        const normalized = returnItems.map(item => ({
+            articleId: item.articleId,
+            quantity: Number(item.quantity)
+        }));
+
+        normalized.forEach(item => {
             const article =
                 this.articleRepository.findById(item.articleId);
 
             if (!article) {
-                throw new Error("Uno de los artículos de la venta ya no existe.");
+                throw new Error("Uno de los artículos de la devolución ya no existe.");
             }
+
+            if (article.type !== "INVENTORY") {
+                return;
+            }
+
+            if (!Number.isFinite(item.quantity) || item.quantity <= 0) {
+                throw new Error("La cantidad a devolver debe ser mayor que cero.");
+            }
+        });
+
+        // La entidad valida que no se devuelva más de lo vendido/presente.
+        const operation =
+            transaction.addReturn(
+                normalized,
+                currentCash.cash.id
+            );
+
+        normalized.forEach(item => {
+
+            const article =
+                this.articleRepository.findById(item.articleId);
 
             if (article.type === "INVENTORY") {
                 this.createMovement.execute({
@@ -76,10 +106,12 @@ export default class ReturnTransaction {
 
         });
 
-        transaction.addFullReturn(currentCash.cash.id);
         this.transactionRepository.update(transaction);
 
-        return transaction;
+        return {
+            transaction,
+            operation
+        };
 
     }
 

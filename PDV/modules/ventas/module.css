@@ -3,7 +3,7 @@
  * PDV
  * Archivo: module.css
  * Módulo: Ventas
- * Versión: 0.9.5
+ * Versión: 0.9.10
  * ==========================================================
  */
 
@@ -65,3 +65,24 @@
     margin-bottom: 0.25rem;
 
 }
+
+.sales-return-dialog {
+    width: min(900px, 92vw);
+    border: 0;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+}
+
+.sales-return-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.sales-return-dialog table {
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.sales-return-dialog input {
+    width: 90px;
+}
+

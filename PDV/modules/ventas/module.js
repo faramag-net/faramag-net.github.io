@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Ventas
  * Descripción: Registro y consulta de ventas.
- * Versión: 0.9.5
+ * Versión: 0.9.10
  * ==========================================================
  */
 
@@ -34,9 +34,6 @@ import CompleteTransaction
 
 import GetTransactions
     from "../../domain/transaction/use-cases/get-transactions.js";
-
-import CancelTransaction
-    from "../../domain/transaction/use-cases/cancel-transaction.js";
 
 import ReturnTransaction
     from "../../domain/transaction/use-cases/return-transaction.js";
@@ -96,14 +93,6 @@ const getCurrentCash =
         transactionRepository
     );
 
-const cancelTransaction =
-    new CancelTransaction(
-        transactionRepository,
-        articleRepository,
-        createMovement,
-        getCurrentCash
-    );
-
 const returnTransaction =
     new ReturnTransaction(
         transactionRepository,
@@ -126,6 +115,10 @@ const Ventas = {
     elements: {},
 
     cart: [],
+
+    pendingReturnTransactionId: null,
+
+    pendingReturnItems: [],
 
     async init() {
 
@@ -536,9 +529,7 @@ const Ventas = {
                 document.createElement("td");
 
             status.textContent =
-                transaction.isFullyReturned()
-                    ? "Devuelta"
-                    : this.translateStatus(transaction.status);
+                this.getOperationalStatus(transaction);
 
             row.appendChild(status);
 
@@ -554,22 +545,10 @@ const Ventas = {
                 returnButton.textContent = "Devolver";
                 returnButton.addEventListener(
                     "click",
-                    () => this.returnSale(transaction.id)
+                    () => this.openReturnDialog(transaction.id)
                 );
 
                 actions.appendChild(returnButton);
-
-                const cancelButton =
-                    document.createElement("button");
-
-                cancelButton.type = "button";
-                cancelButton.textContent = "Cancelar";
-                cancelButton.addEventListener(
-                    "click",
-                    () => this.cancelSale(transaction.id)
-                );
-
-                actions.appendChild(cancelButton);
 
             }
 
@@ -580,36 +559,141 @@ const Ventas = {
 
     },
 
-    cancelSale(transactionId) {
+    openReturnDialog(transactionId) {
 
-        try {
+        const transaction =
+            getTransactions.execute()
+                .find(item => item.id === transactionId);
 
-            const confirmed =
-                window.confirm(
-                    "¿Cancelar esta venta? Se conservará el historial y el inventario será compensado."
-                );
+        if (!transaction || transaction.status !== "COMPLETED" || transaction.isFullyReturned()) {
+            return;
+        }
 
-            if (!confirmed) {
+        this.pendingReturnTransactionId = transactionId;
+        this.pendingReturnItems = [];
+
+        const dialog = document.createElement("dialog");
+        dialog.className = "sales-return-dialog";
+
+        const title = document.createElement("h2");
+        title.textContent = `Devolver venta #${transaction.id.slice(0, 8)}`;
+        dialog.appendChild(title);
+
+        const description = document.createElement("p");
+        description.textContent = "Selecciona las cantidades que el cliente devuelve. La venta original permanece en el historial.";
+        dialog.appendChild(description);
+
+        const table = document.createElement("table");
+        const head = document.createElement("thead");
+        const headRow = document.createElement("tr");
+        ["Artículo", "Vendido", "Devuelto", "Pendiente", "Devolver"].forEach(text => {
+            const cell = document.createElement("th");
+            cell.textContent = text;
+            headRow.appendChild(cell);
+        });
+        head.appendChild(headRow);
+        table.appendChild(head);
+
+        const body = document.createElement("tbody");
+
+        transaction.items.forEach(item => {
+            const row = document.createElement("tr");
+            const article = getArticles.execute().find(entry => entry.id === item.articleId);
+            const returned = transaction.returns.find(entry => entry.articleId === item.articleId);
+            const returnedQuantity = Number(returned?.quantity ?? 0);
+            const remaining = Number(item.quantity) - returnedQuantity;
+
+            const name = document.createElement("td");
+            name.textContent = article?.name ?? "Artículo no disponible";
+            row.appendChild(name);
+
+            const sold = document.createElement("td");
+            sold.textContent = String(item.quantity);
+            row.appendChild(sold);
+
+            const already = document.createElement("td");
+            already.textContent = String(returnedQuantity);
+            row.appendChild(already);
+
+            const pending = document.createElement("td");
+            pending.textContent = String(remaining);
+            row.appendChild(pending);
+
+            const inputCell = document.createElement("td");
+            const input = document.createElement("input");
+            input.type = "number";
+            input.min = "0";
+            input.max = String(remaining);
+            input.step = "0.01";
+            input.value = "0";
+            input.dataset.articleId = item.articleId;
+            input.dataset.unitPrice = String(item.unitPrice);
+            input.addEventListener("input", () => {
+                const value = Number(input.value);
+                const safe = Number.isFinite(value) ? Math.min(Math.max(value, 0), remaining) : 0;
+                input.value = String(safe);
+            });
+            inputCell.appendChild(input);
+            row.appendChild(inputCell);
+
+            body.appendChild(row);
+        });
+
+        table.appendChild(body);
+        dialog.appendChild(table);
+
+        const actions = document.createElement("div");
+        actions.className = "form-actions";
+
+        const confirmButton = document.createElement("button");
+        confirmButton.type = "button";
+        confirmButton.textContent = "Registrar devolución";
+        confirmButton.addEventListener("click", () => {
+            const items = [];
+            body.querySelectorAll("input[data-article-id]").forEach(input => {
+                const quantity = Number(input.value);
+                if (quantity > 0) {
+                    items.push({
+                        articleId: input.dataset.articleId,
+                        quantity
+                    });
+                }
+            });
+
+            if (!items.length) {
+                Logger.error("Ventas", "Selecciona al menos un artículo para devolver.");
                 return;
             }
 
-            cancelTransaction.execute(transactionId);
+            this.pendingReturnItems = items;
+            this.returnSale(transactionId);
+        });
 
-            Logger.success(
-                "Ventas",
-                `Venta cancelada: ${transactionId}`
-            );
+        const cancelButton = document.createElement("button");
+        cancelButton.type = "button";
+        cancelButton.textContent = "Cerrar";
+        cancelButton.addEventListener("click", () => this.closeReturnDialog());
 
-            this.renderHistory();
+        actions.appendChild(confirmButton);
+        actions.appendChild(cancelButton);
+        dialog.appendChild(actions);
 
-        } catch (error) {
+        document.body.appendChild(dialog);
+        this.returnDialog = dialog;
+        dialog.showModal();
 
-            Logger.error(
-                "Ventas",
-                error.message
-            );
+    },
 
+    closeReturnDialog() {
+
+        if (this.returnDialog) {
+            this.returnDialog.close();
+            this.returnDialog.remove();
         }
+
+        this.returnDialog = null;
+        this.pendingReturnTransactionId = null;
+        this.pendingReturnItems = [];
 
     },
 
@@ -619,21 +703,25 @@ const Ventas = {
 
             const confirmed =
                 window.confirm(
-                    "¿Registrar la devolución total de los artículos pendientes de esta venta?"
+                    "¿Registrar esta devolución? El importe correspondiente se descontará de la Caja y los artículos regresarán al inventario."
                 );
 
             if (!confirmed) {
                 return;
             }
 
-            const transaction =
-                returnTransaction.execute(transactionId);
+            const result =
+                returnTransaction.execute(
+                    transactionId,
+                    this.pendingReturnItems
+                );
 
             Logger.success(
                 "Ventas",
-                `Devolución registrada: ${transaction.id}`
+                `Devolución registrada: ${result.transaction.id}`
             );
 
+            this.closeReturnDialog();
             this.renderHistory();
 
         } catch (error) {
@@ -673,6 +761,24 @@ const Ventas = {
 
     },
 
+    getOperationalStatus(transaction) {
+
+        if (transaction.status === "COMPLETED") {
+
+            if (transaction.isFullyReturned()) {
+                return "Devuelta";
+            }
+
+            if (transaction.hasReturns()) {
+                return "Devolución parcial";
+            }
+
+        }
+
+        return this.translateStatus(transaction.status);
+
+    },
+
     translateStatus(status) {
 
         switch (status) {
@@ -700,6 +806,7 @@ const Ventas = {
             "Módulo destruido."
         );
 
+        this.closeReturnDialog();
         this.elements = {};
 
         this.cart = [];

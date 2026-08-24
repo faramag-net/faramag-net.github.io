@@ -4,7 +4,7 @@
  * Archivo: transaction.js
  * Módulo: Domain / Transaction
  * Descripción: Entidad del dominio Transacción / Venta.
- * Versión: 0.9.5
+ * Versión: 0.9.10
  * ==========================================================
  */
 
@@ -50,6 +50,16 @@ export default class Transaction {
                 ? data.returns.map(item => ({ ...item }))
                 : [];
 
+        this.returnOperations =
+            Array.isArray(data.returnOperations)
+                ? data.returnOperations.map(operation => ({
+                    ...operation,
+                    items: Array.isArray(operation.items)
+                        ? operation.items.map(item => ({ ...item }))
+                        : []
+                }))
+                : [];
+
         this.returnCashId =
             data.returnCashId ?? null;
 
@@ -61,6 +71,8 @@ export default class Transaction {
         this.returnedAt =
             data.returnedAt ?? null;
 
+        // Se conservan para compatibilidad con ventas antiguas que fueron
+        // canceladas antes de eliminar Cancelar del flujo de Ventas.
         this.cancelCashId =
             data.cancelCashId ?? null;
 
@@ -163,17 +175,11 @@ export default class Transaction {
 
     }
 
-    addFullReturn(cashId) {
+    addReturn(returnItems, cashId) {
 
         if (this.status !== TRANSACTION_STATUS.COMPLETED) {
             throw new Error(
                 "Solo una venta completada puede tener devoluciones."
-            );
-        }
-
-        if (this.hasReturns()) {
-            throw new Error(
-                "La venta ya tiene una devolución registrada."
             );
         }
 
@@ -183,15 +189,93 @@ export default class Transaction {
             );
         }
 
-        this.returns = this.items.map(item => ({
+        if (!Array.isArray(returnItems) || !returnItems.length) {
+            throw new Error(
+                "La devolución debe contener al menos un artículo."
+            );
+        }
+
+        const normalized = returnItems.map(item => ({
             articleId: item.articleId,
             quantity: Number(item.quantity)
         }));
 
+        normalized.forEach(item => {
+
+            if (!item.articleId || !Number.isFinite(item.quantity) || item.quantity <= 0) {
+                throw new Error(
+                    "La cantidad a devolver debe ser mayor que cero."
+                );
+            }
+
+            const sold =
+                this.items.find(entry => entry.articleId === item.articleId);
+
+            if (!sold) {
+                throw new Error(
+                    "El artículo no pertenece a esta venta."
+                );
+            }
+
+            const returned =
+                this.returns.find(entry => entry.articleId === item.articleId);
+
+            const remaining =
+                Number(sold.quantity) - Number(returned?.quantity ?? 0);
+
+            if (item.quantity > remaining) {
+                throw new Error(
+                    `No se pueden devolver más unidades de las pendientes para "${item.articleId}".`
+                );
+            }
+
+        });
+
+        let operationAmount = 0;
+
+        normalized.forEach(item => {
+
+            const sold =
+                this.items.find(entry => entry.articleId === item.articleId);
+
+            const existing =
+                this.returns.find(entry => entry.articleId === item.articleId);
+
+            if (existing) {
+                existing.quantity =
+                    Number(existing.quantity) + Number(item.quantity);
+            } else {
+                this.returns.push({
+                    articleId: item.articleId,
+                    quantity: Number(item.quantity)
+                });
+            }
+
+            operationAmount +=
+                Number(item.quantity) * Number(sold.unitPrice);
+
+        });
+
+        const operation = {
+            id: crypto.randomUUID(),
+            cashId,
+            amount: Number(operationAmount.toFixed(2)),
+            items: normalized.map(item => ({ ...item })),
+            createdAt: new Date().toISOString()
+        };
+
+        this.returnOperations.push(operation);
         this.returnCashId = cashId;
-        this.returnedAmount = this.total;
-        this.returnedAt = new Date().toISOString();
+        this.returnedAmount = Number(
+            this.returns.reduce((total, item) => {
+                const sold = this.items.find(entry => entry.articleId === item.articleId);
+                return total + (Number(item.quantity) * Number(sold?.unitPrice ?? 0));
+            }, 0).toFixed(2)
+        );
+        this.returnedAt = operation.createdAt;
         this.touch();
+
+        return operation;
 
     }
 
@@ -273,6 +357,10 @@ export default class Transaction {
             cashId: this.cashId,
             paymentMethod: this.paymentMethod,
             returns: this.returns.map(item => ({ ...item })),
+            returnOperations: this.returnOperations.map(operation => ({
+                ...operation,
+                items: operation.items.map(item => ({ ...item }))
+            })),
             returnCashId: this.returnCashId,
             returnedAmount: this.returnedAmount,
             returnedAt: this.returnedAt,

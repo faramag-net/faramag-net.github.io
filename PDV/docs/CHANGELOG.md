@@ -124,15 +124,13 @@ El ticket de la primera versión funcional será virtual.
 - La validación de existencias ocurre antes de registrar movimientos.
 - El monto inicial de Caja sigue siendo un fondo inicial manual; las ventas se suman automáticamente al efectivo esperado.
 
-## 0.9.6 — Cancelaciones y devoluciones en Ventas
+## 0.9.6 — Devoluciones en Ventas
 
-- Se agregaron los casos de uso `CancelTransaction` y `ReturnTransaction` dentro del dominio Transaction.
-- Cancelar una venta completada conserva la transacción y genera movimientos `ENTRY` compensatorios.
-- Las devoluciones conservan la venta original y generan movimientos `ENTRY`.
-- Se soportan devoluciones totales y parciales a nivel de caso de uso.
-- La interfaz de Ventas incorpora acciones para cancelar y devolver ventas.
-- No se crean módulos independientes para cancelaciones o devoluciones; se mantienen como operaciones de Ventas.
-- Los movimientos compensatorios pueden conservar la referencia de la transacción y el motivo.
+- Se agregó el caso de uso `ReturnTransaction` dentro del dominio Transaction.
+- Las devoluciones conservan la transacción original y generan movimientos `ENTRY` compensatorios.
+- Se soportan devoluciones totales y parciales.
+- No se crea un módulo independiente de devoluciones; permanece como operación de Ventas.
+- Las cancelaciones existentes de versiones anteriores se conservan como datos históricos.
 
 ## 0.9.7 - Historial básico
 
@@ -147,3 +145,13 @@ El ticket de la primera versión funcional será virtual.
 
 - Protección contra IDs duplicados al guardar artículos, ventas y movimientos.
 - Historial muestra Devuelta y Devolución parcial sin alterar el estado histórico COMPLETED de la Transaction.
+
+## 0.9.10 — Devoluciones por línea y simplificación de Ventas
+
+- Cancelar deja de ser una operación disponible sobre una venta completada.
+- Quitar artículos permanece como operación del carrito antes de completar la venta.
+- Después de completar una venta, las correcciones se realizan mediante devoluciones parciales o totales.
+- Una devolución puede afectar una o varias líneas y cantidades pendientes de la misma venta.
+- Cada devolución conserva su Caja, importe, artículos y fecha.
+- Caja descuenta cada operación de devolución según la sesión en la que se realiza.
+- La venta original permanece como hecho histórico y su estado operativo se deriva de las cantidades devueltas.

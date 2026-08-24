@@ -62,9 +62,10 @@ Antes de completar todas las funcionalidades previstas para 1.0.0, la serie 0.9.
 
 ## 0.9.6
 
-- Cancelaciones y devoluciones como operaciones del módulo Ventas.
-- Casos de uso de Transaction para cancelar y devolver.
+- Devoluciones como operación del módulo Ventas.
+- Caso de uso de Transaction para devolver.
 - Movimientos ENTRY compensatorios sin borrar hechos históricos.
+- Las cancelaciones antiguas se conservan únicamente como datos históricos.
 
 ## 0.9.7
 
@@ -82,4 +83,14 @@ Antes de completar todas las funcionalidades previstas para 1.0.0, la serie 0.9.
 
 ## 0.9.9
 
-Ajustes de operación antes de la revisión final de 0.9.x: devoluciones/cancelaciones totales, impacto básico en Caja e integridad de códigos/IDs.
+Ajustes de operación antes de la revisión final de 0.9.x: impacto básico en Caja e integridad de códigos/IDs.
+
+## 0.9.10
+
+- La cancelación deja de ser una operación de una venta completada.
+- Antes de completar la venta, el carrito permite quitar artículos.
+- Después de completar la venta, las correcciones se realizan mediante devoluciones parciales o totales.
+- Una devolución puede afectar una o varias líneas y cantidades pendientes de la misma venta.
+- Caja descuenta cada operación de devolución según la sesión en la que se realiza.
+- La venta original permanece como hecho histórico.
+
