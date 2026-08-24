@@ -3,8 +3,8 @@
  * PDV
  * Archivo: return-transaction.js
  * Módulo: Domain / Transaction / Use Case
- * Descripción: Registra una devolución total o parcial mediante movimientos ENTRY.
- * Versión: 0.9.6
+ * Descripción: Registra una devolución TOTAL de una venta.
+ * Versión: 0.9.9
  * ==========================================================
  */
 
@@ -14,15 +14,21 @@ import {
 
 export default class ReturnTransaction {
 
-    constructor(transactionRepository, articleRepository, createMovement) {
+    constructor(
+        transactionRepository,
+        articleRepository,
+        createMovement,
+        getCurrentCash
+    ) {
 
         this.transactionRepository = transactionRepository;
         this.articleRepository = articleRepository;
         this.createMovement = createMovement;
+        this.getCurrentCash = getCurrentCash;
 
     }
 
-    execute(transactionId, requestedItems = null) {
+    execute(transactionId) {
 
         const transaction =
             this.transactionRepository.findById(transactionId);
@@ -35,13 +41,21 @@ export default class ReturnTransaction {
             throw new Error("Solo una venta completada puede tener devoluciones.");
         }
 
-        const itemsToReturn = this.normalizeItems(transaction, requestedItems);
-
-        if (!itemsToReturn.length) {
-            throw new Error("No hay artículos pendientes de devolución.");
+        if (transaction.hasReturns()) {
+            throw new Error("La venta ya tiene una devolución registrada.");
         }
 
-        itemsToReturn.forEach(item => {
+        const currentCash = this.getCurrentCash.execute();
+
+        if (!currentCash) {
+            throw new Error(
+                "No hay una Caja abierta. Abre la Caja antes de registrar una devolución."
+            );
+        }
+
+        // La devolución es siempre TOTAL: se restituyen todos los artículos
+        // de la venta en una sola operación.
+        transaction.items.forEach(item => {
 
             const article =
                 this.articleRepository.findById(item.articleId);
@@ -54,7 +68,7 @@ export default class ReturnTransaction {
                 this.createMovement.execute({
                     articleId: article.id,
                     type: "ENTRY",
-                    quantity: item.quantity,
+                    quantity: Number(item.quantity),
                     transactionId: transaction.id,
                     reason: "RETURN"
                 });
@@ -62,66 +76,10 @@ export default class ReturnTransaction {
 
         });
 
-        transaction.addReturn(itemsToReturn);
+        transaction.addFullReturn(currentCash.cash.id);
         this.transactionRepository.update(transaction);
 
         return transaction;
-
-    }
-
-    normalizeItems(transaction, requestedItems) {
-
-        const requested =
-            Array.isArray(requestedItems) && requestedItems.length
-                ? requestedItems
-                : transaction.items.map(item => ({
-                    articleId: item.articleId,
-                    quantity: item.quantity
-                }));
-
-        const returnedByArticle =
-            new Map(
-                transaction.returns.map(item => [
-                    item.articleId,
-                    Number(item.quantity)
-                ])
-            );
-
-        const soldByArticle =
-            new Map(
-                transaction.items.map(item => [
-                    item.articleId,
-                    Number(item.quantity)
-                ])
-            );
-
-        return requested.map(item => {
-
-            const sold = soldByArticle.get(item.articleId) ?? 0;
-            const alreadyReturned = returnedByArticle.get(item.articleId) ?? 0;
-            const remaining = sold - alreadyReturned;
-            const quantity = Number(item.quantity);
-
-            if (!sold) {
-                throw new Error("El artículo no pertenece a la venta.");
-            }
-
-            if (quantity <= 0) {
-                throw new Error("La cantidad a devolver debe ser mayor que cero.");
-            }
-
-            if (quantity > remaining) {
-                throw new Error(
-                    `No se pueden devolver ${quantity} unidades. Disponibles para devolución: ${remaining}.`
-                );
-            }
-
-            return {
-                articleId: item.articleId,
-                quantity
-            };
-
-        });
 
     }
 

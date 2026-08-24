@@ -79,3 +79,7 @@ Antes de completar todas las funcionalidades previstas para 1.0.0, la serie 0.9.
 - [x] Estado visible derivado de devoluciones en Historial.
 - [x] Mantener Transaction COMPLETED como hecho original; la etiqueta operativa se deriva de devoluciones.
 - [ ] Revisión general del flujo operativo.
+
+## 0.9.9
+
+Ajustes de operación antes de la revisión final de 0.9.x: devoluciones/cancelaciones totales, impacto básico en Caja e integridad de códigos/IDs.

@@ -90,24 +90,26 @@ const getTransactions =
         transactionRepository
     );
 
+const getCurrentCash =
+    new GetCurrentCash(
+        cashRepository,
+        transactionRepository
+    );
+
 const cancelTransaction =
     new CancelTransaction(
         transactionRepository,
         articleRepository,
-        createMovement
+        createMovement,
+        getCurrentCash
     );
 
 const returnTransaction =
     new ReturnTransaction(
         transactionRepository,
         articleRepository,
-        createMovement
-    );
-
-const getCurrentCash =
-    new GetCurrentCash(
-        cashRepository,
-        transactionRepository
+        createMovement,
+        getCurrentCash
     );
 
 const completeTransaction =

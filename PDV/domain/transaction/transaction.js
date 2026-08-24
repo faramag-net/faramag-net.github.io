@@ -50,6 +50,23 @@ export default class Transaction {
                 ? data.returns.map(item => ({ ...item }))
                 : [];
 
+        this.returnCashId =
+            data.returnCashId ?? null;
+
+        this.returnedAmount =
+            data.returnedAmount === null || data.returnedAmount === undefined
+                ? null
+                : Number(data.returnedAmount);
+
+        this.returnedAt =
+            data.returnedAt ?? null;
+
+        this.cancelCashId =
+            data.cancelCashId ?? null;
+
+        this.cancelledAt =
+            data.cancelledAt ?? null;
+
         this.createdAt =
             data.createdAt ?? new Date().toISOString();
 
@@ -105,6 +122,13 @@ export default class Transaction {
 
         this.total = this.calculateTotal();
 
+        if (this.returnedAmount !== null &&
+            (!Number.isFinite(this.returnedAmount) || this.returnedAmount < 0)) {
+            throw new Error(
+                "El monto devuelto no es válido."
+            );
+        }
+
     }
 
     calculateTotal() {
@@ -139,7 +163,7 @@ export default class Transaction {
 
     }
 
-    addReturn(items) {
+    addFullReturn(cashId) {
 
         if (this.status !== TRANSACTION_STATUS.COMPLETED) {
             throw new Error(
@@ -147,24 +171,26 @@ export default class Transaction {
             );
         }
 
-        items.forEach(item => {
+        if (this.hasReturns()) {
+            throw new Error(
+                "La venta ya tiene una devolución registrada."
+            );
+        }
 
-            const existing =
-                this.returns.find(
-                    returned => returned.articleId === item.articleId
-                );
+        if (!cashId) {
+            throw new Error(
+                "La devolución debe estar asociada a una Caja abierta."
+            );
+        }
 
-            if (existing) {
-                existing.quantity += Number(item.quantity);
-            } else {
-                this.returns.push({
-                    articleId: item.articleId,
-                    quantity: Number(item.quantity)
-                });
-            }
+        this.returns = this.items.map(item => ({
+            articleId: item.articleId,
+            quantity: Number(item.quantity)
+        }));
 
-        });
-
+        this.returnCashId = cashId;
+        this.returnedAmount = this.total;
+        this.returnedAt = new Date().toISOString();
         this.touch();
 
     }
@@ -191,6 +217,20 @@ export default class Transaction {
             return Number(returned?.quantity ?? 0) >= Number(item.quantity);
 
         });
+
+    }
+
+    registerCancellationCash(cashId) {
+
+        if (!cashId) {
+            throw new Error(
+                "La cancelación debe estar asociada a una Caja abierta."
+            );
+        }
+
+        this.cancelCashId = cashId;
+        this.cancelledAt = new Date().toISOString();
+        this.touch();
 
     }
 
@@ -233,6 +273,11 @@ export default class Transaction {
             cashId: this.cashId,
             paymentMethod: this.paymentMethod,
             returns: this.returns.map(item => ({ ...item })),
+            returnCashId: this.returnCashId,
+            returnedAmount: this.returnedAmount,
+            returnedAt: this.returnedAt,
+            cancelCashId: this.cancelCashId,
+            cancelledAt: this.cancelledAt,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt
         };

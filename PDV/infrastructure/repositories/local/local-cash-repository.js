@@ -28,6 +28,12 @@ export default class LocalCashRepository
         const cashes =
             Database.get(DB_KEYS.CASH) ?? [];
 
+        if (cashes.some(item => item.id === cash.id)) {
+            throw new Error(
+                "El ID de Caja ya existe."
+            );
+        }
+
         cashes.push(
             cash.toJSON()
         );

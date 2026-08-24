@@ -14,11 +14,17 @@ import {
 
 export default class CancelTransaction {
 
-    constructor(transactionRepository, articleRepository, createMovement) {
+    constructor(
+        transactionRepository,
+        articleRepository,
+        createMovement,
+        getCurrentCash
+    ) {
 
         this.transactionRepository = transactionRepository;
         this.articleRepository = articleRepository;
         this.createMovement = createMovement;
+        this.getCurrentCash = getCurrentCash;
 
     }
 
@@ -36,7 +42,15 @@ export default class CancelTransaction {
         }
 
         if (transaction.hasReturns()) {
-            throw new Error("Una venta con devoluciones no puede cancelarse.");
+            throw new Error("Una venta con devolución no puede cancelarse.");
+        }
+
+        const currentCash = this.getCurrentCash.execute();
+
+        if (!currentCash) {
+            throw new Error(
+                "No hay una Caja abierta. Abre la Caja antes de cancelar una venta."
+            );
         }
 
         transaction.items.forEach(item => {
@@ -61,6 +75,7 @@ export default class CancelTransaction {
         });
 
         transaction.cancel();
+        transaction.registerCancellationCash(currentCash.cash.id);
         this.transactionRepository.update(transaction);
 
         return transaction;

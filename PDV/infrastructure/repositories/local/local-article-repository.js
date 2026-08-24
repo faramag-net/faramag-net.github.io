@@ -32,7 +32,18 @@ export default class LocalArticleRepository
 
         if (articles.some(item => item.id === article.id)) {
             throw new Error(
-                "El artículo ya existe."
+                "El ID del artículo ya existe."
+            );
+        }
+
+        const normalizedCode =
+            article.code.trim().toLowerCase();
+
+        if (articles.some(item =>
+            String(item.code).trim().toLowerCase() === normalizedCode
+        )) {
+            throw new Error(
+                `El código "${article.code}" ya existe.`
             );
         }
 
@@ -96,6 +107,21 @@ export default class LocalArticleRepository
                 "El artículo no existe."
             );
 
+        }
+
+        const normalizedCode =
+            article.code.trim().toLowerCase();
+
+        const duplicateCode =
+            articles.some((item, itemIndex) =>
+                itemIndex !== index &&
+                String(item.code).trim().toLowerCase() === normalizedCode
+            );
+
+        if (duplicateCode) {
+            throw new Error(
+                `El código "${article.code}" ya existe.`
+            );
         }
 
         articles[index] =

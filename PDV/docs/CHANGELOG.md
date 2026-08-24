@@ -1,3 +1,12 @@
+## 0.9.9 — Ajustes de operación
+
+- Devoluciones únicamente totales.
+- Cancelaciones únicamente totales.
+- Devoluciones y cancelaciones requieren Caja abierta para registrar el ajuste de efectivo.
+- El monto esperado de Caja descuenta devoluciones y cancelaciones realizadas en la sesión actual.
+- Validación de códigos de artículo únicos, sin distinguir mayúsculas/minúsculas.
+- Validación de IDs duplicados en persistencia de Caja.
+
 # CHANGELOG
 
 ## 0.9.4 — Ticket virtual
