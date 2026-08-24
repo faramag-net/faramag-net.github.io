@@ -4,7 +4,7 @@
  * Archivo: manifest.js
  * Módulo: Tickets
  * Descripción: Consulta y visualización de tickets virtuales.
- * Versión: 0.9.4
+ * Versión: 0.9.5
  * ==========================================================
  */
 

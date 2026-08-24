@@ -4,7 +4,7 @@
  * Archivo: open-cash.js
  * Módulo: Domain / Cash / Use Case
  * Descripción: Abre una nueva sesión de Caja.
- * Versión: 0.9.3
+ * Versión: 0.9.5
  * ==========================================================
  */
 

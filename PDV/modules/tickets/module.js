@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Tickets
  * Descripción: Consulta y visualización de tickets virtuales.
- * Versión: 0.9.4
+ * Versión: 0.9.5
  * ==========================================================
  */
 
@@ -20,6 +20,9 @@ import LocalArticleRepository
 import GetTransactions
     from "../../domain/transaction/use-cases/get-transactions.js";
 
+import LocalCashRepository
+    from "../../infrastructure/repositories/local/local-cash-repository.js";
+
 import LocalTransactionRepository
     from "../../infrastructure/repositories/local/local-transaction-repository.js";
 
@@ -28,6 +31,9 @@ const articleRepository =
 
 const transactionRepository =
     new LocalTransactionRepository();
+
+const cashRepository =
+    new LocalCashRepository();
 
 const getArticles =
     new GetArticles(
@@ -237,6 +243,29 @@ const Tickets = {
         status.textContent = "Estado: Completada";
 
         meta.appendChild(status);
+
+        const payment =
+            document.createElement("p");
+
+        payment.textContent =
+            `Pago: ${transaction.paymentMethod === "CASH" ? "Efectivo" : "No especificado"}`;
+
+        meta.appendChild(payment);
+
+        if (transaction.cashId) {
+
+            const cash =
+                cashRepository.findById(transaction.cashId);
+
+            const cashLine =
+                document.createElement("p");
+
+            cashLine.textContent =
+                `Caja: #${transaction.cashId.slice(0, 8)}${cash ? "" : " (registro no disponible)"}`;
+
+            meta.appendChild(cashLine);
+
+        }
 
         ticket.appendChild(header);
         ticket.appendChild(meta);

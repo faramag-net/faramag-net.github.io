@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Ventas
  * Descripción: Registro y consulta de ventas.
- * Versión: 0.9.2
+ * Versión: 0.9.5
  * ==========================================================
  */
 
@@ -35,6 +35,12 @@ import CompleteTransaction
 import GetTransactions
     from "../../domain/transaction/use-cases/get-transactions.js";
 
+import GetCurrentCash
+    from "../../domain/cash/use-cases/get-current-cash.js";
+
+import LocalCashRepository
+    from "../../infrastructure/repositories/local/local-cash-repository.js";
+
 import LocalTransactionRepository
     from "../../infrastructure/repositories/local/local-transaction-repository.js";
 
@@ -46,6 +52,9 @@ const movementRepository =
 
 const transactionRepository =
     new LocalTransactionRepository();
+
+const cashRepository =
+    new LocalCashRepository();
 
 const getArticles =
     new GetArticles(
@@ -70,17 +79,24 @@ const createTransaction =
         getInventory
     );
 
+const getTransactions =
+    new GetTransactions(
+        transactionRepository
+    );
+
+const getCurrentCash =
+    new GetCurrentCash(
+        cashRepository,
+        transactionRepository
+    );
+
 const completeTransaction =
     new CompleteTransaction(
         transactionRepository,
         articleRepository,
         createMovement,
-        getInventory
-    );
-
-const getTransactions =
-    new GetTransactions(
-        transactionRepository
+        getInventory,
+        getCurrentCash
     );
 
 const Ventas = {
@@ -390,6 +406,17 @@ const Ventas = {
 
                 throw new Error(
                     "El carrito está vacío."
+                );
+
+            }
+
+            const currentCash =
+                getCurrentCash.execute();
+
+            if (!currentCash) {
+
+                throw new Error(
+                    "No hay una Caja abierta. Abre la Caja antes de registrar una venta."
                 );
 
             }

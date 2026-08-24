@@ -4,7 +4,7 @@
  * Archivo: create-transaction.js
  * Módulo: Domain / Transaction / Use Case
  * Descripción: Crea una venta en estado DRAFT.
- * Versión: 0.9.2
+ * Versión: 0.9.5
  * ==========================================================
  */
 

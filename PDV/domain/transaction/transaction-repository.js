@@ -4,7 +4,7 @@
  * Archivo: transaction-repository.js
  * Módulo: Domain / Transaction
  * Descripción: Contrato del repositorio de transacciones.
- * Versión: 0.9.2
+ * Versión: 0.9.5
  * ==========================================================
  */
 

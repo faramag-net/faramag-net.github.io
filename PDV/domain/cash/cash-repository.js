@@ -4,7 +4,7 @@
  * Archivo: cash-repository.js
  * Módulo: Domain / Repository
  * Descripción: Contrato del repositorio de Caja.
- * Versión: 0.9.3
+ * Versión: 0.9.5
  * ==========================================================
  */
 

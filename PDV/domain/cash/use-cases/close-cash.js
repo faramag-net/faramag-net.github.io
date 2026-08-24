@@ -4,7 +4,7 @@
  * Archivo: close-cash.js
  * Módulo: Domain / Cash / Use Case
  * Descripción: Cierra la Caja y registra el efectivo contado.
- * Versión: 0.9.3
+ * Versión: 0.9.5
  * ==========================================================
  */
 

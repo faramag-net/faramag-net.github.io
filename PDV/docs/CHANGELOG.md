@@ -103,3 +103,14 @@ Construir el primer ciclo funcional de Ventas e integrarlo con Inventario.
 La prioridad de la serie 0.9.x es producir una aplicación WEB funcional lo antes posible.
 Los tickets físicos y un Dashboard avanzado quedan para etapas posteriores.
 El ticket de la primera versión funcional será virtual.
+
+
+## 0.9.5 — Integración Caja / Ventas
+
+- Las ventas completadas requieren una Caja abierta.
+- Las transacciones completadas guardan `cashId` y `paymentMethod`.
+- Por ahora el único método de pago es efectivo (`CASH`).
+- Caja calcula sus ventas únicamente por la sesión de Caja asociada.
+- El ticket virtual muestra método de pago y Caja.
+- La validación de existencias ocurre antes de registrar movimientos.
+- El monto inicial de Caja sigue siendo un fondo inicial manual; las ventas se suman automáticamente al efectivo esperado.

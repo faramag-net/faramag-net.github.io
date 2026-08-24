@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Caja
  * Descripción: Administración básica de Caja.
- * Versión: 0.9.3
+ * Versión: 0.9.5
  * ==========================================================
  */
 

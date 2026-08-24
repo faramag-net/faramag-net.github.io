@@ -4,7 +4,7 @@
  * Archivo: cash.js
  * Módulo: Domain / Cash
  * Descripción: Entidad de sesión de Caja.
- * Versión: 0.9.3
+ * Versión: 0.9.5
  * ==========================================================
  */
 

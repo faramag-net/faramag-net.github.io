@@ -4,7 +4,7 @@
  * Archivo: manifest.js
  * Módulo: ventas
  * Descripción: Registro y consulta de ventas.
- * Versión: 0.9.2
+ * Versión: 0.9.5
  * ==========================================================
  */
 

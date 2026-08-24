@@ -5,6 +5,7 @@ La prioridad de la serie 0.9.x es disponer de una aplicación WEB funcional lo a
 - 0.9.2 — Ventas integradas con inventario.
 - 0.9.3 — Caja básica.
 - 0.9.4 — Ticket virtual.
+- 0.9.5 — Integración Caja / Ventas.
 - Impresión física de tickets: posterior a 1.0.0.
 - Dashboard avanzado: posterior a 1.0.0.
 
@@ -53,7 +54,8 @@ Antes de completar todas las funcionalidades previstas para 1.0.0, la serie 0.9.
 |---|---|
 | v0.9.1 | Artículos + Movement + Inventario funcional |
 | v0.9.2 | Ventas + integración Ventas → Movement → Inventory |
-| siguiente | Caja básica y flujo operativo |
-| siguiente | Ticket virtual |
+| v0.9.3 | Caja básica y flujo operativo |
+| v0.9.4 | Ticket virtual |
+| v0.9.5 | Integración Caja / Ventas |
 | 1.0.0 | PDV WEB funcional consolidado |
 | posterior a 1.0.0 | Dashboard avanzado, impresión física y mejoras no esenciales |
