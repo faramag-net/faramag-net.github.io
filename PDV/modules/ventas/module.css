@@ -86,3 +86,26 @@
     width: 90px;
 }
 
+
+
+.sales-checkout-dialog {
+    width: min(420px, calc(100vw - 2rem));
+    border: 0;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.sales-checkout-dialog::backdrop {
+    background: rgb(0 0 0 / 45%);
+}
+
+.checkout-total {
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.checkout-change {
+    display: block;
+    margin-top: .75rem;
+    font-size: 1.1rem;
+}

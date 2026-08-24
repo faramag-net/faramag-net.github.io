@@ -252,6 +252,20 @@ const Tickets = {
 
         meta.appendChild(payment);
 
+        if (transaction.paymentReceived !== null && transaction.paymentReceived !== undefined) {
+
+            const received = document.createElement("p");
+            received.textContent =
+                `Recibido: ${this.formatCurrency(transaction.paymentReceived)}`;
+            meta.appendChild(received);
+
+            const change = document.createElement("p");
+            change.textContent =
+                `Cambio: ${this.formatCurrency(transaction.change ?? 0)}`;
+            meta.appendChild(change);
+
+        }
+
         if (transaction.cashId) {
 
             const cash =

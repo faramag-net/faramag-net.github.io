@@ -85,7 +85,7 @@ Antes de completar todas las funcionalidades previstas para 1.0.0, la serie 0.9.
 
 Ajustes de operación antes de la revisión final de 0.9.x: impacto básico en Caja e integridad de códigos/IDs.
 
-## 0.9.10
+## 0.9.11
 
 - La cancelación deja de ser una operación de una venta completada.
 - Antes de completar la venta, el carrito permite quitar artículos.

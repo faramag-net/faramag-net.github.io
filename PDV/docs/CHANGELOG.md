@@ -1,3 +1,11 @@
+# 0.9.11 — Cobro integrado a Ventas
+
+- Ventas ahora abre un flujo de cobro antes de completar la Transaction.
+- El cobro inicial de 1.0 se maneja con efectivo.
+- Se registra monto recibido y cambio en la Transaction.
+- El ticket virtual muestra pago, recibido y cambio.
+- La venta solo se completa después de confirmar el cobro.
+
 ## 0.9.9 — Ajustes de operación
 
 - Devoluciones únicamente totales.
@@ -146,7 +154,7 @@ El ticket de la primera versión funcional será virtual.
 - Protección contra IDs duplicados al guardar artículos, ventas y movimientos.
 - Historial muestra Devuelta y Devolución parcial sin alterar el estado histórico COMPLETED de la Transaction.
 
-## 0.9.10 — Devoluciones por línea y simplificación de Ventas
+## 0.9.11 — Devoluciones por línea y simplificación de Ventas
 
 - Cancelar deja de ser una operación disponible sobre una venta completada.
 - Quitar artículos permanece como operación del carrito antes de completar la venta.

@@ -32,7 +32,7 @@ export default class CompleteTransaction {
 
     }
 
-    execute(transactionId) {
+    execute(transactionId, payment = {}) {
 
         const transaction =
             this.transactionRepository.findById(transactionId);
@@ -105,15 +105,18 @@ export default class CompleteTransaction {
 
         });
 
-        // La venta queda vinculada a la sesión de Caja y al método de pago.
+        // La venta queda vinculada a la sesión de Caja y al cobro.
         transaction.cashId = currentCash.cash.id;
-        transaction.paymentMethod = "CASH";
+        transaction.paymentMethod = payment.method ?? "CASH";
+        transaction.paymentReceived = Number(payment.received);
+
+        // Se valida el cobro antes de crear cualquier movimiento para evitar
+        // una venta parcialmente registrada si el efectivo es insuficiente.
+        transaction.complete();
 
         movementData.forEach(data => {
             this.createMovement.execute(data);
         });
-
-        transaction.complete();
 
         this.transactionRepository.update(transaction);
 

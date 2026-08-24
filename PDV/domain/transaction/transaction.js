@@ -45,6 +45,16 @@ export default class Transaction {
         this.paymentMethod =
             data.paymentMethod ?? null;
 
+        this.paymentReceived =
+            data.paymentReceived === null || data.paymentReceived === undefined
+                ? null
+                : Number(data.paymentReceived);
+
+        this.change =
+            data.change === null || data.change === undefined
+                ? null
+                : Number(data.change);
+
         this.returns =
             Array.isArray(data.returns)
                 ? data.returns.map(item => ({ ...item }))
@@ -133,6 +143,20 @@ export default class Transaction {
         }
 
         this.total = this.calculateTotal();
+
+        if (this.paymentReceived !== null &&
+            (!Number.isFinite(this.paymentReceived) || this.paymentReceived < 0)) {
+            throw new Error(
+                "El monto recibido no es válido."
+            );
+        }
+
+        if (this.change !== null &&
+            (!Number.isFinite(this.change) || this.change < 0)) {
+            throw new Error(
+                "El cambio no es válido."
+            );
+        }
 
         if (this.returnedAmount !== null &&
             (!Number.isFinite(this.returnedAmount) || this.returnedAmount < 0)) {
@@ -338,6 +362,24 @@ export default class Transaction {
             );
         }
 
+        if (this.paymentMethod === PAYMENT_METHOD.CASH) {
+            if (this.paymentReceived === null) {
+                throw new Error(
+                    "La venta debe registrar el monto recibido."
+                );
+            }
+
+            if (this.paymentReceived < this.total) {
+                throw new Error(
+                    "El efectivo recibido es insuficiente."
+                );
+            }
+
+            this.change = Number(
+                (this.paymentReceived - this.total).toFixed(2)
+            );
+        }
+
         this.status = TRANSACTION_STATUS.COMPLETED;
         this.touch();
 
@@ -356,6 +398,8 @@ export default class Transaction {
             total: this.total,
             cashId: this.cashId,
             paymentMethod: this.paymentMethod,
+            paymentReceived: this.paymentReceived,
+            change: this.change,
             returns: this.returns.map(item => ({ ...item })),
             returnOperations: this.returnOperations.map(operation => ({
                 ...operation,

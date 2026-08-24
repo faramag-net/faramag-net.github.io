@@ -418,42 +418,151 @@ const Ventas = {
         try {
 
             if (!this.cart.length) {
-
                 throw new Error(
                     "El carrito está vacío."
                 );
-
             }
 
             const currentCash =
                 getCurrentCash.execute();
 
             if (!currentCash) {
-
                 throw new Error(
-                    "No hay una Caja abierta. Abre la Caja antes de registrar una venta."
+                    "No hay una Caja abierta. Abre la Caja antes de cobrar."
                 );
+            }
 
+            this.openCheckoutDialog();
+
+        } catch (error) {
+
+            Logger.error(
+                "Ventas",
+                error.message
+            );
+
+        }
+
+    },
+
+    openCheckoutDialog() {
+
+        const total = this.cart.reduce(
+            (sum, item) =>
+                sum + Number(item.quantity) * Number(item.unitPrice),
+            0
+        );
+
+        const dialog = document.createElement("dialog");
+        dialog.className = "sales-checkout-dialog";
+
+        const title = document.createElement("h2");
+        title.textContent = "Cobrar venta";
+        dialog.appendChild(title);
+
+        const totalLine = document.createElement("p");
+        totalLine.textContent = `Total: ${this.formatCurrency(total)}`;
+        totalLine.className = "checkout-total";
+        dialog.appendChild(totalLine);
+
+        const field = document.createElement("div");
+        field.className = "field";
+
+        const label = document.createElement("label");
+        label.textContent = "Efectivo recibido";
+        label.htmlFor = "checkoutReceived";
+        field.appendChild(label);
+
+        const input = document.createElement("input");
+        input.id = "checkoutReceived";
+        input.type = "number";
+        input.min = total.toFixed(2);
+        input.step = "0.01";
+        input.value = total.toFixed(2);
+        field.appendChild(input);
+
+        const change = document.createElement("strong");
+        change.className = "checkout-change";
+        change.textContent = `Cambio: ${this.formatCurrency(0)}`;
+        field.appendChild(change);
+
+        dialog.appendChild(field);
+
+        const actions = document.createElement("div");
+        actions.className = "form-actions";
+
+        const confirm = document.createElement("button");
+        confirm.type = "button";
+        confirm.textContent = "Finalizar venta";
+
+        const cancel = document.createElement("button");
+        cancel.type = "button";
+        cancel.textContent = "Volver al carrito";
+
+        const updateChange = () => {
+            const received = Number(input.value);
+            const difference = received - total;
+            change.textContent =
+                `Cambio: ${this.formatCurrency(Math.max(0, difference))}`;
+            confirm.disabled = !Number.isFinite(received) || received < total;
+        };
+
+        input.addEventListener("input", updateChange);
+        confirm.addEventListener("click", () => {
+            this.finalizeCheckout(dialog, total, Number(input.value));
+        });
+        cancel.addEventListener("click", () => {
+            dialog.close();
+            dialog.remove();
+        });
+
+        actions.appendChild(confirm);
+        actions.appendChild(cancel);
+        dialog.appendChild(actions);
+
+        document.body.appendChild(dialog);
+        this.checkoutDialog = dialog;
+        dialog.showModal();
+        input.focus();
+        input.select();
+        updateChange();
+
+    },
+
+    finalizeCheckout(dialog, total, received) {
+
+        try {
+
+            if (!Number.isFinite(received) || received < total) {
+                throw new Error(
+                    "El efectivo recibido es insuficiente."
+                );
+            }
+
+            const currentCash = getCurrentCash.execute();
+
+            if (!currentCash) {
+                throw new Error(
+                    "La Caja ya no está abierta."
+                );
             }
 
             const transaction =
                 createTransaction.execute({
-
                     items: this.cart.map(item => ({
-
                         articleId: item.articleId,
-
                         quantity: item.quantity,
-
                         unitPrice: item.unitPrice
-
                     }))
-
                 });
 
             const completed =
                 completeTransaction.execute(
-                    transaction.id
+                    transaction.id,
+                    {
+                        method: "CASH",
+                        received
+                    }
                 );
 
             Logger.success(
@@ -462,10 +571,12 @@ const Ventas = {
             );
 
             this.cart = [];
-
             this.renderCart();
-
             this.renderHistory();
+
+            dialog.close();
+            dialog.remove();
+            this.checkoutDialog = null;
 
         } catch (error) {
 
