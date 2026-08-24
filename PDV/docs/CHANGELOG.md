@@ -114,3 +114,13 @@ El ticket de la primera versión funcional será virtual.
 - El ticket virtual muestra método de pago y Caja.
 - La validación de existencias ocurre antes de registrar movimientos.
 - El monto inicial de Caja sigue siendo un fondo inicial manual; las ventas se suman automáticamente al efectivo esperado.
+
+## 0.9.6 — Cancelaciones y devoluciones en Ventas
+
+- Se agregaron los casos de uso `CancelTransaction` y `ReturnTransaction` dentro del dominio Transaction.
+- Cancelar una venta completada conserva la transacción y genera movimientos `ENTRY` compensatorios.
+- Las devoluciones conservan la venta original y generan movimientos `ENTRY`.
+- Se soportan devoluciones totales y parciales a nivel de caso de uso.
+- La interfaz de Ventas incorpora acciones para cancelar y devolver ventas.
+- No se crean módulos independientes para cancelaciones o devoluciones; se mantienen como operaciones de Ventas.
+- Los movimientos compensatorios pueden conservar la referencia de la transacción y el motivo.

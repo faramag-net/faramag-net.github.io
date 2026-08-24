@@ -35,6 +35,12 @@ import CompleteTransaction
 import GetTransactions
     from "../../domain/transaction/use-cases/get-transactions.js";
 
+import CancelTransaction
+    from "../../domain/transaction/use-cases/cancel-transaction.js";
+
+import ReturnTransaction
+    from "../../domain/transaction/use-cases/return-transaction.js";
+
 import GetCurrentCash
     from "../../domain/cash/use-cases/get-current-cash.js";
 
@@ -82,6 +88,20 @@ const createTransaction =
 const getTransactions =
     new GetTransactions(
         transactionRepository
+    );
+
+const cancelTransaction =
+    new CancelTransaction(
+        transactionRepository,
+        articleRepository,
+        createMovement
+    );
+
+const returnTransaction =
+    new ReturnTransaction(
+        transactionRepository,
+        articleRepository,
+        createMovement
     );
 
 const getCurrentCash =
@@ -514,13 +534,114 @@ const Ventas = {
                 document.createElement("td");
 
             status.textContent =
-                this.translateStatus(transaction.status);
+                transaction.isFullyReturned()
+                    ? "Devuelta"
+                    : this.translateStatus(transaction.status);
 
             row.appendChild(status);
 
+            const actions =
+                document.createElement("td");
+
+            if (transaction.status === "COMPLETED" && !transaction.isFullyReturned()) {
+
+                const returnButton =
+                    document.createElement("button");
+
+                returnButton.type = "button";
+                returnButton.textContent = "Devolver";
+                returnButton.addEventListener(
+                    "click",
+                    () => this.returnSale(transaction.id)
+                );
+
+                actions.appendChild(returnButton);
+
+                const cancelButton =
+                    document.createElement("button");
+
+                cancelButton.type = "button";
+                cancelButton.textContent = "Cancelar";
+                cancelButton.addEventListener(
+                    "click",
+                    () => this.cancelSale(transaction.id)
+                );
+
+                actions.appendChild(cancelButton);
+
+            }
+
+            row.appendChild(actions);
             body.appendChild(row);
 
         });
+
+    },
+
+    cancelSale(transactionId) {
+
+        try {
+
+            const confirmed =
+                window.confirm(
+                    "¿Cancelar esta venta? Se conservará el historial y el inventario será compensado."
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+            cancelTransaction.execute(transactionId);
+
+            Logger.success(
+                "Ventas",
+                `Venta cancelada: ${transactionId}`
+            );
+
+            this.renderHistory();
+
+        } catch (error) {
+
+            Logger.error(
+                "Ventas",
+                error.message
+            );
+
+        }
+
+    },
+
+    returnSale(transactionId) {
+
+        try {
+
+            const confirmed =
+                window.confirm(
+                    "¿Registrar la devolución total de los artículos pendientes de esta venta?"
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+            const transaction =
+                returnTransaction.execute(transactionId);
+
+            Logger.success(
+                "Ventas",
+                `Devolución registrada: ${transaction.id}`
+            );
+
+            this.renderHistory();
+
+        } catch (error) {
+
+            Logger.error(
+                "Ventas",
+                error.message
+            );
+
+        }
 
     },
 

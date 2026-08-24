@@ -59,3 +59,9 @@ Antes de completar todas las funcionalidades previstas para 1.0.0, la serie 0.9.
 | v0.9.5 | Integración Caja / Ventas |
 | 1.0.0 | PDV WEB funcional consolidado |
 | posterior a 1.0.0 | Dashboard avanzado, impresión física y mejoras no esenciales |
+
+## 0.9.6
+
+- Cancelaciones y devoluciones como operaciones del módulo Ventas.
+- Casos de uso de Transaction para cancelar y devolver.
+- Movimientos ENTRY compensatorios sin borrar hechos históricos.

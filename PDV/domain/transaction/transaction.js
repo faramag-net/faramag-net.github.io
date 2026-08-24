@@ -45,6 +45,11 @@ export default class Transaction {
         this.paymentMethod =
             data.paymentMethod ?? null;
 
+        this.returns =
+            Array.isArray(data.returns)
+                ? data.returns.map(item => ({ ...item }))
+                : [];
+
         this.createdAt =
             data.createdAt ?? new Date().toISOString();
 
@@ -115,6 +120,80 @@ export default class Transaction {
 
     }
 
+    cancel() {
+
+        if (this.status !== TRANSACTION_STATUS.COMPLETED) {
+            throw new Error(
+                "Solo una venta completada puede cancelarse."
+            );
+        }
+
+        if (this.hasReturns()) {
+            throw new Error(
+                "Una venta con devoluciones no puede cancelarse."
+            );
+        }
+
+        this.status = TRANSACTION_STATUS.CANCELLED;
+        this.touch();
+
+    }
+
+    addReturn(items) {
+
+        if (this.status !== TRANSACTION_STATUS.COMPLETED) {
+            throw new Error(
+                "Solo una venta completada puede tener devoluciones."
+            );
+        }
+
+        items.forEach(item => {
+
+            const existing =
+                this.returns.find(
+                    returned => returned.articleId === item.articleId
+                );
+
+            if (existing) {
+                existing.quantity += Number(item.quantity);
+            } else {
+                this.returns.push({
+                    articleId: item.articleId,
+                    quantity: Number(item.quantity)
+                });
+            }
+
+        });
+
+        this.touch();
+
+    }
+
+    hasReturns() {
+        return this.returns.some(
+            item => Number(item.quantity) > 0
+        );
+    }
+
+    isFullyReturned() {
+
+        if (!this.items.length) {
+            return false;
+        }
+
+        return this.items.every(item => {
+
+            const returned =
+                this.returns.find(
+                    entry => entry.articleId === item.articleId
+                );
+
+            return Number(returned?.quantity ?? 0) >= Number(item.quantity);
+
+        });
+
+    }
+
     complete() {
 
         if (this.status !== TRANSACTION_STATUS.DRAFT) {
@@ -153,6 +232,7 @@ export default class Transaction {
             total: this.total,
             cashId: this.cashId,
             paymentMethod: this.paymentMethod,
+            returns: this.returns.map(item => ({ ...item })),
             createdAt: this.createdAt,
             updatedAt: this.updatedAt
         };

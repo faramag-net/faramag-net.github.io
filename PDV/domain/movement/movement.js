@@ -24,6 +24,12 @@ export default class Movement {
         this.quantity =
             data.quantity ?? 0;
 
+        this.transactionId =
+            data.transactionId ?? null;
+
+        this.reason =
+            data.reason ?? null;
+
         this.createdAt =
             data.createdAt ??
             new Date().toISOString();
@@ -71,6 +77,10 @@ export default class Movement {
             type: this.type,
 
             quantity: this.quantity,
+
+            transactionId: this.transactionId,
+
+            reason: this.reason,
 
             createdAt: this.createdAt
 
