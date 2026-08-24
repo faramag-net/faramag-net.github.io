@@ -30,6 +30,12 @@ export default class LocalArticleRepository
                 DB_KEYS.ARTICLES
             ) ?? [];
 
+        if (articles.some(item => item.id === article.id)) {
+            throw new Error(
+                "El artículo ya existe."
+            );
+        }
+
         articles.push(
             article.toJSON()
         );

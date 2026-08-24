@@ -30,6 +30,12 @@ export default class LocalMovementRepository
                 DB_KEYS.MOVEMENTS
             ) ?? [];
 
+        if (movements.some(item => item.id === movement.id)) {
+            throw new Error(
+                "El movimiento ya existe."
+            );
+        }
+
         movements.push(
             movement.toJSON()
         );

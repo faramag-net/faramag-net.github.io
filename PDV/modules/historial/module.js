@@ -143,7 +143,7 @@ const Historial = {
 
             row.appendChild(
                 this.createCell(
-                    this.getStatusLabel(transaction.status)
+                    this.getTransactionStatusLabel(transaction)
                 )
             );
 
@@ -264,15 +264,30 @@ const Historial = {
 
     },
 
-    getStatusLabel(status) {
+    getTransactionStatusLabel(transaction) {
 
-        const labels = {
-            DRAFT: "Borrador",
-            COMPLETED: "Completada",
-            CANCELLED: "Cancelada"
-        };
+        if (transaction.status === "CANCELLED") {
+            return "Cancelada";
+        }
 
-        return labels[status] ?? status;
+        if (transaction.status === "COMPLETED") {
+
+            if (transaction.isFullyReturned()) {
+                return "Devuelta";
+            }
+
+            if (transaction.hasReturns()) {
+                return "Devolución parcial";
+            }
+
+            return "Completada";
+        }
+
+        if (transaction.status === "DRAFT") {
+            return "Borrador";
+        }
+
+        return transaction.status;
 
     },
 

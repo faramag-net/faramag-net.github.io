@@ -132,3 +132,9 @@ El ticket de la primera versión funcional será virtual.
 - Las ventas muestran fecha, total y estado.
 - Los movimientos muestran fecha, tipo, artículo, cantidad y referencia de venta cuando existe.
 - Las salidas generadas por nuevas ventas conservan `transactionId` y `reason: SALE` para trazabilidad.
+
+
+## 0.9.8 — Integridad básica
+
+- Protección contra IDs duplicados al guardar artículos, ventas y movimientos.
+- Historial muestra Devuelta y Devolución parcial sin alterar el estado histórico COMPLETED de la Transaction.

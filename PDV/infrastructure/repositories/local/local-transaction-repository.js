@@ -30,6 +30,12 @@ export default class LocalTransactionRepository
                 DB_KEYS.TRANSACTIONS
             ) ?? [];
 
+        if (transactions.some(item => item.id === transaction.id)) {
+            throw new Error(
+                "La venta ya existe."
+            );
+        }
+
         transactions.push(
             transaction.toJSON()
         );
