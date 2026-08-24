@@ -124,3 +124,11 @@ El ticket de la primera versión funcional será virtual.
 - La interfaz de Ventas incorpora acciones para cancelar y devolver ventas.
 - No se crean módulos independientes para cancelaciones o devoluciones; se mantienen como operaciones de Ventas.
 - Los movimientos compensatorios pueden conservar la referencia de la transacción y el motivo.
+
+## 0.9.7 - Historial básico
+
+- Se agregó el módulo Historial para consultar ventas y movimientos.
+- El historial se reconstruye desde Transactions y Movements existentes; no crea una nueva fuente de datos.
+- Las ventas muestran fecha, total y estado.
+- Los movimientos muestran fecha, tipo, artículo, cantidad y referencia de venta cuando existe.
+- Las salidas generadas por nuevas ventas conservan `transactionId` y `reason: SALE` para trazabilidad.

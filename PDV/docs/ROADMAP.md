@@ -65,3 +65,9 @@ Antes de completar todas las funcionalidades previstas para 1.0.0, la serie 0.9.
 - Cancelaciones y devoluciones como operaciones del módulo Ventas.
 - Casos de uso de Transaction para cancelar y devolver.
 - Movimientos ENTRY compensatorios sin borrar hechos históricos.
+
+## 0.9.7
+
+- [x] Historial básico de ventas.
+- [x] Historial básico de movimientos.
+- [x] Referencia de movimientos de venta a su Transaction.

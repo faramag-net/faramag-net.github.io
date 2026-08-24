@@ -21,6 +21,8 @@ export default [
 
     "tickets",
 
+    "historial",
+
     "configuracion"
 
 ];

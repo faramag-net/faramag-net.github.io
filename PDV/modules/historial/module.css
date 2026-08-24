@@ -1,0 +1,38 @@
+/**
+ * ==========================================================
+ * PDV
+ * Archivo: module.css
+ * Módulo: Historial
+ * Versión: 0.9.7
+ * ==========================================================
+ */
+
+.history-layout {
+
+    display: grid;
+
+    gap: var(--spacing-lg);
+
+}
+
+.history .table-container {
+
+    overflow-x: auto;
+
+}
+
+.history table {
+
+    min-width: 680px;
+
+}
+
+.history .empty-state {
+
+    padding: var(--spacing-lg);
+
+    text-align: center;
+
+    opacity: 0.7;
+
+}

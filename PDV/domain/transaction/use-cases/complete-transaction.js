@@ -98,7 +98,9 @@ export default class CompleteTransaction {
             movementData.push({
                 articleId: article.id,
                 type: "EXIT",
-                quantity: Number(item.quantity)
+                quantity: Number(item.quantity),
+                transactionId: transaction.id,
+                reason: "SALE"
             });
 
         });
