@@ -16,7 +16,9 @@ const DB_KEYS = Object.freeze({
 
     MOVEMENTS: "pdv_movements",
 
-    CASH: "pdv_cash"
+    CASH: "pdv_cash",
+
+    CONFIG: "pdv_config"
 
 });
 

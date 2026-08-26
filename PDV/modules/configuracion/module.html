@@ -1,9 +1,75 @@
-/**
- * ---------------------------------------------------
- * PDV
- * Archivo:
- * Descripción:
- * Versión:
- * Autor:
- * ---------------------------------------------------
- */
+<section class="configuration-page">
+
+    <header class="module-header">
+        <h1>Configuración</h1>
+        <p>Parámetros básicos del sistema y del ticket.</p>
+    </header>
+
+    <form id="configurationForm" class="configuration-form">
+
+        <section class="configuration-card">
+            <h2>Negocio</h2>
+
+            <label for="businessName">
+                Nombre del negocio
+            </label>
+
+            <input
+                id="businessName"
+                name="businessName"
+                type="text"
+                maxlength="100"
+                autocomplete="organization"
+                placeholder="Nombre del negocio"
+            >
+        </section>
+
+        <section class="configuration-card">
+            <h2>Ticket</h2>
+
+            <label class="configuration-checkbox">
+                <input
+                    id="ticketShowBusinessName"
+                    name="ticketShowBusinessName"
+                    type="checkbox"
+                >
+                <span>Mostrar nombre del negocio</span>
+            </label>
+
+            <label for="ticketMessage">
+                Mensaje al final del ticket
+            </label>
+
+            <textarea
+                id="ticketMessage"
+                name="ticketMessage"
+                rows="3"
+                maxlength="250"
+                placeholder="Gracias por su compra."
+            ></textarea>
+        </section>
+
+        <div class="configuration-actions">
+            <button type="submit" class="configuration-primary">
+                Guardar configuración
+            </button>
+
+            <button
+                id="configurationReset"
+                type="button"
+                class="configuration-secondary"
+            >
+                Restablecer
+            </button>
+        </div>
+
+        <p
+            id="configurationStatus"
+            class="configuration-status"
+            hidden
+            aria-live="polite"
+        ></p>
+
+    </form>
+
+</section>

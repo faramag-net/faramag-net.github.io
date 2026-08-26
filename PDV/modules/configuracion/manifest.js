@@ -3,8 +3,8 @@
  * PDV
  * Archivo: manifest.js
  * Módulo: configuracion
- * Descripción: Parámetros generales del sistema.
- * Versión: 0.6.2
+ * Descripción: Configuración básica del sistema y del ticket.
+ * Versión: 0.9.14
  * ==========================================================
  */
 
@@ -15,7 +15,7 @@ export default {
     title: "Configuración",
 
     description:
-        "Parámetros generales del sistema.",
+        "Configuración básica del sistema y del ticket.",
 
     icon: "settings",
 
@@ -25,7 +25,7 @@ export default {
 
     enabled: true,
 
-    version: "0.6.2",
+    version: "0.9.14",
 
     author: "Ricardo Farabundo Magallón Juan-Qui"
 

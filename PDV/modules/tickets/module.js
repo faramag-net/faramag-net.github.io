@@ -23,6 +23,12 @@ import GetTransactions
 import LocalCashRepository
     from "../../infrastructure/repositories/local/local-cash-repository.js";
 
+import Database
+    from "../../database/database.js";
+
+import DB_KEYS
+    from "../../database/db-keys.js";
+
 import LocalTransactionRepository
     from "../../infrastructure/repositories/local/local-transaction-repository.js";
 
@@ -212,7 +218,17 @@ const Tickets = {
         const title =
             document.createElement("h3");
 
-        title.textContent = "PDV";
+        const config = {
+            businessName: "PDV",
+            ticketMessage: "Gracias por su compra.",
+            ticketShowBusinessName: true,
+            ...(Database.get(DB_KEYS.CONFIG) ?? {})
+        };
+
+        title.textContent =
+            config.ticketShowBusinessName
+                ? (config.businessName || "PDV")
+                : "PDV";
 
         header.appendChild(title);
 
@@ -421,7 +437,7 @@ const Tickets = {
         footer.className = "ticket-footer";
 
         footer.textContent =
-            "Gracias por su compra.";
+            config.ticketMessage || "Gracias por su compra.";
 
         ticket.appendChild(footer);
 
