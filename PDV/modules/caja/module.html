@@ -3,7 +3,7 @@
 PDV
 Archivo: module.html
 Módulo: Caja
-Versión: 0.9.5
+Versión: 0.9.13
 ==================================================
 -->
 
@@ -14,7 +14,7 @@ Versión: 0.9.5
         <h1>Caja</h1>
 
         <p>
-            Apertura, seguimiento y cierre básico de Caja.
+            Apertura, seguimiento, cierre e historial de sesiones de Caja.
         </p>
 
     </header>
@@ -24,38 +24,23 @@ Versión: 0.9.5
         <section class="card" id="cashOpenCard">
 
             <header class="card-header">
-
                 <h2>Abrir caja</h2>
-
             </header>
 
             <div class="form-grid">
 
                 <div class="field">
-
-                    <label for="cashOpeningAmount">
-                        Monto inicial
-                    </label>
-
+                    <label for="cashOpeningAmount">Monto inicial</label>
                     <input
                         id="cashOpeningAmount"
                         type="number"
                         min="0"
                         step="0.01"
                         value="0">
-
                 </div>
 
                 <div class="form-actions">
-
-                    <button
-                        id="btnOpenCash"
-                        type="button">
-
-                        Abrir caja
-
-                    </button>
-
+                    <button id="btnOpenCash" type="button">Abrir caja</button>
                 </div>
 
             </div>
@@ -65,13 +50,8 @@ Versión: 0.9.5
         <section class="card" id="cashCurrentCard" hidden>
 
             <header class="card-header">
-
                 <h2>Caja abierta</h2>
-
-                <strong id="cashStatus">
-                    Abierta
-                </strong>
-
+                <strong id="cashStatus">Abierta</strong>
             </header>
 
             <div class="cash-summary">
@@ -87,6 +67,16 @@ Versión: 0.9.5
                 </div>
 
                 <div>
+                    <span>Devoluciones</span>
+                    <strong id="cashRefundsDisplay">$0.00</strong>
+                </div>
+
+                <div>
+                    <span>Ventas netas</span>
+                    <strong id="cashNetSalesDisplay">$0.00</strong>
+                </div>
+
+                <div>
                     <span>Efectivo esperado</span>
                     <strong id="cashExpectedDisplay">$0.00</strong>
                 </div>
@@ -94,36 +84,23 @@ Versión: 0.9.5
             </div>
 
             <p class="cash-note">
-                Por ahora, las ventas completadas se consideran efectivo.
+                Por ahora, las ventas y devoluciones en efectivo afectan el saldo esperado de esta Caja.
             </p>
 
             <div class="cash-close-form">
 
                 <div class="field">
-
-                    <label for="cashClosingAmount">
-                        Efectivo contado al cierre
-                    </label>
-
+                    <label for="cashClosingAmount">Efectivo contado al cierre</label>
                     <input
                         id="cashClosingAmount"
                         type="number"
                         min="0"
                         step="0.01"
                         value="0">
-
                 </div>
 
                 <div class="form-actions">
-
-                    <button
-                        id="btnCloseCash"
-                        type="button">
-
-                        Cerrar caja
-
-                    </button>
-
+                    <button id="btnCloseCash" type="button">Cerrar caja</button>
                 </div>
 
             </div>
@@ -133,9 +110,7 @@ Versión: 0.9.5
         <section class="card" id="cashResultCard" hidden>
 
             <header class="card-header">
-
                 <h2>Último cierre</h2>
-
             </header>
 
             <div class="cash-summary">
@@ -156,6 +131,37 @@ Versión: 0.9.5
                 </div>
 
             </div>
+
+        </section>
+
+        <section class="card" id="cashHistoryCard">
+
+            <header class="card-header">
+                <h2>Historial de cajas</h2>
+                <span id="cashHistoryCount">0 sesiones</span>
+            </header>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Apertura</th>
+                            <th>Cierre</th>
+                            <th>Inicial</th>
+                            <th>Ventas netas</th>
+                            <th>Esperado</th>
+                            <th>Contado</th>
+                            <th>Diferencia</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cashHistoryBody"></tbody>
+                </table>
+            </div>
+
+            <p class="cash-history-empty" id="cashHistoryEmpty" hidden>
+                Aún no existen sesiones de Caja cerradas.
+            </p>
 
         </section>
 

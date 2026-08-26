@@ -1,3 +1,11 @@
+
+## 0.9.13
+
+- Historial de sesiones de Caja dentro del módulo Caja.
+- Registro visible de fecha/hora de apertura y cierre.
+- Resumen de monto inicial, ventas netas, esperado, contado y diferencia.
+- El historial conserva las sesiones cerradas y muestra la sesión abierta si existe.
+
 ## 0.9.12
 
 Ticket virtual: reflejar devoluciones parciales y totales sin alterar la venta original.

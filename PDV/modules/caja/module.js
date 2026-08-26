@@ -3,8 +3,8 @@
  * PDV
  * Archivo: module.js
  * Módulo: Caja
- * Descripción: Administración básica de Caja.
- * Versión: 0.9.5
+ * Descripción: Administración de Caja e historial de sesiones.
+ * Versión: 0.9.13
  * ==========================================================
  */
 
@@ -23,6 +23,9 @@ import OpenCash
 import GetCurrentCash
     from "../../domain/cash/use-cases/get-current-cash.js";
 
+import GetCashSummary
+    from "../../domain/cash/use-cases/get-cash-summary.js";
+
 import CloseCash
     from "../../domain/cash/use-cases/close-cash.js";
 
@@ -33,15 +36,16 @@ const transactionRepository =
     new LocalTransactionRepository();
 
 const openCash =
-    new OpenCash(
-        cashRepository
-    );
+    new OpenCash(cashRepository);
 
 const getCurrentCash =
     new GetCurrentCash(
         cashRepository,
         transactionRepository
     );
+
+const getCashSummary =
+    new GetCashSummary(transactionRepository);
 
 const closeCash =
     new CloseCash(
@@ -56,9 +60,7 @@ const Caja = {
     async init() {
 
         this.cache();
-
         this.events();
-
         this.render();
 
         Logger.success(
@@ -93,6 +95,12 @@ const Caja = {
             salesDisplay:
                 document.getElementById("cashSalesDisplay"),
 
+            refundsDisplay:
+                document.getElementById("cashRefundsDisplay"),
+
+            netSalesDisplay:
+                document.getElementById("cashNetSalesDisplay"),
+
             expectedDisplay:
                 document.getElementById("cashExpectedDisplay"),
 
@@ -104,6 +112,15 @@ const Caja = {
 
             closedDifference:
                 document.getElementById("cashClosedDifference"),
+
+            historyBody:
+                document.getElementById("cashHistoryBody"),
+
+            historyCount:
+                document.getElementById("cashHistoryCount"),
+
+            historyEmpty:
+                document.getElementById("cashHistoryEmpty"),
 
             openButton:
                 document.getElementById("btnOpenCash"),
@@ -135,14 +152,12 @@ const Caja = {
             getCurrentCash.execute();
 
         if (current) {
-
             this.showCurrent(current);
-
-            return;
-
+        } else {
+            this.showOpen();
         }
 
-        this.showOpen();
+        this.renderHistory();
 
     },
 
@@ -163,6 +178,12 @@ const Caja = {
 
         this.elements.salesDisplay.textContent =
             this.formatCurrency(current.salesTotal);
+
+        this.elements.refundsDisplay.textContent =
+            this.formatCurrency(current.refundsTotal);
+
+        this.elements.netSalesDisplay.textContent =
+            this.formatCurrency(current.netSalesTotal);
 
         this.elements.expectedDisplay.textContent =
             this.formatCurrency(current.expectedAmount);
@@ -236,6 +257,77 @@ const Caja = {
             );
 
         }
+
+    },
+
+    renderHistory() {
+
+        const cashes =
+            cashRepository.findAll();
+
+        this.elements.historyBody.replaceChildren();
+
+        this.elements.historyCount.textContent =
+            `${cashes.length} ${cashes.length === 1 ? "sesión" : "sesiones"}`;
+
+        this.elements.historyEmpty.hidden =
+            cashes.length > 0;
+
+        for (const cash of cashes) {
+
+            const summary =
+                getCashSummary.execute(cash);
+
+            const row =
+                document.createElement("tr");
+
+            this.appendCell(row, this.formatDate(cash.openedAt));
+            this.appendCell(row, cash.closedAt ? this.formatDate(cash.closedAt) : "—");
+            this.appendCell(row, this.formatCurrency(cash.openingAmount));
+            this.appendCell(row, this.formatCurrency(summary.netSalesTotal));
+            this.appendCell(row, this.formatCurrency(summary.expectedAmount));
+            this.appendCell(
+                row,
+                cash.closingAmount === null
+                    ? "—"
+                    : this.formatCurrency(cash.closingAmount)
+            );
+            this.appendCell(
+                row,
+                summary.difference === null
+                    ? "—"
+                    : this.formatCurrency(summary.difference)
+            );
+            this.appendCell(
+                row,
+                cash.status === "OPEN" ? "Abierta" : "Cerrada"
+            );
+
+            this.elements.historyBody.appendChild(row);
+
+        }
+
+    },
+
+    appendCell(row, value) {
+
+        const cell =
+            document.createElement("td");
+
+        cell.textContent = value;
+        row.appendChild(cell);
+
+    },
+
+    formatDate(value) {
+
+        return new Intl.DateTimeFormat(
+            "es-MX",
+            {
+                dateStyle: "short",
+                timeStyle: "short"
+            }
+        ).format(new Date(value));
 
     },
 

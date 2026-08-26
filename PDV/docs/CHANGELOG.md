@@ -1,3 +1,11 @@
+# 0.9.13 — Historial de Caja
+
+- Se agregó historial de sesiones de Caja dentro del módulo Caja.
+- Se muestran fechas de apertura y cierre.
+- Se conserva el resumen de cada sesión: inicial, ventas netas, esperado, contado y diferencia.
+- La sesión abierta también puede consultarse en el historial.
+- Se agregó el caso de uso `GetCashSummary` para centralizar el cálculo de Caja y evitar lógica de negocio en la UI.
+
 # 0.9.12 — Ticket con devoluciones
 
 - El ticket conserva íntegra la venta original.
