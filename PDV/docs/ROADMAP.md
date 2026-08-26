@@ -1,3 +1,7 @@
+## 0.9.12
+
+Ticket virtual: reflejar devoluciones parciales y totales sin alterar la venta original.
+
 ## Prioridad actual — 0.9.x
 
 La prioridad de la serie 0.9.x es disponer de una aplicación WEB funcional lo antes posible.

@@ -1,3 +1,11 @@
+# 0.9.12 — Ticket con devoluciones
+
+- El ticket conserva íntegra la venta original.
+- Las devoluciones se muestran como operaciones adicionales dentro del mismo ticket.
+- Se muestra el total devuelto y el total neto.
+- El estado visual distingue Completada, Devolución parcial y Devuelta.
+- No se crea un ticket nuevo para cada devolución.
+
 # 0.9.11 — Cobro integrado a Ventas
 
 - Ventas ahora abre un flujo de cobro antes de completar la Transaction.

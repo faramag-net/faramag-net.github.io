@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Tickets
  * Descripción: Consulta y visualización de tickets virtuales.
- * Versión: 0.9.5
+ * Versión: 0.9.12
  * ==========================================================
  */
 
@@ -240,7 +240,7 @@ const Tickets = {
         const status =
             document.createElement("p");
 
-        status.textContent = "Estado: Completada";
+        status.textContent = `Estado: ${this.getTransactionDisplayStatus(transaction)}`;
 
         meta.appendChild(status);
 
@@ -361,27 +361,59 @@ const Tickets = {
         table.appendChild(tbody);
         ticket.appendChild(table);
 
-        const total =
+        const originalTotal =
             document.createElement("div");
 
-        total.className = "ticket-total";
+        originalTotal.className = "ticket-total";
 
-        const totalLabel =
+        const originalLabel =
             document.createElement("span");
 
-        totalLabel.textContent = "TOTAL";
+        originalLabel.textContent = "TOTAL VENTA";
 
-        total.appendChild(totalLabel);
+        originalTotal.appendChild(originalLabel);
 
-        const totalValue =
+        const originalValue =
             document.createElement("span");
 
-        totalValue.textContent =
+        originalValue.textContent =
             this.formatCurrency(transaction.total);
 
-        total.appendChild(totalValue);
+        originalTotal.appendChild(originalValue);
 
-        ticket.appendChild(total);
+        ticket.appendChild(originalTotal);
+
+        if (transaction.hasReturns()) {
+
+            ticket.appendChild(
+                this.createReturnsSection(transaction)
+            );
+
+            const netTotal =
+                document.createElement("div");
+
+            netTotal.className = "ticket-total ticket-net-total";
+
+            const netLabel =
+                document.createElement("span");
+
+            netLabel.textContent = "TOTAL NETO";
+
+            netTotal.appendChild(netLabel);
+
+            const netValue =
+                document.createElement("span");
+
+            netValue.textContent =
+                this.formatCurrency(
+                    Number(transaction.total) - Number(transaction.returnedAmount ?? 0)
+                );
+
+            netTotal.appendChild(netValue);
+
+            ticket.appendChild(netTotal);
+
+        }
 
         const footer =
             document.createElement("footer");
@@ -394,6 +426,118 @@ const Tickets = {
         ticket.appendChild(footer);
 
         return ticket;
+
+    },
+
+
+    createReturnsSection(transaction) {
+
+        const section =
+            document.createElement("section");
+
+        section.className = "ticket-returns";
+
+        const title =
+            document.createElement("h4");
+
+        title.textContent = "Devoluciones";
+
+        section.appendChild(title);
+
+        const table =
+            document.createElement("table");
+
+        table.className = "ticket-items ticket-return-items";
+
+        const thead =
+            document.createElement("thead");
+
+        const headerRow =
+            document.createElement("tr");
+
+        ["Artículo", "Cant.", "Importe"].forEach(text => {
+
+            const cell =
+                document.createElement("th");
+
+            cell.textContent = text;
+            headerRow.appendChild(cell);
+
+        });
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody =
+            document.createElement("tbody");
+
+        transaction.returnOperations.forEach(operation => {
+
+            operation.items.forEach(item => {
+
+                const row =
+                    document.createElement("tr");
+
+                const article =
+                    this.articles.find(current => current.id === item.articleId);
+
+                const name =
+                    document.createElement("td");
+
+                name.textContent =
+                    article ? article.name : "Artículo no disponible";
+
+                row.appendChild(name);
+
+                const quantity =
+                    document.createElement("td");
+
+                quantity.textContent = item.quantity;
+                row.appendChild(quantity);
+
+                const amount =
+                    document.createElement("td");
+
+                const sold =
+                    transaction.items.find(current => current.articleId === item.articleId);
+
+                amount.textContent =
+                    `-${this.formatCurrency(Number(item.quantity) * Number(sold?.unitPrice ?? 0))}`;
+
+                row.appendChild(amount);
+                tbody.appendChild(row);
+
+            });
+
+        });
+
+        table.appendChild(tbody);
+        section.appendChild(table);
+
+        const returned =
+            document.createElement("div");
+
+        returned.className = "ticket-return-total";
+        returned.textContent =
+            `TOTAL DEVUELTO: ${this.formatCurrency(transaction.returnedAmount ?? 0)}`;
+
+        section.appendChild(returned);
+
+        return section;
+
+    },
+
+    getTransactionDisplayStatus(transaction) {
+
+        if (transaction.isFullyReturned()) {
+            return "Devuelta";
+        }
+
+        if (transaction.hasReturns()) {
+            return "Devolución parcial";
+        }
+
+        return "Completada";
 
     },
 
