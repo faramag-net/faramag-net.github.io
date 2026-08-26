@@ -4,7 +4,7 @@
  * Archivo: manifest.js
  * Módulo: configuracion
  * Descripción: Configuración básica del sistema y del ticket.
- * Versión: 0.9.14
+ * Versión: 0.9.15
  * ==========================================================
  */
 
@@ -25,7 +25,7 @@ export default {
 
     enabled: true,
 
-    version: "0.9.14",
+    version: "0.9.15",
 
     author: "Ricardo Farabundo Magallón Juan-Qui"
 

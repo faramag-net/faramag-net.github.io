@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Configuración
  * Descripción: Administración de la configuración básica del sistema.
- * Versión: 0.9.14
+ * Versión: 0.9.15
  * ==========================================================
  */
 
