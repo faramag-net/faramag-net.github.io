@@ -3,7 +3,7 @@
  * PDV
  * Archivo: module.css
  * Módulo: Ventas
- * Versión: 0.9.10
+ * Versión: 0.9.17
  * ==========================================================
  */
 
@@ -108,4 +108,19 @@
     display: block;
     margin-top: .75rem;
     font-size: 1.1rem;
+}
+
+
+.sale-stock {
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+.checkout-error {
+    margin: 0.75rem 0;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
 }

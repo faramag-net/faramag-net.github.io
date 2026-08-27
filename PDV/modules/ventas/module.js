@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Ventas
  * Descripción: Registro y consulta de ventas.
- * Versión: 0.9.10
+ * Versión: 0.9.17
  * ==========================================================
  */
 
@@ -127,7 +127,11 @@ const Ventas = {
             "Módulo iniciado."
         );
 
-        this.cart = [];
+        // El carrito representa una venta en proceso y debe sobrevivir
+        // al cambio de módulo. Solo se vacía al finalizar la venta.
+        if (!Array.isArray(this.cart)) {
+            this.cart = [];
+        }
 
         this.cache();
 
@@ -149,6 +153,11 @@ const Ventas = {
             saleQuantity:
                 document.getElementById(
                     "saleQuantity"
+                ),
+
+            saleStock:
+                document.getElementById(
+                    "saleStock"
                 ),
 
             btnAddToCart:
@@ -188,6 +197,12 @@ const Ventas = {
                 () => this.addToCart()
             );
 
+        this.elements.saleArticle
+            .addEventListener(
+                "change",
+                () => this.updateSelectedArticleStock()
+            );
+
         this.elements.btnCompleteSale
             .addEventListener(
                 "click",
@@ -215,6 +230,9 @@ const Ventas = {
         this.elements.saleArticle
             .replaceChildren();
 
+        const inventory =
+            getInventory.execute();
+
         articles.forEach(article => {
 
             const option =
@@ -225,13 +243,56 @@ const Ventas = {
             option.value =
                 article.id;
 
-            option.textContent =
-                `${article.code} - ${article.name} — ${this.formatCurrency(article.salePrice)}`;
+            const inventoryItem =
+                inventory.find(item => item.article.id === article.id);
 
-            this.elements.saleArticle
+            const stock =
+                inventoryItem?.stock ?? 0;
+
+            option.textContent =
+                `${article.code} - ${article.name} — ${this.formatCurrency(article.salePrice)} — ${article.type === "INVENTORY" ? `Existencia: ${stock}` : "Sin control de inventario"}`;
+
+                this.elements.saleArticle
                 .appendChild(option);
 
         });
+
+        this.updateSelectedArticleStock();
+
+    },
+
+    updateSelectedArticleStock() {
+
+        if (!this.elements.saleStock) return;
+
+        const articleId =
+            this.elements.saleArticle.value;
+
+        const article =
+            getArticles.execute().find(
+                item => item.id === articleId
+            );
+
+        if (!article) {
+            this.elements.saleStock.textContent = "Existencia: —";
+            return;
+        }
+
+        if (article.type !== "INVENTORY") {
+            this.elements.saleStock.textContent =
+                "Existencia: no controlada";
+            return;
+        }
+
+        const inventoryItem =
+            getInventory.execute().find(
+                item => item.article.id === article.id
+            );
+
+        const stock = inventoryItem?.stock ?? 0;
+
+        this.elements.saleStock.textContent =
+            `Existencia disponible: ${stock}`;
 
     },
 
@@ -465,6 +526,12 @@ const Ventas = {
         totalLine.className = "checkout-total";
         dialog.appendChild(totalLine);
 
+        const errorMessage = document.createElement("p");
+        errorMessage.className = "checkout-error";
+        errorMessage.hidden = true;
+        errorMessage.setAttribute("role", "alert");
+        dialog.appendChild(errorMessage);
+
         const field = document.createElement("div");
         field.className = "field";
 
@@ -579,6 +646,14 @@ const Ventas = {
             this.checkoutDialog = null;
 
         } catch (error) {
+
+            if (dialog?.isConnected) {
+                const message = dialog.querySelector(".checkout-error");
+                if (message) {
+                    message.textContent = `⚠️ ${error.message}`;
+                    message.hidden = false;
+                }
+            }
 
             Logger.error(
                 "Ventas",
@@ -918,9 +993,16 @@ const Ventas = {
         );
 
         this.closeReturnDialog();
-        this.elements = {};
 
-        this.cart = [];
+        if (this.checkoutDialog) {
+            this.checkoutDialog.close();
+            this.checkoutDialog.remove();
+            this.checkoutDialog = null;
+        }
+
+        // El carrito se conserva al cambiar de módulo.
+        // Solo se vacía después de completar la venta.
+        this.elements = {};
 
     }
 

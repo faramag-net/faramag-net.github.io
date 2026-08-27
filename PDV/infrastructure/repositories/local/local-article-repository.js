@@ -112,7 +112,17 @@ export default class LocalArticleRepository
         const normalizedCode =
             article.code.trim().toLowerCase();
 
+        const previousCode =
+            String(articles[index].code ?? "").trim().toLowerCase();
+
+        // Un artículo heredado puede tener un código duplicado.
+        // Activar/desactivar o guardar sin cambiar su código no debe quedar
+        // bloqueado por esa inconsistencia histórica.
+        const codeChanged =
+            normalizedCode !== previousCode;
+
         const duplicateCode =
+            codeChanged &&
             articles.some((item, itemIndex) =>
                 itemIndex !== index &&
                 String(item.code).trim().toLowerCase() === normalizedCode
