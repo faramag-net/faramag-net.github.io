@@ -85,3 +85,13 @@
     border-radius: 8px;
     background: var(--surface-muted, #f3f3f3);
 }
+
+.configuration-help {
+    margin: 0;
+    opacity: .75;
+    line-height: 1.45;
+}
+
+.configuration-backup-card {
+    margin-top: .25rem;
+}

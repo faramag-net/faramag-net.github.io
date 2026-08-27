@@ -1,3 +1,14 @@
+
+## 0.9.16 — Respaldo y restauración
+
+- Se agregó exportación completa del estado local en JSON.
+- Se agregó importación/restauración desde JSON.
+- El respaldo usa `format: PDV_BACKUP` y `formatVersion: 1`.
+- Los campos desconocidos de los registros se conservan durante la importación.
+- Los campos ausentes en respaldos antiguos no rompen la importación.
+- Se validan IDs obligatorios y duplicados dentro de cada colección.
+- Los respaldos de un formato futuro no compatible se rechazan de forma controlada.
+- La restauración reemplaza las entidades conocidas del estado local después de confirmación.
 # 0.9.13 — Historial de Caja
 
 - Se agregó historial de sesiones de Caja dentro del módulo Caja.

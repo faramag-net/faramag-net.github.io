@@ -63,3 +63,7 @@ Cada documento deberá ampliarse de la siguiente manera:
 ## Condición de cierre
 
 La documentación se considerará oficialmente completada cuando todos los documentos anteriores reflejen el comportamiento real del sistema implementado en la versión 1.0.0.
+
+### Respaldo compatible
+
+El respaldo de PDV utiliza un formato independiente de la versión de la aplicación. La ausencia de un campo nuevo se interpreta como dato no disponible; los campos desconocidos se ignoran al consumirlos y se conservan en los registros que sí los contienen. Los campos obligatorios (ID) se validan y los duplicados se rechazan.

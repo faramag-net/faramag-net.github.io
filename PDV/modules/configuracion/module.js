@@ -4,13 +4,14 @@
  * Archivo: module.js
  * Módulo: Configuración
  * Descripción: Administración de la configuración básica del sistema.
- * Versión: 0.9.15
+ * Versión: 0.9.16
  * ==========================================================
  */
 
 import Logger from "../../core/logger.js";
 import Database from "../../database/database.js";
 import DB_KEYS from "../../database/db-keys.js";
+import BackupService from "../../services/backup/backup-service.js";
 
 const DEFAULTS = Object.freeze({
     businessName: "PDV",
@@ -43,7 +44,10 @@ const Configuracion = {
             ticketMessage: document.getElementById("ticketMessage"),
             ticketShowBusinessName: document.getElementById("ticketShowBusinessName"),
             reset: document.getElementById("configurationReset"),
-            status: document.getElementById("configurationStatus")
+            status: document.getElementById("configurationStatus"),
+            backupExport: document.getElementById("backupExport"),
+            backupImport: document.getElementById("backupImport"),
+            backupFile: document.getElementById("backupFile")
         };
 
     },
@@ -60,6 +64,28 @@ const Configuracion = {
         this.elements.reset?.addEventListener("click", () => {
 
             this.reset();
+
+        });
+
+        this.elements.backupExport?.addEventListener("click", () => {
+
+            this.exportBackup();
+
+        });
+
+        this.elements.backupImport?.addEventListener("click", () => {
+
+            this.elements.backupFile?.click();
+
+        });
+
+        this.elements.backupFile?.addEventListener("change", (event) => {
+
+            const file = event.target.files?.[0];
+
+            if (file) {
+                this.importBackup(file);
+            }
 
         });
 
@@ -131,6 +157,103 @@ const Configuracion = {
             "Configuración",
             "Configuración restablecida."
         );
+
+    },
+
+    exportBackup() {
+
+        try {
+
+            const backup = BackupService.export();
+            const blob = new Blob(
+                [JSON.stringify(backup, null, 2)],
+                { type: "application/json" }
+            );
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const stamp = new Date()
+                .toISOString()
+                .replace(/[:.]/g, "-");
+
+            link.href = url;
+            link.download = `PDV-backup-${stamp}.json`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+
+            this.showStatus("Respaldo exportado correctamente.");
+
+            Logger.success(
+                "Configuración",
+                "Respaldo exportado."
+            );
+
+        } catch (error) {
+
+            Logger.error(
+                "Configuración",
+                `No fue posible exportar el respaldo: ${error.message}`
+            );
+
+            this.showStatus("No fue posible exportar el respaldo.");
+
+        }
+
+    },
+
+    async importBackup(file) {
+
+        try {
+
+            const confirmed = window.confirm(
+                "Importar este respaldo reemplazará los datos locales actuales. ¿Deseas continuar?"
+            );
+
+            if (!confirmed) {
+                if (this.elements.backupFile) {
+                    this.elements.backupFile.value = "";
+                }
+                return;
+            }
+
+            const text = await file.text();
+            const payload = JSON.parse(text);
+
+            BackupService.import(payload);
+
+            this.load();
+
+            this.showStatus(
+                "Respaldo restaurado correctamente. Recarga la aplicación para actualizar todos los módulos."
+            );
+
+            Logger.success(
+                "Configuración",
+                "Respaldo importado y restaurado."
+            );
+
+            if (this.elements.backupFile) {
+                this.elements.backupFile.value = "";
+            }
+
+        } catch (error) {
+
+            Logger.error(
+                "Configuración",
+                `No fue posible importar el respaldo: ${error.message}`
+            );
+
+            this.showStatus(
+                `No fue posible importar el respaldo: ${error.message}`
+            );
+
+            if (this.elements.backupFile) {
+                this.elements.backupFile.value = "";
+            }
+
+        }
 
     },
 

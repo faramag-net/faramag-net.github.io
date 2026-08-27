@@ -1,4 +1,4 @@
-<section class="configuration-page" data-module-version="0.9.15">
+<section class="configuration-page" data-module-version="0.9.16">
 
     <header class="module-header">
         <h1>Configuración</h1>
@@ -62,6 +62,42 @@
                 Restablecer
             </button>
         </div>
+
+        <section class="configuration-card configuration-backup-card">
+            <h2>Respaldo y restauración</h2>
+            <p class="configuration-help">
+                Exporta el estado actual del PDV para conservarlo o restaurarlo en otra computadora.
+            </p>
+
+            <div class="configuration-actions">
+                <button
+                    id="backupExport"
+                    type="button"
+                    class="configuration-primary"
+                >
+                    Exportar respaldo
+                </button>
+
+                <button
+                    id="backupImport"
+                    type="button"
+                    class="configuration-secondary"
+                >
+                    Importar respaldo
+                </button>
+
+                <input
+                    id="backupFile"
+                    type="file"
+                    accept="application/json,.json"
+                    hidden
+                >
+            </div>
+
+            <p class="configuration-help">
+                La restauración reemplaza los datos locales actuales. Los campos nuevos que no existan en un respaldo antiguo quedan vacíos o usan su valor predeterminado.
+            </p>
+        </section>
 
         <p
             id="configurationStatus"
