@@ -4,7 +4,7 @@
  * Archivo: inventario.js
  * Módulo: Inventario
  * Descripción: Administración del inventario y existencias.
- * Versión: 0.9.1
+ * Versión: 0.9.18
  * ==========================================================
  */
 
@@ -72,6 +72,11 @@ const Inventario = {
             inventoryTableBody:
                 document.getElementById(
                     "inventoryTableBody"
+                ),
+
+            inventorySearch:
+                document.getElementById(
+                    "inventorySearch"
                 )
 
         };
@@ -79,6 +84,11 @@ const Inventario = {
     },
 
     events() {
+
+        this.elements.inventorySearch?.addEventListener(
+            "input",
+            () => this.renderInventory()
+        );
 
         this.elements.btnSaveMovement
             .addEventListener(
@@ -155,7 +165,9 @@ const Inventario = {
         this.elements.movementArticle
             .replaceChildren();
 
-        articles.forEach(article => {
+        articles
+            .filter(article => article.active)
+            .forEach(article => {
 
             const option =
                 document.createElement(
@@ -179,8 +191,15 @@ const Inventario = {
 
     renderInventory() {
 
+        const search =
+            (this.elements.inventorySearch?.value ?? "").trim().toLowerCase();
+
         const inventory =
-            getInventory.execute();
+            getInventory.execute().filter(item => {
+                if (!search) return true;
+                return [item.article?.code, item.article?.name]
+                    .some(value => String(value ?? "").toLowerCase().includes(search));
+            });
 
         this.elements.inventoryTableBody
             .replaceChildren();

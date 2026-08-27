@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Historial
  * Descripción: Consulta básica de ventas y movimientos.
- * Versión: 0.9.7
+ * Versión: 0.9.188
  * ==========================================================
  */
 
@@ -62,7 +62,22 @@ const Historial = {
 
         this.cache();
 
+        this.events();
         this.load();
+
+    },
+
+    events() {
+
+        this.elements.transactionsSearch?.addEventListener(
+            "input",
+            () => this.renderTransactions()
+        );
+
+        this.elements.movementsSearch?.addEventListener(
+            "input",
+            () => this.renderMovements()
+        );
 
     },
 
@@ -78,6 +93,16 @@ const Historial = {
             movementsBody:
                 document.getElementById(
                     "historyMovementsBody"
+                ),
+
+            transactionsSearch:
+                document.getElementById(
+                    "historyTransactionsSearch"
+                ),
+
+            movementsSearch:
+                document.getElementById(
+                    "historyMovementsSearch"
                 )
 
         };
@@ -97,8 +122,21 @@ const Historial = {
 
     renderTransactions() {
 
+        const search =
+            (this.elements.transactionsSearch?.value ?? "").trim().toLowerCase();
+
         const transactions =
-            getTransactions.execute();
+            getTransactions.execute().filter(transaction => {
+                if (!search) return true;
+                const articleText = transaction.items
+                    .map(item => {
+                        const article = this.articles.find(a => a.id === item.articleId);
+                        return `${article?.name ?? ""} ${article?.code ?? ""}`;
+                    })
+                    .join(" ");
+                return `${transaction.id} ${this.formatDate(transaction.createdAt)} ${articleText}`
+                    .toLowerCase().includes(search);
+            });
 
         const body =
             this.elements.transactionsBody;
@@ -155,8 +193,17 @@ const Historial = {
 
     renderMovements() {
 
+        const search =
+            (this.elements.movementsSearch?.value ?? "").trim().toLowerCase();
+
         const movements =
             getMovements.execute()
+                .filter(movement => {
+                    if (!search) return true;
+                    const article = this.articles.find(item => item.id === movement.articleId);
+                    const haystack = `${movement.type} ${movement.reason ?? ""} ${article?.name ?? ""} ${article?.code ?? ""} ${movement.transactionId ?? ""} ${this.formatDate(movement.createdAt)}`.toLowerCase();
+                    return haystack.includes(search);
+                })
                 .sort(
                     (a, b) =>
                         new Date(b.createdAt) -

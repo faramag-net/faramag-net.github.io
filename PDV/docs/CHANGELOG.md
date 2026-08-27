@@ -190,3 +190,9 @@ El ticket de la primera versión funcional será virtual.
 - Cada devolución conserva su Caja, importe, artículos y fecha.
 - Caja descuenta cada operación de devolución según la sesión en la que se realiza.
 - La venta original permanece como hecho histórico y su estado operativo se deriva de las cantidades devueltas.
+
+## 0.9.18
+- Búsqueda en Artículos, Inventario, Ventas, Tickets, Historial y Caja.
+- Filtros de búsqueda sin recargar la página.
+- Inventario conserva la búsqueda incluyendo artículos inactivos.
+- Selector de movimientos de Inventario muestra únicamente artículos activos.

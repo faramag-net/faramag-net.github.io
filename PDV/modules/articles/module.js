@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Articles
  * Descripción: Administración del catálogo de artículos.
- * Versión: 0.9.0
+ * Versión: 0.9.18
  * ==========================================================
  */
 
@@ -123,11 +123,21 @@ const Articles = {
                 "articlesTableBody"
             ),
 
+        articlesSearch:
+            document.getElementById(
+                "articlesSearch"
+            ),
+
     };
 
     },
 
     events() {
+
+    this.elements.articlesSearch?.addEventListener(
+        "input",
+        () => this.renderTable()
+    );
 
     this.elements.btnSaveArticle
         .addEventListener(
@@ -211,8 +221,15 @@ const Articles = {
 
     renderTable() {
 
+        const search =
+            (this.elements.articlesSearch?.value ?? "").trim().toLowerCase();
+
         const articles =
-            getArticles.execute();
+            getArticles.execute().filter(article => {
+                if (!search) return true;
+                return [article.code, article.name, article.description]
+                    .some(value => String(value ?? "").toLowerCase().includes(search));
+            });
 
         this.elements.articlesTableBody.replaceChildren();
 

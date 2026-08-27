@@ -25,7 +25,7 @@ export default {
 
     enabled: true,
 
-    version: "0.9.4",
+    version: "0.9.18",
 
     author: "Ricardo Farabundo Magallón Juan-Qui"
 

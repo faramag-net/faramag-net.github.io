@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Tickets
  * Descripción: Consulta y visualización de tickets virtuales.
- * Versión: 0.9.12
+ * Versión: 0.9.188
  * ==========================================================
  */
 
@@ -83,6 +83,11 @@ const Tickets = {
                     "ticketSale"
                 ),
 
+            ticketSearch:
+                document.getElementById(
+                    "ticketSearch"
+                ),
+
             ticketPreview:
                 document.getElementById(
                     "ticketPreview"
@@ -93,6 +98,11 @@ const Tickets = {
     },
 
     events() {
+
+        this.elements.ticketSearch?.addEventListener(
+            "input",
+            () => this.renderSelector()
+        );
 
         this.elements.ticketSale
             .addEventListener(
@@ -125,9 +135,25 @@ const Tickets = {
         const select =
             this.elements.ticketSale;
 
+        const search =
+            (this.elements.ticketSearch?.value ?? "").trim().toLowerCase();
+
+        const filteredTransactions =
+            this.transactions.filter(transaction => {
+                if (!search) return true;
+                const articleText = transaction.items
+                    .map(item => {
+                        const article = this.articles.find(a => a.id === item.articleId);
+                        return `${article?.name ?? ""} ${article?.code ?? ""}`;
+                    })
+                    .join(" ");
+                const haystack = `${transaction.id} ${this.formatDate(transaction.createdAt)} ${articleText}`.toLowerCase();
+                return haystack.includes(search);
+            });
+
         select.replaceChildren();
 
-        if (!this.transactions.length) {
+        if (!filteredTransactions.length) {
 
             const option =
                 document.createElement("option");
@@ -145,7 +171,7 @@ const Tickets = {
 
         select.disabled = false;
 
-        this.transactions.forEach(
+        filteredTransactions.forEach(
             transaction => {
 
                 const option =
@@ -162,7 +188,7 @@ const Tickets = {
         );
 
         select.value =
-            this.transactions[0].id;
+            filteredTransactions[0].id;
 
     },
 

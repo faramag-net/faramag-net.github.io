@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Ventas
  * Descripción: Registro y consulta de ventas.
- * Versión: 0.9.17
+ * Versión: 0.9.188
  * ==========================================================
  */
 
@@ -183,6 +183,11 @@ const Ventas = {
             salesHistoryTableBody:
                 document.getElementById(
                     "salesHistoryTableBody"
+                ),
+
+            salesHistorySearch:
+                document.getElementById(
+                    "salesHistorySearch"
                 )
 
         };
@@ -190,6 +195,11 @@ const Ventas = {
     },
 
     events() {
+
+        this.elements.salesHistorySearch?.addEventListener(
+            "input",
+            () => this.renderHistory()
+        );
 
         this.elements.btnAddToCart
             .addEventListener(
@@ -666,8 +676,21 @@ const Ventas = {
 
     renderHistory() {
 
+        const search =
+            (this.elements.salesHistorySearch?.value ?? "").trim().toLowerCase();
+
         const transactions =
-            getTransactions.execute();
+            getTransactions.execute().filter(transaction => {
+                if (!search) return true;
+                const articleText = transaction.items
+                    .map(item => {
+                        const article = getArticles.execute().find(a => a.id === item.articleId);
+                        return `${article?.name ?? ""} ${article?.code ?? ""}`;
+                    })
+                    .join(" ");
+                const haystack = `${transaction.id} ${this.formatDate(transaction.createdAt)} ${articleText}`.toLowerCase();
+                return haystack.includes(search);
+            });
 
         const body =
             this.elements.salesHistoryTableBody;

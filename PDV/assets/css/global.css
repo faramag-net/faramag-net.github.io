@@ -7,3 +7,23 @@
  * Autor:
  * ---------------------------------------------------
  */
+
+/* Búsqueda y filtros de tablas */
+.table-toolbar {
+    margin: 0 0 1rem;
+}
+
+.search-field {
+    display: grid;
+    gap: .35rem;
+    max-width: 520px;
+}
+
+.search-field span {
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.search-field input {
+    width: 100%;
+}

@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Caja
  * Descripción: Administración de Caja e historial de sesiones.
- * Versión: 0.9.13
+ * Versión: 0.9.188
  * ==========================================================
  */
 
@@ -134,6 +134,11 @@ const Caja = {
 
     events() {
 
+        this.elements.historySearch?.addEventListener(
+            "input",
+            () => this.renderHistory()
+        );
+
         this.elements.openButton.addEventListener(
             "click",
             () => this.open()
@@ -262,8 +267,16 @@ const Caja = {
 
     renderHistory() {
 
+        const search =
+            (this.elements.historySearch?.value ?? "").trim().toLowerCase();
+
         const cashes =
-            cashRepository.findAll();
+            cashRepository.findAll().filter(cash => {
+                if (!search) return true;
+                const status = cash.status === "OPEN" ? "abierta" : "cerrada";
+                const haystack = `${cash.id} ${status} ${this.formatDate(cash.openedAt)} ${cash.closedAt ? this.formatDate(cash.closedAt) : ""}`.toLowerCase();
+                return haystack.includes(search);
+            });
 
         this.elements.historyBody.replaceChildren();
 
