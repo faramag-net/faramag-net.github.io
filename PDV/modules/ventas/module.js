@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Ventas
  * Descripción: Registro y consulta de ventas.
- * Versión: 0.9.188
+ * Versión: 0.9.19
  * ==========================================================
  */
 
@@ -150,6 +150,11 @@ const Ventas = {
                     "saleArticle"
                 ),
 
+            saleArticleSearch:
+                document.getElementById(
+                    "saleArticleSearch"
+                ),
+
             saleQuantity:
                 document.getElementById(
                     "saleQuantity"
@@ -207,6 +212,11 @@ const Ventas = {
                 () => this.addToCart()
             );
 
+        this.elements.saleArticleSearch?.addEventListener(
+            "input",
+            () => this.loadArticles()
+        );
+
         this.elements.saleArticle
             .addEventListener(
                 "change",
@@ -233,9 +243,26 @@ const Ventas = {
 
     loadArticles() {
 
+        const search =
+            (this.elements.saleArticleSearch?.value ?? "")
+                .trim()
+                .toLowerCase();
+
         const articles =
             getArticles.execute()
-                .filter(article => article.active);
+                .filter(article => article.active)
+                .filter(article => {
+                    if (!search) return true;
+                    return [article.code, article.name, article.description]
+                        .some(value =>
+                            String(value ?? "")
+                                .toLowerCase()
+                                .includes(search)
+                        );
+                });
+
+        const previousArticleId =
+            this.elements.saleArticle.value;
 
         this.elements.saleArticle
             .replaceChildren();
@@ -266,6 +293,16 @@ const Ventas = {
                 .appendChild(option);
 
         });
+
+        if (articles.some(article => article.id === previousArticleId)) {
+            this.elements.saleArticle.value = previousArticleId;
+        } else if (articles.length) {
+            this.elements.saleArticle.value = articles[0].id;
+        }
+
+        if (this.elements.btnAddToCart) {
+            this.elements.btnAddToCart.disabled = articles.length === 0;
+        }
 
         this.updateSelectedArticleStock();
 

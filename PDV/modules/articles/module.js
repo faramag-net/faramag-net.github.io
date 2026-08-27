@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Articles
  * Descripción: Administración del catálogo de artículos.
- * Versión: 0.9.18
+ * Versión: 0.9.19
  * ==========================================================
  */
 

@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Tickets
  * Descripción: Consulta y visualización de tickets virtuales.
- * Versión: 0.9.188
+ * Versión: 0.9.19
  * ==========================================================
  */
 
@@ -136,7 +136,10 @@ const Tickets = {
             this.elements.ticketSale;
 
         const search =
-            (this.elements.ticketSearch?.value ?? "").trim().toLowerCase();
+            (this.elements.ticketSearch?.value ?? "")
+                .trim()
+                .toLowerCase()
+                .replace(/^#/, "");
 
         const filteredTransactions =
             this.transactions.filter(transaction => {

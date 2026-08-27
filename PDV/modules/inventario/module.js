@@ -4,7 +4,7 @@
  * Archivo: inventario.js
  * Módulo: Inventario
  * Descripción: Administración del inventario y existencias.
- * Versión: 0.9.18
+ * Versión: 0.9.19
  * ==========================================================
  */
 
@@ -54,6 +54,11 @@ const Inventario = {
                     "movementArticle"
                 ),
 
+            movementArticleSearch:
+                document.getElementById(
+                    "movementArticleSearch"
+                ),
+
             movementType:
                 document.getElementById(
                     "movementType"
@@ -88,6 +93,11 @@ const Inventario = {
         this.elements.inventorySearch?.addEventListener(
             "input",
             () => this.renderInventory()
+        );
+
+        this.elements.movementArticleSearch?.addEventListener(
+            "input",
+            () => this.loadArticles()
         );
 
         this.elements.btnSaveMovement
@@ -159,14 +169,31 @@ const Inventario = {
 
     loadArticles() {
 
+        const search =
+            (this.elements.movementArticleSearch?.value ?? "")
+                .trim()
+                .toLowerCase();
+
+        const previousArticleId =
+            this.elements.movementArticle.value;
+
         const articles =
-            getArticles.execute();
+            getArticles.execute()
+                .filter(article => article.active)
+                .filter(article => {
+                    if (!search) return true;
+                    return [article.code, article.name, article.description]
+                        .some(value =>
+                            String(value ?? "")
+                                .toLowerCase()
+                                .includes(search)
+                        );
+                });
 
         this.elements.movementArticle
             .replaceChildren();
 
         articles
-            .filter(article => article.active)
             .forEach(article => {
 
             const option =
@@ -186,6 +213,12 @@ const Inventario = {
                 );
 
         });
+
+        if (articles.some(article => article.id === previousArticleId)) {
+            this.elements.movementArticle.value = previousArticleId;
+        } else if (articles.length) {
+            this.elements.movementArticle.value = articles[0].id;
+        }
 
     },
 
