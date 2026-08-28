@@ -4,7 +4,7 @@
  * Archivo: module.js
  * Módulo: Articles
  * Descripción: Administración del catálogo de artículos.
- * Versión: 0.9.19
+ * 0.9.20
  * ==========================================================
  */
 
@@ -64,6 +64,9 @@ const Articles = {
 
     editingArticle: null,
 
+    articlesPage: 1,
+    articlesPageSize: 25,
+
     async init() {
 
         Logger.success(
@@ -121,6 +124,11 @@ const Articles = {
         articlesTableBody:
             document.getElementById(
                 "articlesTableBody"
+            ),
+
+        articlesPagination:
+            document.getElementById(
+                "articlesPagination"
             ),
 
         articlesSearch:
@@ -233,7 +241,22 @@ const Articles = {
 
         this.elements.articlesTableBody.replaceChildren();
 
-        articles.forEach(article => {
+        const start = (this.articlesPage - 1) * this.articlesPageSize;
+        const visibleArticles = articles.slice(start, start + this.articlesPageSize);
+
+        Pagination.create({
+            container: this.elements.articlesPagination,
+            total: articles.length,
+            page: this.articlesPage,
+            pageSize: this.articlesPageSize,
+            onChange: (page, size) => {
+                this.articlesPage = page;
+                this.articlesPageSize = size;
+                this.renderTable();
+            }
+        });
+
+        visibleArticles.forEach(article => {
 
             const row =
                 this.createRow(article);

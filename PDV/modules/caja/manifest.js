@@ -4,7 +4,7 @@
  * Archivo: manifest.js
  * Módulo: caja
  * Descripción: Administración de Caja e historial de sesiones.
- * Versión: 0.9.13
+ * 0.9.20
  * ==========================================================
  */
 
@@ -25,7 +25,7 @@ export default {
 
     enabled: true,
 
-    version: "0.9.18",
+    version: "0.9.20",
 
     author: "Ricardo Farabundo Magallón Juan-Qui"
 

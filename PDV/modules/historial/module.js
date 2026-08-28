@@ -4,12 +4,15 @@
  * Archivo: module.js
  * Módulo: Historial
  * Descripción: Consulta básica de ventas y movimientos.
- * Versión: 0.9.188
+ * 0.9.20
  * ==========================================================
  */
 
 import Logger
     from "../../core/logger.js";
+
+import Pagination
+    from "../../core/pagination.js";
 
 import GetArticles
     from "../../domain/article/use-cases/get-articles.js";
@@ -53,6 +56,11 @@ const Historial = {
 
     articles: [],
 
+    transactionsPage: 1,
+    transactionsPageSize: 25,
+    movementsPage: 1,
+    movementsPageSize: 25,
+
     async init() {
 
         Logger.success(
@@ -71,12 +79,18 @@ const Historial = {
 
         this.elements.transactionsSearch?.addEventListener(
             "input",
-            () => this.renderTransactions()
+            () => {
+                this.transactionsPage = 1;
+                this.renderTransactions();
+            }
         );
 
         this.elements.movementsSearch?.addEventListener(
             "input",
-            () => this.renderMovements()
+            () => {
+                this.movementsPage = 1;
+                this.renderMovements();
+            }
         );
 
     },
@@ -103,6 +117,16 @@ const Historial = {
             movementsSearch:
                 document.getElementById(
                     "historyMovementsSearch"
+                ),
+
+            transactionsPagination:
+                document.getElementById(
+                    "historyTransactionsPagination"
+                ),
+
+            movementsPagination:
+                document.getElementById(
+                    "historyMovementsPagination"
                 )
 
         };
@@ -151,12 +175,34 @@ const Historial = {
                     "No hay ventas registradas."
                 )
             );
+            Pagination.create({
+                container: this.elements.transactionsPagination,
+                total: 0,
+                page: 1,
+                pageSize: this.transactionsPageSize,
+                onChange: () => {}
+            });
 
             return;
 
         }
 
-        transactions.forEach(transaction => {
+        const start = (this.transactionsPage - 1) * this.transactionsPageSize;
+        const visibleTransactions = transactions.slice(start, start + this.transactionsPageSize);
+
+        Pagination.create({
+            container: this.elements.transactionsPagination,
+            total: transactions.length,
+            page: this.transactionsPage,
+            pageSize: this.transactionsPageSize,
+            onChange: (page, size) => {
+                this.transactionsPage = page;
+                this.transactionsPageSize = size;
+                this.renderTransactions();
+            }
+        });
+
+        visibleTransactions.forEach(transaction => {
 
             const row =
                 document.createElement("tr");
@@ -223,12 +269,34 @@ const Historial = {
                     "No hay movimientos registrados."
                 )
             );
+            Pagination.create({
+                container: this.elements.movementsPagination,
+                total: 0,
+                page: 1,
+                pageSize: this.movementsPageSize,
+                onChange: () => {}
+            });
 
             return;
 
         }
 
-        movements.forEach(movement => {
+        const start = (this.movementsPage - 1) * this.movementsPageSize;
+        const visibleMovements = movements.slice(start, start + this.movementsPageSize);
+
+        Pagination.create({
+            container: this.elements.movementsPagination,
+            total: movements.length,
+            page: this.movementsPage,
+            pageSize: this.movementsPageSize,
+            onChange: (page, size) => {
+                this.movementsPage = page;
+                this.movementsPageSize = size;
+                this.renderMovements();
+            }
+        });
+
+        visibleMovements.forEach(movement => {
 
             const row =
                 document.createElement("tr");

@@ -4,7 +4,7 @@
  * Archivo: manifest.js
  * Módulo: Historial
  * Descripción: Consulta básica de ventas y movimientos.
- * Versión: 0.9.7
+ * 0.9.20
  * ==========================================================
  */
 
@@ -25,7 +25,7 @@ export default {
 
     enabled: true,
 
-    version: "0.9.18",
+    version: "0.9.20",
 
     author: "Ricardo Farabundo Magallón Juan-Qui"
 

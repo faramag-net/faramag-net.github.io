@@ -4,12 +4,15 @@
  * Archivo: module.js
  * Módulo: Caja
  * Descripción: Administración de Caja e historial de sesiones.
- * Versión: 0.9.188
+ * 0.9.20
  * ==========================================================
  */
 
 import Logger
     from "../../core/logger.js";
+
+import Pagination
+    from "../../core/pagination.js";
 
 import LocalCashRepository
     from "../../infrastructure/repositories/local/local-cash-repository.js";
@@ -56,6 +59,9 @@ const closeCash =
 const Caja = {
 
     elements: {},
+
+    historyPage: 1,
+    historyPageSize: 25,
 
     async init() {
 
@@ -116,6 +122,12 @@ const Caja = {
             historyBody:
                 document.getElementById("cashHistoryBody"),
 
+            historySearch:
+                document.getElementById("cashHistorySearch"),
+
+            historyPagination:
+                document.getElementById("cashHistoryPagination"),
+
             historyCount:
                 document.getElementById("cashHistoryCount"),
 
@@ -136,7 +148,10 @@ const Caja = {
 
         this.elements.historySearch?.addEventListener(
             "input",
-            () => this.renderHistory()
+            () => {
+                this.historyPage = 1;
+                this.renderHistory();
+            }
         );
 
         this.elements.openButton.addEventListener(
@@ -286,7 +301,33 @@ const Caja = {
         this.elements.historyEmpty.hidden =
             cashes.length > 0;
 
-        for (const cash of cashes) {
+        if (!cashes.length) {
+            Pagination.create({
+                container: this.elements.historyPagination,
+                total: 0,
+                page: 1,
+                pageSize: this.historyPageSize,
+                onChange: () => {}
+            });
+            return;
+        }
+
+        const start = (this.historyPage - 1) * this.historyPageSize;
+        const visibleCashes = cashes.slice(start, start + this.historyPageSize);
+
+        Pagination.create({
+            container: this.elements.historyPagination,
+            total: cashes.length,
+            page: this.historyPage,
+            pageSize: this.historyPageSize,
+            onChange: (page, size) => {
+                this.historyPage = page;
+                this.historyPageSize = size;
+                this.renderHistory();
+            }
+        });
+
+        for (const cash of visibleCashes) {
 
             const summary =
                 getCashSummary.execute(cash);

@@ -4,12 +4,15 @@
  * Archivo: inventario.js
  * Módulo: Inventario
  * Descripción: Administración del inventario y existencias.
- * Versión: 0.9.19
+ * 0.9.20
  * ==========================================================
  */
 
 // Core
 import Logger from "../../core/logger.js";
+
+import Pagination
+    from "../../core/pagination.js";
 
 import GetArticles
     from "../../domain/article/use-cases/get-articles.js";
@@ -29,6 +32,9 @@ import GetInventory
 const Inventario = {
 
     elements: {},
+
+    inventoryPage: 1,
+    inventoryPageSize: 25,
 
     async init() {
 
@@ -82,6 +88,11 @@ const Inventario = {
             inventorySearch:
                 document.getElementById(
                     "inventorySearch"
+                ),
+
+            inventoryPagination:
+                document.getElementById(
+                    "inventoryPagination"
                 )
 
         };
@@ -92,7 +103,10 @@ const Inventario = {
 
         this.elements.inventorySearch?.addEventListener(
             "input",
-            () => this.renderInventory()
+            () => {
+                this.inventoryPage = 1;
+                this.renderInventory();
+            }
         );
 
         this.elements.movementArticleSearch?.addEventListener(
@@ -237,7 +251,22 @@ const Inventario = {
         this.elements.inventoryTableBody
             .replaceChildren();
 
-        inventory.forEach(item => {
+        const start = (this.inventoryPage - 1) * this.inventoryPageSize;
+        const visibleInventory = inventory.slice(start, start + this.inventoryPageSize);
+
+        Pagination.create({
+            container: this.elements.inventoryPagination,
+            total: inventory.length,
+            page: this.inventoryPage,
+            pageSize: this.inventoryPageSize,
+            onChange: (page, size) => {
+                this.inventoryPage = page;
+                this.inventoryPageSize = size;
+                this.renderInventory();
+            }
+        });
+
+        visibleInventory.forEach(item => {
 
             const row =
                 this.createRow(item);

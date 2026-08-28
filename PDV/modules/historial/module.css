@@ -3,7 +3,7 @@
  * PDV
  * Archivo: module.css
  * Módulo: Historial
- * Versión: 0.9.7
+ * 0.9.20
  * ==========================================================
  */
 
@@ -35,4 +35,51 @@
 
     opacity: 0.7;
 
+}
+
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    font-size: .875rem;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.pagination button {
+    padding: .4rem .65rem;
+}
+
+.pagination-size {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+.pagination-size select {
+    padding: .35rem;
+}
+
+.pagination-info,
+.pagination-page {
+    opacity: .75;
+}
+
+@media (max-width: 700px) {
+    .pagination {
+        align-items: stretch;
+        flex-direction: column;
+    }
+    .pagination-controls {
+        justify-content: space-between;
+    }
 }
