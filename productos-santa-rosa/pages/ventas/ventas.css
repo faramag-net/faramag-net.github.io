@@ -124,3 +124,27 @@
     font-size: 11px;
 
 }
+
+
+/* BUSQUEDA Y FILTROS DE PRODUCTOS */
+.filtros-productos,
+.consigna-filtros{
+    display:grid;
+    grid-template-columns:minmax(180px,2fr) minmax(140px,1fr);
+    gap:8px;
+    margin:8px 0 12px;
+}
+
+.filtros-productos input,
+.filtros-productos select,
+.consigna-filtros input,
+.consigna-filtros select{
+    margin:0;
+}
+
+@media(max-width:600px){
+    .filtros-productos,
+    .consigna-filtros{
+        grid-template-columns:1fr;
+    }
+}

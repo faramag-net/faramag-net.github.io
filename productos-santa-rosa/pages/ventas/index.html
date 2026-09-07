@@ -64,11 +64,24 @@
 
     </h2>
 
-    <div
-    id="stockCards"
-    class="stock-grid">
+    <div class="filtros-productos">
+        <input
+            type="search"
+            id="buscarStock"
+            placeholder="🔍 Buscar producto..."
+            autocomplete="off">
 
+        <select id="filtroStock">
+            <option value="todos">Todos</option>
+            <option value="paleta">Paleta</option>
+            <option value="boli">Boli</option>
+            <option value="postre">Postre</option>
+            <option value="historico">Antiguos</option>
+            <option value="otro">Otro</option>
+        </select>
     </div>
+
+    <div id="stockCards" class="stock-grid"></div>
 
 </div>
 
@@ -79,6 +92,23 @@
         <h2>🛒 Registrar Venta</h2>
 
     <!-- GRID 1 -->
+
+<div class="filtros-productos">
+    <input
+        type="search"
+        id="buscarProductoVenta"
+        placeholder="🔍 Buscar producto..."
+        autocomplete="off">
+
+    <select id="filtroProductoVenta">
+        <option value="todos">Todos</option>
+        <option value="paleta">Paleta</option>
+        <option value="boli">Boli</option>
+        <option value="postre">Postre</option>
+        <option value="historico">Antiguos</option>
+        <option value="otro">Otro</option>
+    </select>
+</div>
 
 <div class="grid-formulario">
 

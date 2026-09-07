@@ -6,31 +6,30 @@ import {
 from "./storage.js";
 
 export function renderProductos(){
+    const selectInventario = document.getElementById("productoInventario");
+    if(!selectInventario) return;
 
-    const selectInventario =
-    document.getElementById(
-        "productoInventario"
-    );
+    const texto = (document.getElementById("buscarInventario")?.value || "")
+        .trim().toLowerCase();
+    const categoria = document.getElementById("filtroInventario")?.value || "todos";
+    const valorActual = selectInventario.value;
 
-    selectInventario.innerHTML = "";
+    const lista = [...productos]
+        .filter(p => {
+            const nombre = (p.nombre || "").toLowerCase();
+            const cat = (p.categoria || "historico").toLowerCase();
+            return (!texto || nombre.includes(texto)) &&
+                   (categoria === "todos" || cat === categoria);
+        })
+        .sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }));
 
-    [...productos]\n    .sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }))\n    .forEach(producto=>{
+    selectInventario.innerHTML = lista.map(producto =>
+        `<option value="${producto.nombre}">${producto.nombre}</option>`
+    ).join("");
 
-        // INVENTARIO
-
-        const optionInventario =
-        document.createElement("option");
-
-        optionInventario.value =
-        producto.nombre;
-
-        optionInventario.textContent =
-        producto.nombre;
-
-        selectInventario.appendChild(
-            optionInventario
-        );
-    });
+    if(lista.some(p => p.nombre === valorActual)) {
+        selectInventario.value = valorActual;
+    }
 }
 
 export function agregarInventario(){
@@ -126,7 +125,18 @@ export function renderTablaProductos(){
 
     tabla.innerHTML = "";
 
-    LocalDB.getProducts()
+    const texto = (document.getElementById("buscarInventario")?.value || "")
+        .trim().toLowerCase();
+    const categoria = document.getElementById("filtroInventario")?.value || "todos";
+
+    [...LocalDB.getProducts()]
+    .filter(producto => {
+        const nombre = (producto.nombre || "").toLowerCase();
+        const cat = (producto.categoria || "historico").toLowerCase();
+        return (!texto || nombre.includes(texto)) &&
+               (categoria === "todos" || cat === categoria);
+    })
+    .sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }))
     .forEach(producto=>{
 
     const stock =
@@ -248,7 +258,7 @@ export function editarProducto(id){
 
     const nuevaCategoria =
     prompt(
-        "Categoría (paleta, boli, postre u otro):",
+        "Categoría (paleta, boli, postre, historico u otro):",
         producto.categoria || "otro"
     );
 
@@ -258,7 +268,7 @@ export function editarProducto(id){
         nuevaCategoria.trim().toLowerCase();
 
     const categoriasValidas =
-        ["paleta", "boli", "postre", "otro"];
+        ["paleta", "boli", "postre", "historico", "otro"];
 
     if(!categoriasValidas.includes(categoria)){
         alert("Categoría inválida");

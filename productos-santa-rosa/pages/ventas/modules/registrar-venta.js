@@ -1,31 +1,36 @@
 import LocalDB from "../../../core/storage/local-db.js";
 
 export function cargarProductos(){
+    renderProductosVenta();
+}
 
-    const productos =
-    [...LocalDB.getProducts()]\n    .sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }));
+export function renderProductosVenta(){
+    const select = document.getElementById("producto");
+    if(!select) return;
 
-    const select =
-    document.getElementById("producto");
+    const texto = (document.getElementById("buscarProductoVenta")?.value || "")
+        .trim().toLowerCase();
+    const categoria = document.getElementById("filtroProductoVenta")?.value || "todos";
+    const valorActual = select.value;
 
-    select.innerHTML = "";
+    const productos = [...LocalDB.getProducts()]
+        .filter(p => {
+            const nombre = (p.nombre || "").toLowerCase();
+            const cat = (p.categoria || "historico").toLowerCase();
+            return (!texto || nombre.includes(texto)) &&
+                   (categoria === "todos" || cat === categoria);
+        })
+        .sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }));
 
-    productos.forEach(producto=>{
+    select.innerHTML = productos.map(p =>
+        `<option value="${p.nombre}">${p.nombre}</option>`
+    ).join("");
 
-        select.innerHTML += `
-
-        <option value="${producto.nombre}">
-
-            ${producto.nombre}
-
-        </option>
-
-        `;
-
-    });
+    if(productos.some(p => p.nombre === valorActual)) {
+        select.value = valorActual;
+    }
 
     actualizarProducto();
-
 }
 
 export function actualizarProducto(){

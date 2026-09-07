@@ -676,31 +676,51 @@ consignacion =
         <h4>
             Agregar producto
         </h4>
-        
-        <select
-            id="nuevoProductoConsigna"
-        >
-        
-    ${
-        productos.map(producto => `
 
-            <option
-                value="${producto.id}"
-            >
-                ${producto.nombre}
-            </option>
+        <div class="consigna-filtros">
+            <input
+                type="search"
+                id="buscarProductoEditarConsigna"
+                placeholder="🔍 Buscar producto..."
+                autocomplete="off">
 
-        `).join("")
-    }
-</select>
+            <select id="filtroProductoEditarConsigna">
+                <option value="todos">Todos</option>
+                <option value="paleta">Paleta</option>
+                <option value="boli">Boli</option>
+                <option value="postre">Postre</option>
+                <option value="historico">Antiguos</option>
+                <option value="otro">Otro</option>
+            </select>
+        </div>
 
-<button
-    id="agregarProductoConsignaBtn"
->
-    Agregar
-</button>
+        <select id="nuevoProductoConsigna"></select>
+
+        <button id="agregarProductoConsignaBtn">Agregar</button>
 
 `;
+
+const selectNuevoProducto = document.getElementById("nuevoProductoConsigna");
+const buscarEditar = document.getElementById("buscarProductoEditarConsigna");
+const filtroEditar = document.getElementById("filtroProductoEditarConsigna");
+
+function renderProductosEditarConsigna(){
+    if(!selectNuevoProducto) return;
+    const texto = (buscarEditar?.value || "").trim().toLowerCase();
+    const categoria = filtroEditar?.value || "todos";
+    const opciones = productos.filter(producto => {
+        const nombre = (producto.nombre || "").toLowerCase();
+        const cat = (producto.categoria || "historico").toLowerCase();
+        const yaExiste = consignacion.items.some(item => item.productId === producto.id);
+        return !yaExiste && (!texto || nombre.includes(texto)) &&
+               (categoria === "todos" || cat === categoria);
+    }).sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }));
+    selectNuevoProducto.innerHTML = opciones.map(p => `<option value="${p.id}">${p.nombre}</option>`).join("");
+}
+
+buscarEditar?.addEventListener("input", renderProductosEditarConsigna);
+filtroEditar?.addEventListener("change", renderProductosEditarConsigna);
+renderProductosEditarConsigna();
 
 document
 .getElementById(
@@ -1203,7 +1223,7 @@ document
                             <div
                                 class="producto-row producto-consigna-item"
                                 data-nombre="${(producto.nombre || "").toLowerCase()}"
-                                data-categoria="${(producto.categoria || "otro").toLowerCase()}"
+                                data-categoria="${(producto.categoria || "historico").toLowerCase()}"
                             >
 
                                 <span

@@ -5,7 +5,8 @@ import {
     actualizarProducto,
     actualizarSubtotal,
     cambiarCantidad,
-    registrarVenta
+    registrarVenta,
+    renderProductosVenta
 }
 
 from "./modules/registrar-venta.js";
@@ -64,6 +65,9 @@ importarVentas;
 window.cerrarCorte =
 cerrarCorte;
 
+// Recuperar productos antiguos referenciados por históricos/consignaciones.
+LocalDB.recuperarProductosHistoricos();
+
 // RENDER STOCK
 
 function renderStock(){
@@ -73,8 +77,18 @@ function renderStock(){
         "stockCards"
     );
     
-    const productos =
-        LocalDB.getProducts();
+    const texto = (document.getElementById("buscarStock")?.value || "")
+        .trim().toLowerCase();
+    const categoria = document.getElementById("filtroStock")?.value || "todos";
+
+    const productos = [...LocalDB.getProducts()]
+        .filter(p => {
+            const nombre = (p.nombre || "").toLowerCase();
+            const cat = (p.categoria || "historico").toLowerCase();
+            return (!texto || nombre.includes(texto)) &&
+                   (categoria === "todos" || cat === categoria);
+        })
+        .sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }));
     
     const inventario = 
         LocalDB.getInventory();
@@ -148,6 +162,24 @@ actualizarSubtotal();
 renderTablaVentas();
 
 actualizarKPIs();
+
+["buscarStock", "filtroStock", "buscarProductoVenta", "filtroProductoVenta"]
+    .forEach(id => {
+        document.getElementById(id)?.addEventListener("input", () => {
+            if(id === "buscarProductoVenta" || id === "filtroProductoVenta") {
+                renderProductosVenta();
+            } else {
+                renderStock();
+            }
+        });
+        document.getElementById(id)?.addEventListener("change", () => {
+            if(id === "buscarProductoVenta" || id === "filtroProductoVenta") {
+                renderProductosVenta();
+            } else {
+                renderStock();
+            }
+        });
+    });
 
 document
     .getElementById(

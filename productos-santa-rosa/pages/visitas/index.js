@@ -1,6 +1,8 @@
 import LocalDB
 from "../../core/storage/local-db.js";
 
+LocalDB.recuperarProductosHistoricos();
+
 import {
     crearCliente
 }

@@ -32,6 +32,8 @@ from "./modules/exportar.js";
 
 window.LocalDB = LocalDB;
 
+LocalDB.recuperarProductosHistoricos();
+
 window.agregarProducto =
 agregarProducto;
 

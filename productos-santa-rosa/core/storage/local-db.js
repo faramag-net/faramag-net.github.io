@@ -62,6 +62,82 @@ class LocalDB {
     return this.get(DB_KEYS.PRODUCTS);
   }
 
+  // Recupera productos antiguos que todavía son referenciados por
+  // ventas/consignaciones/clientes, evitando que queden "huérfanos".
+  static recuperarProductosHistoricos() {
+    const products = this.get(DB_KEYS.PRODUCTS);
+    let normalized = false;
+
+    products.forEach(product => {
+      if (!product.categoria) {
+        product.categoria = "historico";
+        normalized = true;
+      }
+    });
+
+    const byId = new Map(products.map(p => [p.id, p]));
+    const recovered = [];
+
+    const registerReference = (productId, data = {}) => {
+      if (!productId || byId.has(productId)) return;
+
+      const nombre = data.nombre || `Producto antiguo ${String(productId).slice(0, 8)}`;
+      const product = {
+        id: productId,
+        nombre,
+        categoria: "historico",
+        precio: Number(data.precio || 0),
+        costo: Number(data.costo || 0),
+        descripcion: "Producto recuperado de registros históricos",
+        active: true,
+        createdAt: data.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        recuperado: true
+      };
+
+      byId.set(productId, product);
+      recovered.push(product);
+    };
+
+    // Las ventas contienen el productId dentro de items y el nombre/precio/costo.
+    this.get(DB_KEYS.SALES).forEach(sale => {
+      (sale.items || []).forEach(item => {
+        registerReference(item.productId, {
+          nombre: sale.producto,
+          precio: item.price ?? sale.precio,
+          costo: sale.costo,
+          createdAt: sale.createdAt
+        });
+      });
+    });
+
+    // Las consignaciones mantienen el productId aunque el producto haya sido eliminado.
+    this.get(DB_KEYS.CONSIGNATIONS).forEach(consigna => {
+      (consigna.items || []).forEach(item => {
+        registerReference(item.productId, {
+          precio: item.precio,
+          createdAt: consigna.fecha
+        });
+      });
+    });
+
+    // Productos previamente asociados a clientes.
+    this.get(DB_KEYS.CLIENT_PRODUCTS).forEach(item => {
+      registerReference(item.productoId);
+    });
+
+    // Movimientos de inventario también pueden conservar productId.
+    this.get(DB_KEYS.INVENTORY).forEach(item => {
+      registerReference(item.productId);
+    });
+
+    if (recovered.length || normalized) {
+      this.saveProducts([...products, ...recovered]);
+    }
+
+    return [...products, ...recovered];
+  }
+
   static saveProducts(products) {
     return this.set(DB_KEYS.PRODUCTS, products);
   }
@@ -121,18 +197,21 @@ static deleteInventoryByProductId(productId) {
   
 static deleteProduct(id) {
 
-    const products =
-        this.getProducts();
+    const products = this.getProducts();
+    const index = products.findIndex(p => p.id === id);
 
-    const filtered =
-        products.filter(
-            (p) => p.id !== id
-        );
+    if (index < 0) return false;
 
-    this.saveProducts(filtered);
+    // No borrar físicamente: el historial, ventas y consignaciones
+    // pueden seguir necesitando este producto.
+    products[index] = {
+      ...products[index],
+      active: false,
+      categoria: "historico",
+      updatedAt: new Date().toISOString()
+    };
 
-    this.deleteInventoryByProductId(id);
-
+    this.saveProducts(products);
     return true;
 }
   
