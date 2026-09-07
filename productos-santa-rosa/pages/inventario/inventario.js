@@ -13,7 +13,8 @@ from "./modules/agregar-producto.js";
 import {
     agregarInventario,
     renderProductos,
-    renderTablaProductos
+    renderTablaProductos,
+    actualizarCostoMovimiento
 }
 from "./modules/entradas.js";
 
@@ -58,6 +59,8 @@ renderTablaProductos();
 actualizarResumen();
 
 renderTabla();
+
+document.getElementById("productoInventario")?.addEventListener("change", actualizarCostoMovimiento);
 
 document
     .getElementById(

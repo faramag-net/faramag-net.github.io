@@ -66,6 +66,8 @@ const movimientos =
 
             <td>${movimiento.cantidad}</td>
 
+            <td>$${Number(movimiento.costo || 0).toFixed(2)}</td>
+
             <td>${movimiento.stock || 0}</td>
 
             <td>${movimiento.fecha}</td>

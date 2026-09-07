@@ -30,6 +30,16 @@ export function renderProductos(){
     if(lista.some(p => p.nombre === valorActual)) {
         selectInventario.value = valorActual;
     }
+
+    actualizarCostoMovimiento();
+}
+
+export function actualizarCostoMovimiento(){
+    const nombre = document.getElementById("productoInventario")?.value;
+    const producto = LocalDB.getProducts().find(p => p.nombre === nombre);
+    const costo = Number(producto?.costo || 0);
+    const el = document.getElementById("costoMovimiento");
+    if(el) el.textContent = "$" + costo.toFixed(2);
 }
 
 export function agregarInventario(){
@@ -93,6 +103,8 @@ LocalDB.addHistory({
     producto: nombre,
 
     cantidad,
+
+    costo: Number(producto.costo || 0),
 
     stock: stockActual,
 
@@ -159,6 +171,8 @@ export function renderTablaProductos(){
             <td>${producto.nombre}</td>
 
             <td>$${Number(producto.precio || 0).toFixed(2)}</td>
+
+            <td>$${Number(producto.costo || 0).toFixed(2)}</td>
 
             <td>${stock}</td>
 
@@ -234,61 +248,69 @@ export function eliminarProductoPorId(id){
 
 export function editarProducto(id){
 
-    const producto =
-    LocalDB.getProducts()
-    .find(p => p.id === id);
-
+    const producto = LocalDB.getProducts().find(p => p.id === id);
     if(!producto) return;
 
-    const nuevoPrecio =
-    prompt(
-        "Nuevo precio:",
-        producto.precio
-    );
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.innerHTML = `
+        <div class="modal-content modal-editar-producto">
+            <button class="modal-close" type="button">✖</button>
+            <h2>✏️ Editar producto</h2>
+            <p><strong>${producto.nombre}</strong></p>
 
-    if(nuevoPrecio === null) return;
+            <label>Categoría</label>
+            <select id="editarCategoria">
+                <option value="paleta">Paleta</option>
+                <option value="boli">Boli</option>
+                <option value="postre">Postre</option>
+                <option value="otro">Otro</option>
+                <option value="historico">Histórico</option>
+            </select>
 
-    const nuevoCosto =
-    prompt(
-        "Nuevo costo:",
-        producto.costo || 0
-    );
+            <label>Precio de venta</label>
+            <input id="editarPrecio" type="number" min="0" step="0.01" value="${Number(producto.precio || 0)}">
 
-    if(nuevoCosto === null) return;
+            <label>Costo</label>
+            <input id="editarCosto" type="number" min="0" step="0.01" value="${Number(producto.costo || 0)}">
 
-    const nuevaCategoria =
-    prompt(
-        "Categoría (paleta, boli, postre, historico u otro):",
-        producto.categoria || "otro"
-    );
+            <div class="acciones-editar-producto">
+                <button type="button" id="cancelarEditar">Cancelar</button>
+                <button type="button" id="guardarEditar">💾 Guardar cambios</button>
+            </div>
+        </div>
+    `;
 
-    if(nuevaCategoria === null) return;
+    document.body.appendChild(overlay);
 
-    const categoria =
-        nuevaCategoria.trim().toLowerCase();
+    overlay.querySelector("#editarCategoria").value = producto.categoria || "otro";
 
-    const categoriasValidas =
-        ["paleta", "boli", "postre", "historico", "otro"];
+    const cerrar = () => overlay.remove();
+    overlay.querySelector(".modal-close").onclick = cerrar;
+    overlay.querySelector("#cancelarEditar").onclick = cerrar;
 
-    if(!categoriasValidas.includes(categoria)){
-        alert("Categoría inválida");
-        return;
-    }
+    overlay.querySelector("#guardarEditar").onclick = () => {
+        const precio = Number(overlay.querySelector("#editarPrecio").value);
+        const costo = Number(overlay.querySelector("#editarCosto").value);
+        const categoria = overlay.querySelector("#editarCategoria").value;
 
-    LocalDB.updateProduct(id, {
+        if(!Number.isFinite(precio) || precio < 0){
+            alert("Precio inválido");
+            return;
+        }
+        if(!Number.isFinite(costo) || costo < 0){
+            alert("Costo inválido");
+            return;
+        }
 
-        precio: Number(nuevoPrecio),
-
-        costo: Number(nuevoCosto),
-
-        categoria
-
-    });
-
-    renderTablaProductos();
-
-    alert("Producto actualizado");
-
+        LocalDB.updateProduct(id, { precio, costo, categoria });
+        productos.length = 0;
+        productos.push(...LocalDB.getProducts());
+        cerrar();
+        renderProductos();
+        renderTablaProductos();
+        alert("Producto actualizado");
+    };
 }
 
 window.editarProducto =

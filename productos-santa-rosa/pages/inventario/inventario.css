@@ -324,3 +324,52 @@ h1{
         grid-template-columns:1fr;
     }
 }
+
+
+/* EDICIÓN DE PRODUCTO */
+.modal-editar-producto{
+    max-width:420px;
+    width:calc(100% - 30px);
+    padding:20px;
+}
+
+.modal-editar-producto h2{
+    margin-top:0;
+}
+
+.modal-editar-producto label{
+    display:block;
+    margin:10px 0 5px;
+    font-weight:600;
+}
+
+.modal-editar-producto input,
+.modal-editar-producto select{
+    width:100%;
+    box-sizing:border-box;
+}
+
+.acciones-editar-producto{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:18px;
+}
+
+.detalle-costo-movimiento{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:40px;
+    padding:0 10px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    background:#f8f8f8;
+    white-space:nowrap;
+}
+
+@media(max-width:600px){
+    .detalle-costo-movimiento{
+        justify-content:flex-start;
+    }
+}

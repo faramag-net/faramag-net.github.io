@@ -70,7 +70,9 @@ class LocalDB {
 
     products.forEach(product => {
       if (!product.categoria) {
-        product.categoria = "historico";
+        // La ausencia de categoría NO significa que el producto sea antiguo.
+        // Puede tener stock 0 y seguir siendo un producto vigente.
+        product.categoria = "otro";
         normalized = true;
       }
     });
@@ -81,11 +83,15 @@ class LocalDB {
     const registerReference = (productId, data = {}) => {
       if (!productId || byId.has(productId)) return;
 
-      const nombre = data.nombre || `Producto antiguo ${String(productId).slice(0, 8)}`;
+      // Nunca inventar nombres a partir del UUID. Si no tenemos un nombre real
+      // en los registros históricos, no creamos un producto ficticio.
+      const nombre = data.nombre;
+      if (!nombre) return;
+
       const product = {
         id: productId,
         nombre,
-        categoria: "historico",
+        categoria: data.categoria || "otro",
         precio: Number(data.precio || 0),
         costo: Number(data.costo || 0),
         descripcion: "Producto recuperado de registros históricos",
