@@ -65,8 +65,24 @@ class LocalDB {
   // Recupera productos antiguos que todavía son referenciados por
   // ventas/consignaciones/clientes, evitando que queden "huérfanos".
   static recuperarProductosHistoricos() {
-    const products = this.get(DB_KEYS.PRODUCTS);
+    let products = this.get(DB_KEYS.PRODUCTS);
     let normalized = false;
+
+    // Limpieza de los nombres ficticios creados por una versión anterior.
+    // No representan productos reales y no deben confundirse con productos
+    // con stock 0 ni convertirse automáticamente en "antiguos".
+    const nombresFicticios = /^Producto antiguo [0-9a-f]{8}$/i;
+    const productosSinFicticio = products.filter(product => {
+      return !(
+        typeof product?.nombre === "string" &&
+        nombresFicticios.test(product.nombre)
+      );
+    });
+
+    if (productosSinFicticio.length !== products.length) {
+      products = productosSinFicticio;
+      normalized = true;
+    }
 
     products.forEach(product => {
       if (!product.categoria) {

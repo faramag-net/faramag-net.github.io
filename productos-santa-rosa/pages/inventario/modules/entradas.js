@@ -17,7 +17,7 @@ export function renderProductos(){
     const lista = [...productos]
         .filter(p => {
             const nombre = (p.nombre || "").toLowerCase();
-            const cat = (p.categoria || "historico").toLowerCase();
+            const cat = (p.categoria || "otro").toLowerCase();
             return (!texto || nombre.includes(texto)) &&
                    (categoria === "todos" || cat === categoria);
         })
@@ -144,7 +144,7 @@ export function renderTablaProductos(){
     [...LocalDB.getProducts()]
     .filter(producto => {
         const nombre = (producto.nombre || "").toLowerCase();
-        const cat = (producto.categoria || "historico").toLowerCase();
+        const cat = (producto.categoria || "otro").toLowerCase();
         return (!texto || nombre.includes(texto)) &&
                (categoria === "todos" || cat === categoria);
     })

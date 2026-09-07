@@ -62,6 +62,21 @@ renderTabla();
 
 document.getElementById("productoInventario")?.addEventListener("change", actualizarCostoMovimiento);
 
+// La búsqueda y el filtro de productos controlan tanto la tabla
+// como el selector utilizado para registrar movimientos.
+const actualizarFiltroProductos = () => {
+    renderProductos();
+    renderTablaProductos();
+};
+
+document
+    .getElementById("buscarInventario")
+    ?.addEventListener("input", actualizarFiltroProductos);
+
+document
+    .getElementById("filtroInventario")
+    ?.addEventListener("change", actualizarFiltroProductos);
+
 document
     .getElementById(
         "buscarHistorial"
