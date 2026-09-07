@@ -68,24 +68,28 @@ export function agregarInventario(){
 
     }
 
-    if(cantidad <= 0){
-
+    // ENTRADA, MERMA y CORTESÍA requieren una cantidad positiva.
+    // AJUSTE es especial: acepta valores positivos o negativos.
+    if(tipo === "AJUSTE") {
+        if(!Number.isFinite(cantidad) || cantidad === 0){
+            alert("El ajuste debe ser un número distinto de 0");
+            return;
+        }
+    } else if(!Number.isFinite(cantidad) || cantidad <= 0){
         alert("Cantidad inválida");
-
         return;
-
     }
 
-let movimientoCantidad = cantidad;
+    // En un AJUSTE se conserva el signo introducido por el usuario:
+    // +5 aumenta el stock y -5 lo disminuye.
+    let movimientoCantidad = cantidad;
 
-if(
-    tipo === "MERMA" ||
-    tipo === "CORTESIA" ||
-    tipo === "AJUSTE"
-){
-
-    movimientoCantidad = -cantidad;
-}
+    if(
+        tipo === "MERMA" ||
+        tipo === "CORTESIA"
+    ){
+        movimientoCantidad = -cantidad;
+    }
 
 LocalDB.updateStock(
     producto.id,

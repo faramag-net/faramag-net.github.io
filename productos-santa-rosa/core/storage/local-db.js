@@ -347,7 +347,13 @@ static getCalculatedStock(productId){
             case "CORTESIA":
             case "CONSIGNACION_SALIDA":
 
-                stock -= item.cantidad;
+                stock -= Math.abs(Number(item.cantidad || 0));
+                break;
+
+            case "AJUSTE":
+
+                // El ajuste conserva el signo: positivo suma, negativo resta.
+                stock += Number(item.cantidad || 0);
                 break;
 
             case "ELIMINAR PRODUCTO":
