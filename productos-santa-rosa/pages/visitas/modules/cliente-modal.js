@@ -168,6 +168,85 @@ setTimeout(() => {
 
 },0);
 
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function conectarEdicionCliente() {
+        document.getElementById("btnGuardarCliente")?.addEventListener("click", () => {
+            const nombre = document.getElementById("editarClienteNombre")?.value.trim();
+            const telefono = document.getElementById("editarClienteTelefono")?.value.trim();
+            const direccion = document.getElementById("editarClienteDireccion")?.value.trim();
+            const latitud = document.getElementById("editarClienteLatitud")?.value || null;
+            const longitud = document.getElementById("editarClienteLongitud")?.value || null;
+
+            if (!nombre) {
+                alert("El nombre del cliente es requerido");
+                return;
+            }
+
+            const actualizado = LocalDB.updateRouteClient(clienteId, {
+                nombre, telefono, direccion, latitud, longitud
+            });
+
+            if (!actualizado) {
+                alert("No se pudo actualizar el cliente");
+                return;
+            }
+
+            cliente.nombre = actualizado.nombre;
+            cliente.telefono = actualizado.telefono;
+            cliente.direccion = actualizado.direccion;
+            cliente.latitud = actualizado.latitud;
+            cliente.longitud = actualizado.longitud;
+
+            showToast("Cliente actualizado");
+            renderInfoTab();
+        });
+
+        document.getElementById("btnObtenerUbicacionCliente")?.addEventListener("click", () => {
+            if (!navigator.geolocation) {
+                alert("La geolocalización no está disponible en este dispositivo");
+                return;
+            }
+
+            const boton = document.getElementById("btnObtenerUbicacionCliente");
+            if (boton) { boton.disabled = true; boton.textContent = "📍 Obteniendo ubicación..."; }
+
+            navigator.geolocation.getCurrentPosition(async pos => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                const latEl = document.getElementById("editarClienteLatitud");
+                const lonEl = document.getElementById("editarClienteLongitud");
+                if (latEl) latEl.value = lat;
+                if (lonEl) lonEl.value = lon;
+
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&accept-language=es`);
+                    if (!response.ok) throw new Error("Error de geocodificación");
+                    const data = await response.json();
+                    const direccion = data.display_name || "";
+                    if (direccion) {
+                        document.getElementById("editarClienteDireccion").value = direccion;
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert("Se obtuvo la ubicación, pero no fue posible convertirla en dirección. Puedes escribir la dirección manualmente.");
+                } finally {
+                    if (boton) { boton.disabled = false; boton.textContent = "📍 Obtener ubicación"; }
+                }
+            }, () => {
+                if (boton) { boton.disabled = false; boton.textContent = "📍 Obtener ubicación"; }
+                alert("No se pudo obtener la ubicación. Verifica los permisos de ubicación.");
+            }, { enableHighAccuracy: true, timeout: 10000 });
+        });
+    }
+
     function renderInfoTab(){
 
     const container =
@@ -189,15 +268,28 @@ setTimeout(() => {
         
     container.innerHTML = `
 
-        <p>
-            📞 ${cliente.telefono || "-"}
-        </p>
+        <div class="cliente-info-resumen">
+            <p>📞 ${cliente.telefono || "-"}</p>
+            <p>📍 ${cliente.direccion || "-"}</p>
+            ${cliente.latitud && cliente.longitud ? `<small>📌 Ubicación guardada</small>` : ""}
+        </div>
 
-        <p>
-            📍 ${cliente.direccion || "-"}
-        </p>
+        <div class="cliente-edicion" style="margin:16px 0; padding:14px; border:1px solid #ddd; border-radius:10px;">
+            <h3 style="margin-top:0;">✏️ Editar cliente</h3>
 
-                <h3>
+            <input id="editarClienteNombre" type="text" value="${escapeHtml(cliente.nombre || "")}" placeholder="Nombre">
+            <input id="editarClienteTelefono" type="tel" value="${escapeHtml(cliente.telefono || "")}" placeholder="Teléfono">
+            <input id="editarClienteDireccion" type="text" value="${escapeHtml(cliente.direccion || "")}" placeholder="Dirección">
+
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                <button type="button" id="btnObtenerUbicacionCliente">📍 Obtener ubicación</button>
+                <button type="button" id="btnGuardarCliente">💾 Guardar cambios</button>
+            </div>
+            <input id="editarClienteLatitud" type="hidden" value="${cliente.latitud ?? ""}">
+            <input id="editarClienteLongitud" type="hidden" value="${cliente.longitud ?? ""}">
+        </div>
+
+        <h3>
     Últimas Compras
 </h3>
 
@@ -262,8 +354,8 @@ setTimeout(() => {
 </table>
  
     `;
-      
-       
+
+    conectarEdicionCliente();
 }
 
     function renderVisitasTab(){

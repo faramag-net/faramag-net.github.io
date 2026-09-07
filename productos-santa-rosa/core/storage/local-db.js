@@ -582,6 +582,39 @@ static saveClients(clients) {
     );
 }
 
+static updateRouteClient(clienteId, cambios = {}) {
+    const clientes = this.getRouteClients();
+    const index = clientes.findIndex(c => c.id === clienteId);
+    if (index === -1) return null;
+
+    const anterior = { ...clientes[index] };
+    clientes[index] = {
+      ...clientes[index],
+      ...cambios,
+      id: clientes[index].id,
+      updatedAt: new Date().toISOString()
+    };
+
+    this.saveRouteClients(clientes);
+
+    // Las ventas históricas guardan el nombre del cliente.
+    // Si cambia el nombre, actualizamos esa referencia para no perder
+    // el historial al consultar las compras desde Visitas.
+    if (anterior.nombre !== clientes[index].nombre) {
+      const ventas = this.getSales();
+      let changed = false;
+      ventas.forEach(venta => {
+        if (venta.cliente === anterior.nombre) {
+          venta.cliente = clientes[index].nombre;
+          changed = true;
+        }
+      });
+      if (changed) this.saveSales(ventas);
+    }
+
+    return clientes[index];
+}
+
 static addClient(client) {
 
     const clients =

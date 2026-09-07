@@ -80,7 +80,8 @@ let movimientoCantidad = cantidad;
 
 if(
     tipo === "MERMA" ||
-    tipo === "CORTESIA"
+    tipo === "CORTESIA" ||
+    tipo === "AJUSTE"
 ){
 
     movimientoCantidad = -cantidad;
