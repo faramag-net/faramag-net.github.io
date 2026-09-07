@@ -15,6 +15,9 @@ export function agregarProducto(){
     const nombre =
     document.getElementById("nuevoProducto").value;
 
+    const categoria =
+        document.getElementById("nuevoCategoria").value;
+
     const precio =
     Number(
         document.getElementById("nuevoPrecio").value
@@ -82,6 +85,7 @@ const nuevoProducto =
     LocalDB.addProduct({
 
         nombre,
+        categoria,
         precio,
         costo,
 
@@ -120,6 +124,7 @@ function limpiarFormulario(){
 
     document.getElementById("nuevoProducto").value = "";
 
+    document.getElementById("nuevoCategoria").value = "paleta";
     document.getElementById("nuevoPrecio").value = "";
 
     document.getElementById("nuevoCosto").value = "";

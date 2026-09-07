@@ -691,3 +691,43 @@ body{
     text-overflow:ellipsis;
 
 }
+
+
+/* =========================
+   Consignación: búsqueda de productos
+   ========================= */
+
+.consigna-filtros{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:8px;
+    margin:10px 0;
+}
+
+.consigna-filtros input,
+.consigna-filtros select{
+    width:100%;
+    min-width:0;
+    padding:8px;
+}
+
+.lista-productos-consigna{
+    max-height:55vh;
+    overflow-y:auto;
+    margin-bottom:12px;
+}
+
+.producto-consigna-item{
+    padding:6px 0;
+    border-bottom:1px solid #eee;
+}
+
+@media (max-width:480px){
+    .consigna-filtros{
+        grid-template-columns:1fr;
+    }
+
+    .lista-productos-consigna{
+        max-height:60vh;
+    }
+}

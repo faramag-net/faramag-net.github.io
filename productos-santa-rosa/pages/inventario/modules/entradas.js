@@ -14,7 +14,7 @@ export function renderProductos(){
 
     selectInventario.innerHTML = "";
 
-    productos.forEach(producto=>{
+    [...productos]\n    .sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }))\n    .forEach(producto=>{
 
         // INVENTARIO
 
@@ -246,11 +246,32 @@ export function editarProducto(id){
 
     if(nuevoCosto === null) return;
 
+    const nuevaCategoria =
+    prompt(
+        "Categoría (paleta, boli, postre u otro):",
+        producto.categoria || "otro"
+    );
+
+    if(nuevaCategoria === null) return;
+
+    const categoria =
+        nuevaCategoria.trim().toLowerCase();
+
+    const categoriasValidas =
+        ["paleta", "boli", "postre", "otro"];
+
+    if(!categoriasValidas.includes(categoria)){
+        alert("Categoría inválida");
+        return;
+    }
+
     LocalDB.updateProduct(id, {
 
         precio: Number(nuevoPrecio),
 
-        costo: Number(nuevoCosto)
+        costo: Number(nuevoCosto),
+
+        categoria
 
     });
 

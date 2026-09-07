@@ -3,7 +3,7 @@ import LocalDB from "../../../core/storage/local-db.js";
 export function cargarProductos(){
 
     const productos =
-    LocalDB.getProducts();
+    [...LocalDB.getProducts()]\n    .sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }));
 
     const select =
     document.getElementById("producto");

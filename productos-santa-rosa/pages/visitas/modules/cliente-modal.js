@@ -397,7 +397,14 @@ function renderProductosTab(){
         );
 
     const productos =
-        LocalDB.getProducts();
+        [...LocalDB.getProducts()]
+        .sort((a,b) =>
+            (a.nombre || "").localeCompare(
+                b.nombre || "",
+                "es",
+                { sensitivity: "base" }
+            )
+        );
 
     const asignados =
         LocalDB.getProductsByClient(
@@ -586,7 +593,14 @@ consignacion =
         );
 
     const productos =
-        LocalDB.getProducts();
+        [...LocalDB.getProducts()]
+        .sort((a,b) =>
+            (a.nombre || "").localeCompare(
+                b.nombre || "",
+                "es",
+                { sensitivity: "base" }
+            )
+        );
 
     container.innerHTML = `
 
@@ -1138,223 +1152,276 @@ document
 }
 
         function renderNuevaEntrega(){
-           
-        const container =
-            document.getElementById(
-                "clienteTabContent"
+
+            const container =
+                document.getElementById(
+                    "clienteTabContent"
+                );
+
+            const productos =
+                [...LocalDB.getProducts()]
+                .sort((a,b) =>
+                    (a.nombre || "").localeCompare(
+                        b.nombre || "",
+                        "es",
+                        { sensitivity: "base" }
+                    )
+                );
+
+            container.innerHTML = `
+
+                <h3>
+                    Nueva Entrega
+                </h3>
+
+                <div class="consigna-filtros">
+
+                    <input
+                        type="search"
+                        id="buscarProductoConsigna"
+                        placeholder="🔍 Buscar producto..."
+                        autocomplete="off"
+                    >
+
+                    <select id="filtroProductoConsigna">
+                        <option value="todos">Todos</option>
+                        <option value="paleta">Paleta</option>
+                        <option value="boli">Boli</option>
+                        <option value="postre">Postre</option>
+                    </select>
+
+                </div>
+
+                <div
+                    id="listaProductosConsigna"
+                    class="lista-productos-consigna"
+                >
+
+                    ${
+                        productos.map(producto => `
+
+                            <div
+                                class="producto-row producto-consigna-item"
+                                data-nombre="${(producto.nombre || "").toLowerCase()}"
+                                data-categoria="${(producto.categoria || "otro").toLowerCase()}"
+                            >
+
+                                <span
+                                    class="producto-nombre"
+                                    title="${producto.nombre || "[PRODUCTO ELIMINADO]"}"
+                                >
+                                    ${producto.nombre || "[PRODUCTO ELIMINADO]"}
+                                </span>
+
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    value="0"
+                                    class="cantidad-consignacion"
+                                    data-productid="${producto.id}"
+                                >
+
+                                <div class="precio-box">
+
+                                    <span>$</span>
+
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        value="${LocalDB.getSuggestedPrice(
+                                            cliente.id,
+                                            producto.id
+                                        )}"
+                                        class="precio-consignacion"
+                                        data-productid="${producto.id}"
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        `).join("")
+                    }
+
+                </div>
+
+                <button
+                    id="guardarEntregaBtn"
+                >
+                    Guardar Entrega
+                </button>
+
+            `;
+
+            const buscar =
+                document.getElementById(
+                    "buscarProductoConsigna"
+                );
+
+            const filtro =
+                document.getElementById(
+                    "filtroProductoConsigna"
+                );
+
+            function filtrarProductos(){
+
+                const texto =
+                    buscar.value
+                    .trim()
+                    .toLowerCase();
+
+                const categoria =
+                    filtro.value;
+
+                document
+                    .querySelectorAll(
+                        ".producto-consigna-item"
+                    )
+                    .forEach(row => {
+
+                        const coincideTexto =
+                            !texto ||
+                            row.dataset.nombre.includes(texto);
+
+                        const coincideCategoria =
+                            categoria === "todos" ||
+                            row.dataset.categoria === categoria;
+
+                        row.style.display =
+                            coincideTexto && coincideCategoria
+                            ? "flex"
+                            : "none";
+
+                    });
+
+            }
+
+            buscar.addEventListener(
+                "input",
+                filtrarProductos
             );
-    
-        const productos =
-            LocalDB.getProducts();
-    
-        const asignados =
-            LocalDB.getProductsByClient(
-                clienteId
+
+            filtro.addEventListener(
+                "change",
+                filtrarProductos
             );
-        
-    container.innerHTML = `
-
-        <h3>
-            Nueva Entrega
-        </h3>
-
-        ${
-
-            asignados.map(item => {
-               
-                const producto =
-                    productos.find(
-                        p =>
-                        p.id ===
-                        item.productoId
-                    );
-
-                if(!producto){
-
-                    console.warn(
-                        "Producto no encontrado",
-                        item
-                    );
-                
-                    return "";
-                
-                }
-                
-                    return `
-
-    <div class="producto-row">
-
-        <span
-            class="producto-nombre"
-            title="${producto?.nombre || "[PRODUCTO ELIMINADO]"}"
-        >
-            ${producto?.nombre || "[PRODUCTO ELIMINADO]"}
-        </span>
-
-        <input
-            type="number"
-            min="0"
-            step="0.01"
-            value="0"
-            class="cantidad-consignacion"
-            data-productid="${producto?.id || ''}"
-        >
-
-    <div class="precio-box">
-
-        <span>$</span>
-        
-        <input
-            type="number"
-            min="0"
-            step="0.01"
-            value="${LocalDB.getSuggestedPrice(
-                cliente.id,
-                producto?.id
-            )}"
-            class="precio-consignacion"
-            data-productid="${producto?.id || ''}"
-        >
-
-    </div>
-
-</div>
-
-`;
-
-            }).join("")
-
-        }
-
-        <button
-            id="guardarEntregaBtn"
-        >
-            Guardar Entrega
-        </button>
-
-    `;
 
             document
-    .getElementById(
-        "guardarEntregaBtn"
-    )
-    .onclick = () => {
-    
-        const inputs =
-            document.querySelectorAll(
-                ".cantidad-consignacion"
-            );
-    
-        const items = [];
-    
-        inputs.forEach(input => {
-    
-            const cantidad =
-                Number(
-                    input.value
-                );
-    
-            if(cantidad <= 0){
-                return;
-            }
-    
-            const precioInput =
-                document.querySelector(
-                    `.precio-consignacion[data-productid="${input.dataset.productid}"]`
-                );
-            
-            items.push({
-            
-                productId:
-                    input.dataset.productid,
-            
-                cantidadEntregada:
-                    cantidad,
-            
-                precio:
-                    Number(
-                        precioInput.value
-                    )
-            
-            });
-    
-        });
-    
-        if(!items.length){
-    
-            showToast(
-                "Ingresa cantidades"
-            );
-    
-            return;
-    
+                .getElementById(
+                    "guardarEntregaBtn"
+                )
+                .onclick = () => {
+
+                    const inputs =
+                        document.querySelectorAll(
+                            ".cantidad-consignacion"
+                        );
+
+                    const items = [];
+
+                    inputs.forEach(input => {
+
+                        const cantidad =
+                            Number(input.value);
+
+                        if(cantidad <= 0){
+                            return;
+                        }
+
+                        const precioInput =
+                            document.querySelector(
+                                `.precio-consignacion[data-productid="${input.dataset.productid}"]`
+                            );
+
+                        items.push({
+
+                            productId:
+                                input.dataset.productid,
+
+                            cantidadEntregada:
+                                cantidad,
+
+                            precio:
+                                Number(
+                                    precioInput.value
+                                )
+
+                        });
+
+                    });
+
+                    if(!items.length){
+
+                        showToast(
+                            "Ingresa cantidades"
+                        );
+
+                        return;
+
+                    }
+
+                    const productosActuales =
+                        LocalDB.getProducts();
+
+                    items.forEach(item => {
+
+                        const producto =
+                            productosActuales.find(
+                                p =>
+                                    p.id ===
+                                    item.productId
+                            );
+
+                        if(!producto) return;
+
+                        LocalDB.addHistory({
+
+                            tipo:
+                                "CONSIGNACION_SALIDA",
+
+                            producto:
+                                producto.nombre,
+
+                            cantidad:
+                                item.cantidadEntregada,
+
+                            fecha:
+                                new Date()
+                                .toLocaleString()
+
+                        });
+
+                    });
+
+                    LocalDB.addConsignation({
+
+                        id:
+                            crypto.randomUUID(),
+
+                        clienteId,
+
+                        fecha:
+                            new Date()
+                            .toLocaleString(),
+
+                        estado:
+                            "ACTIVA",
+
+                        items
+
+                    });
+
+                    showToast(
+                        "Consignación creada"
+                    );
+
+                    renderConsignacionTab();
+
+                };
+
         }
-    
-items.forEach(item => {
-
-    const producto =
-        LocalDB.getProducts()
-        .find(
-            p =>
-                p.id ===
-                item.productId
-        );
-
-    LocalDB.addHistory({
-
-        tipo:
-            "CONSIGNACION_SALIDA",
-
-        producto:
-            producto.nombre,
-
-        cantidad:
-            item.cantidadEntregada,
-
-        fecha:
-            new Date()
-            .toLocaleString()
-
-    });
-
-});
-                                                                            console.log(
-                                                                        "ANTES",
-                                                                        LocalDB.getConsignations()
-                                                                        );
-        
-        LocalDB.addConsignation({
-    
-            id:
-                crypto.randomUUID(),
-    
-            clienteId,
-    
-            fecha:
-                new Date()
-                .toLocaleString(),
-    
-            estado:
-                "ACTIVA",
-    
-            items
-    
-        });
-
-                                                                            console.log(
-                                                                        "DESPUÉS",
-                                                                        LocalDB.getConsignations()
-                                                                    );
-                                                                    
-    
-        showToast(
-            "Consignación creada"
-        );
-    
-        renderConsignacionTab();
-    
-    };
-}
 
     function renderRecogerProducto(consignacion){
 
