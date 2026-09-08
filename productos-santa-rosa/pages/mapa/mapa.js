@@ -83,12 +83,67 @@ document.getElementById("btnMiUbicacion")?.addEventListener("click", () => {
 
 const clientes = JSON.parse(localStorage.getItem("psr_route_clients")) || [];
 const puntos = [];
+const marcadoresClientes = new Map();
+
+function guardarUbicacionCliente(cliente, lat, lon) {
+  const lista = JSON.parse(localStorage.getItem("psr_route_clients")) || [];
+  const indice = lista.findIndex(c => c.id === cliente.id);
+  if (indice === -1) return false;
+
+  lista[indice].latitud = Number(lat);
+  lista[indice].longitud = Number(lon);
+  lista[indice].updatedAt = new Date().toISOString();
+  localStorage.setItem("psr_route_clients", JSON.stringify(lista));
+
+  // Mantener también la referencia local actualizada.
+  cliente.latitud = Number(lat);
+  cliente.longitud = Number(lon);
+  cliente.updatedAt = lista[indice].updatedAt;
+  return true;
+}
+
 clientes.forEach(cliente => {
   if (!Number.isFinite(Number(cliente.latitud)) || !Number.isFinite(Number(cliente.longitud))) return;
+
   const punto = [Number(cliente.latitud), Number(cliente.longitud)];
   puntos.push(punto);
-  L.marker(punto).addTo(mapa).bindPopup(`<b>${escapeHtml(cliente.nombre)}</b><br>📞 ${escapeHtml(cliente.telefono || "-")}<br>📍 ${escapeHtml(cliente.direccion || "-")}`);
+
+  // Cada cliente tiene SU PROPIO marcador arrastrable.
+  const marcador = L.marker(punto, { draggable: true }).addTo(mapa);
+  marcadoresClientes.set(String(cliente.id), marcador);
+
+  marcador.bindPopup(`
+    <div style="min-width:190px">
+      <b>${escapeHtml(cliente.nombre)}</b><br>
+      📞 ${escapeHtml(cliente.telefono || "-")}<br>
+      📍 ${escapeHtml(cliente.direccion || "-")}<br><br>
+      <small>🖐️ Arrastra este pin para cambiar la ubicación.</small>
+    </div>
+  `);
+
+  marcador.on("dragstart", () => {
+    estado.textContent = `Moviendo ubicación de ${cliente.nombre}...`;
+  });
+
+  marcador.on("dragend", () => {
+    const posicion = marcador.getLatLng();
+    if (guardarUbicacionCliente(cliente, posicion.lat, posicion.lng)) {
+      actualizarCoordenadas(posicion.lat, posicion.lng);
+      estado.textContent = `📍 Ubicación de ${cliente.nombre} actualizada.`;
+      marcador.setPopupContent(`
+        <div style="min-width:190px">
+          <b>${escapeHtml(cliente.nombre)}</b><br>
+          📞 ${escapeHtml(cliente.telefono || "-")}<br>
+          📍 ${escapeHtml(cliente.direccion || "-")}<br><br>
+          <small>🖐️ Arrastra este pin para cambiar la ubicación.</small>
+        </div>
+      `);
+    } else {
+      estado.textContent = "No se pudo guardar la nueva ubicación del cliente.";
+    }
+  });
 });
+
 if (puntos.length) mapa.fitBounds(puntos, { padding: [30, 30] });
 
 function escapeHtml(value) {
