@@ -218,7 +218,30 @@ setTimeout(() => {
             const boton = document.getElementById("btnObtenerUbicacionCliente");
             if (boton) { boton.disabled = true; boton.textContent = "📍 Obteniendo ubicación..."; }
 
-            navigator.geolocation.getCurrentPosition(async pos => {
+            const restaurarBoton = () => {
+                if (boton) {
+                    boton.disabled = false;
+                    boton.textContent = "📍 Obtener ubicación";
+                }
+            };
+
+            const mostrarErrorUbicacion = (error) => {
+                restaurarBoton();
+                let mensaje = "No se pudo obtener la ubicación.";
+
+                if (error?.code === 1) {
+                    mensaje = "El navegador bloqueó el acceso a la ubicación. En tu móvil, permite la ubicación para faramag-net.github.io y vuelve a intentarlo.";
+                } else if (error?.code === 2) {
+                    mensaje = "El dispositivo no pudo determinar tu ubicación. Activa la ubicación/GPS y vuelve a intentarlo.";
+                } else if (error?.code === 3) {
+                    mensaje = "La ubicación tardó demasiado en responder. Vuelve a intentarlo; el sistema hará un segundo intento más preciso.";
+                }
+
+                console.warn("Geolocalización:", error);
+                alert(mensaje);
+            };
+
+            const procesarUbicacion = async (pos) => {
                 const lat = pos.coords.latitude;
                 const lon = pos.coords.longitude;
                 const latEl = document.getElementById("editarClienteLatitud");
@@ -227,23 +250,42 @@ setTimeout(() => {
                 if (lonEl) lonEl.value = lon;
 
                 try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&accept-language=es`);
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&accept-language=es`, {
+                        headers: { "Accept": "application/json" }
+                    });
                     if (!response.ok) throw new Error("Error de geocodificación");
                     const data = await response.json();
                     const direccion = data.display_name || "";
                     if (direccion) {
-                        document.getElementById("editarClienteDireccion").value = direccion;
+                        const direccionEl = document.getElementById("editarClienteDireccion");
+                        if (direccionEl) direccionEl.value = direccion;
                     }
                 } catch (error) {
-                    console.error(error);
+                    console.error("Geocodificación:", error);
                     alert("Se obtuvo la ubicación, pero no fue posible convertirla en dirección. Puedes escribir la dirección manualmente.");
                 } finally {
-                    if (boton) { boton.disabled = false; boton.textContent = "📍 Obtener ubicación"; }
+                    restaurarBoton();
                 }
-            }, () => {
-                if (boton) { boton.disabled = false; boton.textContent = "📍 Obtener ubicación"; }
-                alert("No se pudo obtener la ubicación. Verifica los permisos de ubicación.");
-            }, { enableHighAccuracy: true, timeout: 10000 });
+            };
+
+            // En móviles, una lectura de alta precisión puede tardar o fallar.
+            // Primero usamos una lectura rápida y, si expira, hacemos un segundo
+            // intento con GPS de mayor precisión y más tiempo.
+            navigator.geolocation.getCurrentPosition(
+                procesarUbicacion,
+                error => {
+                    if (error?.code === 3) {
+                        navigator.geolocation.getCurrentPosition(
+                            procesarUbicacion,
+                            mostrarErrorUbicacion,
+                            { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
+                        );
+                    } else {
+                        mostrarErrorUbicacion(error);
+                    }
+                },
+                { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
+            );
         });
     }
 
