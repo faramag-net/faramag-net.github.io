@@ -273,18 +273,8 @@ setTimeout(() => {
             // intento con GPS de mayor precisión y más tiempo.
             navigator.geolocation.getCurrentPosition(
                 procesarUbicacion,
-                error => {
-                    if (error?.code === 3) {
-                        navigator.geolocation.getCurrentPosition(
-                            procesarUbicacion,
-                            mostrarErrorUbicacion,
-                            { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
-                        );
-                    } else {
-                        mostrarErrorUbicacion(error);
-                    }
-                },
-                { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
+                mostrarErrorUbicacion,
+                { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
             );
         });
     }

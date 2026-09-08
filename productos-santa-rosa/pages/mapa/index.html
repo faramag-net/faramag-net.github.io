@@ -1,46 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
- 
-    <title>Mapa</title>
-    
-<link
-    rel="stylesheet"
-    href="../../styles/global.css"
-/>
-
-<link
-    rel="stylesheet"
-    href="./mapa.css"
-/>
-
-<link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Mapa</title>
+<link rel="stylesheet" href="../../styles/global.css">
+<link rel="stylesheet" href="./mapa.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
-
 <body>
-
 <div id="mapa"></div>
 
-<script
-src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-</script>
+<div class="mapa-controles">
+  <button id="btnMiUbicacion" type="button">📍 Mi ubicación</button>
+  <div class="coordenadas">
+    <input id="latitudMapa" type="number" step="any" inputmode="decimal" placeholder="Latitud">
+    <input id="longitudMapa" type="number" step="any" inputmode="decimal" placeholder="Longitud">
+    <button id="btnIrCoordenadas" type="button">📌 Ir</button>
+  </div>
+  <small id="estadoUbicacion">Puedes mover el marcador directamente sobre el mapa.</small>
+</div>
 
-<script
-type="module"
-src="./mapa.js">
-</script>
-
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module" src="./mapa.js"></script>
 </body>
-
 </html>
