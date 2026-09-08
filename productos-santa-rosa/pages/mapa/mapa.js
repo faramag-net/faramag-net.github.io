@@ -1,5 +1,4 @@
-import LocalDB
-from "../../core/storage/local-db.js";
+import LocalDB from "../../core/storage/local-db.js";
 
 const mapa =
     L.map("mapa")
