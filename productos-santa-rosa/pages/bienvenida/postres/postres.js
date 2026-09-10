@@ -65,88 +65,96 @@ const productos = [
 
 const contenido = document.getElementById("contenido");
 
-function crearSeccion(titulo, lista) {
+function escaparHTML(valor) {
+  return String(valor ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
+function crearSeccion(titulo, lista) {
   const h2 = document.createElement("h2");
   h2.textContent = titulo;
-
   h2.className = "categoria-titulo";
-
-  h2.textContent = titulo;
 
   const grid = document.createElement("div");
   grid.className = "grid";
 
-  lista.forEach(producto => {
+  lista
+    .slice()
+    .sort((a, b) => a.nombre.localeCompare(b.nombre, "es", { sensitivity: "base" }))
+    .forEach(producto => {
+      const card = document.createElement("article");
+      card.className = "producto";
 
-    const card = document.createElement("div");
+      const descripcion = producto.descripcion?.trim()
+        ? escaparHTML(producto.descripcion)
+        : "Una opción artesanal de Santa Rosa.";
 
-    card.classList.add("producto");
+      const mensajePublico = producto.mensaje || `Quiero ${item_word} de ${producto.nombre}`;
+      const mensajeMayoreo = `Hola, quiero información sobre precios de mayoreo de ${item_word} ${producto.nombre}.`;
 
-    card.innerHTML = `
-      <img src="${producto.imagen}" alt="${producto.nombre}">
+      card.innerHTML = `
+        <img src="${escaparHTML(producto.imagen)}"
+             alt="${escaparHTML(producto.nombre)}"
+             loading="lazy">
 
-      <p>${producto.nombre} - $${producto.precio}</p>
+        <p class="nombre">${escaparHTML(producto.nombre)}</p>
 
-      <p class="descripcion">
-        ${producto.descripcion}
-      </p>
-      
-      <a class="btn"
-         href="https://wa.me/5212225655003?text=${encodeURIComponent(producto.mensaje)}"
-         target="_blank">
-         Pedir por WhatsApp
-      </a>
-    `;
+        <p class="precio-label">Precio al público</p>
+        <p class="precio">$${Number(producto.precio).toFixed(2)}</p>
 
-    grid.appendChild(card);
+        <p class="descripcion">${descripcion}</p>
 
-  });
+        <div class="acciones">
+          <a class="btn"
+             href="https://wa.me/5212225655003?text=${encodeURIComponent(mensajePublico)}"
+             target="_blank" rel="noopener noreferrer">
+             📲 Pedir por WhatsApp
+          </a>
+        </div>
+      `;
 
-  contenido.appendChild(h2);
+      grid.appendChild(card);
+    });
+
+  if (titulo) contenido.appendChild(h2);
   contenido.appendChild(grid);
 }
+
 
 crearSeccion(
   "",
   productos.filter(p => p.tipo === "postres" && p.activo)
 );
 
-const modal =
-    document.getElementById("modalImagen");
+const modal = document.getElementById("modalImagen");
+const imagenGrande = document.getElementById("imagenGrande");
+const cerrarModal = document.getElementById("cerrarModal");
 
-const imagenGrande =
-    document.getElementById("imagenGrande");
+document.addEventListener("click", event => {
+  const imagen = event.target.closest(".producto img");
+  if (!imagen) return;
 
-const cerrarModal =
-    document.getElementById("cerrarModal");
-
-document.addEventListener("click", e => {
-
-    if(e.target.matches(".producto img")){
-
-        imagenGrande.src =
-            e.target.src;
-
-        modal.style.display =
-            "flex";
-    }
-
+  imagenGrande.src = imagen.src;
+  imagenGrande.alt = imagen.alt;
+  modal.style.display = "flex";
 });
 
 cerrarModal.addEventListener("click", () => {
-
-    modal.style.display =
-        "none";
-
+  modal.style.display = "none";
 });
 
-modal.addEventListener("click", e => {
+modal.addEventListener("click", event => {
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+});
 
-    if(e.target === modal){
-
-        modal.style.display =
-            "none";
-    }
-
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    modal.style.display = "none";
+  }
 });
