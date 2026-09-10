@@ -93,8 +93,7 @@ function crearSeccion(titulo, lista) {
         ? escaparHTML(producto.descripcion)
         : "Una opción artesanal de Santa Rosa.";
 
-      const mensajePublico = producto.mensaje || `Quiero ${item_word} de ${producto.nombre}`;
-      const mensajeMayoreo = `Hola, quiero información sobre precios de mayoreo de ${item_word} ${producto.nombre}.`;
+      const mensajePublico = producto.mensaje || `Quiero ${producto.nombre}`;
 
       card.innerHTML = `
         <img src="${escaparHTML(producto.imagen)}"
