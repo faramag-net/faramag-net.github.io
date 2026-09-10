@@ -203,7 +203,7 @@ function crearSeccion(titulo, lista) {
           <a class="btn"
              href="https://wa.me/5212225655003?text=${encodeURIComponent(mensajePublico)}"
              target="_blank" rel="noopener noreferrer">
-             📲 Pedir por WhatsApp
+             💬 Pedir por WhatsApp
           </a>
         </div>
       `;
