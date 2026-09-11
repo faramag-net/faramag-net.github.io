@@ -91,15 +91,26 @@ function renderTicket(data, extra = {}){
                         <tbody>
                             ${items.map(item => {
                                 if(isConsignacion){
-                                    const cantidad = operation.estadoConsignacion === "ACTIVA" ? item.entregado : item.vendido;
-                                    const importe = cantidad * item.precio;
-                                    return `<tr><td>${escapeHtml(item.nombre)}</td><td>${cantidad}</td><td>${money(item.precio)}</td><td>${money(importe)}</td></tr>`;
+                                    if(operation.estadoConsignacion === "ACTIVA"){
+                                        const cantidad = item.entregado;
+                                        const importe = cantidad * item.precio;
+                                        return `<tr><td>${escapeHtml(item.nombre)}</td><td>${cantidad}</td><td>${money(item.precio)}</td><td>${money(importe)}</td></tr>`;
+                                    }
+
+                                    const filas = [];
+                                    if(item.vendido > 0){
+                                        filas.push(`<tr><td>${escapeHtml(item.nombre)} — Vendido</td><td>${item.vendido}</td><td>${money(item.precio)}</td><td>${money(item.vendido * item.precio)}</td></tr>`);
+                                    }
+                                    if(item.devuelto > 0){
+                                        filas.push(`<tr><td>${escapeHtml(item.nombre)} — Devuelto</td><td>${item.devuelto}</td><td>${money(0)}</td><td>${money(0)}</td></tr>`);
+                                    }
+                                    return filas.join("");
                                 }
                                 return `<tr><td>${escapeHtml(item.nombre)}</td><td>${item.cantidad}</td><td>${money(item.precio)}</td><td>${money(item.subtotal)}</td></tr>`;
                             }).join("")}
                         </tbody>
                     </table>
-                    <div class="ticket-total"><span>TOTAL</span><strong>${money(total)}</strong></div>
+                    <div class="ticket-total"><span>${isConsignacion && operation.estadoConsignacion === "ACTIVA" ? "TOTAL ESTIMADO" : "TOTAL"}</span><strong>${money(total)}</strong></div>
                     <footer class="ticket-footer">
                         <p>Gracias por su preferencia</p>
                         <small>Documento generado por el sistema</small>
