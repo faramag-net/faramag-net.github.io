@@ -19,6 +19,9 @@ from "../../../components/toast.js";
 
 export function openClienteModal(clienteId){
 
+    let historialClientePagina = 1;
+    const registrosHistorialCliente = 10;
+
     const cliente =
         LocalDB.getRouteClients()
         .find(c => c.id === clienteId);
@@ -299,8 +302,27 @@ setTimeout(() => {
                 cliente.nombre
         )
         .slice()
-        .reverse()
-        .slice(0,10);
+        .sort((a,b) => {
+            const fa = new Date(a.createdAt || a.fecha || 0).getTime() || 0;
+            const fb = new Date(b.createdAt || b.fecha || 0).getTime() || 0;
+            return fb - fa;
+        });
+
+    const totalPaginasHistorialCliente =
+        Math.max(1, Math.ceil(ventasCliente.length / registrosHistorialCliente));
+
+    if(historialClientePagina > totalPaginasHistorialCliente){
+        historialClientePagina = totalPaginasHistorialCliente;
+    }
+
+    const inicioHistorialCliente =
+        (historialClientePagina - 1) * registrosHistorialCliente;
+
+    const ventasClientePagina =
+        ventasCliente.slice(
+            inicioHistorialCliente,
+            inicioHistorialCliente + registrosHistorialCliente
+        );
 
         
     container.innerHTML = `
@@ -327,7 +349,7 @@ setTimeout(() => {
         </div>
 
         <h3>
-    Últimas Compras
+    Historial de Compras
 </h3>
 
 <table class="mini-history">
@@ -355,7 +377,7 @@ setTimeout(() => {
         ${
             ventasCliente.length
             ?
-            ventasCliente.map(v => `
+            ventasClientePagina.map(v => `
 
                 <tr>
 
@@ -389,8 +411,28 @@ setTimeout(() => {
     </tbody>
 
 </table>
+
+<div class="historial-cliente-paginacion">
+    <span>
+        ${ventasCliente.length ? `${inicioHistorialCliente + 1}-${Math.min(inicioHistorialCliente + registrosHistorialCliente, ventasCliente.length)} de ${ventasCliente.length}` : "0 registros"}
+    </span>
+    ${ventasCliente.length > registrosHistorialCliente ? `
+        <div class="historial-cliente-controles">
+            <button type="button" data-hist-page="${historialClientePagina - 1}" ${historialClientePagina === 1 ? "disabled" : ""}>‹</button>
+            <strong>${historialClientePagina} / ${totalPaginasHistorialCliente}</strong>
+            <button type="button" data-hist-page="${historialClientePagina + 1}" ${historialClientePagina === totalPaginasHistorialCliente ? "disabled" : ""}>›</button>
+        </div>
+    ` : ""}
+</div>
  
     `;
+
+    container.querySelectorAll("[data-hist-page]:not(:disabled)").forEach(btn => {
+        btn.onclick = () => {
+            historialClientePagina = Number(btn.dataset.histPage);
+            renderInfoTab();
+        };
+    });
 
     conectarEdicionCliente();
 }
@@ -753,11 +795,15 @@ consignacion =
                         class="producto-row"
                     >
 
-                        <span>
+                        <span class="producto-nombre">
                             ${
                                 producto?.nombre
                                 || "Producto"
                             }
+                        </span>
+
+                        <span class="stock-consigna" title="Inventario disponible">
+                            Inv: ${producto ? Number(LocalDB.getCalculatedStock(producto.id) || 0) : 0}
                         </span>
 
                         <input
@@ -1072,7 +1118,13 @@ function renderConsignacionTab(){
 const consignaciones =
     LocalDB.getClientConsignations(
         clienteId
-    );
+    )
+    .slice()
+    .sort((a,b) => {
+        const fa = new Date(a.createdAt || a.fecha || 0).getTime() || 0;
+        const fb = new Date(b.createdAt || b.fecha || 0).getTime() || 0;
+        return fb - fa;
+    });
 
                                                                 console.log(
                                                                     "Cliente actual:",
@@ -1355,8 +1407,17 @@ document.querySelectorAll(".ticket-consignacion").forEach(btn=>{
                         <option value="paleta">Paleta</option>
                         <option value="boli">Boli</option>
                         <option value="postre">Postre</option>
+                        <option value="historico">Antiguos</option>
+                        <option value="otro">Otro</option>
                     </select>
 
+                </div>
+
+                <div class="consigna-columnas">
+                    <span>Producto</span>
+                    <span>Inventario</span>
+                    <span>Cant.</span>
+                    <span>Precio</span>
                 </div>
 
                 <div
@@ -1378,6 +1439,13 @@ document.querySelectorAll(".ticket-consignacion").forEach(btn=>{
                                     title="${producto.nombre || "[PRODUCTO ELIMINADO]"}"
                                 >
                                     ${producto.nombre || "[PRODUCTO ELIMINADO]"}
+                                </span>
+
+                                <span
+                                    class="stock-consigna"
+                                    title="Inventario disponible"
+                                >
+                                    Inv: ${Number(LocalDB.getCalculatedStock(producto.id) || 0)}
                                 </span>
 
                                 <input

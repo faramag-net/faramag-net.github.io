@@ -755,3 +755,62 @@ body{
         grid-template-columns:1fr;
     }
 }
+
+/* Historial del cliente: navegación de 10 en 10 */
+.historial-cliente-paginacion{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:8px;
+    font-size:12px;
+}
+
+.historial-cliente-controles{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.historial-cliente-controles button{
+    width:auto !important;
+    min-width:30px;
+    padding:4px 8px;
+}
+
+.stock-consigna{
+    flex:0 0 auto;
+    min-width:54px;
+    font-size:11px;
+    font-weight:600;
+    text-align:center;
+    white-space:nowrap;
+}
+
+.consigna-columnas{
+    display:grid;
+    grid-template-columns:minmax(120px,1fr) 58px 60px 70px;
+    gap:4px;
+    align-items:center;
+    margin:0 0 4px;
+    padding:0 0 4px;
+    border-bottom:1px solid #ddd;
+    font-size:11px;
+    font-weight:700;
+    color:#666;
+}
+
+.consigna-columnas span:not(:first-child){
+    text-align:center;
+}
+
+@media(max-width:600px){
+    .consigna-columnas{
+        grid-template-columns:minmax(90px,1fr) 54px 56px 64px;
+        font-size:10px;
+    }
+    .stock-consigna{
+        min-width:50px;
+        font-size:10px;
+    }
+}
