@@ -52,8 +52,8 @@ function buildTicketData(operation){
     return {
         type,
         title: type === "CONSIGNACION"
-            ? (operation.estadoConsignacion === "ACTIVA" ? "TICKET DE CONSIGNACIÓN · ABIERTA" : "TICKET DE CONSIGNACIÓN")
-            : "NOTA DE VENTA",
+            ? (operation.estadoConsignacion === "ACTIVA" ? "TICKET DE VENTA · ABIERTA" : "TICKET DE VENTA")
+            : "TICKET DE VENTA",
         operation,
         items,
         total: Number(operation.total || items.reduce((t,i)=>t+i.subtotal,0))
@@ -105,9 +105,9 @@ function renderTicket(data, extra = {}){
                     </header>
                     <div class="ticket-meta">
                         <div><span>Fecha</span><strong>${escapeHtml(fecha)}</strong></div>
-                        <div><span>Cliente</span><strong>${escapeHtml(cliente)}</strong></div>
+                        <div><span>Nombre</span><strong>${escapeHtml(cliente)}</strong></div>
                     </div>
-                    ${isConsignacion && operation.consignacionId ? `<p class="ticket-id">Consignación: ${escapeHtml(operation.consignacionId)}</p>` : ""}
+                    ${isConsignacion && operation.consignacionId ? `<p class="ticket-id">Folio: ${escapeHtml(operation.consignacionId)}</p>` : ""}
                     ${isConsignacion && operation.estadoConsignacion ? `<p class="ticket-id">Estado: ${operation.estadoConsignacion === "ACTIVA" ? "ABIERTA" : "CERRADA"}</p>` : ""}
                     <table class="ticket-table">
                         <thead>${isConsignacion ? `<tr><th>Producto</th><th>Ent.</th><th>Dev.</th><th>Vend.</th><th>Importe</th></tr>` : `<tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr>`}</thead>
