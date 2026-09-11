@@ -1569,6 +1569,9 @@ document.querySelectorAll(".ticket-consignacion").forEach(btn=>{
 
                         clienteId,
 
+                        createdAt:
+                            new Date().toISOString(),
+
                         fecha:
                             new Date()
                             .toLocaleString(),

@@ -406,6 +406,22 @@ ventas.forEach(venta => {
     return this.set(DB_KEYS.SALES, sales);
   }
 
+  static deleteSale(saleId) {
+    const sales = this.getSales();
+    const venta = sales.find(v => v.id === saleId);
+    if (!venta) return false;
+
+    this.saveSales(sales.filter(v => v.id !== saleId));
+
+    // El log SALE_CREATED es auxiliar de la venta y no debe quedar
+    // visible en el historial de inventario al eliminar la operación.
+    this.saveHistory(this.getHistory().filter(item => !(
+        item.tipo === "SALE_CREATED" && item.metadata?.id === saleId
+    )));
+
+    return venta;
+  }
+
   static createSale(sale) {
    
     const sales = this.getSales();
@@ -904,17 +920,27 @@ static getActiveConsignation(
     clienteId
 ){
 
+    const fechaConsignacion = (c) => {
+        if (c?.createdAt) return new Date(c.createdAt).getTime() || 0;
+        if (c?.fechaCierre) return new Date(c.fechaCierre).getTime() || 0;
+        const texto = String(c?.fecha || "");
+        const m = texto.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:,?\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(a\.m\.|p\.m\.)?)?/i);
+        if (m) {
+            let horas = Number(m[4] || 0);
+            const minutos = Number(m[5] || 0);
+            const segundos = Number(m[6] || 0);
+            const ampm = (m[7] || "").toLowerCase();
+            if (ampm === "p.m." && horas < 12) horas += 12;
+            if (ampm === "a.m." && horas === 12) horas = 0;
+            return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]), horas, minutos, segundos).getTime() || 0;
+        }
+        return new Date(texto).getTime() || 0;
+    };
+
     return this
         .getConsignations()
-        .filter(
-            c =>
-                c.clienteId === clienteId
-        )
-        .sort(
-            (a,b)=>
-                new Date(b.fecha) -
-                new Date(a.fecha)
-        );
+        .filter(c => c.clienteId === clienteId)
+        .sort((a,b) => fechaConsignacion(b) - fechaConsignacion(a));
 
 }
 

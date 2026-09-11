@@ -373,3 +373,91 @@ h1{
         justify-content:flex-start;
     }
 }
+
+/* PAGINACIÓN DEL HISTORIAL DE INVENTARIO */
+.inventario-historial-filtros{
+    display:grid;
+    grid-template-columns:minmax(180px,1fr) auto;
+    gap:8px;
+    align-items:center;
+    margin:8px 0 12px;
+}
+
+.inventario-historial-filtros > *{ min-width:0; }
+
+.inventario-historial-filtros .input-busqueda-historial{
+    width:100%;
+    margin:0;
+}
+
+.inventario-historial-filtros .mostrar-registros{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    white-space:nowrap;
+    font-size:12px;
+    justify-self:end;
+}
+
+.inventario-historial-filtros .mostrar-registros select{
+    width:72px !important;
+    min-width:72px !important;
+    margin:0;
+}
+
+.paginacion-inventario{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:8px;
+    flex-wrap:wrap;
+}
+
+#paginacionInventario .paginacion-info{
+    font-size:11px;
+    color:#444;
+    white-space:nowrap;
+}
+
+#paginacionInventario .paginacion-controles{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:4px;
+    flex-wrap:wrap;
+}
+
+#paginacionInventario .pagina-btn{
+    width:32px !important;
+    min-width:32px !important;
+    height:28px;
+    min-height:28px;
+    padding:0 !important;
+    margin:0 !important;
+    border-radius:7px !important;
+    font-size:12px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#paginacionInventario .pagina-btn.activa{
+    outline:2px solid #111;
+    outline-offset:-2px;
+}
+
+#paginacionInventario .pagina-btn:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}
+
+@media(max-width:600px){
+    .inventario-historial-filtros{
+        grid-template-columns:1fr auto;
+    }
+
+    #paginacionInventario .paginacion-controles{
+        justify-content:flex-start;
+    }
+}

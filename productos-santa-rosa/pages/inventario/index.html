@@ -175,11 +175,21 @@
 
     <h2>📋 Historial Inventario</h2>
 
-    <input
-        type="text"
-        id="buscarHistorial"
-        placeholder="🔍 Buscar movimiento..."
-        class="input-busqueda-historial">    
+    <div class="historial-filtros inventario-historial-filtros">
+        <input
+            type="text"
+            id="buscarHistorial"
+            placeholder="🔍 Buscar movimiento..."
+            class="input-busqueda-historial">
+
+        <label class="mostrar-registros">Mostrar
+            <select id="registrosPorPaginaInventario">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </label>
+    </div>
     
     <div class="table-responsive">
 
@@ -206,6 +216,8 @@
         </table>
 
     </div>
+
+    <div id="paginacionInventario" class="paginacion-inventario"></div>
 
     <br>
     

@@ -10,3 +10,9 @@
 .ticket-total{display:flex;justify-content:space-between;align-items:center;border-top:2px solid #111;margin-top:12px;padding-top:10px;font-size:17px}.ticket-consigna-resumen{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:14px}.ticket-consigna-resumen div{border:1px solid #ddd;border-radius:7px;padding:7px;text-align:center;font-size:11px}.ticket-consigna-resumen span,.ticket-consigna-resumen strong{display:block}.ticket-footer{text-align:center;border-top:1px dashed #777;margin-top:18px;padding-top:12px}.ticket-footer p{margin:0 0 4px;font-weight:700}.ticket-footer small{color:#666}
 @media(max-width:600px){.ticket-overlay{align-items:flex-start}.ticket-paper{padding:18px}.ticket-meta{grid-template-columns:1fr}}
 @media print{body>*:not(#ticketOverlay){display:none!important}.ticket-overlay{position:static;background:#fff;padding:0;display:block}.ticket-modal{max-height:none;overflow:visible;box-shadow:none;width:100%;background:#fff}.no-print{display:none!important}.ticket-paper{box-shadow:none;margin:0;max-width:none;width:100%;padding:0}.ticket-table{font-size:11px}}
+
+.ticket-table th:first-child,
+.ticket-table td:first-child{
+    text-align:left;
+    width:48%;
+}

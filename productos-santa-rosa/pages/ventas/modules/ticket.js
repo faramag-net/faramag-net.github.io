@@ -56,7 +56,9 @@ function buildTicketData(operation){
             : "TICKET DE VENTA",
         operation,
         items,
-        total: Number(operation.total || items.reduce((t,i)=>t+i.subtotal,0))
+        total: type === "CONSIGNACION"
+            ? items.reduce((t,i)=>t + (operation.estadoConsignacion === "ACTIVA" ? i.entregado : i.vendido) * i.precio, 0)
+            : Number(operation.total || items.reduce((t,i)=>t+i.subtotal,0))
     };
 }
 
@@ -65,31 +67,6 @@ function renderTicket(data, extra = {}){
     const isConsignacion = type === "CONSIGNACION";
     const fecha = operation.fecha || operation.createdAt || new Date().toLocaleString();
     const cliente = operation.cliente || extra.cliente || "Público en general";
-
-    let consignationSummary = "";
-    if(isConsignacion){
-        const c = extra.consignacion || LocalDB.getConsignationById(operation.consignacionId);
-        if(c){
-            const resumen = Array.isArray(c.items) ? c.items.reduce((acc,item)=>{
-                const entregado = Number(item.cantidadEntregada || 0);
-                const activo = c.estado === "ACTIVA";
-                const vendido = activo ? 0 : Number(item.cantidadVendida ?? 0);
-                const devuelto = activo ? 0 : Number(item.cantidadDevuelta ?? (entregado - vendido));
-                acc.entregado += entregado;
-                acc.vendido += vendido;
-                acc.devuelto += Math.max(0, devuelto);
-                return acc;
-            }, {entregado:0,vendido:0,devuelto:0}) : null;
-            if(resumen){
-                consignationSummary = `
-                    <div class="ticket-consigna-resumen">
-                        <div><span>Entregado</span><strong>${resumen.entregado}</strong></div>
-                        <div><span>Devuelto</span><strong>${resumen.devuelto}</strong></div>
-                        <div><span>Vendido</span><strong>${resumen.vendido}</strong></div>
-                    </div>`;
-            }
-        }
-    }
 
     return `
         <div class="ticket-overlay" id="ticketOverlay">
@@ -110,14 +87,18 @@ function renderTicket(data, extra = {}){
                     ${isConsignacion && operation.consignacionId ? `<p class="ticket-id">Folio: ${escapeHtml(operation.consignacionId)}</p>` : ""}
                     ${isConsignacion && operation.estadoConsignacion ? `<p class="ticket-id">Estado: ${operation.estadoConsignacion === "ACTIVA" ? "ABIERTA" : "CERRADA"}</p>` : ""}
                     <table class="ticket-table">
-                        <thead>${isConsignacion ? `<tr><th>Producto</th><th>Ent.</th><th>Dev.</th><th>Vend.</th><th>Importe</th></tr>` : `<tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr>`}</thead>
+                        <thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead>
                         <tbody>
-                            ${items.map(item => isConsignacion
-                                ? `<tr><td>${escapeHtml(item.nombre)}</td><td>${item.entregado}</td><td>${item.devuelto}</td><td>${item.vendido}</td><td>${money(item.subtotal)}</td></tr>`
-                                : `<tr><td>${escapeHtml(item.nombre)}</td><td>${item.cantidad}</td><td>${money(item.precio)}</td><td>${money(item.subtotal)}</td></tr>`).join("")}
+                            ${items.map(item => {
+                                if(isConsignacion){
+                                    const cantidad = operation.estadoConsignacion === "ACTIVA" ? item.entregado : item.vendido;
+                                    const importe = cantidad * item.precio;
+                                    return `<tr><td>${escapeHtml(item.nombre)}</td><td>${cantidad}</td><td>${money(item.precio)}</td><td>${money(importe)}</td></tr>`;
+                                }
+                                return `<tr><td>${escapeHtml(item.nombre)}</td><td>${item.cantidad}</td><td>${money(item.precio)}</td><td>${money(item.subtotal)}</td></tr>`;
+                            }).join("")}
                         </tbody>
                     </table>
-                    ${consignationSummary}
                     <div class="ticket-total"><span>TOTAL</span><strong>${money(total)}</strong></div>
                     <footer class="ticket-footer">
                         <p>Gracias por su preferencia</p>

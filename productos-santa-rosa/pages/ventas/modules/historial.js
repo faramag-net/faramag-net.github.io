@@ -15,11 +15,6 @@ function textoTipo(tipo){
     return ({COMANDA:"Comanda", DIRECTA:"Directa", CONSIGNACION:"Consignación"})[tipo] || tipo;
 }
 
-function itemsVenta(venta){
-    if(Array.isArray(venta.items) && venta.items.length) return venta.items.length;
-    return venta.producto ? 1 : 0;
-}
-
 function detalleVenta(venta){
     if(Array.isArray(venta.items) && venta.items.length > 1) return `${venta.items.length} productos`;
     if(Array.isArray(venta.items) && venta.items.length === 1){
@@ -30,7 +25,13 @@ function detalleVenta(venta){
 }
 
 function fechaVenta(venta){
-    return new Date(venta.createdAt || venta.fecha || 0).getTime();
+    return new Date(venta.createdAt || venta.fecha || 0).getTime() || 0;
+}
+
+function esConsignacionAbierta(venta){
+    if(tipoOperacion(venta) !== "CONSIGNACION") return false;
+    const consignacion = venta.consignacionId ? LocalDB.getConsignationById?.(venta.consignacionId) : null;
+    return consignacion?.estado === "ACTIVA" || venta.estadoConsignacion === "ACTIVA";
 }
 
 export function renderTablaVentas(){
@@ -41,6 +42,7 @@ export function renderTablaVentas(){
     const filtroTipo = document.getElementById("filtroTipoVenta")?.value || "todos";
 
     const ventas = [...LocalDB.getSales()]
+        .filter(venta => !esConsignacionAbierta(venta))
         .sort((a,b)=>fechaVenta(b)-fechaVenta(a))
         .filter(venta=>{
             const tipo = tipoOperacion(venta);
@@ -64,7 +66,10 @@ export function renderTablaVentas(){
             <td><span class="tipo-venta tipo-${tipoOperacion(venta).toLowerCase()}">${textoTipo(tipoOperacion(venta))}</span></td>
             <td>${detalleVenta(venta)}</td>
             <td>$${Number(venta.total || 0).toFixed(2)}</td>
-            <td><button class="btnVerTicket" data-id="${venta.id}" title="Ver ticket">🧾</button></td>
+            <td class="acciones-operacion">
+                <button class="btnVerTicket" data-id="${venta.id}" title="Ver ticket">🧾</button>
+                <button class="btnEliminarOperacion" data-id="${venta.id}" title="Eliminar operación">🗑️</button>
+            </td>
         </tr>`).join("");
 
     document.querySelectorAll(".btnVerTicket").forEach(btn=>{
@@ -74,7 +79,33 @@ export function renderTablaVentas(){
         };
     });
 
+    document.querySelectorAll(".btnEliminarOperacion").forEach(btn=>{
+        btn.onclick = ()=> eliminarOperacion(btn.dataset.id);
+    });
+
     renderPaginacion(ventas.length, totalPaginas);
+}
+
+function eliminarOperacion(id){
+    const venta = LocalDB.getSales().find(v => v.id === id);
+    if(!venta) return;
+
+    const tipo = tipoOperacion(venta);
+    const esConsignacion = tipo === "CONSIGNACION";
+    const mensaje = esConsignacion
+        ? "¿Eliminar esta operación del Historial de Ventas?\n\nLa consignación y sus movimientos de inventario NO se eliminarán. Solo se quitará su registro de venta de este historial."
+        : "¿Eliminar esta operación?\n\nLa venta se quitará del historial y el inventario calculado se actualizará como si esta venta no existiera.";
+
+    if(!confirm(mensaje)) return;
+
+    if(typeof LocalDB.deleteSale === "function"){
+        LocalDB.deleteSale(id);
+    }else{
+        LocalDB.saveSales(LocalDB.getSales().filter(v => v.id !== id));
+    }
+
+    renderTablaVentas();
+    actualizarKPIs();
 }
 
 function renderPaginacion(totalRegistros, totalPaginas){

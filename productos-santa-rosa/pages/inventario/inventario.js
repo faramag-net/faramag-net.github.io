@@ -20,7 +20,9 @@ from "./modules/entradas.js";
 
 import {
     actualizarResumen,
-    renderTabla
+    renderTabla,
+    resetPaginaInventario,
+    cambiarRegistrosInventario
 }
 from "./modules/historial.js";
 
@@ -92,11 +94,10 @@ document
     ?.addEventListener("change", actualizarFiltroProductos);
 
 document
-    .getElementById(
-        "buscarHistorial"
-    )
-    ?.addEventListener(
-        "input",
-        renderTabla
-    );
+    .getElementById("buscarHistorial")
+    ?.addEventListener("input", resetPaginaInventario);
+
+document
+    .getElementById("registrosPorPaginaInventario")
+    ?.addEventListener("change", e => cambiarRegistrosInventario(e.target.value));
 
