@@ -156,71 +156,27 @@ export function eliminarComanda(index){
 }
 
 export function registrarComanda(){
-
-    if(comanda.length === 0){
-
-        alert("Comanda vacía");
-
-        return;
-
-    }
-
-comanda.forEach(item => {
-
-    const producto =
-    LocalDB.getProducts()
-    .find(p => p.nombre === item.producto);
-
-    if(!producto) return;
-
-                console.log(
-                "PRECIO CONSIGNACION",
-                item.precio
-            );
-            
-            console.log(
-                "ITEM COMPLETO",
-                item
-            );
-    
+    if(comanda.length === 0){ alert("Comanda vacía"); return; }
+    const productos = LocalDB.getProducts();
+    const items = comanda.map(item=>{
+        const producto=productos.find(p=>p.nombre===item.producto);
+        return producto ? {productId:producto.id, quantity:item.cantidad, price:item.precio} : null;
+    }).filter(Boolean);
+    if(!items.length){ alert("No hay productos válidos en la comanda"); return; }
+    const total=comanda.reduce((t,item)=>t+Number(item.subtotal||0),0);
+    const ganancia=comanda.reduce((t,item)=>t+Number(item.ganancia||0),0);
+    const cliente=comanda.find(item=>item.cliente)?.cliente || "";
     LocalDB.createSale({
-
-        producto: item.producto,
-
-        cliente: item.cliente,
-
-        cantidad: item.cantidad,
-
-        precio: item.precio,
-
-        costo: item.costo,
-
-        total: item.subtotal,
-
-        ganancia: item.ganancia,
-
-        items: [
-            {
-                productId: producto.id,
-                quantity: item.cantidad,
-                price: item.precio
-            }
-        ],
-
-        fecha: new Date().toLocaleString()
-
+        tipoOperacion:"COMANDA",
+        producto:items.length===1?comanda[0].producto:`${items.length} productos`,
+        cliente,
+        cantidad:comanda.reduce((t,item)=>t+Number(item.cantidad||0),0),
+        precio:items.length===1?comanda[0].precio:0,
+        costo:items.length===1?comanda[0].costo:0,
+        total, ganancia, items,
+        fecha:new Date().toLocaleString()
     });
-
-});
-
-    comanda.length = 0;
-
-    renderComanda();
-
-    renderTablaVentas();
-
-    actualizarKPIs();
-
+    comanda.length=0;
+    renderComanda(); renderTablaVentas(); actualizarKPIs();
     alert("Comanda registrada");
-
 }

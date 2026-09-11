@@ -25,7 +25,9 @@ registrarVenta;
 
 import {
     renderTablaVentas,
-    actualizarKPIs
+    actualizarKPIs,
+    resetPaginaVentas,
+    cambiarRegistrosVentas
 }
 
 from "./modules/historial.js";
@@ -181,11 +183,6 @@ actualizarKPIs();
         });
     });
 
-document
-    .getElementById(
-        "buscarVentas"
-    )
-    ?.addEventListener(
-        "input",
-        renderTablaVentas
-    );
+document.getElementById("buscarVentas")?.addEventListener("input", resetPaginaVentas);
+document.getElementById("filtroTipoVenta")?.addEventListener("change", resetPaginaVentas);
+document.getElementById("registrosPorPagina")?.addEventListener("change", e => cambiarRegistrosVentas(e.target.value));

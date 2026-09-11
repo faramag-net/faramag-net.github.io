@@ -163,6 +163,8 @@ export function registrarVenta(){
 
 LocalDB.createSale({
 
+    tipoOperacion: "DIRECTA",
+
     producto: nombre,
 
     cliente,

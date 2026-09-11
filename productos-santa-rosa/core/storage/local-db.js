@@ -413,6 +413,7 @@ ventas.forEach(venta => {
     const newSale = {
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
+      tipoOperacion: sale.tipoOperacion || (sale.consignacionId || sale.consignacion ? "CONSIGNACION" : "DIRECTA"),
       ...sale,
     };
 

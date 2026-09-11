@@ -1,0 +1,145 @@
+import LocalDB from "../../../core/storage/local-db.js";
+
+function escapeHtml(value){
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function money(value){
+    return `$${Number(value || 0).toFixed(2)}`;
+}
+
+function getProductsMap(){
+    return new Map(LocalDB.getProducts().map(p => [p.id, p]));
+}
+
+function normalizeSaleItems(sale){
+    const map = getProductsMap();
+    const isConsignacion = sale.tipoOperacion === "CONSIGNACION" || sale.consignacion || sale.consignacionId;
+    if(isConsignacion && sale.consignacionId){
+        const c = LocalDB.getConsignationById(sale.consignacionId);
+        if(c?.items?.length){
+            return c.items.map(item=>{
+                const p=map.get(item.productId);
+                const entregado=Number(item.cantidadEntregada||0);
+                const devuelto=Number(item.cantidadDevuelta||0);
+                const vendido=Number(item.cantidadVendida ?? Math.max(0,entregado-devuelto));
+                const precio=Number(item.precio ?? p?.precio ?? 0);
+                return {nombre:p?.nombre||"Producto",cantidad:vendido,precio,subtotal:vendido*precio,entregado,devuelto,vendido};
+            });
+        }
+    }
+    if(Array.isArray(sale.items) && sale.items.length){
+        return sale.items.map(item => {
+            const p = map.get(item.productId);
+            const quantity = Number(item.quantity ?? item.cantidad ?? 0);
+            const price = Number(item.price ?? item.precio ?? p?.precio ?? 0);
+            return {nombre:p?.nombre || sale.producto || "Producto",cantidad:quantity,precio:price,subtotal:quantity*price};
+        });
+    }
+    return [{nombre:sale.producto||"Producto",cantidad:Number(sale.cantidad||0),precio:Number(sale.precio||0),subtotal:Number(sale.total||0)}];
+}
+
+function buildTicketData(operation){
+    const type = operation.tipoOperacion || (operation.consignacion ? "CONSIGNACION" : "DIRECTA");
+    const items = normalizeSaleItems(operation);
+    return {
+        type,
+        title: type === "CONSIGNACION" ? "TICKET DE CONSIGNACIÓN" : "NOTA DE VENTA",
+        operation,
+        items,
+        total: Number(operation.total || items.reduce((t,i)=>t+i.subtotal,0))
+    };
+}
+
+function renderTicket(data, extra = {}){
+    const {operation, items, total, type, title} = data;
+    const isConsignacion = type === "CONSIGNACION";
+    const fecha = operation.fecha || operation.createdAt || new Date().toLocaleString();
+    const cliente = operation.cliente || extra.cliente || "Público en general";
+
+    let consignationSummary = "";
+    if(isConsignacion){
+        const c = extra.consignacion || LocalDB.getConsignationById(operation.consignacionId);
+        if(c){
+            const resumen = Array.isArray(c.items) ? c.items.reduce((acc,item)=>{
+                const entregado = Number(item.cantidadEntregada || 0);
+                const vendido = Number(item.cantidadVendida ?? 0);
+                const devuelto = Number(item.cantidadDevuelta ?? (entregado - vendido));
+                acc.entregado += entregado;
+                acc.vendido += vendido;
+                acc.devuelto += Math.max(0, devuelto);
+                return acc;
+            }, {entregado:0,vendido:0,devuelto:0}) : null;
+            if(resumen){
+                consignationSummary = `
+                    <div class="ticket-consigna-resumen">
+                        <div><span>Entregado</span><strong>${resumen.entregado}</strong></div>
+                        <div><span>Devuelto</span><strong>${resumen.devuelto}</strong></div>
+                        <div><span>Vendido</span><strong>${resumen.vendido}</strong></div>
+                    </div>`;
+            }
+        }
+    }
+
+    return `
+        <div class="ticket-overlay" id="ticketOverlay">
+            <div class="ticket-modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}">
+                <div class="ticket-actions no-print">
+                    <button type="button" id="cerrarTicketBtn">✕</button>
+                    <button type="button" id="imprimirTicketBtn">🖨️ Imprimir</button>
+                </div>
+                <div class="ticket-paper">
+                    <header class="ticket-header">
+                        <h2>Productos Santa Rosa</h2>
+                        <p>${title}</p>
+                    </header>
+                    <div class="ticket-meta">
+                        <div><span>Fecha</span><strong>${escapeHtml(fecha)}</strong></div>
+                        <div><span>Cliente</span><strong>${escapeHtml(cliente)}</strong></div>
+                    </div>
+                    ${isConsignacion && operation.consignacionId ? `<p class="ticket-id">Consignación: ${escapeHtml(operation.consignacionId)}</p>` : ""}
+                    <table class="ticket-table">
+                        <thead>${isConsignacion ? `<tr><th>Producto</th><th>Ent.</th><th>Dev.</th><th>Vend.</th><th>Importe</th></tr>` : `<tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr>`}</thead>
+                        <tbody>
+                            ${items.map(item => isConsignacion
+                                ? `<tr><td>${escapeHtml(item.nombre)}</td><td>${item.entregado}</td><td>${item.devuelto}</td><td>${item.vendido}</td><td>${money(item.subtotal)}</td></tr>`
+                                : `<tr><td>${escapeHtml(item.nombre)}</td><td>${item.cantidad}</td><td>${money(item.precio)}</td><td>${money(item.subtotal)}</td></tr>`).join("")}
+                        </tbody>
+                    </table>
+                    ${consignationSummary}
+                    <div class="ticket-total"><span>TOTAL</span><strong>${money(total)}</strong></div>
+                    <footer class="ticket-footer">
+                        <p>Gracias por su preferencia</p>
+                        <small>Documento generado por el sistema</small>
+                    </footer>
+                </div>
+            </div>
+        </div>`;
+}
+
+export function mostrarTicketOperacion(operation, extra = {}){
+    if(!operation) return;
+    document.getElementById("ticketOverlay")?.remove();
+    document.body.insertAdjacentHTML("beforeend", renderTicket(buildTicketData(operation), extra));
+    document.getElementById("cerrarTicketBtn").onclick = () => document.getElementById("ticketOverlay")?.remove();
+    document.getElementById("imprimirTicketBtn").onclick = () => window.print();
+    document.getElementById("ticketOverlay").addEventListener("click", e => {
+        if(e.target.id === "ticketOverlay") document.getElementById("ticketOverlay")?.remove();
+    });
+}
+
+export function mostrarTicketConsignacion(consignacion){
+    if(!consignacion) return;
+    const sales = LocalDB.getSales();
+    const sale = sales.find(s => s.consignacionId === consignacion.id && (s.tipoOperacion === "CONSIGNACION" || s.consignacion));
+    if(!sale){
+        alert("Esta consignación todavía no tiene ticket final. Se genera al cerrarla.");
+        return;
+    }
+    mostrarTicketOperacion(sale, {consignacion});
+}

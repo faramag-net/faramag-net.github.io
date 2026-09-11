@@ -22,6 +22,10 @@
     <link
     rel="stylesheet"
     href="ventas.css">
+
+    <link
+    rel="stylesheet"
+    href="ticket.css">
     
 </head>
 
@@ -229,8 +233,32 @@
     </div>
 
     
-    <!-- HISTORIAL -->
+    <!-- HISTORIAL UNICO DE OPERACIONES -->
 
+    <div class="panel">
+
+        <h2>📋 Historial de Operaciones</h2>
+
+        <div class="historial-filtros">
+            <input type="search" id="buscarVentas" placeholder="🔍 Buscar operación..." class="input-busqueda-historial" autocomplete="off">
+            <select id="filtroTipoVenta">
+                <option value="todos">Todos</option>
+                <option value="DIRECTA">Directas</option>
+                <option value="COMANDA">Comandas</option>
+                <option value="CONSIGNACION">Consignaciones</option>
+            </select>
+            <label class="mostrar-registros">Mostrar <select id="registrosPorPagina"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
+        </div>
+
+        <div class="table-responsive">
+            <table class="tabla-historial-ventas">
+                <thead><tr><th>FECHA</th><th>TIPO</th><th>PRODUCTOS</th><th>TOTAL</th><th>ACCIÓN</th></tr></thead>
+                <tbody id="tablaVentas"></tbody>
+            </table>
+        </div>
+        <div id="paginacionVentas" class="paginacion-ventas"></div>
+    </div>
+    
     <div class="panel">
 
         <h2>📋 Historial Ventas</h2>

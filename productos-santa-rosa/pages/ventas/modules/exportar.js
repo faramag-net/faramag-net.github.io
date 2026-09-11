@@ -74,7 +74,7 @@ export function importarVentas(event){
         const datos =
         JSON.parse(e.target.result);
 
-        LocalDB.saveSales(
+        LocalDB.mergeSales(
             datos.ventas || []
         );
        
