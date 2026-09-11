@@ -128,15 +128,52 @@ function renderTicket(data, extra = {}){
         </div>`;
 }
 
+let ticketWindow = null;
+
 export function mostrarTicketOperacion(operation, extra = {}){
     if(!operation) return;
-    document.getElementById("ticketOverlay")?.remove();
-    document.body.insertAdjacentHTML("beforeend", renderTicket(buildTicketData(operation), extra));
-    document.getElementById("cerrarTicketBtn").onclick = () => document.getElementById("ticketOverlay")?.remove();
-    document.getElementById("imprimirTicketBtn").onclick = () => window.print();
-    document.getElementById("ticketOverlay").addEventListener("click", e => {
-        if(e.target.id === "ticketOverlay") document.getElementById("ticketOverlay")?.remove();
+
+    const ticketHtml = renderTicket(buildTicketData(operation), extra);
+    const cssUrl = new URL("../ticket.css", import.meta.url).href;
+
+    // El ticket se abre en una ventana independiente.
+    // Así no forma parte del DOM de Clientes/Visitas/Ventas y al imprimir
+    // únicamente se imprime el ticket.
+    if(ticketWindow && !ticketWindow.closed){
+        ticketWindow.focus();
+    }else{
+        ticketWindow = window.open("about:blank", "psr_ticket", "width=520,height=760,resizable=yes,scrollbars=yes");
+    }
+
+    if(!ticketWindow){
+        alert("El navegador bloqueó la ventana del ticket. Permite ventanas emergentes para este sitio.");
+        return;
+    }
+
+    ticketWindow.document.open();
+    ticketWindow.document.write(`<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ticket · Productos Santa Rosa</title>
+<link rel="stylesheet" href="${cssUrl}">
+</head>
+<body>${ticketHtml}</body>
+</html>`);
+    ticketWindow.document.close();
+
+    ticketWindow.document.getElementById("cerrarTicketBtn")?.addEventListener("click", () => ticketWindow.close());
+    ticketWindow.document.getElementById("imprimirTicketBtn")?.addEventListener("click", () => {
+        ticketWindow.focus();
+        ticketWindow.print();
     });
+    ticketWindow.document.getElementById("ticketOverlay")?.addEventListener("click", e => {
+        if(e.target.id === "ticketOverlay") ticketWindow.close();
+    });
+
+    ticketWindow.onbeforeunload = () => { ticketWindow = null; };
+    ticketWindow.focus();
 }
 
 export function mostrarTicketConsignacion(consignacion){
