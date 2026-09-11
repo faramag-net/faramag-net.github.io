@@ -21,13 +21,15 @@ function normalizeSaleItems(sale){
     const map = getProductsMap();
     const isConsignacion = sale.tipoOperacion === "CONSIGNACION" || sale.consignacion || sale.consignacionId;
     if(isConsignacion && sale.consignacionId){
-        const c = LocalDB.getConsignationById(sale.consignacionId);
+        const c = sale._consignacionSnapshot || LocalDB.getConsignationById(sale.consignacionId);
         if(c?.items?.length){
+            const activa = sale.estadoConsignacion === "ACTIVA" || c.estado === "ACTIVA";
             return c.items.map(item=>{
                 const p=map.get(item.productId);
                 const entregado=Number(item.cantidadEntregada||0);
                 const devuelto=Number(item.cantidadDevuelta||0);
-                const vendido=Number(item.cantidadVendida ?? Math.max(0,entregado-devuelto));
+                // Mientras está abierta todavía no hay venta ni devolución final.
+                const vendido=activa ? 0 : Number(item.cantidadVendida ?? Math.max(0,entregado-devuelto));
                 const precio=Number(item.precio ?? p?.precio ?? 0);
                 return {nombre:p?.nombre||"Producto",cantidad:vendido,precio,subtotal:vendido*precio,entregado,devuelto,vendido};
             });
@@ -49,7 +51,9 @@ function buildTicketData(operation){
     const items = normalizeSaleItems(operation);
     return {
         type,
-        title: type === "CONSIGNACION" ? "TICKET DE CONSIGNACIÓN" : "NOTA DE VENTA",
+        title: type === "CONSIGNACION"
+            ? (operation.estadoConsignacion === "ACTIVA" ? "TICKET DE CONSIGNACIÓN · ABIERTA" : "TICKET DE CONSIGNACIÓN")
+            : "NOTA DE VENTA",
         operation,
         items,
         total: Number(operation.total || items.reduce((t,i)=>t+i.subtotal,0))
@@ -68,8 +72,9 @@ function renderTicket(data, extra = {}){
         if(c){
             const resumen = Array.isArray(c.items) ? c.items.reduce((acc,item)=>{
                 const entregado = Number(item.cantidadEntregada || 0);
-                const vendido = Number(item.cantidadVendida ?? 0);
-                const devuelto = Number(item.cantidadDevuelta ?? (entregado - vendido));
+                const activo = c.estado === "ACTIVA";
+                const vendido = activo ? 0 : Number(item.cantidadVendida ?? 0);
+                const devuelto = activo ? 0 : Number(item.cantidadDevuelta ?? (entregado - vendido));
                 acc.entregado += entregado;
                 acc.vendido += vendido;
                 acc.devuelto += Math.max(0, devuelto);
@@ -103,6 +108,7 @@ function renderTicket(data, extra = {}){
                         <div><span>Cliente</span><strong>${escapeHtml(cliente)}</strong></div>
                     </div>
                     ${isConsignacion && operation.consignacionId ? `<p class="ticket-id">Consignación: ${escapeHtml(operation.consignacionId)}</p>` : ""}
+                    ${isConsignacion && operation.estadoConsignacion ? `<p class="ticket-id">Estado: ${operation.estadoConsignacion === "ACTIVA" ? "ABIERTA" : "CERRADA"}</p>` : ""}
                     <table class="ticket-table">
                         <thead>${isConsignacion ? `<tr><th>Producto</th><th>Ent.</th><th>Dev.</th><th>Vend.</th><th>Importe</th></tr>` : `<tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr>`}</thead>
                         <tbody>
@@ -135,11 +141,34 @@ export function mostrarTicketOperacion(operation, extra = {}){
 
 export function mostrarTicketConsignacion(consignacion){
     if(!consignacion) return;
-    const sales = LocalDB.getSales();
-    const sale = sales.find(s => s.consignacionId === consignacion.id && (s.tipoOperacion === "CONSIGNACION" || s.consignacion));
-    if(!sale){
-        alert("Esta consignación todavía no tiene ticket final. Se genera al cerrarla.");
-        return;
-    }
-    mostrarTicketOperacion(sale, {consignacion});
+
+    // La consignación es la fuente de verdad mientras está abierta y también
+    // al cerrarse. No dependemos de que exista todavía una venta en el historial.
+    const cliente = LocalDB.getRouteClients?.().find(c => c.id === consignacion.clienteId);
+    const esActiva = consignacion.estado === "ACTIVA";
+
+    const operacion = {
+        id: `CONSIGNACION-${consignacion.id}`,
+        tipoOperacion: "CONSIGNACION",
+        consignacion: true,
+        consignacionId: consignacion.id,
+        cliente: cliente?.nombre || consignacion.cliente || "Público en general",
+        fecha: consignacion.fecha,
+        estadoConsignacion: consignacion.estado,
+        _consignacionSnapshot: consignacion,
+        items: (consignacion.items || []).map(item => ({
+            productId: item.productId,
+            quantity: Number(item.cantidadEntregada || 0),
+            price: Number(item.precio || 0)
+        })),
+        total: (consignacion.items || []).reduce(
+            (total, item) => total + Number(item.cantidadEntregada || 0) * Number(item.precio || 0),
+            0
+        )
+    };
+
+    mostrarTicketOperacion(operacion, {
+        consignacion,
+        activo: esActiva
+    });
 }

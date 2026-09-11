@@ -1214,6 +1214,13 @@ lista.innerHTML =
                         </button>
 
                         <button
+                            class="ticket-consignacion"
+                            data-id="${consignacion.id}"
+                        >
+                            🧾 Ticket
+                        </button>
+
+                        <button
                             class="recoger-consignacion"
                             data-id="${consignacion.id}"
                         >
