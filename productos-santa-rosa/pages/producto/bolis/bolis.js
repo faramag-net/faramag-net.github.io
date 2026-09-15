@@ -16,7 +16,7 @@ const productos = [
     precio: 20,
     tipo: "leche",
     activo: true,
-    descripcion: "",
+    descripcion: "Cremoso relleno con coco rallado",
     imagen: "../../../../imagenes/bolicoco.png",
     mensaje: "Quiero boli de Coco"
   },
@@ -26,7 +26,7 @@ const productos = [
     precio: 20,
     tipo: "leche",
     activo: true,
-    descripcion: "Con trozos de fresa",
+    descripcion: "Delicioso y cremoso con trozos de fresa",
     imagen: "../../../../imagenes/bolifresa.png",
     mensaje: "Quiero boli de Fresa"
   },
@@ -36,7 +36,7 @@ const productos = [
     precio: 22,
     tipo: "gourmet",
     activo: true,
-    descripcion: "",
+    descripcion: "Rica combinacion de 🫐 Mora azul,🫐 Zarzamora y ❤️ Frambuesa",
     imagen: "../../../../imagenes/bolifrutos.png",
     mensaje: "Quiero boli Frutos Rojos"
   },
@@ -46,7 +46,7 @@ const productos = [
     precio: 20,
     tipo: "leche",
     activo: true,
-    descripcion: "",
+    descripcion: "Cremoso y delicioso, con mamey natural",
     imagen: "../../../../imagenes/bolimamey.png",
     mensaje: "Quiero boli de Mamey"
   },
@@ -56,7 +56,7 @@ const productos = [
     precio: 24,
     tipo: "gourmet",
     activo: true,
-    descripcion: "Chocolate y avellana en cada mordida",
+    descripcion: "Chocolate con una deliciosa cobertura de Nutella",
     imagen: "../../../../imagenes/bolinuetlla.png",
     mensaje: "Quiero boli Choco Nutella"
   },
@@ -66,7 +66,7 @@ const productos = [
     precio: 20,
     tipo: "leche",
     activo: true,
-    descripcion: "",
+    descripcion: "Intenso y delicioso chocolate",
     imagen: "../../../../imagenes/bolichocolate.png",
     mensaje: "Quiero boli Chocolate"
   },
@@ -76,7 +76,7 @@ const productos = [
     precio: 22,
     tipo: "gourmet",
     activo: true,
-    descripcion: "",
+    descripcion: "Delicioso sabor a Oreo con trozos de galleta",
     imagen: "../../../../imagenes/bolioreo.png",
     mensaje: "Quiero boli Oreo"
   },
@@ -88,7 +88,7 @@ const productos = [
     precio: 18,
     tipo: "hielo",
     activo: true,
-    descripcion: "Refrescante limón con pepino",
+    descripcion: "Refrescante limón con trozos de pepino",
     imagen: "../../../../imagenes/bolilimonpepino.png",
     mensaje: "Quiero boli Pepino con limón"
   },

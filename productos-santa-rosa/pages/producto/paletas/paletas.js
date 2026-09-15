@@ -16,7 +16,7 @@ const productos = [
     precio: 20,
     tipo: "leche",
     activo: true,
-    descripcion: "",
+    descripcion: "Cremoso relleno con coco rallado",
     imagen: "../../../../imagenes/paletacoco.png",
     mensaje: "Quiero paleta de Coco"
   },
@@ -26,7 +26,7 @@ const productos = [
     precio: 20,
     tipo: "leche",
     activo: true,
-    descripcion: "Con trozos de fresa",
+    descripcion: "Delicioso y cremoso con trozos de fresa",
     imagen: "../../../../imagenes/paletafresa.png",
     mensaje: "Quiero paleta de Fresa"
   },
@@ -36,7 +36,7 @@ const productos = [
     precio: 22,
     tipo: "gourmet",
     activo: false,
-    descripcion: "",
+    descripcion: "Rica combinacion de 🫐 Mora azul,🫐 Zarzamora y ❤️ Frambuesa",
     imagen: "../../../../imagenes/paletafrutos.png",
     mensaje: "Quiero paleta Frutos Rojos"
   },
@@ -46,7 +46,7 @@ const productos = [
     precio: 20,
     tipo: "leche",
     activo: true,
-    descripcion: "",
+    descripcion: "Cremoso y delicioso, con mamey natural",
     imagen: "../../../../imagenes/paletamamey.png",
     mensaje: "Quiero paleta de Mamey"
   },
@@ -56,7 +56,7 @@ const productos = [
     precio: 24,
     tipo: "gourmet",
     activo: true,
-    descripcion: "Chocolate y avellana en cada mordida",
+    descripcion: "Chocolate con una deliciosa cobertura de Nutella",
     imagen: "../../../../imagenes/paletanutella.png",
     mensaje: "Quiero paleta Choco Nutella"
   },
@@ -66,7 +66,7 @@ const productos = [
     precio: 20,
     tipo: "leche",
     activo: true,
-    descripcion: "",
+    descripcion: "Intenso y delicioso chocolate",
     imagen: "../../../../imagenes/paletachocolate.png",
     mensaje: "Quiero paleta Chocolate"
   },
@@ -76,19 +76,9 @@ const productos = [
     precio: 22,
     tipo: "gourmet",
     activo: true,
-    descripcion: "",
+    descripcion: "Delicioso sabor a Oreo con trozos de galleta",
     imagen: "../../../../imagenes/paletaoreo.png",
     mensaje: "Quiero paleta Oreo"
-  },
-
-    {
-    nombre: "Frutos Rojos",
-    precio: 22,
-    tipo: "gourmet",
-    activo: true,
-    descripcion: "Deliciosa mezcla de frutos rojos",
-    imagen: "../../../../imagenes/paletafrutos.png",
-    mensaje: "Quiero paleta Frutos Rojos"
   },
 
   // HIELO
