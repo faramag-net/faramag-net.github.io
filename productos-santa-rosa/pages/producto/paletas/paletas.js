@@ -35,7 +35,7 @@ const productos = [
     nombre: "Frutos Rojos",
     precio: 22,
     tipo: "gourmet",
-    activo: false,
+    activo: true,
     descripcion: "Rica combinacion de 🫐 Mora azul,🫐 Zarzamora y ❤️ Frambuesa",
     imagen: "../../../../imagenes/paletafrutos.png",
     mensaje: "Quiero paleta Frutos Rojos"
