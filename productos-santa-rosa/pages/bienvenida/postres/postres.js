@@ -7,7 +7,7 @@ const productos = [
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con nuez y frutas",
-    imagen: "/imagenes/postrecarlota.png",
+    imagen: "../../../../imagenes/postrecarlota.png",
     mensaje: "Quiero Carlota de Limón"
   },
 
