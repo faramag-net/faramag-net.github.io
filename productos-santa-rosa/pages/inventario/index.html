@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>Inventario</title>
+    
+    <link
+    rel="stylesheet"
+    href="../../styles/global.css">
+
+    <link
+    rel="stylesheet"
+    href="../../components/navbar.css">
+
+    <link
+    rel="stylesheet"
+    href="inventario.css">
+
+    </head>
+    
+    <body>   
+        
+     <div id="navbar"></div>
+
+    <div class="container">
+    
+  <h1>📦 Inventario Santa Rosa</h1>
+
+  
+        
+<div class="panel">
+
+    <h2>📦 Agregar Producto</h2>
+    
+<div class="producto-grid">
+    
+    <input
+    type="text"
+    id="nuevoProducto"
+    placeholder="Nombre producto">
+
+    <select id="nuevoCategoria">
+        <option value="paleta">Paleta</option>
+        <option value="boli">Boli</option>
+        <option value="postre">Postre</option>
+        <option value="otro">Otro</option>
+    </select>
+
+    <input
+    type="number"
+    id="nuevoPrecio"
+    placeholder="Precio">
+
+    <input
+    type="number"
+    id="nuevoCosto"
+    placeholder="Costo">
+
+    <input
+    type="number"
+    id="nuevoStock"
+    placeholder="Stock inicial">
+
+    <button onclick="agregarProducto()">
+
+        ➕ Agregar Producto
+
+    </button>
+
+</div>
+    
+</div> 
+        
+<div class="panel">
+
+    <h2>📥 Movimiento Inventario</h2>
+
+    <div class="filtros-productos">
+        <input
+            type="search"
+            id="buscarInventario"
+            placeholder="🔍 Buscar producto..."
+            autocomplete="off">
+
+        <select id="filtroInventario">
+            <option value="todos">Todos</option>
+            <option value="paleta">Paleta</option>
+            <option value="boli">Boli</option>
+            <option value="postre">Postre</option>
+            <option value="historico">Antiguos</option>
+            <option value="otro">Otro</option>
+        </select>
+    </div>
+
+            <table class="tabla-productos">
+
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Costo</th>
+            <th>Stock</th>
+            <th>Estado</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+
+    <tbody id="tablaProductos">
+
+    </tbody>
+
+</table> 
+
+    <div class="movimiento-grid">
+        
+    <select id="productoInventario"></select>
+
+    <div class="detalle-costo-movimiento">
+        Costo: <strong id="costoMovimiento">$0.00</strong>
+    </div>
+
+    <select id="tipoMovimiento">
+
+        <option value="ENTRADA">
+
+            ENTRADA
+
+        </option>
+
+        <option value="MERMA">
+
+            MERMA
+
+        </option>
+
+        <option value="CORTESIA">
+
+            CORTESIA
+
+        </option>
+
+        <option value="AJUSTE">
+
+            AJUSTE
+
+        </option>
+
+    </select>
+
+    <input
+    type="number"
+    id="agregarStock"
+    step="0.01"
+    placeholder="Cantidad">
+
+    <button onclick="agregarInventario()">
+
+        Registrar Movimiento
+
+    </button>
+
+</div>
+    
+</div>
+        
+<div class="panel">
+
+    <h2>📋 Historial Inventario</h2>
+
+    <div class="historial-filtros inventario-historial-filtros">
+        <input
+            type="text"
+            id="buscarHistorial"
+            placeholder="🔍 Buscar movimiento..."
+            class="input-busqueda-historial">
+
+        <label class="mostrar-registros">Mostrar
+            <select id="registrosPorPaginaInventario">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </label>
+    </div>
+    
+    <div class="table-responsive">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>TIPO</th>
+                    <th>PRODUCTO</th>
+                    <th>CANTIDAD</th>
+                    <th>COSTO</th>
+                    <th>STOCK</th>
+                    <th>FECHA</th>
+                    <th>ACCION</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaInventario"></tbody>
+
+        </table>
+
+    </div>
+
+    <div id="paginacionInventario" class="paginacion-inventario"></div>
+
+    <br>
+    
+<div class="acciones-inventario">
+    
+    <button
+    class="btn-exportar"
+    onclick="exportarJSON()">
+
+    💾 Exportar JSON
+
+    </button>
+
+    <input
+    type="file"
+    id="importarArchivo"
+    hidden
+    onchange="importarJSON(event)">
+
+    <button
+    class="btn-importar"
+    onclick="
+    document
+    .getElementById('importarArchivo')
+    .click()
+    ">
+
+    📂 Importar JSON
+
+    </button>
+
+    <button
+    class="btn-eliminar"
+    onclick="cerrarInventario()">
+
+    🗑 Limpiar Historial
+
+    </button>
+
+</div>
+        
+</div>
+        
+<script type="module">
+
+import {
+    crearNavbar
+}
+from "../../components/navbar.js";
+
+document
+.getElementById("navbar")
+.innerHTML =
+crearNavbar();
+
+</script> 
+    
+<script
+type="module"
+src="inventario.js">
+</script>
+        
+</body>
+
+</html>

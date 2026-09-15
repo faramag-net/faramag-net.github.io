@@ -1,0 +1,312 @@
+/* GRID FORMULARIO */
+
+.grid-formulario{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(140px,1fr));
+
+    gap:10px;
+
+    margin-bottom:15px;
+
+}
+
+/* GRID CANTIDAD */
+
+.grid-cantidad{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(50px,1fr));
+
+    gap:10px;
+
+    align-items:center;
+
+    margin-bottom:15px;
+
+}
+
+/* GRID BOTONES */
+
+.grid-botones{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(140px,1fr));
+
+    gap:10px;
+
+}
+
+/* INPUTS PEQUEÑOS */
+
+#cantidad,
+#precio,
+#costo{
+
+    text-align:center;
+
+}
+
+/* BOTONES CANTIDAD */
+
+.grid-cantidad button{
+
+    width:100%;
+
+}
+
+
+/* STOCK CARDS */
+
+.stock-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(50px,1fr));
+
+    gap:10px;
+
+}
+
+.stock-card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:12px;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+    box-shadow:
+    0 2px 6px rgba(0,0,0,.1);
+
+}
+
+.stock-verde{
+
+    border-left:
+    6px solid #22c55e;
+
+}
+
+.stock-amarillo{
+
+    border-left:
+    6px solid #facc15;
+
+}
+
+.stock-rojo{
+
+    border-left:
+    6px solid #ef4444;
+
+}
+
+.stock-nombre{
+
+    font-size: 11px;
+
+}
+
+
+/* BUSQUEDA Y FILTROS DE PRODUCTOS */
+.filtros-productos,
+.consigna-filtros{
+    display:grid;
+    grid-template-columns:minmax(180px,2fr) minmax(140px,1fr);
+    gap:8px;
+    margin:8px 0 12px;
+}
+
+.filtros-productos input,
+.filtros-productos select,
+.consigna-filtros input,
+.consigna-filtros select{
+    margin:0;
+}
+
+@media(max-width:600px){
+    .filtros-productos,
+    .consigna-filtros{
+        grid-template-columns:1fr;
+    }
+}
+
+/* ==========================================================
+   HISTORIAL DE OPERACIONES — CONTROLES COMPACTOS
+   ========================================================== */
+
+.historial-filtros{
+    display:grid;
+    grid-template-columns:minmax(180px, 1fr) minmax(130px, 170px) auto;
+    gap:8px;
+    align-items:center;
+    margin:8px 0 12px;
+}
+
+.historial-filtros > *{
+    min-width:0;
+}
+
+.historial-filtros .input-busqueda-historial,
+.historial-filtros select{
+    width:100%;
+    margin:0;
+}
+
+.mostrar-registros{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    white-space:nowrap;
+    font-size:12px;
+}
+
+.mostrar-registros select{
+    width:72px;
+    min-width:72px;
+    margin:0;
+}
+
+.tabla-historial-ventas th,
+.tabla-historial-ventas td{
+    white-space:nowrap;
+}
+
+.btnVerTicket{
+    width:42px !important;
+    min-width:42px !important;
+    height:24px;
+    padding:0 !important;
+    margin:0 !important;
+    border-radius:12px !important;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    line-height:1;
+}
+
+/* Evita que los botones globales ocupen todo el ancho. */
+.paginacion-ventas{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:8px;
+    flex-wrap:wrap;
+}
+
+.paginacion-info{
+    font-size:11px;
+    color:#444;
+    white-space:nowrap;
+}
+
+.paginacion-controles{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:4px;
+    flex-wrap:wrap;
+}
+
+.paginacion-controles .pagina-btn{
+    width:32px !important;
+    min-width:32px !important;
+    height:28px;
+    min-height:28px;
+    padding:0 !important;
+    margin:0 !important;
+    border-radius:7px !important;
+    font-size:12px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.paginacion-controles .pagina-btn.activa{
+    outline:2px solid #111;
+    outline-offset:-2px;
+}
+
+.paginacion-controles .pagina-btn:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}
+
+@media(max-width:600px){
+    .historial-filtros{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .historial-filtros .input-busqueda-historial{
+        grid-column:1 / -1;
+    }
+
+    .mostrar-registros{
+        justify-self:start;
+    }
+
+    .paginacion-ventas{
+        align-items:flex-start;
+    }
+
+    .paginacion-controles{
+        justify-content:flex-start;
+    }
+}
+
+.acciones-operacion{
+    white-space:nowrap;
+}
+
+.acciones-operacion .btnVerTicket,
+.acciones-operacion .btnEliminarOperacion{
+    width:32px !important;
+    min-width:32px !important;
+    height:24px;
+    padding:0 !important;
+    margin:0 2px !important;
+    border-radius:12px !important;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    line-height:1;
+    font-size:12px;
+}
+
+.btnEliminarOperacion{
+    background:#111 !important;
+    color:#fff;
+}
+
+.inventario-historial-filtros{
+    grid-template-columns:minmax(180px,1fr) auto;
+}
+
+.inventario-historial-filtros .mostrar-registros{
+    justify-self:end;
+}
+
+@media(max-width:600px){
+    .inventario-historial-filtros{
+        grid-template-columns:1fr auto;
+    }
+}

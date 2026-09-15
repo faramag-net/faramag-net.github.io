@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>Ventas</title>
+
+    <link
+    rel="stylesheet"
+    href="../../styles/global.css">
+
+    <link
+    rel="stylesheet"
+    href="../../components/navbar.css">
+
+    <link
+    rel="stylesheet"
+    href="ventas.css">
+
+    <link
+    rel="stylesheet"
+    href="ticket.css">
+    
+</head>
+
+<body>
+
+    <div id="navbar"></div>
+    
+    <div class="container">
+
+    
+    <h1>💰 Sistema de Ventas</h1>
+
+    <!-- KPI CARDS -->
+
+    <div class="resumen">
+
+        <div class="card">
+
+            <h3>Total Vendido</h3>
+
+            <p id="totalVentas">$0</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Ganancia Total</h3>
+
+            <p id="totalGanancia">$0</p>
+
+        </div>
+
+    </div>
+
+        <div class="panel">
+
+    <h2>
+
+        📦 Existencias
+
+    </h2>
+
+    <div class="filtros-productos">
+        <input
+            type="search"
+            id="buscarStock"
+            placeholder="🔍 Buscar producto..."
+            autocomplete="off">
+
+        <select id="filtroStock">
+            <option value="todos">Todos</option>
+            <option value="paleta">Paleta</option>
+            <option value="boli">Boli</option>
+            <option value="postre">Postre</option>
+            <option value="historico">Antiguos</option>
+            <option value="otro">Otro</option>
+        </select>
+    </div>
+
+    <div id="stockCards" class="stock-grid"></div>
+
+</div>
+
+    <!-- REGISTRAR VENTA -->
+
+    <div class="panel">
+
+        <h2>🛒 Registrar Venta</h2>
+
+    <!-- GRID 1 -->
+
+<div class="filtros-productos">
+    <input
+        type="search"
+        id="buscarProductoVenta"
+        placeholder="🔍 Buscar producto..."
+        autocomplete="off">
+
+    <select id="filtroProductoVenta">
+        <option value="todos">Todos</option>
+        <option value="paleta">Paleta</option>
+        <option value="boli">Boli</option>
+        <option value="postre">Postre</option>
+        <option value="historico">Antiguos</option>
+        <option value="otro">Otro</option>
+    </select>
+</div>
+
+<div class="grid-formulario">
+
+        <select
+        id="producto"
+        onchange="actualizarProducto()">
+        </select>
+
+        <input
+        type="text"
+        id="cliente"
+        placeholder="Cliente">
+
+    </div>
+        
+<div class="grid-cantidad">
+
+            <button
+            onclick="cambiarCantidad(-1)">
+            -
+            </button>
+
+            <input
+            type="number"
+            id="cantidad"
+            value="1"
+            onchange="actualizarSubtotal()">
+
+            <button
+            onclick="cambiarCantidad(1)">
+            +
+            </button>
+
+            <input
+            type="number"
+            id="precio"
+            step="0.01">
+        
+            <input
+            type="text"
+            id="costo"
+            readonly>
+            
+          </div> 
+    
+<!-- GRID 3 -->
+
+<div class="grid-botones">
+
+    <button onclick="agregarComanda()">
+
+        ➕ Agregar Comanda
+
+    </button>
+
+    <button onclick="registrarVenta()">
+
+        Registrar Venta
+
+    </button>
+
+</div>
+
+<h3 id="subtotalVista">
+
+    SUBTOTAL: $0
+
+</h3>
+        
+        </div>  
+        
+ 
+        
+<!-- COMANDA -->
+
+<div class="panel">
+
+    <h2>🧾 Comanda Actual</h2>
+    
+    <div class="table-responsive">
+    
+        <table>
+
+        <thead>
+
+            <tr>
+
+                <th>PRODUCTO</th>
+                <th>CANTIDAD</th>
+                <th>PRECIO</th>
+                <th>SUBTOTAL</th>
+                <th>ACCION</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="tablaComanda"></tbody>
+            
+
+        
+    </table>
+        
+    </div>
+    
+    <h2 id="totalComanda">
+
+        TOTAL: $0
+
+    </h2>
+
+        <button onclick="registrarComanda()">
+
+            ✅ Registrar Comanda
+
+        </button>
+
+    </div>
+
+    
+    <!-- HISTORIAL UNICO DE OPERACIONES -->
+
+    <div class="panel">
+
+        <h2>📋 Historial de Operaciones</h2>
+
+        <div class="historial-filtros">
+            <input type="search" id="buscarVentas" placeholder="🔍 Buscar operación..." class="input-busqueda-historial" autocomplete="off">
+            <select id="filtroTipoVenta">
+                <option value="todos">Todos</option>
+                <option value="DIRECTA">Directas</option>
+                <option value="COMANDA">Comandas</option>
+                <option value="CONSIGNACION">Consignaciones</option>
+            </select>
+            <label class="mostrar-registros">Mostrar <select id="registrosPorPagina"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
+        </div>
+
+        <div class="table-responsive">
+            <table class="tabla-historial-ventas">
+                <thead><tr><th>FECHA</th><th>TIPO</th><th>PRODUCTOS</th><th>TOTAL</th><th>ACCIÓN</th></tr></thead>
+                <tbody id="tablaVentas"></tbody>
+            </table>
+        </div>
+        <div id="paginacionVentas" class="paginacion-ventas"></div>
+    </div>
+<div class="panel">
+
+    <h2>⚙️ Administrar Ventas</h2>
+
+    <button onclick="exportarVentas()">
+
+        💾 Exportar JSON
+
+    </button>
+
+    <input
+    type="file"
+    id="importarVentas"
+    hidden
+    onchange="importarVentas(event)">
+
+    <button
+    onclick="
+    document
+    .getElementById('importarVentas')
+    .click()
+    ">
+
+    📂 Importar JSON
+
+    </button>
+
+    <button onclick="cerrarCorte()">
+
+        🗑 Cerrar Corte
+
+    </button>
+
+</div>
+        
+    </div>
+    
+    <script type="module">
+
+import {
+    crearNavbar
+}
+from "../../components/navbar.js";
+
+document
+.getElementById("navbar")
+.innerHTML =
+crearNavbar();
+              
+</script>
+    
+    <script type="module" src="ventas.js"></script>
+
+</body>
+
+</html>

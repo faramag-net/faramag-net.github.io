@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard</title>
+
+    <link rel="stylesheet"
+          href="./styles.css">
+    
+    <link
+    rel="stylesheet"
+    href="./styles/global.css">
+
+    <link
+    rel="stylesheet"
+    href="./components/navbar.css">
+
+</head>
+
+<body>
+
+    <div id="navbar"></div>
+
+    <div class="container">
+        
+    <h1>Dashboard</h1>
+
+    <div class="dashboard">
+
+        <div class="card">
+            <h3>Ventas</h3>
+            <p id="kpiVentas">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Ganancia</h3>
+            <p id="kpiGanancia">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Productos</h3>
+            <p id="kpiProductos">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Stock Bajo</h3>
+            <p id="kpiStock">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Valor Inventario</h3>
+            <p id="kpiInventario">$0</p>
+        </div>
+
+        <div class="card">
+
+            <h3>📦 Piezas</h3>
+        
+            <p id="kpiPiezas">
+                0
+            </p>
+        
+        </div>
+
+        <div class="card">
+
+            <h3>🛒 Insumos</h3>
+        
+            <p id="kpiInsumos">
+                $0
+            </p>
+        
+        </div>
+
+    </div>
+
+    <script type="module">
+
+    import {
+        crearNavbar
+    }
+    from "./components/navbar.js";
+        
+    document
+        .getElementById("navbar")
+        .innerHTML =
+        crearNavbar();
+
+    </script>
+        
+    <script type="module"
+            src="./dashboard.js"></script>
+
+</body>
+
+</html>
