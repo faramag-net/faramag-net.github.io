@@ -1,186 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Productos Frescos Santa Rosa
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="frescos.css"
-    >
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2f2f2f">
+  <title>Productos Frescos y Tradicionales Santa Rosa</title>
+  <link rel="stylesheet" href="frescos.css">
 </head>
-
 <body>
+  <nav class="nav">
+    <a href="../">🏠 Inicio</a>
+    <a href="../../producto/">🍨 Productos</a>
+  </nav>
 
-<header class="header">
+  <img src="../../../../imagenes/logosantarosa.png" class="logo" alt="Productos Santa Rosa">
+  <h1>🥒 Productos Frescos y Tradicionales</h1>
 
-    <nav class="menu">
+  <section class="mayoreo" aria-label="Precios de mayoreo">
+    <p class="mayoreo-kicker">Para negocios</p>
+    <h2>¿Tienes un negocio?</h2>
+    <p>Tenemos <strong>precios especiales de mayoreo</strong> para ti. Pregunta por disponibilidad y precios para tu pedido.</p>
+    <a class="mayoreo-btn" href="https://wa.me/5212225655003?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20precios%20de%20mayoreo%20de%20productos%20frescos%20y%20tradicionales." target="_blank" rel="noopener noreferrer">💬 Solicitar precio de mayoreo</a>
+  </section>
 
-        <a href="#">
-            Inicio
-        </a>
+  <main id="contenido"></main>
 
-        <a href="#productos">
-            Productos
-        </a>
+  <div id="modalImagen" class="modal-imagen" role="dialog" aria-modal="true" aria-label="Imagen del producto">
+    <span id="cerrarModal" aria-label="Cerrar">&times;</span>
+    <img id="imagenGrande" src="" alt="">
+  </div>
 
-        <a href="#">
-            Contacto
-        </a>
-
-    </nav>
-
-</header>
-
-<section class="hero">
-
-        <img
-            class="logo-principal"
-            src="/imagenes/logosantarosa.png"
-            alt="Santa Rosa"
-        >
-
-    <div class="hero-contenedor">
-        
-    <div class="hero-texto">
-
-
-        <h1>
-            Jitomate Fresco
-        </h1>
-
-        <p>
-
-            Cultivado con dedicación y cuidado.
-
-            Productos frescos directamente
-            del campo para tu negocio.
-
-        </p>
-
-    </div>
-
-    <div class="hero-imagen">
-
-        <img
-            src="/imagenes/jitomateracimo.png"
-            alt="Jitomate"
-        >
-
-    </div>
-
-        </div>
-   
-</section>
-
-<section
-    id="productos"
-    class="productos"
->
-    
-    <div class="productos-contenedor">
-
-    <h2>
-        Nuestros Productos
-    </h2>
-
-    <div class="productos-grid">
-
-        <article class="producto">
-        
-            <div class="producto-imagen">
-        
-                <img
-                    src="/imagenes/jitomatecaja.webp"
-                    alt="Jitomate Saladet"
-                >
-        
-            </div>
-        
-            <h3>
-                Jitomate Saladet
-            </h3>
-        
-            <p>
-                Fresco y natural.
-            </p>
-        
-        </article>
-
-        <article class="producto">
-    
-            <div class="producto-imagen">
-    
-                <img
-                    src="/imagenes/tomatebola.jpg"
-                    alt="Jitomate Bola"
-                >
-    
-            </div>
-    
-            <h3>
-                Jitomate Bola
-            </h3>
-    
-            <p>
-                Tamaño uniforme, ideal para ensaladas, hamburguesas y consumo fresco.
-            </p>
-    
-        </article>
-    
-        <article class="producto">
-    
-            <div class="producto-imagen">
-    
-                <img
-                    src="/imagenes/jitomatetara.jpg"
-                    alt="Jitomate en Tara"
-                >
-    
-            </div>
-    
-            <h3>
-                Jitomate en Tara
-            </h3>
-    
-            <p>
-                Presentación a granel para mayoreo, distribución y centros de abasto.
-            </p>
-    
-        </article>
-
-    </div>
-
-        </div>
-          
-    <a
-        href="#productos"
-        class="btn-whatsapp"
-    >
-        Cotizar ahora
-    </a>
-    
-
-</section>
-
-   
-<footer>
-
-    Productos Santa Rosa
-     
-</footer>
-
-<script src="./frescos.js"></script>
-
+  <script src="frescos.js"></script>
 </body>
 </html>

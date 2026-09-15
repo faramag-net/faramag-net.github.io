@@ -167,6 +167,8 @@ function escaparHTML(valor) {
 }
 
 function crearSeccion(titulo, lista) {
+  if (!lista.length) return;
+
   const h2 = document.createElement("h2");
   h2.textContent = titulo;
   h2.className = "categoria-titulo";
@@ -224,6 +226,11 @@ crearSeccion(
 crearSeccion(
   "🥛 Bolis de Leche Cremosos",
   productos.filter(p => p.tipo === "leche" && p.activo)
+);
+
+crearSeccion(
+  "✨ Bolis Gourmet",
+  productos.filter(p => p.tipo === "gourmet" && p.activo)
 );
 
 const modal = document.getElementById("modalImagen");
