@@ -4,7 +4,7 @@ const productos = [
   {
     nombre: "Beso de Ángel",
     precio: 22,
-    tipo: "leche",
+    tipo: "gourmet",
     activo: true,
     descripcion: "Cereza con trozos de Nuez, arandanos y coco",
     imagen: "../../../../imagenes/bolibeso.png",
@@ -34,7 +34,7 @@ const productos = [
   {
     nombre: "Frutos Rojos",
     precio: 22,
-    tipo: "leche",
+    tipo: "gourmet",
     activo: true,
     descripcion: "",
     imagen: "../../../../imagenes/bolifrutos.png",
@@ -54,7 +54,7 @@ const productos = [
   {
     nombre: "Choco Nutella",
     precio: 24,
-    tipo: "leche",
+    tipo: "gourmet",
     activo: true,
     descripcion: "Chocolate y avellana en cada mordida",
     imagen: "../../../../imagenes/bolinuetlla.png",
@@ -74,7 +74,7 @@ const productos = [
   {
     nombre: "Oreo",
     precio: 22,
-    tipo: "leche",
+    tipo: "gourmet",
     activo: true,
     descripcion: "",
     imagen: "../../../../imagenes/bolioreo.png",
