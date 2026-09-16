@@ -21,7 +21,7 @@ const productos = [
     nombre: "Jitomate en Tara",
     precio: null,
     tipo: "frescos",
-    activo: true,
+    activo: false,
     descripcion: "Presentación a granel para mayoreo, distribución y centros de abasto.",
     imagen: "../../../../imagenes/jitomatetara.jpg",
     mensaje: "Quiero información sobre Jitomate en Tara"
