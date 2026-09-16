@@ -13,13 +13,23 @@ body {
   min-height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
-  background:
-    linear-gradient(rgba(0,0,0,.34), rgba(0,0,0,.34)),
-    url("../../../../imagenes/fondofrescolargo.png");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
   color: #fff;
+  background: #f8f4ec;
+  position: relative;
+}
+
+/* Fondo independiente, igual al sistema visual de bienvenida.
+   Sin velo oscuro para conservar la nitidez y luminosidad original. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("../../../../imagenes/fondofrescolargo.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* ====== NAVEGACIÓN ====== */
@@ -253,8 +263,9 @@ h1 {
 
 /* ====== MÓVIL ====== */
 @media (max-width: 600px) {
-  body {
-    background-attachment: scroll;
+  body::before {
+    background-position: center center;
+    background-size: cover;
   }
 
   .nav {
