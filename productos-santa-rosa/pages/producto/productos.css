@@ -1,22 +1,46 @@
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   text-align: center;
-  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-              url("../../../imagenes/fondofrescolargo.png");
-
-  background-size: cover;
-  background-position: center;
+  background: #222;
   color: white;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* FONDO UNIFICADO
+   Mismo tratamiento visual que Frescos, Paletas, Bolis y Postres. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("../../../imagenes/fondopostresybolis.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  z-index: 0;
+  transform: translateZ(0);
+}
+
+/* Capa sutil para que el texto blanco destaque sin apagar el fondo. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.20);
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* CONTENEDOR */
 .contenido {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 /* LOGO */
@@ -29,10 +53,12 @@ body {
 h1 {
   margin: 10px 0;
   font-size: 28px;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.75);
 }
 
 p {
   margin-bottom: 30px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.75);
 }
 
 /* BOTONES */
@@ -47,6 +73,7 @@ p {
   font-weight: bold;
   display: block;
   transition: 0.3s;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
 }
 
 /* estilos individuales */
@@ -69,4 +96,12 @@ p {
 /* efecto */
 .btn:hover {
   transform: scale(1.05);
+}
+
+/* Ajuste móvil: conserva el fondo amplio y la sensación de profundidad. */
+@media (max-width: 768px) {
+  body::before {
+    background-position: center top;
+    background-size: cover;
+  }
 }
