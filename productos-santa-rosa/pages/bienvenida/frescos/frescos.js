@@ -49,6 +49,28 @@ const productos = [
   mensaje: "Quiero información sobre Chile Seco Miahuateco"
 },
 
+{
+  nombre: "Mole poblano en Pasta",
+  precio: null,
+  tipo: "artesanales",
+  activo: true,
+  descripcion: "Mole poblano en pasta, de textura untuosa y espesa, con ajonjolí, chocolate y chile Miahuateco, elaborado en la región de Santa Rosa Tecamachalco.",
+  imagen: "../../../../imagenes/mole.jpg",
+  mensaje: "Quiero información sobre Mole"
+},
+
+{
+  nombre: "Cajeta de San Juan de los Lagos",
+  precio: null,
+  tipo: "artesanales",
+  activo: true,
+  descripcion: "Deliciosa y auténtica Cajeta artesanal de San Juan de los Lagos 100% Leche de Vaca, disponible a granel y mayoreo para negocio",
+  imagen: "../../../../imagenes/cajeta.jpg",
+  mensaje: "Quiero información sobre Cajeta"
+},
+
+
+
 ];
 
 const contenido = document.getElementById("contenido");
