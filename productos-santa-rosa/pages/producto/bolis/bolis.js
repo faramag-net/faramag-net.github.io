@@ -67,7 +67,7 @@ const productos = [
     tipo: "leche",
     activo: true,
     descripcion: "Intenso y delicioso chocolate",
-    imagen: "../../../../imagenes/bolichocolate.png",
+    imagen: "../../../../imagenes/bolichocolate.jpg",
     mensaje: "Quiero boli Chocolate"
   },
 
@@ -129,7 +129,7 @@ const productos = [
     tipo: "hielo",
     activo: true,
     descripcion: "Con pulpa de piña",
-    imagen: "../../../../imagenes/bolipina.png",
+    imagen: "../../../../imagenes/bolipina.jpg",
     mensaje: "Quiero boli de Piña"
   },
 
@@ -139,7 +139,7 @@ const productos = [
     tipo: "hielo",
     activo: true,
     descripcion: "Picosita y refrescante",
-    imagen: "../../../../imagenes/bolipinachamoy.png",
+    imagen: "../../../../imagenes/bolipinachamoy.jpg",
     mensaje: "Quiero boli de Piña con chile y chamoy"
   },
   
