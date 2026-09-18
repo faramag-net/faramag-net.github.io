@@ -65,7 +65,7 @@ const productos = [
   tipo: "tradicionales",
   activo: true,
   descripcion: "Deliciosa y auténtica Cajeta artesanal de San Juan de los Lagos 100% Leche de Vaca, disponible a granel y mayoreo para negocio",
-  imagen: "../../../../imagenes/cajeta.jpg",
+  imagen: "../../../../imagenes/cajeta.png",
   mensaje: "Quiero información sobre Cajeta"
 },
 
