@@ -4,7 +4,7 @@ const productos = [
     precio: null,
     tipo: "frescos",
     activo: true,
-    descripcion: "Fresco y natural.",
+    descripcion: "Fresco, disponible a granel y mayoreo para negocio, distribución y centros de abasto.",
     imagen: "../../../../imagenes/jitomatecaja.webp",
     mensaje: "Quiero información sobre Jitomate Saladet"
   },
@@ -13,19 +13,11 @@ const productos = [
     precio: null,
     tipo: "frescos",
     activo: true,
-    descripcion: "Tamaño uniforme, ideal para ensaladas, hamburguesas y consumo fresco.",
+    descripcion: "Fresco, disponible a granel y mayoreo para negocio, distribución y centros de abasto.",
     imagen: "../../../../imagenes/tomatebola.jpg",
     mensaje: "Quiero información sobre Jitomate Bola"
   },
-  {
-    nombre: "Jitomate en Tara",
-    precio: null,
-    tipo: "frescos",
-    activo: false,
-    descripcion: "Presentación a granel para mayoreo, distribución y centros de abasto.",
-    imagen: "../../../../imagenes/jitomatetara.jpg",
-    mensaje: "Quiero información sobre Jitomate en Tara"
-  }
+  
 ];
 
 const contenido = document.getElementById("contenido");
