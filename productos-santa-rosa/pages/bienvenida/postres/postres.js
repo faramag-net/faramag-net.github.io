@@ -7,7 +7,7 @@ const productos = [
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con nuez y frutas",
-    imagen: "../../../../imagenes/postrecarlota.png",
+    imagen: "../../../../imagenes/postrecarlota.jpg",
     mensaje: "Quiero Carlota de Limón"
   },
 
@@ -17,7 +17,7 @@ const productos = [
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con nuez y un toque de caramelo",
-    imagen: "../../../../imagenes/postreflan.png",
+    imagen: "../../../../imagenes/postreflan.jpg",
     mensaje: "Quiero Flan caramelo en vaso"
   },
 
@@ -27,7 +27,7 @@ const productos = [
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con pasas",
-    imagen: "../../../../imagenes/postrearrozconleche.png",
+    imagen: "../../../../imagenes/postrearrozconleche.jpg",
     mensaje: "Quiero Arroz con Leche"
   },
 
@@ -37,7 +37,7 @@ const productos = [
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con Frutas",
-    imagen: "../../../../imagenes/postremosaicofrutas.png",
+    imagen: "../../../../imagenes/postremosaicofrutas.jpg",
     mensaje: "Quiero Gelatina de Mosaico de Frutas"
   },
 
@@ -47,7 +47,7 @@ const productos = [
     tipo: "postres",
     activo: true,
     descripcion: "delicioso postre en un vaso",
-    imagen: "../../../../imagenes/postremosaicovaso.png",
+    imagen: "../../../../imagenes/postremosaicovaso.jpg",
     mensaje: "Quiero Gelatina Mosaico en Vaso"
   },
 
