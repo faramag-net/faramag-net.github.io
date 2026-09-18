@@ -42,7 +42,7 @@ const productos = [
 {
   nombre: "Chile Seco Miahuateco",
   precio: null,
-  tipo: "frescos",
+  tipo: "tradicionales",
   activo: true,
   descripcion: "Chile seco de origen Miahuateco, disponible a granel y mayoreo para negocio, distribución y centros de abasto.",
   imagen: "../../../../imagenes/chilesecomiahuateco.jpg",
