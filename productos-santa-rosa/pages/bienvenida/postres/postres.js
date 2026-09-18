@@ -32,13 +32,13 @@ const productos = [
   },
 
     {
-    nombre: "Gelatina de mosaico de frutas",
+    nombre: "Gelatina de frutas",
     precio: 20,
     tipo: "postres",
     activo: true,
     descripcion: "Adornado con Frutas",
     imagen: "../../../../imagenes/postremosaicofrutas.jpg",
-    mensaje: "Quiero Gelatina de Mosaico de Frutas"
+    mensaje: "Quiero Gelatina de Frutas"
   },
 
     {
