@@ -37,7 +37,7 @@ const productos = [
     tipo: "gourmet",
     activo: true,
     descripcion: "Rica combinacion de 🫐 Mora azul,🫐 Zarzamora y ❤️ Frambuesa",
-    imagen: "../../../../imagenes/paletafrutos.png",
+    imagen: "../../../../imagenes/paletafrutos.jpg",
     mensaje: "Quiero paleta Frutos Rojos"
   },
 
@@ -67,7 +67,7 @@ const productos = [
     tipo: "leche",
     activo: true,
     descripcion: "Intenso y delicioso chocolate",
-    imagen: "../../../../imagenes/paletachocolate.png",
+    imagen: "../../../../imagenes/paletachocolate.jpg",
     mensaje: "Quiero paleta Chocolate"
   },
 
@@ -77,7 +77,7 @@ const productos = [
     tipo: "gourmet",
     activo: true,
     descripcion: "Delicioso sabor a Oreo con trozos de galleta",
-    imagen: "../../../../imagenes/paletaoreo.png",
+    imagen: "../../../../imagenes/paletaoreo.jpg",
     mensaje: "Quiero paleta Oreo"
   },
 
@@ -88,7 +88,7 @@ const productos = [
     tipo: "hielo",
     activo: true,
     descripcion: "Picosita con pulpa y trozos de mango",
-    imagen: "../../../../imagenes/paletamangochamoy.png",
+    imagen: "../../../../imagenes/paletamangochamoy.jpg",
     mensaje: "Quiero paleta de Mango con chile y chamoy"
   },
 
@@ -118,7 +118,7 @@ const productos = [
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante limón con pepino",
-    imagen: "../../../../imagenes/paletapepino.png",
+    imagen: "../../../../imagenes/paletapepino.jpg",
     mensaje: "Quiero paleta de Pepino con limón"
   },
 
@@ -139,7 +139,7 @@ const productos = [
     tipo: "hielo",
     activo: true,
     descripcion: "Picosita y refrescante",
-    imagen: "../../../../imagenes/paletapinachamoy.png",
+    imagen: "../../../../imagenes/paletapinachamoy.jpg",
     mensaje: "Quiero paleta de Piña con chile y chamoy"
   },
 
