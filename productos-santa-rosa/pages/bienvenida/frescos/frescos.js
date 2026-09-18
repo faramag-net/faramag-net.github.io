@@ -8,6 +8,7 @@ const productos = [
     imagen: "../../../../imagenes/jitomatecaja.webp",
     mensaje: "Quiero información sobre Jitomate Saladet"
   },
+
   {
     nombre: "Jitomate Bola",
     precio: null,
@@ -17,7 +18,37 @@ const productos = [
     imagen: "../../../../imagenes/tomatebola.jpg",
     mensaje: "Quiero información sobre Jitomate Bola"
   },
-  
+
+  {
+  nombre: "Pepino",
+  precio: null,
+  tipo: "frescos",
+  activo: true,
+  descripcion: "Fresco, disponible a granel y mayoreo para negocio, distribución y centros de abasto.",
+  imagen: "../../../../imagenes/pepino.jpg",
+  mensaje: "Quiero información sobre Pepino"
+},
+
+{
+  nombre: "Chile Miahuateco",
+  precio: null,
+  tipo: "frescos",
+  activo: true,
+  descripcion: "Fresco, disponible a granel y mayoreo para negocio, distribución y centros de abasto.",
+  imagen: "../../../../imagenes/chilemiahuateco.jpg",
+  mensaje: "Quiero información sobre Chile Miahuateco"
+},
+
+{
+  nombre: "Chile Seco Miahuateco",
+  precio: null,
+  tipo: "frescos",
+  activo: true,
+  descripcion: "Chile seco de origen Miahuateco, disponible a granel y mayoreo para negocio, distribución y centros de abasto.",
+  imagen: "../../../../imagenes/chilesecomiahuateco.jpg",
+  mensaje: "Quiero información sobre Chile Seco Miahuateco"
+},
+
 ];
 
 const contenido = document.getElementById("contenido");
