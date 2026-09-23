@@ -170,9 +170,13 @@ function normalizeSaleItems(sale){
 }
 
 function buildTicketData(operation){
-    const type = operation.tipoOperacion === "CONSIGNACION_PARCIAL" || operation.consignacion
-        ? "CONSIGNACION"
-        : (operation.tipoOperacion || "DIRECTA");
+    const esVentaParcial = operation.tipoOperacion === "CONSIGNACION_PARCIAL";
+    const esConsignacion = !esVentaParcial && (
+        operation.tipoOperacion === "CONSIGNACION" || operation.consignacion
+    );
+    const type = esVentaParcial
+        ? "CONSIGNACION_PARCIAL"
+        : (esConsignacion ? "CONSIGNACION" : (operation.tipoOperacion || "DIRECTA"));
 
     const normalized = normalizeSaleItems(operation);
     const activa = operation.estadoConsignacion === "ACTIVA";
@@ -180,7 +184,10 @@ function buildTicketData(operation){
     const vendidos = normalized.vendidos || [];
     const devueltos = normalized.devueltos || [];
     const tieneVentaParcial = Boolean(
-        operation._consignacionSnapshot?.tieneVentasParciales || vendidos.some(i => Number(i.vendido || 0) > 0)
+        esConsignacion && (
+            operation._consignacionSnapshot?.tieneVentasParciales ||
+            vendidos.some(i => Number(i.vendido || 0) > 0)
+        )
     );
 
     let total = Number(operation.total || 0);

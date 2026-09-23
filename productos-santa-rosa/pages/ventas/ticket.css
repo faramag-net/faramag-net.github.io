@@ -16,32 +16,3 @@
     text-align:left;
     width:48%;
 }
-
-.ticket-section{
-    margin-top:16px;
-}
-.ticket-section h3{
-    margin:0 0 7px;
-    font-size:13px;
-    letter-spacing:.4px;
-    border-bottom:1px dashed #999;
-    padding-bottom:5px;
-}
-.ticket-section-total{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    margin-top:7px;
-    padding-top:7px;
-    border-top:1px solid #ddd;
-    font-size:12px;
-}
-.ticket-section-total strong{
-    white-space:nowrap;
-}
-.ticket-empty{
-    margin:8px 0;
-    font-size:12px;
-    color:#666;
-    font-style:italic;
-}
