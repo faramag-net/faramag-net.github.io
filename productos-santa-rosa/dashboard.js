@@ -167,3 +167,78 @@ document
 .getElementById("kpiInsumos")
 .innerText =
 `$${totalInsumos.toFixed(2)}`;
+
+
+/* TOP 10 CLIENTES POR VENTAS */
+const topClientesLista = document.getElementById("topClientesLista");
+const topClientesPaginaInfo = document.getElementById("topClientesPaginaInfo");
+const topClientesPagina = document.getElementById("topClientesPagina");
+const topClientesAnterior = document.getElementById("topClientesAnterior");
+const topClientesSiguiente = document.getElementById("topClientesSiguiente");
+
+const clientesRoute = LocalDB.getRouteClients();
+const ventasPorCliente = new Map();
+
+ventas.forEach(venta => {
+    const clienteId = venta.clienteId || null;
+    const nombreDirecto = String(venta.cliente || "").trim();
+    const cliente = clienteId
+        ? clientesRoute.find(c => c.id === clienteId)
+        : null;
+    const nombre = (cliente?.nombre || nombreDirecto).trim();
+    if (!nombre) return;
+
+    const clave = clienteId || nombre.toLowerCase();
+    const actual = ventasPorCliente.get(clave);
+    ventasPorCliente.set(clave, {
+        nombre: actual?.nombre || nombre,
+        total: (actual?.total || 0) + Number(venta.total || 0)
+    });
+});
+
+const topClientes = [...ventasPorCliente.values()]
+    .sort((a, b) => b.total - a.total || a.nombre.localeCompare(b.nombre, "es", {sensitivity:"base"}));
+
+const TOP_CLIENTES_POR_PAGINA = 10;
+let paginaTopClientes = 1;
+const totalPaginasTopClientes = Math.max(1, Math.ceil(topClientes.length / TOP_CLIENTES_POR_PAGINA));
+
+function renderTopClientes(){
+    if (!topClientesLista) return;
+
+    paginaTopClientes = Math.min(paginaTopClientes, totalPaginasTopClientes);
+    const inicio = (paginaTopClientes - 1) * TOP_CLIENTES_POR_PAGINA;
+    const visibles = topClientes.slice(inicio, inicio + TOP_CLIENTES_POR_PAGINA);
+
+    topClientesLista.innerHTML = visibles.length
+        ? visibles.map((cliente, index) => `
+            <div class="top-cliente-item">
+                <span class="top-cliente-pos">${inicio + index + 1}.</span>
+                <span class="top-cliente-nombre">${cliente.nombre}</span>
+                <strong>$${cliente.total.toFixed(2)}</strong>
+            </div>
+        `).join("")
+        : '<div class="top-clientes-vacio">Sin ventas registradas</div>';
+
+    const hasta = Math.min(inicio + visibles.length, topClientes.length);
+    topClientesPaginaInfo.textContent = topClientes.length ? `${inicio + 1}-${hasta}` : "0-0";
+    topClientesPagina.textContent = `${paginaTopClientes} / ${totalPaginasTopClientes}`;
+    topClientesAnterior.disabled = paginaTopClientes <= 1;
+    topClientesSiguiente.disabled = paginaTopClientes >= totalPaginasTopClientes;
+}
+
+topClientesAnterior?.addEventListener("click", () => {
+    if (paginaTopClientes > 1) {
+        paginaTopClientes--;
+        renderTopClientes();
+    }
+});
+
+topClientesSiguiente?.addEventListener("click", () => {
+    if (paginaTopClientes < totalPaginasTopClientes) {
+        paginaTopClientes++;
+        renderTopClientes();
+    }
+});
+
+renderTopClientes();

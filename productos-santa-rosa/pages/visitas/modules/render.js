@@ -127,11 +127,26 @@ color =
     });
 }
 
+function getTotalVendidoCliente(cliente){
+    const ventas = LocalDB.getSales();
+    return ventas.reduce((total, venta) => {
+        const coincidePorId = venta.clienteId && venta.clienteId === cliente.id;
+        const nombreVenta = String(venta.cliente || "").trim().toLowerCase();
+        const nombreCliente = String(cliente.nombre || "").trim().toLowerCase();
+        const coincidePorNombre = !venta.clienteId && nombreVenta && nombreVenta === nombreCliente;
+        return (coincidePorId || coincidePorNombre)
+            ? total + Number(venta.total || 0)
+            : total;
+    }, 0);
+}
+
 function clienteCard(
     cliente,
     color,
     estado
 ){
+
+    const totalVendido = getTotalVendidoCliente(cliente);
 
     return `
 
@@ -160,6 +175,10 @@ function clienteCard(
         <p class="direccion">
             📍 ${cliente.direccion || "-"}
         </p>
+
+        <div class="cliente-resumen-venta">
+            💰 Vendido: <strong>$${totalVendido.toFixed(2)}</strong>
+        </div>
 
         <small>
             ${estado}

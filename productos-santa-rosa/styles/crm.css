@@ -814,3 +814,20 @@ body{
         font-size:10px;
     }
 }
+
+/* Total vendido por cliente — resumen compacto */
+.cliente-resumen-venta{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:5px 8px;
+    border-radius:8px;
+    background:#f5f7fb;
+    font-size:12px;
+    line-height:1.2;
+}
+
+.cliente-resumen-venta strong{
+    font-size:13px;
+}

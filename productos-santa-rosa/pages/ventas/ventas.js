@@ -165,21 +165,15 @@ renderTablaVentas();
 
 actualizarKPIs();
 
-["buscarStock", "filtroStock", "buscarProductoVenta", "filtroProductoVenta"]
+["buscarStock", "filtroStock"]
     .forEach(id => {
         document.getElementById(id)?.addEventListener("input", () => {
-            if(id === "buscarProductoVenta" || id === "filtroProductoVenta") {
-                renderProductosVenta();
-            } else {
-                renderStock();
-            }
+            renderStock();
+            renderProductosVenta();
         });
         document.getElementById(id)?.addEventListener("change", () => {
-            if(id === "buscarProductoVenta" || id === "filtroProductoVenta") {
-                renderProductosVenta();
-            } else {
-                renderStock();
-            }
+            renderStock();
+            renderProductosVenta();
         });
     });
 

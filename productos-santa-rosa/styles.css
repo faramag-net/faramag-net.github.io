@@ -69,3 +69,96 @@ body{
     }
 
 }
+
+
+/* Top clientes — panel compacto al final del dashboard */
+.top-clientes-dashboard{
+    margin-top:18px;
+    background:#fff;
+    border-radius:12px;
+    padding:10px 12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.top-clientes-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:5px;
+}
+
+.top-clientes-header h3{
+    margin:0;
+    font-size:14px;
+}
+
+.top-clientes-header span{
+    font-size:11px;
+    color:#666;
+}
+
+.top-clientes-lista{
+    display:flex;
+    flex-direction:column;
+}
+
+.top-cliente-item{
+    display:grid;
+    grid-template-columns:24px minmax(0,1fr) auto;
+    align-items:center;
+    gap:6px;
+    min-height:27px;
+    border-bottom:1px solid #eee;
+    font-size:12px;
+}
+
+.top-cliente-item:last-child{
+    border-bottom:0;
+}
+
+.top-cliente-pos{
+    color:#777;
+    text-align:right;
+}
+
+.top-cliente-nombre{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.top-cliente-item strong{
+    font-size:12px;
+}
+
+.top-clientes-vacio{
+    padding:8px 0;
+    font-size:12px;
+    color:#777;
+}
+
+.top-clientes-paginacion{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin-top:6px;
+    font-size:11px;
+}
+
+.top-clientes-paginacion button{
+    width:24px;
+    min-width:24px;
+    height:24px;
+    padding:0;
+    border:1px solid #ddd;
+    border-radius:6px;
+    background:#f7f7f7;
+    cursor:pointer;
+}
+
+.top-clientes-paginacion button:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}

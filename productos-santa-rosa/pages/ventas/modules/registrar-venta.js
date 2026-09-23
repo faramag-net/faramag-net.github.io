@@ -8,9 +8,11 @@ export function renderProductosVenta(){
     const select = document.getElementById("producto");
     if(!select) return;
 
-    const texto = (document.getElementById("buscarProductoVenta")?.value || "")
+    // La búsqueda/filtro de Existencias es la única fuente de filtrado
+    // para la selección de productos de Registrar Venta.
+    const texto = (document.getElementById("buscarStock")?.value || "")
         .trim().toLowerCase();
-    const categoria = document.getElementById("filtroProductoVenta")?.value || "todos";
+    const categoria = document.getElementById("filtroStock")?.value || "todos";
     const valorActual = select.value;
 
     const productos = [...LocalDB.getProducts()]
