@@ -19,324 +19,142 @@ function getProductsMap(){
 
 function normalizeSaleItems(sale){
     const map = getProductsMap();
-    const tipo = sale.tipoOperacion || "";
-
-    // Una VENTA PARCIAL consultada desde Historial debe mostrar
-    // únicamente los productos de ESA venta, no toda la consignación.
-    if(tipo === "CONSIGNACION_PARCIAL"){
-        if(Array.isArray(sale.items) && sale.items.length){
-            const vendidos = sale.items.map(item => {
-                const p = map.get(item.productId);
-                const quantity = Number(item.quantity ?? item.cantidad ?? 0);
-                const price = Number(item.price ?? item.precio ?? p?.precio ?? 0);
-                return {
-                    productId: item.productId,
-                    nombre: p?.nombre || item.nombre || sale.producto || "Producto",
-                    vendido: quantity,
-                    precio: price,
-                    importeVendido: quantity * price
-                };
-            }).filter(item => item.vendido > 0);
-
-            // Si por compatibilidad algún registro antiguo tiene cantidades
-            // inválidas en items, usamos la cantidad/total de la operación
-            // solamente cuando es una venta de un solo producto.
-            if(vendidos.length) return { entregados:[], vendidos, devueltos:[] };
-        }
-
-        return {
-            entregados:[],
-            vendidos:[{
-                nombre:sale.producto || "Producto",
-                vendido:Number(sale.cantidad || 0),
-                precio:Number(sale.precio || 0),
-                importeVendido:Number(sale.total || 0)
-            }].filter(item => item.vendido > 0),
-            devueltos:[]
-        };
-    }
-
-    const isConsignacion = tipo === "CONSIGNACION" || sale.consignacion;
-
-    // El ticket de una CONSIGNACIÓN representa el estado completo de la
-    // consignación. Siempre obtenemos la versión actual para que el ticket
-    // de cierre incluya también las ventas parciales anteriores.
+    const isConsignacion = sale.tipoOperacion === "CONSIGNACION" || sale.consignacion || sale.consignacionId;
     if(isConsignacion && sale.consignacionId){
-        const c = LocalDB.getConsignationById?.(sale.consignacionId) || sale._consignacionSnapshot;
+        const c = sale._consignacionSnapshot || LocalDB.getConsignationById(sale.consignacionId);
         if(c?.items?.length){
-            const entregados = c.items
-                .filter(item => Number(item.cantidadEntregada || 0) > 0)
-                .map(item => {
-                    const p = map.get(item.productId);
-                    const cantidad = Number(item.cantidadEntregada || 0);
-                    const precio = Number(item.precio ?? p?.precio ?? 0);
-                    return {
-                        productId:item.productId,
-                        nombre:p?.nombre || "Producto",
-                        entregado:cantidad,
-                        precio,
-                        importeEntregado:cantidad * precio
-                    };
-                });
-
-            const devueltos = c.items
-                .filter(item => Number(item.cantidadDevuelta || 0) > 0)
-                .map(item => {
-                    const p = map.get(item.productId);
-                    const cantidad = Number(item.cantidadDevuelta || 0);
-                    const precio = Number(item.precio ?? p?.precio ?? 0);
-                    return {
-                        productId:item.productId,
-                        nombre:p?.nombre || "Producto",
-                        devuelto:cantidad,
-                        precio,
-                        importeDevuelto:-(cantidad * precio)
-                    };
-                });
-
-            const soldMap = new Map();
-            const addSold = (item) => {
-                const p = map.get(item.productId);
-                const cantidad = Number(item.quantity ?? item.cantidad ?? 0);
-                if(cantidad <= 0) return;
-                const precio = Number(item.price ?? item.precio ?? p?.precio ?? 0);
-                const key = `${item.productId}::${precio}`;
-                const current = soldMap.get(key);
-                if(current){
-                    current.vendido += cantidad;
-                    current.importeVendido += cantidad * precio;
-                }else{
-                    soldMap.set(key, {
-                        productId:item.productId,
-                        nombre:p?.nombre || item.nombre || "Producto",
-                        vendido:cantidad,
-                        precio,
-                        importeVendido:cantidad * precio
-                    });
-                }
-            };
-
-            if(Array.isArray(c.ventasParciales) && c.ventasParciales.length){
-                c.ventasParciales.forEach(venta => (venta.items || []).forEach(addSold));
-            }else{
-                // Compatibilidad con consignaciones anteriores.
-                c.items.forEach(item => {
-                    const cantidad = Number(item.cantidadVendida || 0);
-                    if(cantidad > 0){
-                        addSold({
-                            productId:item.productId,
-                            quantity:cantidad,
-                            price:Number(item.precio ?? map.get(item.productId)?.precio ?? 0)
-                        });
-                    }
-                });
-            }
-
-            return {
-                entregados,
-                vendidos:[...soldMap.values()],
-                devueltos
-            };
+            const activa = sale.estadoConsignacion === "ACTIVA" || c.estado === "ACTIVA";
+            return c.items.map(item=>{
+                const p=map.get(item.productId);
+                const entregado=Number(item.cantidadEntregada||0);
+                const devuelto=Number(item.cantidadDevuelta||0);
+                // Mientras está abierta todavía no hay venta ni devolución final.
+                const vendido=activa ? 0 : Number(item.cantidadVendida ?? Math.max(0,entregado-devuelto));
+                const precio=Number(item.precio ?? p?.precio ?? 0);
+                return {nombre:p?.nombre||"Producto",cantidad:vendido,precio,subtotal:vendido*precio,entregado,devuelto,vendido};
+            });
         }
     }
-
-    // Venta normal/directa.
     if(Array.isArray(sale.items) && sale.items.length){
-        const vendidos = sale.items.map(item => {
+        return sale.items.map(item => {
             const p = map.get(item.productId);
             const quantity = Number(item.quantity ?? item.cantidad ?? 0);
             const price = Number(item.price ?? item.precio ?? p?.precio ?? 0);
-            return {
-                productId:item.productId,
-                nombre:p?.nombre || item.nombre || sale.producto || "Producto",
-                vendido:quantity,
-                precio:price,
-                importeVendido:quantity * price
-            };
-        }).filter(item => item.vendido > 0);
-        if(vendidos.length) return { entregados:[], vendidos, devueltos:[] };
+            return {nombre:p?.nombre || sale.producto || "Producto",cantidad:quantity,precio:price,subtotal:quantity*price};
+        });
     }
-
-    return {
-        entregados:[],
-        vendidos:[{
-            nombre:sale.producto || "Producto",
-            vendido:Number(sale.cantidad || 0),
-            precio:Number(sale.precio || 0),
-            importeVendido:Number(sale.total || 0)
-        }].filter(item => item.vendido > 0),
-        devueltos:[]
-    };
+    return [{nombre:sale.producto||"Producto",cantidad:Number(sale.cantidad||0),precio:Number(sale.precio||0),subtotal:Number(sale.total||0)}];
 }
 
 function buildTicketData(operation){
-    const esVentaParcial = operation.tipoOperacion === "CONSIGNACION_PARCIAL";
-    const esConsignacion = !esVentaParcial && (
-        operation.tipoOperacion === "CONSIGNACION" || operation.consignacion
-    );
-    const type = esVentaParcial
-        ? "CONSIGNACION_PARCIAL"
-        : (esConsignacion ? "CONSIGNACION" : (operation.tipoOperacion || "DIRECTA"));
-
-    const normalized = normalizeSaleItems(operation);
-    const activa = operation.estadoConsignacion === "ACTIVA";
-    const entregados = normalized.entregados || [];
-    const vendidos = normalized.vendidos || [];
-    const devueltos = normalized.devueltos || [];
-    const tieneVentaParcial = Boolean(
-        esConsignacion && (
-            operation._consignacionSnapshot?.tieneVentasParciales ||
-            vendidos.some(i => Number(i.vendido || 0) > 0)
-        )
-    );
-
-    let total = Number(operation.total || 0);
-    if(type === "CONSIGNACION"){
-        total = activa
-            ? entregados.reduce((t,i) => t + Number(i.importeEntregado || 0), 0) +
-              vendidos.reduce((t,i) => t + Number(i.importeVendido || 0), 0)
-            : vendidos.reduce((t,i) => t + Number(i.importeVendido || 0), 0);
-    }
-
+    const type = operation.tipoOperacion || (operation.consignacion ? "CONSIGNACION" : "DIRECTA");
+    const items = normalizeSaleItems(operation);
     return {
         type,
-        activa,
-        tieneVentaParcial,
         title: type === "CONSIGNACION"
-            ? (activa ? "TICKET DE VENTA · ABIERTA" : "TICKET DE VENTA · CERRADA")
+            ? (operation.estadoConsignacion === "ACTIVA" ? "TICKET DE VENTA · ABIERTA" : "TICKET DE VENTA")
             : "TICKET DE VENTA",
         operation,
-        entregados,
-        vendidos,
-        devueltos,
-        total
+        items,
+        total: type === "CONSIGNACION"
+            ? items.reduce((t,i)=>t + (operation.estadoConsignacion === "ACTIVA" ? i.entregado : i.vendido) * i.precio, 0)
+            : Number(operation.total || items.reduce((t,i)=>t+i.subtotal,0))
     };
 }
 
-function sectionSummary(label, quantity, amount, negative = false){
-    return `
-        <div class="ticket-section-total">
-            <span>${label}: ${Number(quantity || 0)} ${Number(quantity || 0) === 1 ? "pieza" : "piezas"}</span>
-            <strong>${negative ? "-" : ""}${money(Math.abs(amount || 0))}</strong>
-        </div>
-    `;
-}
-
-function renderRows(items, mode){
-    return items
-        .filter(item => Number(item[mode] || 0) > 0)
-        .map(item => {
-            const quantity = Number(item[mode] || 0);
-            const price = Number(item.precio || 0);
-            const amount = quantity * price;
-            return `
-                <tr>
-                    <td>${escapeHtml(item.nombre)}</td>
-                    <td>${quantity}</td>
-                    <td>${money(price)}</td>
-                    <td>${mode === "devuelto" ? `-${money(amount)}` : money(amount)}</td>
-                </tr>
-            `;
-        }).join("");
-}
-
-function renderSection(title, items, mode, emptyText){
-    const rows = renderRows(items, mode);
-    const quantity = items.reduce((t,item) => t + Number(item[mode] || 0), 0);
-    const amount = items.reduce((t,item) => t + Number(item[mode] || 0) * Number(item.precio || 0), 0);
-    return `
-        <section class="ticket-section">
-            <h3>${title}</h3>
-            ${rows ? `
-                <table class="ticket-table">
-                    <thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead>
-                    <tbody>${rows}</tbody>
-                </table>
-            ` : `<p class="ticket-empty">${emptyText}</p>`}
-            ${sectionSummary(
-                title === "DEVUELTO" ? "Total devuelto" : `Total ${title.toLowerCase()}`,
-                quantity,
-                amount,
-                title === "DEVUELTO"
-            )}
-        </section>
-    `;
-}
-
 function renderTicket(data, extra = {}){
-    const {operation, type, title, activa, tieneVentaParcial, entregados, vendidos, devueltos} = data;
+    const {operation, items, total, type, title} = data;
     const isConsignacion = type === "CONSIGNACION";
+    const activa = isConsignacion && operation.estadoConsignacion === "ACTIVA";
+    const consignacion = operation._consignacionSnapshot || (operation.consignacionId ? LocalDB.getConsignationById(operation.consignacionId) : null);
+    const tieneVentasParciales = activa && Array.isArray(consignacion?.ventasParciales) && consignacion.ventasParciales.length > 0;
     const fecha = operation.fecha || operation.createdAt || new Date().toLocaleString();
     const cliente = operation.cliente || extra.cliente || "Público en general";
-    let total = Number(data.total || 0);
+
+    const entregados = (consignacion?.items || []).filter(i => Number(i.cantidadEntregada || 0) > 0);
+    const vendidos = [];
+    (consignacion?.ventasParciales || []).forEach(v => {
+        if(v.tipo !== "VENTA_PARCIAL") return;
+        (v.items || []).forEach(item => {
+            const existente = vendidos.find(x => x.productId === item.productId && Number(x.price) === Number(item.price));
+            if(existente){ existente.quantity += Number(item.quantity || 0); }
+            else { vendidos.push({...item, quantity:Number(item.quantity || 0)}); }
+        });
+    });
+
+    const productos = getProductsMap();
+    const vendidoRows = vendidos.map(item => {
+        const p=productos.get(item.productId);
+        const qty=Number(item.quantity || 0), price=Number(item.price || 0);
+        return `<tr><td>${escapeHtml(p?.nombre || "Producto")}</td><td>${qty}</td><td>${money(price)}</td><td>${money(qty*price)}</td></tr>`;
+    }).join("");
+    const entregadoRows = entregados.map(item => {
+        const p=productos.get(item.productId);
+        const qty=Number(item.cantidadEntregada || 0), price=Number(item.precio || p?.precio || 0);
+        return `<tr><td>${escapeHtml(p?.nombre || "Producto")}</td><td>${qty}</td><td>${money(price)}</td><td>${money(qty*price)}</td></tr>`;
+    }).join("");
+
+    const totalEntregado = entregados.reduce((s,i)=>s+Number(i.cantidadEntregada||0)*Number(i.precio||productos.get(i.productId)?.precio||0),0);
+    const cantidadEntregada = entregados.reduce((s,i)=>s+Number(i.cantidadEntregada||0),0);
+    const totalVendido = vendidos.reduce((s,i)=>s+Number(i.quantity||0)*Number(i.price||0),0);
+    const cantidadVendida = vendidos.reduce((s,i)=>s+Number(i.quantity||0),0);
+
     let body = "";
     let totalLabel = "TOTAL";
+    let totalValue = total;
 
-    if(isConsignacion && activa && !tieneVentaParcial){
-        const quantity = entregados.reduce((t,i) => t + Number(i.entregado || 0), 0);
-        const amount = entregados.reduce((t,i) => t + Number(i.importeEntregado || 0), 0);
-        body = `
-            <section class="ticket-section">
-                <table class="ticket-table">
-                    <thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead>
-                    <tbody>${renderRows(entregados, "entregado")}</tbody>
-                </table>
-                ${sectionSummary("Total entregado", quantity, amount)}
-            </section>
-        `;
-        total = amount;
+    if(isConsignacion && activa && !tieneVentasParciales){
+        body = `<table class="ticket-table"><thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead><tbody>${entregadoRows}</tbody></table>`;
         totalLabel = "TOTAL ESTIMADO";
-    }else if(isConsignacion && activa){
-        const montoEntregado = entregados.reduce((t,i) => t + Number(i.importeEntregado || 0), 0);
-        const montoVendido = vendidos.reduce((t,i) => t + Number(i.importeVendido || 0), 0);
+        totalValue = totalEntregado;
+    }else if(isConsignacion && activa && tieneVentasParciales){
         body = `
-            ${renderSection("ENTREGADO", entregados, "entregado", "Sin productos en consignación.")}
-            ${renderSection("VENDIDO", vendidos, "vendido", "Sin ventas registradas.")}
-        `;
-        total = montoEntregado + montoVendido;
+            <h3 class="ticket-section-title">ENTREGADO</h3>
+            <table class="ticket-table"><thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead><tbody>${entregadoRows || `<tr><td colspan="4">Sin productos entregados</td></tr>`}</tbody></table>
+            <div class="ticket-subtotal">Total entregado: ${cantidadEntregada} piezas — ${money(totalEntregado)}</div>
+            <h3 class="ticket-section-title">VENDIDO</h3>
+            <table class="ticket-table"><thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead><tbody>${vendidoRows || `<tr><td colspan="4">Sin ventas registradas</td></tr>`}</tbody></table>
+            <div class="ticket-subtotal">Total vendido: ${cantidadVendida} piezas — ${money(totalVendido)}</div>`;
         totalLabel = "TOTAL ESTIMADO";
+        totalValue = totalEntregado + totalVendido;
     }else if(isConsignacion){
-        body = `
-            ${renderSection("VENDIDO", vendidos, "vendido", "Sin ventas registradas.")}
-            ${renderSection("DEVUELTO", devueltos, "devuelto", "Sin devoluciones registradas.")}
-        `;
-        total = vendidos.reduce((t,i) => t + Number(i.importeVendido || 0), 0);
-        totalLabel = "TOTAL";
+        const cerrados = (consignacion?.items || []).map(item=>{
+            const p=productos.get(item.productId);
+            const precio=Number(item.precio || p?.precio || 0);
+            const vendido=Number(item.cantidadVendida || 0);
+            const devuelto=Number(item.cantidadDevuelta || 0);
+            return {nombre:p?.nombre||"Producto",precio,vendido,devuelto};
+        });
+        const vendidoFinal=cerrados.filter(x=>x.vendido>0).map(x=>`<tr><td>${escapeHtml(x.nombre)}</td><td>${x.vendido}</td><td>${money(x.precio)}</td><td>${money(x.vendido*x.precio)}</td></tr>`).join("");
+        const devueltoFinal=cerrados.filter(x=>x.devuelto>0).map(x=>`<tr><td>${escapeHtml(x.nombre)}</td><td>${x.devuelto}</td><td>${money(x.precio)}</td><td>-${money(x.devuelto*x.precio)}</td></tr>`).join("");
+        const tv=cerrados.reduce((s,x)=>s+x.vendido*x.precio,0);
+        const td=cerrados.reduce((s,x)=>s+x.devuelto*x.precio,0);
+        const cv=cerrados.reduce((s,x)=>s+x.vendido,0);
+        const cd=cerrados.reduce((s,x)=>s+x.devuelto,0);
+        body=`
+            <h3 class="ticket-section-title">VENDIDO</h3>
+            <table class="ticket-table"><thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead><tbody>${vendidoFinal || `<tr><td colspan="4">Sin ventas registradas</td></tr>`}</tbody></table>
+            <div class="ticket-subtotal">Total vendido: ${cv} piezas — ${money(tv)}</div>
+            <h3 class="ticket-section-title">DEVUELTO</h3>
+            <table class="ticket-table"><thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead><tbody>${devueltoFinal || `<tr><td colspan="4">Sin devoluciones registradas</td></tr>`}</tbody></table>
+            <div class="ticket-subtotal">Total devuelto: ${cd} piezas — -${money(td)}</div>`;
+        totalValue=tv;
     }else{
-        body = `
-            <table class="ticket-table">
-                <thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead>
-                <tbody>${vendidos.map(item => `
-                    <tr><td>${escapeHtml(item.nombre)}</td><td>${item.vendido}</td><td>${money(item.precio)}</td><td>${money(item.importeVendido)}</td></tr>
-                `).join("")}</tbody>
-            </table>
-        `;
+        body=`<table class="ticket-table"><thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead><tbody>${items.map(item=>`<tr><td>${escapeHtml(item.nombre)}</td><td>${item.cantidad}</td><td>${money(item.precio)}</td><td>${money(item.subtotal)}</td></tr>`).join("")}</tbody></table>`;
     }
 
     return `
         <div class="ticket-overlay" id="ticketOverlay">
             <div class="ticket-modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}">
-                <div class="ticket-actions no-print">
-                    <button type="button" id="cerrarTicketBtn">✕</button>
-                    <button type="button" id="imprimirTicketBtn">🖨️ Imprimir</button>
-                </div>
+                <div class="ticket-actions no-print"><button type="button" id="cerrarTicketBtn">✕</button><button type="button" id="imprimirTicketBtn">🖨️ Imprimir</button></div>
                 <div class="ticket-paper">
-                    <header class="ticket-header">
-                        <h2>Productos Santa Rosa</h2>
-                        <p>${title}</p>
-                    </header>
-                    <div class="ticket-meta">
-                        <div><span>Fecha</span><strong>${escapeHtml(fecha)}</strong></div>
-                        <div><span>Nombre</span><strong>${escapeHtml(cliente)}</strong></div>
-                    </div>
+                    <header class="ticket-header"><h2>Productos Santa Rosa</h2><p>${title}</p></header>
+                    <div class="ticket-meta"><div><span>Fecha</span><strong>${escapeHtml(fecha)}</strong></div><div><span>Nombre</span><strong>${escapeHtml(cliente)}</strong></div></div>
                     ${isConsignacion && operation.consignacionId ? `<p class="ticket-id">Folio: ${escapeHtml(operation.consignacionId)}</p>` : ""}
                     ${isConsignacion && operation.estadoConsignacion ? `<p class="ticket-id">Estado: ${operation.estadoConsignacion === "ACTIVA" ? "ABIERTA" : "CERRADA"}</p>` : ""}
                     ${body}
-                    <div class="ticket-total"><span>${totalLabel}</span><strong>${money(total)}</strong></div>
-                    <footer class="ticket-footer">
-                        <p>Gracias por su preferencia</p>
-                        <small>Documento generado por el sistema</small>
-                    </footer>
+                    <div class="ticket-total"><span>${totalLabel}</span><strong>${money(totalValue)}</strong></div>
+                    <footer class="ticket-footer"><p>Gracias por su preferencia</p><small>Documento generado por el sistema</small></footer>
                 </div>
             </div>
         </div>`;
@@ -350,6 +168,9 @@ export function mostrarTicketOperacion(operation, extra = {}){
     const ticketHtml = renderTicket(buildTicketData(operation), extra);
     const cssUrl = new URL("../ticket.css", import.meta.url).href;
 
+    // El ticket se abre en una ventana independiente.
+    // Así no forma parte del DOM de Clientes/Visitas/Ventas y al imprimir
+    // únicamente se imprime el ticket.
     if(ticketWindow && !ticketWindow.closed){
         ticketWindow.focus();
     }else{
@@ -390,6 +211,8 @@ export function mostrarTicketOperacion(operation, extra = {}){
 export function mostrarTicketConsignacion(consignacion){
     if(!consignacion) return;
 
+    // La consignación es la fuente de verdad mientras está abierta y también
+    // al cerrarse. No dependemos de que exista todavía una venta en el historial.
     const cliente = LocalDB.getRouteClients?.().find(c => c.id === consignacion.clienteId);
     const esActiva = consignacion.estado === "ACTIVA";
 
@@ -407,7 +230,10 @@ export function mostrarTicketConsignacion(consignacion){
             quantity: Number(item.cantidadEntregada || 0),
             price: Number(item.precio || 0)
         })),
-        total: 0
+        total: (consignacion.items || []).reduce(
+            (total, item) => total + Number(item.cantidadEntregada || 0) * Number(item.precio || 0),
+            0
+        )
     };
 
     mostrarTicketOperacion(operacion, {

@@ -1945,14 +1945,14 @@ container.innerHTML = `
             totalVendido+=vendido;
             itemsVenta.push({productId,quantity:vendido,price:precio});
         }
-        itemConsignado.cantidadDevuelta=devuelto;
-        itemConsignado.cantidadVendida=vendido;
+        itemConsignado.cantidadDevuelta=Number(itemConsignado.cantidadDevuelta || 0)+devuelto;
+        itemConsignado.cantidadVendida=Number(itemConsignado.cantidadVendida || 0)+vendido;
     });
 
     consignacion.fechaCierre=new Date().toISOString();
     consignacion.estado="CERRADA";
-    consignacion.totalVendido=total;
-    consignacion.cantidadVendida=totalVendido;
+    consignacion.totalVendido=Number(consignacion.totalVendido || 0)+total;
+    consignacion.cantidadVendida=Number(consignacion.cantidadVendida || 0)+totalVendido;
     consignacion.cantidadDevuelta=consignacion.items.reduce((t,i)=>t+Number(i.cantidadDevuelta||0),0);
 
     const consignaciones=LocalDB.getConsignations();

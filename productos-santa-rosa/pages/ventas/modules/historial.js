@@ -31,15 +31,8 @@ function fechaVenta(venta){
 function esConsignacionAbierta(venta){
     if(tipoOperacion(venta) !== "CONSIGNACION") return false;
     const consignacion = venta.consignacionId ? LocalDB.getConsignationById?.(venta.consignacionId) : null;
+    if(tipoOperacion(venta) === "CONSIGNACION_PARCIAL") return consignacion?.estado === "ACTIVA" || venta.estadoConsignacion === "ACTIVA";
     return consignacion?.estado === "ACTIVA" || venta.estadoConsignacion === "ACTIVA";
-}
-
-function esVentaParcialDeConsignacionCerrada(venta){
-    if(tipoOperacion(venta) !== "CONSIGNACION_PARCIAL") return false;
-    if(!venta.consignacionId) return false;
-
-    const consignacion = LocalDB.getConsignationById?.(venta.consignacionId);
-    return consignacion?.estado === "CERRADA";
 }
 
 export function renderTablaVentas(){
@@ -50,7 +43,7 @@ export function renderTablaVentas(){
     const filtroTipo = document.getElementById("filtroTipoVenta")?.value || "todos";
 
     const ventas = [...LocalDB.getSales()]
-        .filter(venta => !esConsignacionAbierta(venta) && !esVentaParcialDeConsignacionCerrada(venta))
+        .filter(venta => !esConsignacionAbierta(venta))
         .sort((a,b)=>fechaVenta(b)-fechaVenta(a))
         .filter(venta=>{
             const tipo = tipoOperacion(venta);
