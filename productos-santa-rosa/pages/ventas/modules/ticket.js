@@ -19,6 +19,35 @@ function getProductsMap(){
 
 function normalizeSaleItems(sale){
     const map = getProductsMap();
+
+    // Una venta parcial es una operación de venta independiente en el historial.
+    // Para su ticket debemos usar EXCLUSIVAMENTE los items de esa venta,
+    // no reconstruir la consignación completa a partir de consignacionId.
+    if(sale.tipoOperacion === "CONSIGNACION_PARCIAL"){
+        if(Array.isArray(sale.items) && sale.items.length){
+            return sale.items
+                .map(item => {
+                    const p = map.get(item.productId);
+                    const quantity = Number(item.quantity ?? item.cantidad ?? 0);
+                    const price = Number(item.price ?? item.precio ?? p?.precio ?? 0);
+                    return {
+                        nombre: p?.nombre || sale.producto || "Producto",
+                        cantidad: quantity,
+                        precio: price,
+                        subtotal: quantity * price
+                    };
+                })
+                .filter(item => item.cantidad > 0);
+        }
+
+        return [{
+            nombre: sale.producto || "Producto",
+            cantidad: Number(sale.cantidad || 0),
+            precio: Number(sale.precio || 0),
+            subtotal: Number(sale.total || 0)
+        }].filter(item => item.cantidad > 0);
+    }
+
     const isConsignacion = sale.tipoOperacion === "CONSIGNACION" || sale.consignacion || sale.consignacionId;
     if(isConsignacion && sale.consignacionId){
         const c = sale._consignacionSnapshot || LocalDB.getConsignationById(sale.consignacionId);
