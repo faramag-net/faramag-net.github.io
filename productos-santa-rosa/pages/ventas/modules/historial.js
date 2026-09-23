@@ -34,6 +34,14 @@ function esConsignacionAbierta(venta){
     return consignacion?.estado === "ACTIVA" || venta.estadoConsignacion === "ACTIVA";
 }
 
+function esVentaParcialDeConsignacionCerrada(venta){
+    if(tipoOperacion(venta) !== "CONSIGNACION_PARCIAL") return false;
+    if(!venta.consignacionId) return false;
+
+    const consignacion = LocalDB.getConsignationById?.(venta.consignacionId);
+    return consignacion?.estado === "CERRADA";
+}
+
 export function renderTablaVentas(){
     const tabla = document.getElementById("tablaVentas");
     if(!tabla) return;
@@ -42,7 +50,7 @@ export function renderTablaVentas(){
     const filtroTipo = document.getElementById("filtroTipoVenta")?.value || "todos";
 
     const ventas = [...LocalDB.getSales()]
-        .filter(venta => !esConsignacionAbierta(venta))
+        .filter(venta => !esConsignacionAbierta(venta) && !esVentaParcialDeConsignacionCerrada(venta))
         .sort((a,b)=>fechaVenta(b)-fechaVenta(a))
         .filter(venta=>{
             const tipo = tipoOperacion(venta);

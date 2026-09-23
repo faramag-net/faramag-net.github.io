@@ -170,17 +170,12 @@ function normalizeSaleItems(sale){
 }
 
 function buildTicketData(operation){
-    const esVentaParcial = operation.tipoOperacion === "CONSIGNACION_PARCIAL";
-    const esConsignacion = !esVentaParcial && (
-        operation.tipoOperacion === "CONSIGNACION" ||
-        operation.consignacion
-    );
-    const type = esVentaParcial
-        ? "CONSIGNACION_PARCIAL"
-        : (esConsignacion ? "CONSIGNACION" : (operation.tipoOperacion || "DIRECTA"));
+    const type = operation.tipoOperacion === "CONSIGNACION_PARCIAL" || operation.consignacion
+        ? "CONSIGNACION"
+        : (operation.tipoOperacion || "DIRECTA");
 
     const normalized = normalizeSaleItems(operation);
-    const activa = esConsignacion && operation.estadoConsignacion === "ACTIVA";
+    const activa = operation.estadoConsignacion === "ACTIVA";
     const entregados = normalized.entregados || [];
     const vendidos = normalized.vendidos || [];
     const devueltos = normalized.devueltos || [];
@@ -189,7 +184,7 @@ function buildTicketData(operation){
     );
 
     let total = Number(operation.total || 0);
-    if(esConsignacion){
+    if(type === "CONSIGNACION"){
         total = activa
             ? entregados.reduce((t,i) => t + Number(i.importeEntregado || 0), 0) +
               vendidos.reduce((t,i) => t + Number(i.importeVendido || 0), 0)
@@ -200,7 +195,7 @@ function buildTicketData(operation){
         type,
         activa,
         tieneVentaParcial,
-        title: esConsignacion
+        title: type === "CONSIGNACION"
             ? (activa ? "TICKET DE VENTA · ABIERTA" : "TICKET DE VENTA · CERRADA")
             : "TICKET DE VENTA",
         operation,
@@ -264,25 +259,13 @@ function renderSection(title, items, mode, emptyText){
 function renderTicket(data, extra = {}){
     const {operation, type, title, activa, tieneVentaParcial, entregados, vendidos, devueltos} = data;
     const isConsignacion = type === "CONSIGNACION";
-    const isVentaParcial = type === "CONSIGNACION_PARCIAL";
     const fecha = operation.fecha || operation.createdAt || new Date().toLocaleString();
     const cliente = operation.cliente || extra.cliente || "Público en general";
     let total = Number(data.total || 0);
     let body = "";
     let totalLabel = "TOTAL";
 
-    if(isVentaParcial){
-        body = `
-            <table class="ticket-table">
-                <thead><tr><th>Concepto</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead>
-                <tbody>${vendidos.map(item => `
-                    <tr><td>${escapeHtml(item.nombre)}</td><td>${item.vendido}</td><td>${money(item.precio)}</td><td>${money(item.importeVendido)}</td></tr>
-                `).join("")}</tbody>
-            </table>
-        `;
-        total = vendidos.reduce((t,i) => t + Number(i.importeVendido || 0), 0);
-        totalLabel = "TOTAL";
-    }else if(isConsignacion && activa && !tieneVentaParcial){
+    if(isConsignacion && activa && !tieneVentaParcial){
         const quantity = entregados.reduce((t,i) => t + Number(i.entregado || 0), 0);
         const amount = entregados.reduce((t,i) => t + Number(i.importeEntregado || 0), 0);
         body = `
