@@ -944,7 +944,7 @@ function renderEditarConsignacion(consignacion){
 
 }
 
-function renderConsignacionTab(){function renderConsignacionTab(){
+function renderConsignacionTab(){
 
     const container =
         document.getElementById(
@@ -1904,4 +1904,3 @@ container.innerHTML = `
 
 }
    
-}
