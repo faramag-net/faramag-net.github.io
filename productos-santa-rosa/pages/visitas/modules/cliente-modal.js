@@ -749,116 +749,63 @@ function renderProductosTab(){
     
     }
 
-function renderEditarConsignacion(
-    consignacion
-){
+function renderEditarConsignacion(consignacion){
 
-consignacion =
-    JSON.parse(
-        JSON.stringify(consignacion)
+    consignacion = JSON.parse(JSON.stringify(consignacion));
+
+    const container = document.getElementById("clienteTabContent");
+    const productos = [...LocalDB.getProducts()].sort((a,b) =>
+        (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" })
     );
-    
-    const container =
-        document.getElementById(
-            "clienteTabContent"
-        );
-
-    const productos =
-        [...LocalDB.getProducts()]
-        .sort((a,b) =>
-            (a.nombre || "").localeCompare(
-                b.nombre || "",
-                "es",
-                { sensitivity: "base" }
-            )
-        );
 
     container.innerHTML = `
+        <h3>Editar Consignación</h3>
 
-        <h3>
-            Editar Consignación
-        </h3>
+        <p class="consigna-ayuda">
+            Puedes agregar o retirar producto mientras la consignación siga abierta.
+            Las cantidades ya vendidas no se modifican.
+        </p>
 
-        ${
-            consignacion.items.map(item => {
-
-                const producto =
-                    productos.find(
-                        p =>
-                            p.id ===
-                            item.productId
-                    );
-
-                return `
-
-                    <div
-                        class="producto-row"
+        ${consignacion.items.map(item => {
+            const producto = productos.find(p => p.id === item.productId);
+            const vendido = Number(item.cantidadVendida || 0);
+            return `
+                <div class="producto-row">
+                    <span class="producto-nombre">
+                        ${producto?.nombre || "Producto"}
+                    </span>
+                    <span class="stock-consigna" title="Inventario disponible">
+                        Inv: ${producto ? Number(LocalDB.getCalculatedStock(producto.id) || 0) : 0}
+                    </span>
+                    <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value="${Number(item.cantidadEntregada || 0)}"
+                        class="cantidad-editar-consignacion"
+                        data-productid="${item.productId}"
                     >
+                    <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value="${Number(item.precio || 0)}"
+                        class="precio-editar-consignacion"
+                        data-productid="${item.productId}"
+                    >
+                    ${vendido > 0 ? `<small title="Cantidad vendida acumulada">Vendidas: ${vendido}</small>` : ""}
+                </div>
+            `;
+        }).join("")}
 
-                        <span class="producto-nombre">
-                            ${
-                                producto?.nombre
-                                || "Producto"
-                            }
-                        </span>
+        <button id="guardarEdicionConsignacionBtn">Guardar Cambios</button>
+        <button id="volverConsignacionBtn">Volver</button>
 
-                        <span class="stock-consigna" title="Inventario disponible">
-                            Inv: ${producto ? Number(LocalDB.getCalculatedStock(producto.id) || 0) : 0}
-                        </span>
-
-                        <input
-                            type="number"
-                            min="0"
-                            value="${
-                                item.cantidadEntregada
-                            }"
-                            class="cantidad-editar-consignacion"
-                            data-productid="${
-                                item.productId
-                            }"
-                        >
-
-                        <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value="${item.precio}"
-                            class="precio-editar-consignacion"
-                            data-productid="${item.productId}"
-                        >
-
-                    </div>
-
-                `;
-
-            }).join("")
-        }
-
-        <button
-            id="guardarEdicionConsignacionBtn"
-        >
-            Guardar Cambios
-        </button>
-        
-        <button
-            id="volverConsignacionBtn"
-        >
-            Volver
-        </button>
-        
         <hr>
-        
-        <h4>
-            Agregar producto
-        </h4>
+        <h4>Agregar producto</h4>
 
         <div class="consigna-filtros">
-            <input
-                type="search"
-                id="buscarProductoEditarConsigna"
-                placeholder="🔍 Buscar producto..."
-                autocomplete="off">
-
+            <input type="search" id="buscarProductoEditarConsigna" placeholder="🔍 Buscar producto..." autocomplete="off">
             <select id="filtroProductoEditarConsigna">
                 <option value="todos">Todos</option>
                 <option value="paleta">Paleta</option>
@@ -870,340 +817,134 @@ consignacion =
         </div>
 
         <select id="nuevoProductoConsigna"></select>
-
         <button id="agregarProductoConsignaBtn">Agregar</button>
-
-`;
-
-const selectNuevoProducto = document.getElementById("nuevoProductoConsigna");
-const buscarEditar = document.getElementById("buscarProductoEditarConsigna");
-const filtroEditar = document.getElementById("filtroProductoEditarConsigna");
-
-function renderProductosEditarConsigna(){
-    if(!selectNuevoProducto) return;
-    const texto = (buscarEditar?.value || "").trim().toLowerCase();
-    const categoria = filtroEditar?.value || "todos";
-    const opciones = productos.filter(producto => {
-        const nombre = (producto.nombre || "").toLowerCase();
-        const cat = (producto.categoria || "historico").toLowerCase();
-        const yaExiste = consignacion.items.some(item => item.productId === producto.id);
-        return !yaExiste && (!texto || nombre.includes(texto)) &&
-               (categoria === "todos" || cat === categoria);
-    }).sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }));
-    selectNuevoProducto.innerHTML = opciones.map(p => `<option value="${p.id}">${p.nombre}</option>`).join("");
-}
-
-buscarEditar?.addEventListener("input", renderProductosEditarConsigna);
-filtroEditar?.addEventListener("change", renderProductosEditarConsigna);
-renderProductosEditarConsigna();
-
-document
-.getElementById(
-    "agregarProductoConsignaBtn"
-)
-    
-.onclick = () => {
-
-    const productId =
-        document.getElementById(
-            "nuevoProductoConsigna"
-        ).value;
-
-    const existe =
-        consignacion.items.some(
-            item =>
-                item.productId ===
-                productId
-        );
-
-    if(existe){
-
-        showToast(
-            "El producto ya existe en la consignación"
-        );
-
-        return;
-
-    }
-
-    const producto =
-        productos.find(
-            p =>
-                p.id ===
-                productId
-        );
-
-    consignacion.items.push({
-
-        productId,
-
-        cantidadEntregada: 0,
-
-        precio:
-            producto?.precio || 0
-
-    });
-
-    renderEditarConsignacion(
-        consignacion
-    );
-
-};
-
-    
-    document
-.getElementById(
-    "guardarEdicionConsignacionBtn"
-)
-.onclick = () => {
-
-    const cantidades =
-        document.querySelectorAll(
-            ".cantidad-editar-consignacion"
-        );
-
-    const productos =
-        LocalDB.getProducts();
-
-    cantidades.forEach(input => {
-
-        const productId =
-            input.dataset.productid;
-
-        const nuevaCantidad =
-            Number(input.value);
-
-        const itemOriginal =
-            consignacion.items.find(
-                item =>
-                    item.productId ===
-                    productId
-            );
-
-        const cantidadOriginal =
-            itemOriginal.cantidadEntregada;
-
-        const diferencia =
-            nuevaCantidad -
-            cantidadOriginal;
-
-        const producto =
-            productos.find(
-                p =>
-                    p.id ===
-                    productId
-            );
-
-        if(diferencia > 0){
-
-            LocalDB.addHistory({
-
-                tipo:
-                    "CONSIGNACION_SALIDA",
-
-                producto:
-                    producto.nombre,
-
-                cantidad:
-                    diferencia,
-
-                fecha:
-                    new Date()
-                    .toLocaleString()
-
-            });
-
-        }
-
-        if(diferencia < 0){
-
-            LocalDB.addHistory({
-
-                tipo:
-                    "CONSIGNACION_ENTRADA",
-
-                producto:
-                    producto.nombre,
-
-                cantidad:
-                    Math.abs(
-                        diferencia
-                    ),
-
-                fecha:
-                    new Date()
-                    .toLocaleString()
-
-            });
-
-        }
-
-        itemOriginal.cantidadEntregada =
-            nuevaCantidad;
-           
-        const precioInput =
-            document.querySelector(
-                `.precio-editar-consignacion[data-productid="${productId}"]`
-            );
-        
-        itemOriginal.precio =
-            Number(
-                precioInput.value
-            );
-          
-        });
-
-    consignacion.items =
-    consignacion.items.filter(
-        item =>
-            item.cantidadEntregada > 0
-    );
-    
-const consignaciones =
-    LocalDB.getConsignations();
-
-const index =
-    consignaciones.findIndex(
-        c =>
-            c.id ===
-            consignacion.id
-    );
-
-if(index < 0){
-
-    showToast(
-        "No se encontró la consignación."
-    );
-
-    return;
-
-}
-
-// Reemplazar la consignación editada
-consignaciones[index] =
-    consignacion;
-
-// Guardar el arreglo actualizado
-LocalDB.saveConsignations(
-    consignaciones
-);
-
-showToast(
-    "Consignación actualizada"
-);
-
-renderConsignacionTab();
-
-};
-    
-    document
-    .getElementById(
-        "volverConsignacionBtn"
-    )
-    .onclick = () => {
-
-        renderConsignacionTab();
-
-    };
-
-}
-
-function renderVentaParcial(consignacion){
-
-    const container = document.getElementById("clienteTabContent");
-    const productos = LocalDB.getProducts();
-
-    const itemsDisponibles = (consignacion.items || []).filter(item =>
-        Number(item.cantidadEntregada || 0) > 0
-    );
-
-    container.innerHTML = `
-        <h3>Venta Parcial</h3>
-        <p class="consigna-ayuda">Registra productos que el cliente ya pagó. La consignación seguirá abierta.</p>
-        <div class="consigna-columnas">
-            <span>Producto</span><span>Disponible</span><span>Cant.</span><span>Precio</span>
-        </div>
-        <div class="lista-productos-consigna">
-            ${itemsDisponibles.map(item=>{
-                const p=productos.find(x=>x.id===item.productId);
-                return `
-                    <div class="producto-row">
-                        <span class="producto-nombre">${p?.nombre || "[PRODUCTO ELIMINADO]"}</span>
-                        <span class="stock-consigna">${Number(item.cantidadEntregada || 0)}</span>
-                        <input type="number" min="0" max="${Number(item.cantidadEntregada || 0)}" step="0.01" value="0" class="cantidad-venta-parcial" data-productid="${item.productId}">
-                        <span>$${Number(item.precio || p?.precio || 0).toFixed(2)}</span>
-                    </div>`;
-            }).join("")}
-        </div>
-        <button id="guardarVentaParcialBtn">Registrar venta</button>
-        <button id="cancelarVentaParcialBtn">Cancelar</button>
     `;
 
-    document.getElementById("cancelarVentaParcialBtn").onclick=()=>renderConsignacionTab();
-    document.getElementById("guardarVentaParcialBtn").onclick=()=>{
-        const inputs=[...document.querySelectorAll(".cantidad-venta-parcial")];
-        const ventaItems=[];
-        let total=0;
-        let ganancia=0;
-        let cantidadTotal=0;
+    const selectNuevoProducto = document.getElementById("nuevoProductoConsigna");
+    const buscarEditar = document.getElementById("buscarProductoEditarConsigna");
+    const filtroEditar = document.getElementById("filtroProductoEditarConsigna");
 
-        inputs.forEach(input=>{
-            const cantidad=Math.max(0, Number(input.value || 0));
-            if(cantidad<=0) return;
-            const item=consignacion.items.find(i=>i.productId===input.dataset.productid);
-            const producto=productos.find(p=>p.id===input.dataset.productid);
-            if(!item || !producto) return;
-            const disponible=Number(item.cantidadEntregada || 0);
-            if(cantidad>disponible) return;
-            const precio=Number(item.precio ?? producto.precio ?? 0);
-            const subtotal=cantidad*precio;
-            ventaItems.push({productId:item.productId, quantity:cantidad, price:precio});
-            total+=subtotal;
-            ganancia+=subtotal-(cantidad*Number(producto.costo || 0));
-            cantidadTotal+=cantidad;
+    function renderProductosEditarConsigna(){
+        if(!selectNuevoProducto) return;
+        const texto = (buscarEditar?.value || "").trim().toLowerCase();
+        const categoria = filtroEditar?.value || "todos";
+        const opciones = productos.filter(producto => {
+            const nombre = (producto.nombre || "").toLowerCase();
+            const cat = (producto.categoria || "historico").toLowerCase();
+            const item = consignacion.items.find(i => i.productId === producto.id);
+            const yaEntregado = Number(item?.cantidadEntregada || 0) > 0;
+            return !yaEntregado && (!texto || nombre.includes(texto)) &&
+                (categoria === "todos" || cat === categoria);
+        }).sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "", "es", { sensitivity: "base" }));
+        selectNuevoProducto.innerHTML = opciones.map(p => `<option value="${p.id}">${p.nombre}</option>`).join("");
+    }
+
+    buscarEditar?.addEventListener("input", renderProductosEditarConsigna);
+    filtroEditar?.addEventListener("change", renderProductosEditarConsigna);
+    renderProductosEditarConsigna();
+
+    document.getElementById("agregarProductoConsignaBtn").onclick = () => {
+        const productId = document.getElementById("nuevoProductoConsigna").value;
+        if(!productId){
+            showToast("Selecciona un producto");
+            return;
+        }
+
+        const producto = productos.find(p => p.id === productId);
+        const existente = consignacion.items.find(item => item.productId === productId);
+
+        if(existente){
+            if(Number(existente.cantidadEntregada || 0) > 0){
+                showToast("El producto ya está en la consignación");
+                return;
+            }
+            existente.cantidadEntregada = 1;
+            existente.precio = Number(producto?.precio || 0);
+        }else{
+            consignacion.items.push({
+                productId,
+                cantidadEntregada: 1,
+                cantidadVendida: 0,
+                cantidadDevuelta: 0,
+                precio: Number(producto?.precio || 0)
+            });
+        }
+
+        renderEditarConsignacion(consignacion);
+    };
+
+    document.getElementById("guardarEdicionConsignacionBtn").onclick = () => {
+        const cantidades = document.querySelectorAll(".cantidad-editar-consignacion");
+        const productosActuales = LocalDB.getProducts();
+        let invalido = false;
+
+        cantidades.forEach(input => {
+            const productId = input.dataset.productid;
+            const nuevaCantidad = Math.max(0, Number(input.value || 0));
+            const itemOriginal = consignacion.items.find(item => item.productId === productId);
+            if(!itemOriginal) return;
+
+            const cantidadOriginal = Number(itemOriginal.cantidadEntregada || 0);
+            const diferencia = nuevaCantidad - cantidadOriginal;
+            const producto = productosActuales.find(p => p.id === productId);
+
+            if(!producto) return;
+
+            if(diferencia > 0){
+                const stock = Number(LocalDB.getCalculatedStock(productId) || 0);
+                if(diferencia > stock){
+                    showToast(`No hay inventario suficiente de ${producto.nombre}`);
+                    invalido = true;
+                    return;
+                }
+                LocalDB.addHistory({
+                    tipo: "CONSIGNACION_SALIDA",
+                    producto: producto.nombre,
+                    cantidad: diferencia,
+                    fecha: new Date().toLocaleString()
+                });
+            }else if(diferencia < 0){
+                LocalDB.addHistory({
+                    tipo: "CONSIGNACION_ENTRADA",
+                    producto: producto.nombre,
+                    cantidad: Math.abs(diferencia),
+                    fecha: new Date().toLocaleString()
+                });
+            }
+
+            itemOriginal.cantidadEntregada = nuevaCantidad;
+            const precioInput = document.querySelector(`.precio-editar-consignacion[data-productid="${productId}"]`);
+            if(precioInput) itemOriginal.precio = Number(precioInput.value || 0);
+            itemOriginal.cantidadVendida = Number(itemOriginal.cantidadVendida || 0);
+            itemOriginal.cantidadDevuelta = Number(itemOriginal.cantidadDevuelta || 0);
         });
 
-        if(!ventaItems.length){ showToast("Selecciona al menos un producto"); return; }
+        if(invalido) return;
 
-        const fecha=new Date().toISOString();
-        consignacion.ventasParciales=Array.isArray(consignacion.ventasParciales)?consignacion.ventasParciales:[];
-        consignacion.ventasParciales.push({id:crypto.randomUUID(),fecha,tipo:"VENTA_PARCIAL",items:ventaItems.map(i=>({...i})),total,ganancia});
+        consignacion.items = consignacion.items.filter(item =>
+            Number(item.cantidadEntregada || 0) > 0 ||
+            Number(item.cantidadVendida || 0) > 0 ||
+            Number(item.cantidadDevuelta || 0) > 0
+        );
 
-        ventaItems.forEach(v=>{
-            const item=consignacion.items.find(i=>i.productId===v.productId);
-            item.cantidadEntregada=Number(item.cantidadEntregada || 0)-v.quantity;
-            item.cantidadVendida=Number(item.cantidadVendida || 0)+v.quantity;
-        });
-        consignacion.totalVendido=Number(consignacion.totalVendido || 0)+total;
-        consignacion.cantidadVendida=Number(consignacion.cantidadVendida || 0)+cantidadTotal;
+        const consignaciones = LocalDB.getConsignations();
+        const index = consignaciones.findIndex(c => c.id === consignacion.id);
+        if(index < 0){
+            showToast("No se encontró la consignación.");
+            return;
+        }
 
-        const consignaciones=LocalDB.getConsignations();
-        const index=consignaciones.findIndex(c=>c.id===consignacion.id);
-        if(index<0){ showToast("No se encontró la consignación"); return; }
-        consignaciones[index]=consignacion;
+        consignaciones[index] = consignacion;
         LocalDB.saveConsignations(consignaciones);
-
-        const clienteObj=LocalDB.getRouteClients().find(c=>c.id===consignacion.clienteId);
-        LocalDB.createSale({
-            tipoOperacion:"CONSIGNACION_PARCIAL",
-            consignacion:true,
-            consignacionId:consignacion.id,
-            estadoConsignacion:"ACTIVA",
-            producto:`${ventaItems.length} productos`,
-            cliente:clienteObj?.nombre || "",
-            cantidad:cantidadTotal,
-            precio:ventaItems.length===1?ventaItems[0].price:0,
-            costo:0,total,ganancia,
-            items:ventaItems,
-            fecha:new Date().toLocaleString()
-        });
-
-        showToast("Venta parcial registrada");
+        showToast("Consignación actualizada");
         renderConsignacionTab();
     };
+
+    document.getElementById("volverConsignacionBtn").onclick = () => renderConsignacionTab();
+
 }
 
-function renderConsignacionTab(){
+function renderConsignacionTab(){function renderConsignacionTab(){
 
     const container =
         document.getElementById(
@@ -1279,30 +1020,19 @@ lista.innerHTML =
     consignaciones.map(
         consignacion=>{
 
-            const monto =
+            const montoEntregado =
                 consignacion.items.reduce(
-
-                    (t,item)=>
-
-                        t +
-
-                        (
-
-                            Number(
-                                item.cantidadEntregada||0
-                            )
-
-                            *
-
-                            Number(
-                                item.precio||0
-                            )
-
-                        ),
-
+                    (t,item) => t +
+                        Number(item.cantidadEntregada || 0) *
+                        Number(item.precio || 0),
                     0
-
                 );
+
+            const montoVendido = Number(consignacion.totalVendido || 0);
+
+            const monto = consignacion.estado === "ACTIVA"
+                ? montoEntregado + montoVendido
+                : montoVendido;
 
             return `
 
@@ -1442,18 +1172,10 @@ document
     ".venta-parcial-consignacion"
 )
 .forEach(btn=>{
-
     btn.onclick=()=>{
-
-        const consignacion =
-            LocalDB.getConsignationById(
-                btn.dataset.id
-            );
-
+        const consignacion = LocalDB.getConsignationById(btn.dataset.id);
         if(consignacion) renderVentaParcial(consignacion);
-
     };
-
 });
 
 document
@@ -1699,9 +1421,11 @@ document.querySelectorAll(".ticket-consignacion").forEach(btn=>{
                             cantidadEntregada:
                                 cantidad,
 
-                            cantidadVendida: 0,
+                            cantidadVendida:
+                                0,
 
-                            cantidadDevuelta: 0,
+                            cantidadDevuelta:
+                                0,
 
                             precio:
                                 Number(
@@ -1786,7 +1510,180 @@ document.querySelectorAll(".ticket-consignacion").forEach(btn=>{
 
         }
 
-    function renderRecogerProducto(consignacion){
+    function renderVentaParcial(consignacion){
+
+    const container = document.getElementById("clienteTabContent");
+    const productos = LocalDB.getProducts();
+
+    const itemsDisponibles = (consignacion.items || []).filter(item => Number(item.cantidadEntregada || 0) > 0);
+
+    if(!itemsDisponibles.length){
+        showToast("No hay productos disponibles para vender.");
+        return;
+    }
+
+    container.innerHTML = `
+        <h3>Venta Parcial</h3>
+        <p class="consigna-ayuda">
+            Registra productos que el cliente ya pagó. La consignación permanecerá abierta.
+        </p>
+
+        <div class="venta-parcial-lista">
+            ${itemsDisponibles.map(item => {
+                const producto = productos.find(p => p.id === item.productId);
+                const disponible = Number(item.cantidadEntregada || 0);
+                const precio = Number(item.precio || producto?.precio || 0);
+                return `
+                    <div class="producto-row venta-parcial-row">
+                        <span class="producto-nombre">${producto?.nombre || "Producto"}</span>
+                        <span class="stock-consigna">Disp: ${disponible}</span>
+                        <input
+                            type="number"
+                            min="0"
+                            max="${disponible}"
+                            step="0.01"
+                            value="0"
+                            class="cantidad-venta-parcial"
+                            data-productid="${item.productId}"
+                        >
+                        <span class="precio-venta-parcial">${`$${Number(precio || 0).toFixed(2)}`}</span>
+                    </div>
+                `;
+            }).join("")}
+        </div>
+
+        <div class="venta-parcial-total">
+            <strong>Total de esta venta:</strong>
+            <strong id="totalVentaParcial">$0.00</strong>
+        </div>
+
+        <button id="registrarVentaParcialBtn">Registrar Venta</button>
+        <button id="cancelarVentaParcialBtn">Volver</button>
+    `;
+
+    const moneyLocal = value => `$${Number(value || 0).toFixed(2)}`;
+
+    function actualizarTotal(){
+        let total = 0;
+        document.querySelectorAll(".cantidad-venta-parcial").forEach(input => {
+            const cantidad = Math.max(0, Number(input.value || 0));
+            const item = consignacion.items.find(i => i.productId === input.dataset.productid);
+            total += cantidad * Number(item?.precio || 0);
+        });
+        const totalEl = document.getElementById("totalVentaParcial");
+        if(totalEl) totalEl.textContent = moneyLocal(total);
+    }
+
+    document.querySelectorAll(".cantidad-venta-parcial").forEach(input => {
+        input.addEventListener("input", () => {
+            const max = Number(input.max || 0);
+            const value = Math.max(0, Math.min(max, Number(input.value || 0)));
+            input.value = value;
+            actualizarTotal();
+        });
+    });
+
+    document.getElementById("cancelarVentaParcialBtn").onclick = () => renderConsignacionTab();
+
+    document.getElementById("registrarVentaParcialBtn").onclick = () => {
+        const productosActuales = LocalDB.getProducts();
+        const itemsVenta = [];
+        let total = 0;
+        let ganancia = 0;
+        let cantidadVendida = 0;
+
+        const entradasVenta = [];
+        let errorCantidad = "";
+
+        document.querySelectorAll(".cantidad-venta-parcial").forEach(input => {
+            const productId = input.dataset.productid;
+            const cantidad = Math.max(0, Number(input.value || 0));
+            if(cantidad <= 0) return;
+
+            const item = consignacion.items.find(i => i.productId === productId);
+            const producto = productosActuales.find(p => p.id === productId);
+            if(!item || !producto) return;
+
+            const disponible = Number(item.cantidadEntregada || 0);
+            if(cantidad > disponible){
+                errorCantidad = `La cantidad de ${producto.nombre} supera lo disponible en la consignación.`;
+                return;
+            }
+
+            const precio = Number(item.precio ?? producto.precio ?? 0);
+            entradasVenta.push({ item, producto, productId, cantidad, precio });
+        });
+
+        if(errorCantidad){
+            showToast(errorCantidad);
+            return;
+        }
+
+        entradasVenta.forEach(({item, producto, productId, cantidad, precio}) => {
+            const subtotal = cantidad * precio;
+            item.cantidadEntregada = Number(item.cantidadEntregada || 0) - cantidad;
+            item.cantidadVendida = Number(item.cantidadVendida || 0) + cantidad;
+            item.cantidadDevuelta = Number(item.cantidadDevuelta || 0);
+
+            itemsVenta.push({ productId, quantity: cantidad, price: precio });
+            total += subtotal;
+            ganancia += subtotal - cantidad * Number(producto.costo || 0);
+            cantidadVendida += cantidad;
+        });
+
+        if(!itemsVenta.length){
+            showToast("Selecciona al menos un producto.");
+            return;
+        }
+
+        const fechaVentaParcial = new Date().toISOString();
+        consignacion.totalVendido = Number(consignacion.totalVendido || 0) + total;
+        consignacion.cantidadVendida = Number(consignacion.cantidadVendida || 0) + cantidadVendida;
+        consignacion.tieneVentasParciales = true;
+        consignacion.ultimaVentaParcialAt = fechaVentaParcial;
+        consignacion.ventasParciales = Array.isArray(consignacion.ventasParciales)
+            ? consignacion.ventasParciales
+            : [];
+        consignacion.ventasParciales.push({
+            id: crypto.randomUUID(),
+            fecha: fechaVentaParcial,
+            items: itemsVenta.map(item => ({...item})),
+            total,
+            ganancia
+        });
+
+        const consignaciones = LocalDB.getConsignations();
+        const index = consignaciones.findIndex(c => c.id === consignacion.id);
+        if(index < 0){
+            showToast("No se encontró la consignación.");
+            return;
+        }
+        consignaciones[index] = consignacion;
+        LocalDB.saveConsignations(consignaciones);
+
+        const clienteObj = LocalDB.getRouteClients().find(c => c.id === consignacion.clienteId);
+        LocalDB.createSale({
+            tipoOperacion: "CONSIGNACION_PARCIAL",
+            consignacion: true,
+            consignacionId: consignacion.id,
+            estadoConsignacion: "ACTIVA",
+            producto: `${itemsVenta.length} productos`,
+            cliente: clienteObj?.nombre || "",
+            cantidad: cantidadVendida,
+            precio: itemsVenta.length === 1 ? itemsVenta[0].price : 0,
+            costo: 0,
+            total,
+            ganancia,
+            items: itemsVenta,
+            fecha: new Date().toLocaleString()
+        });
+
+        showToast("Venta parcial registrada");
+        renderConsignacionTab();
+    };
+}
+
+function renderRecogerProducto(consignacion){
 
     const container =
         document.getElementById(
@@ -1914,73 +1811,95 @@ container.innerHTML = `
 )
 .onclick = () => {
 
-        if(
-        !confirm(
-            "¿Seguro que deseas cerrar la consignación?"
-        )
-    ){
-        return;
-    }
+    if(!confirm("¿Seguro que deseas cerrar la consignación?")) return;
 
     const inputs = document.querySelectorAll(".cantidad-devuelta");
     const productos = LocalDB.getProducts();
     const itemsVenta = [];
-    let total = 0, ganancia = 0, totalVendido = 0;
+    let totalVentaFinal = 0;
+    let gananciaFinal = 0;
+    let cantidadVendidaFinal = 0;
+    let cantidadDevueltaFinal = 0;
 
     inputs.forEach(input=>{
-        const productId=input.dataset.productid;
-        const entregado=Number(input.dataset.entregado||0);
-        const devuelto=Math.max(0,Math.min(entregado,Number(input.value||0)));
-        const vendido=entregado-devuelto;
-        const producto=productos.find(p=>p.id===productId);
-        const itemConsignado=consignacion.items.find(i=>i.productId===productId);
+        const productId = input.dataset.productid;
+        const entregadoActual = Number(input.dataset.entregado || 0);
+        const devuelto = Math.max(0, Math.min(entregadoActual, Number(input.value || 0)));
+        const vendidoFinal = entregadoActual - devuelto;
+        const producto = productos.find(p=>p.id===productId);
+        const itemConsignado = consignacion.items.find(i=>i.productId===productId);
         if(!producto || !itemConsignado) return;
 
-        if(devuelto>0) LocalDB.addHistory({tipo:"CONSIGNACION_ENTRADA",producto:producto.nombre,cantidad:devuelto,fecha:new Date().toLocaleString()});
-        if(vendido>0){
-            const precio=Number(itemConsignado.precio ?? producto.precio ?? 0);
-            const subtotal=vendido*precio;
-            total+=subtotal;
-            ganancia+=subtotal-(vendido*Number(producto.costo||0));
-            totalVendido+=vendido;
-            itemsVenta.push({productId,quantity:vendido,price:precio});
+        cantidadDevueltaFinal += devuelto;
+
+        if(devuelto > 0){
+            LocalDB.addHistory({
+                tipo:"CONSIGNACION_ENTRADA",
+                producto:producto.nombre,
+                cantidad:devuelto,
+                fecha:new Date().toLocaleString()
+            });
         }
-        itemConsignado.cantidadDevuelta=devuelto;
-        itemConsignado.cantidadVendida=vendido;
+
+        if(vendidoFinal > 0){
+            const precio = Number(itemConsignado.precio ?? producto.precio ?? 0);
+            const subtotal = vendidoFinal * precio;
+            totalVentaFinal += subtotal;
+            gananciaFinal += subtotal - (vendidoFinal * Number(producto.costo || 0));
+            cantidadVendidaFinal += vendidoFinal;
+            itemsVenta.push({productId, quantity:vendidoFinal, price:precio});
+        }
+
+        itemConsignado.cantidadDevuelta = Number(itemConsignado.cantidadDevuelta || 0) + devuelto;
+        itemConsignado.cantidadVendida = Number(itemConsignado.cantidadVendida || 0) + vendidoFinal;
+        itemConsignado.cantidadEntregada = 0;
     });
+
+    if(itemsVenta.length){
+        const fechaVentaCierre = new Date().toISOString();
+        consignacion.ventasParciales = Array.isArray(consignacion.ventasParciales)
+            ? consignacion.ventasParciales
+            : [];
+        consignacion.ventasParciales.push({
+            id: crypto.randomUUID(),
+            fecha: fechaVentaCierre,
+            tipo: "CIERRE",
+            items: itemsVenta.map(item => ({...item})),
+            total: totalVentaFinal,
+            ganancia: gananciaFinal
+        });
+
+        const clienteObj=LocalDB.getRouteClients().find(c=>c.id===consignacion.clienteId);
+        LocalDB.createSale({
+            tipoOperacion:"CONSIGNACION",
+            consignacion:true,
+            consignacionId:consignacion.id,
+            estadoConsignacion:"CERRADA",
+            producto:`${itemsVenta.length} productos`,
+            cliente:clienteObj?.nombre || "",
+            cantidad:cantidadVendidaFinal,
+            precio:itemsVenta.length===1?itemsVenta[0].price:0,
+            costo:0,
+            total:totalVentaFinal,
+            ganancia:gananciaFinal,
+            items:itemsVenta,
+            fecha:new Date().toLocaleString()
+        });
+    }
 
     consignacion.fechaCierre=new Date().toISOString();
     consignacion.estado="CERRADA";
-    consignacion.totalVendido=total;
-    consignacion.cantidadVendida=totalVendido;
-    consignacion.cantidadDevuelta=consignacion.items.reduce((t,i)=>t+Number(i.cantidadDevuelta||0),0);
+    consignacion.totalVendido=Number(consignacion.totalVendido || 0) + totalVentaFinal;
+    consignacion.cantidadVendida=Number(consignacion.cantidadVendida || 0) + cantidadVendidaFinal;
+    consignacion.cantidadDevuelta=Number(consignacion.cantidadDevuelta || 0) + cantidadDevueltaFinal;
 
     const consignaciones=LocalDB.getConsignations();
     const index=consignaciones.findIndex(c=>c.id===consignacion.id);
     if(index>=0) consignaciones[index]=consignacion;
     LocalDB.saveConsignations(consignaciones);
 
-    {
-        const clienteObj=LocalDB.getRouteClients().find(c=>c.id===consignacion.clienteId);
-        LocalDB.createSale({
-            tipoOperacion:"CONSIGNACION",
-            consignacion:true,
-            consignacionId:consignacion.id,
-            producto:`${itemsVenta.length} productos`,
-            cliente:clienteObj?.nombre || "",
-            cantidad:totalVendido,
-            precio:itemsVenta.length===1?itemsVenta[0].price:0,
-            costo:0,total,ganancia,items:itemsVenta,
-            fecha:new Date().toLocaleString()
-        });
-    }
-
-    showToast(
-        "Consignación cerrada"
-    );
-
+    showToast("Consignación cerrada");
     renderConsignacionTab();
-
 };
 
 }

@@ -12,7 +12,7 @@ function tipoOperacion(venta){
 }
 
 function textoTipo(tipo){
-    return ({COMANDA:"Comanda", DIRECTA:"Directa", CONSIGNACION:"Consignación"})[tipo] || tipo;
+    return ({COMANDA:"Comanda", DIRECTA:"Directa", CONSIGNACION:"Consignación", CONSIGNACION_PARCIAL:"Venta parcial"})[tipo] || tipo;
 }
 
 function detalleVenta(venta){
