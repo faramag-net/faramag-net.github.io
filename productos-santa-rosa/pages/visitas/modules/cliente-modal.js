@@ -942,7 +942,6 @@ function renderEditarConsignacion(consignacion){
 
     document.getElementById("volverConsignacionBtn").onclick = () => renderConsignacionTab();
 
-}
 
 function renderConsignacionTab(){
 
