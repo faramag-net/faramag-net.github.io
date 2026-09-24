@@ -65,6 +65,7 @@ export function renderTablaVentas(){
         <tr>
             <td>${venta.fecha || new Date(venta.createdAt).toLocaleString()}</td>
             <td><span class="tipo-venta tipo-${tipoOperacion(venta).toLowerCase()}">${textoTipo(tipoOperacion(venta))}</span></td>
+            <td>${venta.cliente || "—"}</td>
             <td>${detalleVenta(venta)}</td>
             <td>$${Number(venta.total || 0).toFixed(2)}</td>
             <td class="acciones-operacion">

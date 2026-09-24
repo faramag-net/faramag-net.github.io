@@ -177,6 +177,10 @@ actualizarKPIs();
         });
     });
 
+document.getElementById("cliente")?.addEventListener("input", () => {
+    actualizarProducto();
+});
+
 document.getElementById("buscarVentas")?.addEventListener("input", resetPaginaVentas);
 document.getElementById("filtroTipoVenta")?.addEventListener("change", resetPaginaVentas);
 document.getElementById("registrosPorPagina")?.addEventListener("change", e => cambiarRegistrosVentas(e.target.value));

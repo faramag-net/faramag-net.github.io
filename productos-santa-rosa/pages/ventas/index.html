@@ -130,10 +130,14 @@
             +
             </button>
 
-            <input
-            type="number"
-            id="precio"
-            step="0.01">
+            <div class="precio-venta-wrap">
+                <label for="precio">Precio</label>
+                <input
+                type="number"
+                id="precio"
+                step="0.01">
+                <small id="precioSugeridoVenta">Sugerido: —</small>
+            </div>
         
             <input
             type="text"
@@ -236,7 +240,7 @@
 
         <div class="table-responsive">
             <table class="tabla-historial-ventas">
-                <thead><tr><th>FECHA</th><th>TIPO</th><th>PRODUCTOS</th><th>TOTAL</th><th>ACCIÓN</th></tr></thead>
+                <thead><tr><th>FECHA</th><th>TIPO</th><th>CLIENTE</th><th>PRODUCTOS</th><th>TOTAL</th><th>ACCIÓN</th></tr></thead>
                 <tbody id="tablaVentas"></tbody>
             </table>
         </div>

@@ -95,6 +95,48 @@ export function renderProductosVenta(){
     actualizarProducto();
 }
 
+function obtenerPrecioSugeridoVenta(clienteNombre, productoId, precioReal){
+    const cliente = normalizarNombreCliente(clienteNombre);
+    if(!cliente) return Number(precioReal) || 0;
+
+    const ventas = [...(LocalDB.getSales?.() || [])]
+        .filter(venta => normalizarNombreCliente(venta?.cliente) === cliente)
+        .sort((a,b) => {
+            const fa = new Date(a?.createdAt || a?.fecha || 0).getTime() || 0;
+            const fb = new Date(b?.createdAt || b?.fecha || 0).getTime() || 0;
+            return fb - fa;
+        });
+
+    for(const venta of ventas){
+        const item = Array.isArray(venta?.items)
+            ? venta.items.find(i => i?.productId === productoId)
+            : null;
+        if(item && item.price !== undefined && item.price !== null && item.price !== ""){
+            return Number(item.price);
+        }
+    }
+
+    return Number(precioReal) || 0;
+}
+
+function actualizarPrecioSugeridoVenta(){
+    const producto = LocalDB.getProducts().find(
+        p => p.nombre === document.getElementById("producto")?.value
+    );
+    if(!producto) return;
+
+    const cliente = document.getElementById("cliente")?.value || "";
+    const sugerido = obtenerPrecioSugeridoVenta(cliente, producto.id, producto.precio);
+    const precio = document.getElementById("precio");
+    const etiqueta = document.getElementById("precioSugeridoVenta");
+
+    if(precio) precio.value = sugerido;
+    if(etiqueta){
+        etiqueta.textContent = `Sugerido: $${sugerido.toFixed(2)}`;
+    }
+    actualizarSubtotal();
+}
+
 export function actualizarProducto(){
 
     const productos =
@@ -110,13 +152,10 @@ export function actualizarProducto(){
 
     if(!producto) return;
 
-    document.getElementById("precio").value =
-    producto.precio;
-
     document.getElementById("costo").value =
     producto.costo;
 
-    actualizarSubtotal();
+    actualizarPrecioSugeridoVenta();
 
 }
 
