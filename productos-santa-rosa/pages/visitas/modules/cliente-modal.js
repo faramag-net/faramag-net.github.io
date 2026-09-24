@@ -940,7 +940,10 @@ document
         cantidadEntregada: 0,
 
         precio:
-            producto?.precio || 0
+            LocalDB.getSuggestedPrice(
+                consignacion.clienteId,
+                productId
+            )
 
     });
 
@@ -1537,6 +1540,7 @@ document.querySelectorAll(".ticket-consignacion").forEach(btn=>{
                 <div class="consigna-columnas">
                     <span>Producto</span>
                     <span>Inventario</span>
+                    <span>P.real</span>
                     <span>Cant.</span>
                     <span>Precio</span>
                 </div>
@@ -1567,6 +1571,13 @@ document.querySelectorAll(".ticket-consignacion").forEach(btn=>{
                                     title="Inventario disponible"
                                 >
                                     Inv: ${Number(LocalDB.getCalculatedStock(producto.id) || 0)}
+                                </span>
+
+                                <span
+                                    class="precio-real-consigna"
+                                    title="Precio base definido en Inventario"
+                                >
+                                    $${Number(producto.precio || 0).toFixed(2)}
                                 </span>
 
                                 <input

@@ -781,6 +781,23 @@ static getSuggestedPrice(
     const sales =
         this.getSales();
 
+    // En Ventas los clientes pueden existir como registros ligeros
+    // y las ventas históricas pueden identificar al cliente por nombre.
+    // En Visitas, en cambio, el cliente tiene clienteId.
+    // Resolvemos ambos casos sin crear ningún campo ni historial nuevo.
+    const routeClient =
+        this.getRouteClients?.()
+            ?.find(c => c.id === clienteId);
+
+    const normalizarNombre = nombre =>
+        String(nombre || "")
+            .trim()
+            .replace(/\s+/g, " ")
+            .toLocaleLowerCase("es");
+
+    const nombreCliente =
+        normalizarNombre(routeClient?.nombre);
+
     const ventas =
         sales
         .filter(sale => {
@@ -796,10 +813,19 @@ static getSuggestedPrice(
                         productId
                 );
 
-            return (
-                sale.clienteId === clienteId &&
-                contieneProducto
-            );
+            if(!contieneProducto){
+                return false;
+            }
+
+            const mismoId =
+                sale.clienteId === clienteId;
+
+            const mismoNombre =
+                nombreCliente &&
+                normalizarNombre(sale.cliente) ===
+                nombreCliente;
+
+            return mismoId || mismoNombre;
 
         })
         .sort(
