@@ -1,7 +1,67 @@
 import LocalDB from "../../../core/storage/local-db.js";
 
+function normalizarNombreCliente(nombre = "") {
+    return String(nombre)
+        .trim()
+        .replace(/\s+/g, " ")
+        .toLocaleLowerCase("es");
+}
+
+function obtenerClientesVenta() {
+    const nombres = new Map();
+
+    // Clientes registrados específicamente desde Ventas.
+    (LocalDB.getClients?.() || []).forEach(cliente => {
+        const nombre = String(cliente?.nombre || "").trim().replace(/\s+/g, " ");
+        if (nombre) nombres.set(normalizarNombreCliente(nombre), nombre);
+    });
+
+    // También se aprovechan los nombres que ya existen en el historial de ventas.
+    (LocalDB.getSales?.() || []).forEach(venta => {
+        const nombre = String(venta?.cliente || "").trim().replace(/\s+/g, " ");
+        if (nombre) nombres.set(normalizarNombreCliente(nombre), nombre);
+    });
+
+    return [...nombres.values()].sort((a, b) =>
+        a.localeCompare(b, "es", { sensitivity: "base" })
+    );
+}
+
+export function renderClientesVenta() {
+    const datalist = document.getElementById("clientesVenta");
+    if (!datalist) return;
+
+    datalist.innerHTML = obtenerClientesVenta()
+        .map(nombre => `<option value="${nombre.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;")}"></option>`)
+        .join("");
+}
+
+function guardarClienteVenta(nombre) {
+    const limpio = String(nombre || "").trim().replace(/\s+/g, " ");
+    if (!limpio) return "";
+
+    const clientes = LocalDB.getClients?.() || [];
+    const normalizado = normalizarNombreCliente(limpio);
+    const existente = clientes.find(c =>
+        normalizarNombreCliente(c?.nombre) === normalizado
+    );
+
+    if (!existente) {
+        clientes.push({
+            id: crypto.randomUUID(),
+            nombre: limpio,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        });
+        LocalDB.saveClients(clientes);
+    }
+
+    return existente?.nombre || limpio;
+}
+
 export function cargarProductos(){
     renderProductosVenta();
+    renderClientesVenta();
 }
 
 export function renderProductosVenta(){
@@ -194,6 +254,7 @@ LocalDB.createSale({
 });
 
     limpiarFormulario();
+    renderClientesVenta();
 
     actualizarSubtotal();
 

@@ -1,5 +1,22 @@
 import LocalDB from "../../../core/storage/local-db.js";
 
+function normalizarNombreCliente(nombre = "") {
+    return String(nombre).trim().replace(/\s+/g, " ").toLocaleLowerCase("es");
+}
+
+function guardarClienteVenta(nombre) {
+    const limpio = String(nombre || "").trim().replace(/\s+/g, " ");
+    if (!limpio) return "";
+    const clientes = LocalDB.getClients?.() || [];
+    const normalizado = normalizarNombreCliente(limpio);
+    const existente = clientes.find(c => normalizarNombreCliente(c?.nombre) === normalizado);
+    if (!existente) {
+        clientes.push({ id: crypto.randomUUID(), nombre: limpio, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+        LocalDB.saveClients(clientes);
+    }
+    return existente?.nombre || limpio;
+}
+
 const comanda = [];
 
 function obtenerProductos(){
@@ -165,7 +182,7 @@ export function registrarComanda(){
     if(!items.length){ alert("No hay productos válidos en la comanda"); return; }
     const total=comanda.reduce((t,item)=>t+Number(item.subtotal||0),0);
     const ganancia=comanda.reduce((t,item)=>t+Number(item.ganancia||0),0);
-    const cliente=comanda.find(item=>item.cliente)?.cliente || "";
+    const cliente=guardarClienteVenta(comanda.find(item=>item.cliente)?.cliente || "");
     LocalDB.createSale({
         tipoOperacion:"COMANDA",
         producto:items.length===1?comanda[0].producto:`${items.length} productos`,
