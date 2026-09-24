@@ -132,7 +132,7 @@ function actualizarPrecioSugeridoVenta(){
 
     if(precio) precio.value = sugerido;
     if(etiqueta){
-        etiqueta.textContent = `Sugerido: $${sugerido.toFixed(2)}`;
+        etiqueta.textContent = `P.real: $${Number(producto.precio || 0).toFixed(2)}`;
     }
     actualizarSubtotal();
 }
