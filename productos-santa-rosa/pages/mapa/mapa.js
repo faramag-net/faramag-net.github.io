@@ -364,14 +364,43 @@ function renderMarcadores() {
     }).addTo(mapa);
 
     marker.bindPopup(popupHtml(registro));
+
+    // La nueva ubicación no se guarda hasta que el usuario la confirme.
+    let ubicacionAnterior = {
+      lat: Number(registro.latitud),
+      lng: Number(registro.longitud)
+    };
+
+    marker.on("dragstart", () => {
+      const actual = marker.getLatLng();
+      ubicacionAnterior = { lat: Number(actual.lat), lng: Number(actual.lng) };
+      actualizarEstado(`📍 Moviendo el pin de ${registro.nombre}…`);
+    });
+
     marker.on("dragend", () => {
-      const p = marker.getLatLng();
-      registro.latitud = Number(p.lat);
-      registro.longitud = Number(p.lng);
+      const nueva = marker.getLatLng();
+      const nuevaLat = Number(nueva.lat);
+      const nuevaLng = Number(nueva.lng);
+      const mensaje =
+        `¿Quieres actualizar el pin de "${registro.nombre}" a esta nueva ubicación?\n\n` +
+        `Si eliges "Aceptar", se guardará la nueva ubicación.\n` +
+        `Si eliges "Cancelar", el pin regresará a su ubicación anterior.`;
+
+      const confirmar = window.confirm(mensaje);
+
+      if (!confirmar) {
+        marker.setLatLng([ubicacionAnterior.lat, ubicacionAnterior.lng], { animate: true });
+        actualizarEstado(`↩️ El pin de ${registro.nombre} regresó a su ubicación anterior.`);
+        return;
+      }
+
+      registro.latitud = nuevaLat;
+      registro.longitud = nuevaLng;
       registro.updatedAt = new Date().toISOString();
       guardarMapa();
       if (esReal(registro)) sincronizarClienteReal(registro);
-      actualizarEstado(`📍 Ubicación de ${registro.nombre} actualizada.`);
+      actualizarEstado(`✓ Ubicación de ${registro.nombre} actualizada.`);
+      marker.bindPopup(popupHtml(registro));
     });
     marcadores.set(String(registro.id), marker);
   });
