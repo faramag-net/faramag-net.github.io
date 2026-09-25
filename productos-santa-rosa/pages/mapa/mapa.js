@@ -1,151 +1,388 @@
+const MAP_KEY = "psr_map_clients";
+const ROUTE_KEY = "psr_route_clients";
+const CATEGORIES_KEY = "psr_map_categories";
+
+const DEFAULT_CATEGORIES = [
+  { id: "cliente", nombre: "Cliente", color: "#16803c" },
+  { id: "prospecto", nombre: "Prospecto", color: "#d97706" },
+  { id: "tienda", nombre: "Tienda", color: "#2563eb" },
+  { id: "restaurante", nombre: "Restaurante", color: "#9333ea" },
+  { id: "otro", nombre: "Otro", color: "#64748b" }
+];
+
 const mapa = L.map("mapa", { zoomControl: true }).setView([19.0414, -98.2063], 12);
-
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(mapa);
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png"
-});
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution: "© OpenStreetMap"
+}).addTo(mapa);
 
 const estado = document.getElementById("estadoUbicacion");
-const latInput = document.getElementById("latitudMapa");
-const lonInput = document.getElementById("longitudMapa");
-let marcadorManual = null;
+const panel = document.querySelector(".mapa-panel");
+const modal = document.getElementById("modalCliente");
+const form = document.getElementById("formClienteMapa");
+const marcadores = new Map();
+let clientesMapa = cargarJSON(MAP_KEY, []);
+let categorias = cargarJSON(CATEGORIES_KEY, DEFAULT_CATEGORIES);
+let categoriasSeleccionadas = new Set(categorias.map(c => c.id));
+let marcadorNuevo = null;
 
-function actualizarCoordenadas(lat, lon) {
-  latInput.value = Number(lat).toFixed(7);
-  lonInput.value = Number(lon).toFixed(7);
+function cargarJSON(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return Array.isArray(value) ? value : fallback;
+  } catch (_) {
+    return fallback;
+  }
 }
 
-function colocarMarcador(lat, lon, zoom = 16) {
-  if (!marcadorManual) {
-    marcadorManual = L.marker([lat, lon], { draggable: true }).addTo(mapa);
-    marcadorManual.bindPopup("Arrastra este marcador o toca el mapa para cambiar la ubicación.");
-    marcadorManual.on("dragend", () => {
-      const p = marcadorManual.getLatLng();
-      actualizarCoordenadas(p.lat, p.lng);
-      estado.textContent = "Ubicación ajustada manualmente.";
-    });
+function guardarMapa() {
+  localStorage.setItem(MAP_KEY, JSON.stringify(clientesMapa));
+}
+
+function guardarCategorias() {
+  localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categorias));
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function normalizar(texto) {
+  return String(texto ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function categoriaPorId(id) {
+  return categorias.find(c => c.id === id) || categorias[0];
+}
+
+function crearIconoCategoria(categoria) {
+  const color = categoria?.color || "#64748b";
+  return L.divIcon({
+    className: "pin-categoria-wrapper",
+    html: `<span class="pin-categoria" style="--pin-color:${escapeHtml(color)}"><span></span></span>`,
+    iconSize: [34, 42],
+    iconAnchor: [17, 40],
+    popupAnchor: [0, -38]
+  });
+}
+
+function obtenerNombreTipo(tipo) {
+  return tipo === "prospecto" ? "🎯 Prospecto" : "👤 Cliente real";
+}
+
+function crearId() {
+  return `map-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function esReal(registro) {
+  return registro.tipo === "real";
+}
+
+function sincronizarClienteReal(registro) {
+  if (!esReal(registro)) return;
+  const lista = cargarJSON(ROUTE_KEY, []);
+  const indice = lista.findIndex(c => String(c.id) === String(registro.routeClientId));
+  if (indice === -1) return;
+
+  const cliente = lista[indice];
+  cliente.nombre = registro.nombre;
+  cliente.telefono = registro.telefono || "";
+  cliente.direccion = registro.direccion || "";
+  cliente.latitud = Number(registro.latitud);
+  cliente.longitud = Number(registro.longitud);
+  cliente.updatedAt = new Date().toISOString();
+  localStorage.setItem(ROUTE_KEY, JSON.stringify(lista));
+}
+
+function crearClienteRealDesdeMapa(registro) {
+  const lista = cargarJSON(ROUTE_KEY, []);
+  const nombre = normalizar(registro.nombre);
+  const existente = lista.find(c => normalizar(c.nombre) === nombre);
+
+  if (existente) {
+    registro.routeClientId = existente.id;
+    existente.telefono = registro.telefono || existente.telefono || "";
+    existente.direccion = registro.direccion || existente.direccion || "";
+    existente.latitud = Number(registro.latitud);
+    existente.longitud = Number(registro.longitud);
+    existente.updatedAt = new Date().toISOString();
   } else {
-    marcadorManual.setLatLng([lat, lon]);
+    const nuevo = {
+      id: `cliente-${Date.now()}`,
+      nombre: registro.nombre,
+      telefono: registro.telefono || "",
+      direccion: registro.direccion || "",
+      latitud: Number(registro.latitud),
+      longitud: Number(registro.longitud),
+      estatus: "activo",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    lista.push(nuevo);
+    registro.routeClientId = nuevo.id;
   }
-  actualizarCoordenadas(lat, lon);
-  mapa.setView([lat, lon], Math.max(mapa.getZoom(), zoom));
+  localStorage.setItem(ROUTE_KEY, JSON.stringify(lista));
 }
 
-mapa.on("click", (e) => {
-  colocarMarcador(e.latlng.lat, e.latlng.lng);
-  estado.textContent = "Ubicación seleccionada en el mapa.";
+function renderCategorias() {
+  const lista = document.getElementById("listaCategorias");
+  lista.innerHTML = categorias.map(c => `
+    <label class="categoria-check">
+      <input type="checkbox" data-categoria="${escapeHtml(c.id)}" ${categoriasSeleccionadas.has(c.id) ? "checked" : ""}>
+      <span class="dot-categoria" style="--cat-color:${escapeHtml(c.color)}"></span>
+      <span>${escapeHtml(c.nombre)}</span>
+    </label>
+  `).join("");
+
+  const select = document.getElementById("mapaCategoria");
+  select.innerHTML = categorias.map(c =>
+    `<option value="${escapeHtml(c.id)}">${escapeHtml(c.nombre)}</option>`
+  ).join("");
+
+  lista.querySelectorAll("input[data-categoria]").forEach(input => {
+    input.addEventListener("change", () => {
+      if (input.checked) categoriasSeleccionadas.add(input.dataset.categoria);
+      else categoriasSeleccionadas.delete(input.dataset.categoria);
+      renderMarcadores();
+    });
+  });
+}
+
+function coincideBusqueda(registro) {
+  const q = normalizar(document.getElementById("buscarMapa").value);
+  if (!q) return true;
+  const texto = [
+    registro.nombre,
+    registro.telefono,
+    registro.direccion,
+    registro.comentarios,
+    categoriaPorId(registro.categoriaId)?.nombre,
+    registro.tipo
+  ].map(normalizar).join(" ");
+  return texto.includes(q);
+}
+
+function registroVisible(registro) {
+  return categoriasSeleccionadas.has(registro.categoriaId) && coincideBusqueda(registro);
+}
+
+function abrirGoogleMaps(registro) {
+  const lat = Number(registro.latitud);
+  const lon = Number(registro.longitud);
+  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lon}`)}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function popupHtml(registro) {
+  const categoria = categoriaPorId(registro.categoriaId);
+  const tipo = obtenerNombreTipo(registro.tipo);
+  const comentario = registro.comentarios
+    ? `<div class="popup-nota">💬 ${escapeHtml(registro.comentarios)}</div>`
+    : "";
+
+  return `
+    <div class="popup-cliente">
+      <div class="popup-titulo"><span class="popup-dot" style="--cat-color:${escapeHtml(categoria.color)}"></span><b>${escapeHtml(registro.nombre)}</b></div>
+      <div class="popup-meta">${tipo} · ${escapeHtml(categoria.nombre)}</div>
+      ${registro.telefono ? `<div>📞 ${escapeHtml(registro.telefono)}</div>` : ""}
+      ${registro.direccion ? `<div>📍 ${escapeHtml(registro.direccion)}</div>` : ""}
+      ${comentario}
+      <div class="popup-botones">
+        <button type="button" data-accion="editar" data-id="${escapeHtml(registro.id)}">✏️ Editar</button>
+        <button type="button" data-accion="google" data-id="${escapeHtml(registro.id)}">🗺️ Google Maps</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderMarcadores() {
+  marcadores.forEach(marker => marker.remove());
+  marcadores.clear();
+
+  const visibles = clientesMapa.filter(registroVisible);
+  visibles.forEach(registro => {
+    if (!Number.isFinite(Number(registro.latitud)) || !Number.isFinite(Number(registro.longitud))) return;
+    const categoria = categoriaPorId(registro.categoriaId);
+    const marker = L.marker([Number(registro.latitud), Number(registro.longitud)], {
+      draggable: true,
+      icon: crearIconoCategoria(categoria)
+    }).addTo(mapa);
+
+    marker.bindPopup(popupHtml(registro));
+    marker.on("dragend", () => {
+      const p = marker.getLatLng();
+      registro.latitud = Number(p.lat);
+      registro.longitud = Number(p.lng);
+      registro.updatedAt = new Date().toISOString();
+      guardarMapa();
+      if (esReal(registro)) sincronizarClienteReal(registro);
+      actualizarEstado(`📍 Ubicación de ${registro.nombre} actualizada.`);
+    });
+    marcadores.set(String(registro.id), marker);
+  });
+
+  actualizarEstado(`${visibles.length} ${visibles.length === 1 ? "registro visible" : "registros visibles"}.`);
+}
+
+function actualizarEstado(texto) {
+  estado.textContent = texto;
+}
+
+function abrirModal({ registro = null, lat = null, lon = null } = {}) {
+  const nuevo = !registro;
+  document.getElementById("mapaId").value = registro?.id || "";
+  document.getElementById("mapaLatitud").value = Number(registro?.latitud ?? lat).toFixed(7);
+  document.getElementById("mapaLongitud").value = Number(registro?.longitud ?? lon).toFixed(7);
+  document.getElementById("mapaNombre").value = registro?.nombre || "";
+  document.getElementById("mapaTelefono").value = registro?.telefono || "";
+  document.getElementById("mapaDireccion").value = registro?.direccion || "";
+  document.getElementById("mapaComentarios").value = registro?.comentarios || "";
+  document.getElementById("mapaCategoria").value = registro?.categoriaId || categorias[0]?.id || "";
+  document.querySelector(`input[name="tipoRegistro"][value="${registro?.tipo || "real"}"]`).checked = true;
+  document.getElementById("tituloModalMapa").textContent = nuevo ? "📍 Nuevo registro" : `✏️ Editar ${registro.nombre}`;
+  document.getElementById("subtituloModalMapa").textContent = nuevo ? "Cliente o prospecto" : obtenerNombreTipo(registro.tipo);
+  document.getElementById("btnEliminarRegistro").hidden = nuevo;
+  document.getElementById("coordenadasTexto").textContent = `${Number(registro?.latitud ?? lat).toFixed(7)}, ${Number(registro?.longitud ?? lon).toFixed(7)}`;
+  modal.classList.add("visible");
+  modal.setAttribute("aria-hidden", "false");
+  setTimeout(() => document.getElementById("mapaNombre").focus(), 50);
+}
+
+function cerrarModal() {
+  modal.classList.remove("visible");
+  modal.setAttribute("aria-hidden", "true");
+}
+
+function eliminarRegistro() {
+  const id = document.getElementById("mapaId").value;
+  const registro = clientesMapa.find(c => String(c.id) === String(id));
+  if (!registro) return;
+  if (!confirm(`¿Eliminar "${registro.nombre}" del mapa?`)) return;
+  clientesMapa = clientesMapa.filter(c => String(c.id) !== String(id));
+  guardarMapa();
+  cerrarModal();
+  renderMarcadores();
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  const id = document.getElementById("mapaId").value;
+  const tipo = document.querySelector('input[name="tipoRegistro"]:checked')?.value || "real";
+  const nombre = document.getElementById("mapaNombre").value.trim();
+  const latitud = Number(document.getElementById("mapaLatitud").value);
+  const longitud = Number(document.getElementById("mapaLongitud").value);
+
+  if (!nombre) return alert("Escribe el nombre del cliente o prospecto.");
+  if (!Number.isFinite(latitud) || !Number.isFinite(longitud)) return alert("La ubicación del pin no es válida.");
+
+  const categoriaId = document.getElementById("mapaCategoria").value;
+  const datos = {
+    nombre,
+    telefono: document.getElementById("mapaTelefono").value.trim(),
+    direccion: document.getElementById("mapaDireccion").value.trim(),
+    comentarios: document.getElementById("mapaComentarios").value.trim(),
+    categoriaId,
+    tipo,
+    latitud,
+    longitud,
+    updatedAt: new Date().toISOString()
+  };
+
+  if (id) {
+    const registro = clientesMapa.find(c => String(c.id) === String(id));
+    if (!registro) return;
+    Object.assign(registro, datos);
+    if (esReal(registro)) sincronizarClienteReal(registro);
+  } else {
+    const registro = { id: crearId(), createdAt: new Date().toISOString(), ...datos };
+    if (tipo === "real") crearClienteRealDesdeMapa(registro);
+    clientesMapa.push(registro);
+  }
+
+  guardarMapa();
+  cerrarModal();
+  renderMarcadores();
+  actualizarEstado(`✓ ${tipo === "prospecto" ? "Prospecto" : "Cliente"} guardado.`);
 });
 
-document.getElementById("btnIrCoordenadas")?.addEventListener("click", () => {
-  const lat = Number(latInput.value);
-  const lon = Number(lonInput.value);
-  if (!Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-    alert("Escribe una latitud (-90 a 90) y longitud (-180 a 180) válidas.");
-    return;
-  }
-  colocarMarcador(lat, lon);
-  estado.textContent = "Ubicación colocada mediante coordenadas.";
+document.getElementById("btnEliminarRegistro").addEventListener("click", eliminarRegistro);
+document.getElementById("btnCerrarModal").addEventListener("click", cerrarModal);
+document.getElementById("btnCancelarModal").addEventListener("click", cerrarModal);
+modal.addEventListener("click", e => { if (e.target === modal) cerrarModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarModal(); });
+
+document.getElementById("btnNuevoCliente").addEventListener("click", () => {
+  const centro = mapa.getCenter();
+  abrirModal({ lat: centro.lat, lon: centro.lng });
+});
+document.getElementById("btnCerrarPanel").addEventListener("click", () => panel.classList.add("oculto"));
+document.getElementById("btnAbrirPanel").addEventListener("click", () => panel.classList.remove("oculto"));
+document.getElementById("buscarMapa").addEventListener("input", renderMarcadores);
+document.getElementById("btnTodasCategorias").addEventListener("click", () => {
+  categoriasSeleccionadas = new Set(categorias.map(c => c.id));
+  renderCategorias();
+  renderMarcadores();
+});
+document.getElementById("btnLimpiarFiltros").addEventListener("click", () => {
+  document.getElementById("buscarMapa").value = "";
+  categoriasSeleccionadas = new Set(categorias.map(c => c.id));
+  renderCategorias();
+  renderMarcadores();
 });
 
-document.getElementById("btnMiUbicacion")?.addEventListener("click", () => {
-  if (!navigator.geolocation) {
-    alert("Este dispositivo/navegador no permite obtener la ubicación.");
-    return;
-  }
+document.getElementById("btnMiUbicacion").addEventListener("click", () => {
+  if (!navigator.geolocation) return alert("Este dispositivo/navegador no permite obtener la ubicación.");
   const boton = document.getElementById("btnMiUbicacion");
   boton.disabled = true;
   boton.textContent = "📍 Obteniendo...";
-  estado.textContent = "Solicitando la ubicación real del dispositivo...";
-
   navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const { latitude, longitude, accuracy } = pos.coords;
-      colocarMarcador(latitude, longitude, 17);
-      estado.textContent = `Ubicación del dispositivo. Precisión aproximada: ${Math.round(accuracy || 0)} m.`;
+    pos => {
+      mapa.setView([pos.coords.latitude, pos.coords.longitude], 17);
       boton.disabled = false;
       boton.textContent = "📍 Mi ubicación";
+      actualizarEstado("Ubicación del dispositivo centrada en el mapa.");
     },
-    (error) => {
+    () => {
       boton.disabled = false;
       boton.textContent = "📍 Mi ubicación";
-      if (error.code === 1) estado.textContent = "Permiso de ubicación bloqueado para este sitio.";
-      else if (error.code === 2) estado.textContent = "El dispositivo no pudo determinar la ubicación.";
-      else estado.textContent = "La ubicación tardó demasiado. Intenta nuevamente.";
-      alert(estado.textContent);
+      alert("No fue posible obtener la ubicación del dispositivo.");
     },
     { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
   );
 });
 
-const clientes = JSON.parse(localStorage.getItem("psr_route_clients")) || [];
-const puntos = [];
-const marcadoresClientes = new Map();
-
-function guardarUbicacionCliente(cliente, lat, lon) {
-  const lista = JSON.parse(localStorage.getItem("psr_route_clients")) || [];
-  const indice = lista.findIndex(c => c.id === cliente.id);
-  if (indice === -1) return false;
-
-  lista[indice].latitud = Number(lat);
-  lista[indice].longitud = Number(lon);
-  lista[indice].updatedAt = new Date().toISOString();
-  localStorage.setItem("psr_route_clients", JSON.stringify(lista));
-
-  // Mantener también la referencia local actualizada.
-  cliente.latitud = Number(lat);
-  cliente.longitud = Number(lon);
-  cliente.updatedAt = lista[indice].updatedAt;
-  return true;
-}
-
-clientes.forEach(cliente => {
-  if (!Number.isFinite(Number(cliente.latitud)) || !Number.isFinite(Number(cliente.longitud))) return;
-
-  const punto = [Number(cliente.latitud), Number(cliente.longitud)];
-  puntos.push(punto);
-
-  // Cada cliente tiene SU PROPIO marcador arrastrable.
-  const marcador = L.marker(punto, { draggable: true }).addTo(mapa);
-  marcadoresClientes.set(String(cliente.id), marcador);
-
-  marcador.bindPopup(`
-    <div style="min-width:190px">
-      <b>${escapeHtml(cliente.nombre)}</b><br>
-      📞 ${escapeHtml(cliente.telefono || "-")}<br>
-      📍 ${escapeHtml(cliente.direccion || "-")}<br><br>
-      <small>🖐️ Arrastra este pin para cambiar la ubicación.</small>
-    </div>
-  `);
-
-  marcador.on("dragstart", () => {
-    estado.textContent = `Moviendo ubicación de ${cliente.nombre}...`;
-  });
-
-  marcador.on("dragend", () => {
-    const posicion = marcador.getLatLng();
-    if (guardarUbicacionCliente(cliente, posicion.lat, posicion.lng)) {
-      actualizarCoordenadas(posicion.lat, posicion.lng);
-      estado.textContent = `📍 Ubicación de ${cliente.nombre} actualizada.`;
-      marcador.setPopupContent(`
-        <div style="min-width:190px">
-          <b>${escapeHtml(cliente.nombre)}</b><br>
-          📞 ${escapeHtml(cliente.telefono || "-")}<br>
-          📍 ${escapeHtml(cliente.direccion || "-")}<br><br>
-          <small>🖐️ Arrastra este pin para cambiar la ubicación.</small>
-        </div>
-      `);
-    } else {
-      estado.textContent = "No se pudo guardar la nueva ubicación del cliente.";
-    }
-  });
+mapa.on("click", e => {
+  abrirModal({ lat: e.latlng.lat, lon: e.latlng.lng });
 });
 
-if (puntos.length) mapa.fitBounds(puntos, { padding: [30, 30] });
+document.addEventListener("click", event => {
+  const boton = event.target.closest("button[data-accion]");
+  if (!boton) return;
+  const registro = clientesMapa.find(c => String(c.id) === String(boton.dataset.id));
+  if (!registro) return;
+  const marker = marcadores.get(String(registro.id));
+  if (boton.dataset.accion === "editar") {
+    if (marker) marker.closePopup();
+    abrirModal({ registro });
+  }
+  if (boton.dataset.accion === "google") abrirGoogleMaps(registro);
+});
 
-function escapeHtml(value) {
-  return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+renderCategorias();
+renderMarcadores();
+
+if (clientesMapa.length) {
+  const puntos = clientesMapa
+    .filter(c => Number.isFinite(Number(c.latitud)) && Number.isFinite(Number(c.longitud)))
+    .map(c => [Number(c.latitud), Number(c.longitud)]);
+  if (puntos.length) mapa.fitBounds(puntos, { padding: [40, 40], maxZoom: 15 });
 }

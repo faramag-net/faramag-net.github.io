@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Mapa</title>
+<title>Mapa interactivo</title>
 <link rel="stylesheet" href="../../styles/global.css">
 <link rel="stylesheet" href="./mapa.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -11,14 +11,93 @@
 <body>
 <div id="mapa"></div>
 
-<div class="mapa-controles">
-  <button id="btnMiUbicacion" type="button">📍 Mi ubicación</button>
-  <div class="coordenadas">
-    <input id="latitudMapa" type="number" step="any" inputmode="decimal" placeholder="Latitud">
-    <input id="longitudMapa" type="number" step="any" inputmode="decimal" placeholder="Longitud">
-    <button id="btnIrCoordenadas" type="button">📌 Ir</button>
+<div class="mapa-panel">
+  <div class="mapa-panel-head">
+    <strong>🗺️ Mapa interactivo</strong>
+    <button id="btnCerrarPanel" type="button" aria-label="Cerrar panel">×</button>
   </div>
-  <small id="estadoUbicacion">Puedes mover el marcador directamente sobre el mapa.</small>
+
+  <div class="mapa-busqueda">
+    <input id="buscarMapa" type="search" placeholder="🔎 Buscar cliente, prospecto, dirección o comentario…" autocomplete="off">
+    <button id="btnNuevoCliente" type="button">＋ Nuevo</button>
+  </div>
+
+  <div class="mapa-filtros">
+    <div class="filtros-head">
+      <span>Categorías</span>
+      <button id="btnTodasCategorias" type="button">Todas</button>
+    </div>
+    <div id="listaCategorias" class="lista-categorias"></div>
+  </div>
+
+  <div class="mapa-acciones">
+    <button id="btnMiUbicacion" type="button">📍 Mi ubicación</button>
+    <button id="btnLimpiarFiltros" type="button">↺ Limpiar</button>
+  </div>
+
+  <small id="estadoUbicacion">Toca el mapa para colocar un nuevo cliente o prospecto.</small>
+</div>
+
+<button id="btnAbrirPanel" class="btn-flotante" type="button" aria-label="Abrir controles">☰</button>
+
+<div id="modalCliente" class="modal-mapa" aria-hidden="true">
+  <div class="modal-mapa-card" role="dialog" aria-modal="true" aria-labelledby="tituloModalMapa">
+    <div class="modal-mapa-head">
+      <div>
+        <small id="subtituloModalMapa">Nuevo registro</small>
+        <h2 id="tituloModalMapa">📍 Nuevo cliente</h2>
+      </div>
+      <button id="btnCerrarModal" type="button" aria-label="Cerrar">×</button>
+    </div>
+
+    <form id="formClienteMapa">
+      <input type="hidden" id="mapaId">
+      <input type="hidden" id="mapaLatitud">
+      <input type="hidden" id="mapaLongitud">
+
+      <div class="tipo-registro">
+        <label><input type="radio" name="tipoRegistro" value="real" checked> 👤 Cliente real</label>
+        <label><input type="radio" name="tipoRegistro" value="prospecto"> 🎯 Prospecto</label>
+      </div>
+
+      <div class="campo">
+        <label for="mapaNombre">Nombre *</label>
+        <input id="mapaNombre" type="text" required maxlength="100" placeholder="Nombre del cliente o negocio">
+      </div>
+
+      <div class="dos-columnas">
+        <div class="campo">
+          <label for="mapaTelefono">Teléfono</label>
+          <input id="mapaTelefono" type="tel" inputmode="tel" maxlength="30" placeholder="Teléfono">
+        </div>
+        <div class="campo">
+          <label for="mapaCategoria">Categoría *</label>
+          <select id="mapaCategoria" required></select>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="mapaDireccion">Dirección</label>
+        <input id="mapaDireccion" type="text" maxlength="180" placeholder="Dirección o referencia">
+      </div>
+
+      <div class="campo">
+        <label for="mapaComentarios">Comentarios</label>
+        <textarea id="mapaComentarios" rows="3" maxlength="500" placeholder="Notas, horarios, contacto, interés, etc."></textarea>
+      </div>
+
+      <div class="coordenadas-modal">
+        <span>📍 <b>Ubicación</b></span>
+        <span id="coordenadasTexto">—</span>
+      </div>
+
+      <div class="modal-acciones">
+        <button id="btnEliminarRegistro" class="btn-peligro" type="button" hidden>🗑️ Eliminar del mapa</button>
+        <button class="btn-secundario" type="button" id="btnCancelarModal">Cancelar</button>
+        <button class="btn-principal" type="submit">💾 Guardar</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
