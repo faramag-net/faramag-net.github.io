@@ -386,7 +386,7 @@ async function obtenerDireccionEscrita(latitud, longitud) {
   }
 }
 
-function abrirModal({ registro = null, lat = null, lon = null } = {}) {
+function abrirModal({ registro = null, lat = null, lon = null, obtenerDireccion = true } = {}) {
   const nuevo = !registro;
   document.getElementById("mapaId").value = registro?.id || "";
   document.getElementById("mapaLatitud").value = Number(registro?.latitud ?? lat).toFixed(7);
@@ -407,7 +407,7 @@ function abrirModal({ registro = null, lat = null, lon = null } = {}) {
 
   // Al crear un registro nuevo, obtener automáticamente la dirección
   // correspondiente al punto seleccionado en el mapa.
-  if (nuevo && Number.isFinite(Number(lat)) && Number.isFinite(Number(lon))) {
+  if (nuevo && obtenerDireccion && Number.isFinite(Number(lat)) && Number.isFinite(Number(lon))) {
     const campoDireccion = document.getElementById("mapaDireccion");
     campoDireccion.value = "Obteniendo dirección…";
     obtenerDireccionEscrita(Number(lat), Number(lon)).then(() => {

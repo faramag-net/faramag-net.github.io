@@ -81,3 +81,12 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; }
 #btnCerrarPanel, #btnCerrarModal { color:#000 !important; background:transparent !important; }
 .btn-flotante { color:#243447; }
 .categoria-check button { min-width:28px; min-height:28px; }
+
+
+#btnAgregarExistente { background:#0f766e; color:#fff; }
+.lista-clientes-existentes { display:flex; flex-direction:column; gap:8px; max-height:45vh; overflow:auto; margin-top:8px; }
+.cliente-existente-item { width:100%; text-align:left; border:1px solid #cbd5e1; background:#fff; color:#172033; border-radius:10px; padding:11px 12px; cursor:pointer; }
+.cliente-existente-item strong, .cliente-existente-item span { display:block; }
+.cliente-existente-item span { margin-top:3px; font-size:.88rem; color:#475569; }
+.cliente-existente-item:hover { border-color:#0f766e; }
+.sin-clientes-existentes { padding:12px; color:#475569; text-align:center; }

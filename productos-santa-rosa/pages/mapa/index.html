@@ -20,6 +20,7 @@
   <div class="mapa-busqueda">
     <input id="buscarMapa" type="search" placeholder="🔎 Buscar cliente, prospecto, dirección o comentario…" autocomplete="off">
     <button id="btnNuevoCliente" type="button">＋ Nuevo</button>
+    <button id="btnAgregarExistente" type="button">➕ Existente</button>
   </div>
 
   <div class="mapa-filtros">
@@ -100,6 +101,27 @@
         <button class="btn-principal" type="submit">💾 Guardar</button>
       </div>
     </form>
+  </div>
+</div>
+
+
+<div id="modalExistente" class="modal-mapa" aria-hidden="true">
+  <div class="modal-mapa-card" role="dialog" aria-modal="true" aria-labelledby="tituloModalExistente">
+    <div class="modal-mapa-head">
+      <div>
+        <small>Clientes de Visitas</small>
+        <h2 id="tituloModalExistente">➕ Agregar cliente existente</h2>
+      </div>
+      <button id="btnCerrarExistente" type="button" aria-label="Cerrar">×</button>
+    </div>
+    <div class="campo">
+      <label for="buscarClienteExistente">Buscar cliente</label>
+      <input id="buscarClienteExistente" type="search" placeholder="🔎 Nombre, teléfono o dirección" autocomplete="off">
+    </div>
+    <div id="listaClientesExistentes" class="lista-clientes-existentes"></div>
+    <div class="modal-acciones">
+      <button class="btn-secundario" type="button" id="btnCancelarExistente">Cerrar</button>
+    </div>
   </div>
 </div>
 
