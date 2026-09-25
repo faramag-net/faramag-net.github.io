@@ -358,6 +358,34 @@ function actualizarEstado(texto) {
   estado.textContent = texto;
 }
 
+async function obtenerDireccionEscrita(latitud, longitud) {
+  const campo = document.getElementById("mapaDireccion");
+  if (!campo || !Number.isFinite(Number(latitud)) || !Number.isFinite(Number(longitud))) return;
+
+  try {
+    const respuesta = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(latitud)}&lon=${encodeURIComponent(longitud)}&accept-language=es`,
+      {
+        headers: {
+          "Accept": "application/json"
+        }
+      }
+    );
+
+    if (!respuesta.ok) return;
+
+    const datos = await respuesta.json();
+    const direccion = String(datos.display_name || "").trim();
+
+    // Solo completar automáticamente si el usuario todavía no escribió nada.
+    if (direccion && !campo.value.trim()) {
+      campo.value = direccion;
+    }
+  } catch (error) {
+    console.warn("No fue posible obtener la dirección escrita:", error);
+  }
+}
+
 function abrirModal({ registro = null, lat = null, lon = null } = {}) {
   const nuevo = !registro;
   document.getElementById("mapaId").value = registro?.id || "";
@@ -376,6 +404,18 @@ function abrirModal({ registro = null, lat = null, lon = null } = {}) {
   modal.classList.add("visible");
   modal.setAttribute("aria-hidden", "false");
   setTimeout(() => document.getElementById("mapaNombre").focus(), 50);
+
+  // Al crear un registro nuevo, obtener automáticamente la dirección
+  // correspondiente al punto seleccionado en el mapa.
+  if (nuevo && Number.isFinite(Number(lat)) && Number.isFinite(Number(lon))) {
+    const campoDireccion = document.getElementById("mapaDireccion");
+    campoDireccion.value = "Obteniendo dirección…";
+    obtenerDireccionEscrita(Number(lat), Number(lon)).then(() => {
+      if (campoDireccion.value === "Obteniendo dirección…") {
+        campoDireccion.value = "";
+      }
+    });
+  }
 }
 
 function cerrarModal() {
