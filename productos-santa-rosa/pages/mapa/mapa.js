@@ -25,6 +25,7 @@ let clientesMapa = cargarJSON(MAP_KEY, []);
 let categorias = cargarJSON(CATEGORIES_KEY, DEFAULT_CATEGORIES);
 let categoriasSeleccionadas = new Set(categorias.map(c => c.id));
 let marcadorNuevo = null;
+let marcadorMiUbicacion = null;
 
 function cargarJSON(key, fallback) {
   try {
@@ -41,6 +42,92 @@ function guardarMapa() {
 
 function guardarCategorias() {
   localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categorias));
+}
+
+function esCategoriaPermanente(id) {
+  return DEFAULT_CATEGORIES.some(c => c.id === id);
+}
+
+function sincronizarClientesVisitasEnMapa() {
+  const routeClients = cargarJSON(ROUTE_KEY, []);
+  let cambio = false;
+
+  routeClients.forEach(cliente => {
+    const lat = Number(cliente.latitud);
+    const lon = Number(cliente.longitud);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+
+    let registro = clientesMapa.find(c => String(c.routeClientId) === String(cliente.id));
+    if (!registro) {
+      registro = clientesMapa.find(c => normalizar(c.nombre) === normalizar(cliente.nombre) && c.tipo === "real");
+    }
+
+    if (!registro) {
+      registro = {
+        id: crearId(),
+        routeClientId: cliente.id,
+        nombre: cliente.nombre || "Cliente",
+        telefono: cliente.telefono || "",
+        direccion: cliente.direccion || "",
+        comentarios: "",
+        categoriaId: categorias.some(c => c.id === "cliente") ? "cliente" : categorias[0]?.id,
+        tipo: "real",
+        latitud: lat,
+        longitud: lon,
+        createdAt: cliente.createdAt || new Date().toISOString(),
+        updatedAt: cliente.updatedAt || new Date().toISOString()
+      };
+      clientesMapa.push(registro);
+      cambio = true;
+    } else {
+      if (registro.routeClientId !== cliente.id) { registro.routeClientId = cliente.id; cambio = true; }
+      if (registro.nombre !== cliente.nombre) { registro.nombre = cliente.nombre || registro.nombre; cambio = true; }
+      if (registro.telefono !== (cliente.telefono || "")) { registro.telefono = cliente.telefono || ""; cambio = true; }
+      if (registro.direccion !== (cliente.direccion || "")) { registro.direccion = cliente.direccion || ""; cambio = true; }
+      if (Number(registro.latitud) !== lat || Number(registro.longitud) !== lon) { registro.latitud = lat; registro.longitud = lon; cambio = true; }
+      if (registro.tipo !== "real") { registro.tipo = "real"; cambio = true; }
+      if (!registro.categoriaId || !categorias.some(c => c.id === registro.categoriaId)) { registro.categoriaId = categorias.some(c => c.id === "cliente") ? "cliente" : categorias[0]?.id; cambio = true; }
+    }
+  });
+
+  if (cambio) guardarMapa();
+}
+
+function crearCategoria() {
+  const nombre = prompt("Nombre de la nueva categoría:");
+  if (!nombre || !nombre.trim()) return;
+  const limpio = nombre.trim();
+  if (categorias.some(c => normalizar(c.nombre) === normalizar(limpio))) return alert("Ya existe una categoría con ese nombre.");
+  const color = prompt("Color del pin (hexadecimal, por ejemplo #0ea5e9):", "#0ea5e9")?.trim() || "#0ea5e9";
+  const colorValido = /^#[0-9a-fA-F]{6}$/.test(color) ? color : "#0ea5e9";
+  const id = `cat-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+  categorias.push({ id, nombre: limpio, color: colorValido, personalizada: true });
+  categoriasSeleccionadas.add(id);
+  guardarCategorias();
+  renderCategorias();
+  renderMarcadores();
+}
+
+function eliminarCategoria(id) {
+  const categoria = categoriaPorId(id);
+  if (!categoria || esCategoriaPermanente(id)) return alert("Las categorías predeterminadas no se pueden eliminar.");
+  const destino = categorias.filter(c => c.id !== id);
+  if (!destino.length) return;
+  const opciones = destino.map((c, i) => `${i + 1}. ${c.nombre}`).join("\n");
+  const respuesta = prompt(`La categoría \"${categoria.nombre}\" tiene registros. Escribe el número de la categoría a la que quieres pasarlos:\n\n${opciones}`);
+  const indice = Number(respuesta) - 1;
+  if (!Number.isInteger(indice) || !destino[indice]) return;
+  const nueva = destino[indice];
+  clientesMapa.forEach(registro => {
+    if (registro.categoriaId === id) registro.categoriaId = nueva.id;
+  });
+  categorias = destino;
+  categoriasSeleccionadas.delete(id);
+  categoriasSeleccionadas.add(nueva.id);
+  guardarCategorias();
+  guardarMapa();
+  renderCategorias();
+  renderMarcadores();
 }
 
 function escapeHtml(value) {
@@ -140,6 +227,7 @@ function renderCategorias() {
       <input type="checkbox" data-categoria="${escapeHtml(c.id)}" ${categoriasSeleccionadas.has(c.id) ? "checked" : ""}>
       <span class="dot-categoria" style="--cat-color:${escapeHtml(c.color)}"></span>
       <span>${escapeHtml(c.nombre)}</span>
+      ${esCategoriaPermanente(c.id) ? "" : `<button type="button" class="btn-eliminar-categoria" data-eliminar-categoria="${escapeHtml(c.id)}" title="Eliminar categoría">×</button>`}
     </label>
   `).join("");
 
@@ -153,6 +241,13 @@ function renderCategorias() {
       if (input.checked) categoriasSeleccionadas.add(input.dataset.categoria);
       else categoriasSeleccionadas.delete(input.dataset.categoria);
       renderMarcadores();
+    });
+  });
+  lista.querySelectorAll("button[data-eliminar-categoria]").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      eliminarCategoria(btn.dataset.eliminarCategoria);
     });
   });
 }
@@ -339,26 +434,43 @@ document.getElementById("btnLimpiarFiltros").addEventListener("click", () => {
   renderMarcadores();
 });
 
-document.getElementById("btnMiUbicacion").addEventListener("click", () => {
-  if (!navigator.geolocation) return alert("Este dispositivo/navegador no permite obtener la ubicación.");
+function mostrarMiUbicacion(centrar = false) {
+  if (!navigator.geolocation) {
+    actualizarEstado("Este dispositivo/navegador no permite obtener la ubicación.");
+    return;
+  }
   const boton = document.getElementById("btnMiUbicacion");
   boton.disabled = true;
   boton.textContent = "📍 Obteniendo...";
   navigator.geolocation.getCurrentPosition(
     pos => {
-      mapa.setView([pos.coords.latitude, pos.coords.longitude], 17);
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      if (marcadorMiUbicacion) marcadorMiUbicacion.remove();
+      marcadorMiUbicacion = L.circleMarker([lat, lon], {
+        radius: 9,
+        color: "#fff",
+        weight: 3,
+        fillColor: "#4285f4",
+        fillOpacity: 1,
+        interactive: false
+      }).addTo(mapa);
+      if (centrar) mapa.setView([lat, lon], Math.max(mapa.getZoom(), 16));
       boton.disabled = false;
       boton.textContent = "📍 Mi ubicación";
-      actualizarEstado("Ubicación del dispositivo centrada en el mapa.");
+      actualizarEstado("🔵 Ubicación actualizada.");
     },
     () => {
       boton.disabled = false;
       boton.textContent = "📍 Mi ubicación";
-      alert("No fue posible obtener la ubicación del dispositivo.");
+      actualizarEstado("No fue posible obtener la ubicación.");
     },
-    { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
   );
-});
+}
+
+document.getElementById("btnMiUbicacion").addEventListener("click", () => mostrarMiUbicacion(true));
+document.getElementById("btnNuevaCategoria").addEventListener("click", crearCategoria);
 
 mapa.on("click", e => {
   abrirModal({ lat: e.latlng.lat, lon: e.latlng.lng });
@@ -377,8 +489,10 @@ document.addEventListener("click", event => {
   if (boton.dataset.accion === "google") abrirGoogleMaps(registro);
 });
 
+sincronizarClientesVisitasEnMapa();
 renderCategorias();
 renderMarcadores();
+mostrarMiUbicacion(false);
 
 if (clientesMapa.length) {
   const puntos = clientesMapa
