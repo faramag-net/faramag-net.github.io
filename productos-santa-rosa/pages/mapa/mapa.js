@@ -494,7 +494,21 @@ form.addEventListener("submit", event => {
   if (id) {
     const registro = clientesMapa.find(c => String(c.id) === String(id));
     if (!registro) return;
+
     const tipoAnterior = registro.tipo;
+
+    if (tipoAnterior === "real" && tipo === "prospecto") {
+      const confirmarCambio = confirm(
+        `¿Cambiar a "${nombre}" de 👤 Cliente real a 🎯 Prospecto?\n\n` +
+        `Este cambio hará que deje de aparecer en Visitas.\n` +
+        `El registro permanecerá en el mapa como prospecto.`
+      );
+
+      if (!confirmarCambio) {
+        return;
+      }
+    }
+
     Object.assign(registro, datos, { mapVisible: true });
 
     if (tipo === "real") {
@@ -625,11 +639,12 @@ document.getElementById("btnNuevoCliente").addEventListener("click", () => {
 document.getElementById("btnCerrarPanel").addEventListener("click", () => panel.classList.add("oculto"));
 document.getElementById("btnAbrirPanel").addEventListener("click", () => panel.classList.remove("oculto"));
 document.getElementById("buscarMapa").addEventListener("input", renderMarcadores);
-document.getElementById("btnTodasCategorias").addEventListener("click", () => {
-  categoriasSeleccionadas = new Set(categorias.map(c => c.id));
+document.getElementById("btnQuitarFiltros").addEventListener("click", () => {
+  categoriasSeleccionadas = new Set();
   renderCategorias();
   renderMarcadores();
 });
+
 document.getElementById("btnLimpiarFiltros").addEventListener("click", () => {
   document.getElementById("buscarMapa").value = "";
   categoriasSeleccionadas = new Set(categorias.map(c => c.id));
