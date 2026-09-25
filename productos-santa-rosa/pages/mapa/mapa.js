@@ -62,6 +62,12 @@ function sincronizarClientesVisitasEnMapa() {
       registro = clientesMapa.find(c => normalizar(c.nombre) === normalizar(cliente.nombre) && c.tipo === "real");
     }
 
+    // Si el cliente fue quitado del mapa, conservar su registro oculto
+    // para que no vuelva a aparecer automáticamente al recargar.
+    if (registro?.mapVisible === false) {
+      return;
+    }
+
     if (!registro) {
       registro = {
         id: crearId(),
@@ -85,7 +91,8 @@ function sincronizarClientesVisitasEnMapa() {
       if (registro.telefono !== (cliente.telefono || "")) { registro.telefono = cliente.telefono || ""; cambio = true; }
       if (registro.direccion !== (cliente.direccion || "")) { registro.direccion = cliente.direccion || ""; cambio = true; }
       if (Number(registro.latitud) !== lat || Number(registro.longitud) !== lon) { registro.latitud = lat; registro.longitud = lon; cambio = true; }
-      if (registro.tipo !== "real") { registro.tipo = "real"; cambio = true; }
+      const tipoRoute = cliente.tipo === "prospecto" ? "prospecto" : "real";
+      if (registro.tipo !== tipoRoute) { registro.tipo = tipoRoute; cambio = true; }
       if (!registro.categoriaId || !categorias.some(c => c.id === registro.categoriaId)) { registro.categoriaId = categorias.some(c => c.id === "cliente") ? "cliente" : categorias[0]?.id; cambio = true; }
     }
   });
@@ -217,6 +224,7 @@ function crearClienteRealDesdeMapa(registro) {
     existente.direccion = registro.direccion || existente.direccion || "";
     existente.latitud = Number(registro.latitud);
     existente.longitud = Number(registro.longitud);
+    existente.tipo = "real";
     existente.updatedAt = new Date().toISOString();
   } else {
     const nuevo = {
@@ -228,11 +236,28 @@ function crearClienteRealDesdeMapa(registro) {
       longitud: Number(registro.longitud),
       estatus: "activo",
       createdAt: new Date().toISOString(),
+      tipo: "real",
       updatedAt: new Date().toISOString()
     };
     lista.push(nuevo);
     registro.routeClientId = nuevo.id;
   }
+  localStorage.setItem(ROUTE_KEY, JSON.stringify(lista));
+}
+
+function marcarRouteClientComoProspecto(registro) {
+  const lista = cargarJSON(ROUTE_KEY, []);
+  let cliente = lista.find(c => String(c.id) === String(registro.routeClientId));
+
+  if (!cliente) {
+    const nombre = normalizar(registro.nombre);
+    cliente = lista.find(c => normalizar(c.nombre) === nombre);
+  }
+
+  if (!cliente) return;
+
+  cliente.tipo = "prospecto";
+  cliente.updatedAt = new Date().toISOString();
   localStorage.setItem(ROUTE_KEY, JSON.stringify(lista));
 }
 
@@ -293,7 +318,7 @@ function coincideBusqueda(registro) {
 }
 
 function registroVisible(registro) {
-  return categoriasSeleccionadas.has(registro.categoriaId) && coincideBusqueda(registro);
+  return registro.mapVisible !== false && categoriasSeleccionadas.has(registro.categoriaId) && coincideBusqueda(registro);
 }
 
 function abrirGoogleMaps(registro) {
@@ -360,30 +385,29 @@ function actualizarEstado(texto) {
 
 async function obtenerDireccionEscrita(latitud, longitud) {
   const campo = document.getElementById("mapaDireccion");
-  if (!campo || !Number.isFinite(Number(latitud)) || !Number.isFinite(Number(longitud))) return;
+  if (!campo || !Number.isFinite(Number(latitud)) || !Number.isFinite(Number(longitud))) return "";
 
   try {
+    // Usamos el mismo servicio de geocodificación inversa que funciona
+    // actualmente en Visitas para obtener la dirección escrita.
     const respuesta = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(latitud)}&lon=${encodeURIComponent(longitud)}&accept-language=es`,
-      {
-        headers: {
-          "Accept": "application/json"
-        }
-      }
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitud}&lon=${longitud}`
     );
 
-    if (!respuesta.ok) return;
+    if (!respuesta.ok) return "";
 
     const datos = await respuesta.json();
     const direccion = String(datos.display_name || "").trim();
 
-    // Solo completar automáticamente si el usuario todavía no escribió nada.
-    if (direccion && !campo.value.trim()) {
+    if (direccion) {
       campo.value = direccion;
+      return direccion;
     }
   } catch (error) {
     console.warn("No fue posible obtener la dirección escrita:", error);
   }
+
+  return "";
 }
 
 function abrirModal({ registro = null, lat = null, lon = null, obtenerDireccion = true } = {}) {
@@ -410,8 +434,8 @@ function abrirModal({ registro = null, lat = null, lon = null, obtenerDireccion 
   if (nuevo && obtenerDireccion && Number.isFinite(Number(lat)) && Number.isFinite(Number(lon))) {
     const campoDireccion = document.getElementById("mapaDireccion");
     campoDireccion.value = "Obteniendo dirección…";
-    obtenerDireccionEscrita(Number(lat), Number(lon)).then(() => {
-      if (campoDireccion.value === "Obteniendo dirección…") {
+    obtenerDireccionEscrita(Number(lat), Number(lon)).then(direccion => {
+      if (!direccion && campoDireccion.value === "Obteniendo dirección…") {
         campoDireccion.value = "";
       }
     });
@@ -432,7 +456,12 @@ function eliminarRegistro() {
     ? `¿Eliminar a "${registro.nombre}" del mapa?\n\nEl cliente seguirá existiendo en Visitas.`
     : `¿Eliminar a "${registro.nombre}" del mapa?`;
   if (!confirm(mensaje)) return;
-  clientesMapa = clientesMapa.filter(c => String(c.id) !== String(id));
+  if (esClienteReal) {
+    registro.mapVisible = false;
+    registro.updatedAt = new Date().toISOString();
+  } else {
+    clientesMapa = clientesMapa.filter(c => String(c.id) !== String(id));
+  }
   guardarMapa();
   cerrarModal();
   renderMarcadores();
@@ -465,10 +494,19 @@ form.addEventListener("submit", event => {
   if (id) {
     const registro = clientesMapa.find(c => String(c.id) === String(id));
     if (!registro) return;
-    Object.assign(registro, datos);
-    if (esReal(registro)) sincronizarClienteReal(registro);
+    const tipoAnterior = registro.tipo;
+    Object.assign(registro, datos, { mapVisible: true });
+
+    if (tipo === "real") {
+      // Al volver a Cliente real, vuelve a quedar disponible en Visitas.
+      crearClienteRealDesdeMapa(registro);
+      sincronizarClienteReal(registro);
+    } else {
+      // Prospecto permanece en el mapa, pero deja de mostrarse en Visitas.
+      marcarRouteClientComoProspecto(registro);
+    }
   } else {
-    const registro = { id: crearId(), createdAt: new Date().toISOString(), ...datos };
+    const registro = { id: crearId(), createdAt: new Date().toISOString(), mapVisible: true, ...datos };
     if (tipo === "real") crearClienteRealDesdeMapa(registro);
     clientesMapa.push(registro);
   }
@@ -479,11 +517,106 @@ form.addEventListener("submit", event => {
   actualizarEstado(`✓ ${tipo === "prospecto" ? "Prospecto" : "Cliente"} guardado.`);
 });
 
+function abrirModalExistente() {
+  const modalExistente = document.getElementById("modalExistente");
+  modalExistente.classList.add("visible");
+  modalExistente.setAttribute("aria-hidden", "false");
+  document.getElementById("buscarClienteExistente").value = "";
+  renderClientesExistentes();
+  setTimeout(() => document.getElementById("buscarClienteExistente").focus(), 50);
+}
+
+function cerrarModalExistente() {
+  const modalExistente = document.getElementById("modalExistente");
+  modalExistente.classList.remove("visible");
+  modalExistente.setAttribute("aria-hidden", "true");
+}
+
+function renderClientesExistentes() {
+  const lista = document.getElementById("listaClientesExistentes");
+  const busqueda = normalizar(document.getElementById("buscarClienteExistente").value);
+  const routeClients = cargarJSON(ROUTE_KEY, []).filter(c => c.tipo !== "prospecto");
+  const colocados = new Set(
+    clientesMapa.filter(c => c.mapVisible !== false && c.routeClientId).map(c => String(c.routeClientId))
+  );
+
+  const disponibles = routeClients.filter(c => {
+    if (colocados.has(String(c.id))) return false;
+    const texto = normalizar(`${c.nombre || ""} ${c.telefono || ""} ${c.direccion || ""}`);
+    return !busqueda || texto.includes(busqueda);
+  });
+
+  if (!disponibles.length) {
+    lista.innerHTML = `<p class="sin-resultados">No hay clientes de Visitas disponibles para agregar.</p>`;
+    return;
+  }
+
+  lista.innerHTML = disponibles.map(c => `
+    <button type="button" class="cliente-existente-item" data-cliente-existente="${escapeHtml(c.id)}">
+      <strong>${escapeHtml(c.nombre || "Sin nombre")}</strong>
+      ${c.telefono ? `<span>📞 ${escapeHtml(c.telefono)}</span>` : ""}
+      ${c.direccion ? `<span>📍 ${escapeHtml(c.direccion)}</span>` : ""}
+    </button>
+  `).join("");
+
+  lista.querySelectorAll("[data-cliente-existente]").forEach(btn => {
+    btn.addEventListener("click", () => agregarClienteExistente(btn.dataset.clienteExistente));
+  });
+}
+
+function agregarClienteExistente(clienteId) {
+  const routeClients = cargarJSON(ROUTE_KEY, []);
+  const cliente = routeClients.find(c => String(c.id) === String(clienteId));
+  if (!cliente) return;
+
+  let registro = clientesMapa.find(c => String(c.routeClientId) === String(cliente.id));
+  const lat = Number(cliente.latitud);
+  const lon = Number(cliente.longitud);
+  const centro = mapa.getCenter();
+
+  if (!registro) {
+    registro = {
+      id: crearId(),
+      routeClientId: cliente.id,
+      nombre: cliente.nombre || "Cliente",
+      telefono: cliente.telefono || "",
+      direccion: cliente.direccion || "",
+      comentarios: cliente.notas || "",
+      categoriaId: categorias.some(c => c.id === "cliente") ? "cliente" : categorias[0]?.id,
+      tipo: "real",
+      mapVisible: true,
+      latitud: Number.isFinite(lat) ? lat : centro.lat,
+      longitud: Number.isFinite(lon) ? lon : centro.lng,
+      createdAt: cliente.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    clientesMapa.push(registro);
+  } else {
+    registro.mapVisible = true;
+    registro.tipo = "real";
+  }
+
+  guardarMapa();
+  cerrarModalExistente();
+  renderMarcadores();
+  mapa.setView([Number(registro.latitud), Number(registro.longitud)], Math.max(mapa.getZoom(), 16));
+  actualizarEstado(`✓ ${registro.nombre} agregado al mapa.`);
+}
+
 document.getElementById("btnEliminarRegistro").addEventListener("click", eliminarRegistro);
 document.getElementById("btnCerrarModal").addEventListener("click", cerrarModal);
+document.getElementById("btnAgregarExistente").addEventListener("click", abrirModalExistente);
+document.getElementById("btnCerrarExistente").addEventListener("click", cerrarModalExistente);
+document.getElementById("btnCancelarExistente").addEventListener("click", cerrarModalExistente);
+document.getElementById("buscarClienteExistente").addEventListener("input", renderClientesExistentes);
 document.getElementById("btnCancelarModal").addEventListener("click", cerrarModal);
 modal.addEventListener("click", e => { if (e.target === modal) cerrarModal(); });
-document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarModal(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    cerrarModal();
+    cerrarModalExistente();
+  }
+});
 
 document.getElementById("btnNuevoCliente").addEventListener("click", () => {
   const centro = mapa.getCenter();

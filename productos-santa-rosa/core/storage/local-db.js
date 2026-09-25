@@ -649,6 +649,8 @@ static addClient(client) {
 
         nombre: client.nombre || "",
 
+        tipo: client.tipo || "real",
+
         telefono: client.telefono || "",
 
         direccion: client.direccion || "",

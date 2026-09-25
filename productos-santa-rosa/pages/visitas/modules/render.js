@@ -10,7 +10,8 @@ const container =
 if(!container) return;
 
 let clientes =
-    LocalDB.getRouteClients();
+    LocalDB.getRouteClients()
+        .filter(cliente => cliente.tipo !== "prospecto");
 
 const textoBusqueda =
     document

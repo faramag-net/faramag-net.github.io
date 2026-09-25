@@ -176,7 +176,7 @@ const topClientesPagina = document.getElementById("topClientesPagina");
 const topClientesAnterior = document.getElementById("topClientesAnterior");
 const topClientesSiguiente = document.getElementById("topClientesSiguiente");
 
-const clientesRoute = LocalDB.getRouteClients();
+const clientesRoute = LocalDB.getRouteClients().filter(cliente => cliente.tipo !== "prospecto");
 const ventasPorCliente = new Map();
 
 ventas.forEach(venta => {
