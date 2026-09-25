@@ -108,6 +108,22 @@ function crearCategoria() {
   renderMarcadores();
 }
 
+function renombrarCategoria(id) {
+  const categoria = categoriaPorId(id);
+  if (!categoria || esCategoriaPermanente(id)) return;
+  const nuevoNombre = prompt(`Nuevo nombre para \"${categoria.nombre}\":`, categoria.nombre);
+  if (!nuevoNombre || !nuevoNombre.trim()) return;
+  const limpio = nuevoNombre.trim();
+  if (normalizar(limpio) === normalizar(categoria.nombre)) return;
+  if (categorias.some(c => c.id !== id && normalizar(c.nombre) === normalizar(limpio))) {
+    return alert("Ya existe una categoría con ese nombre.");
+  }
+  categoria.nombre = limpio;
+  guardarCategorias();
+  renderCategorias();
+  renderMarcadores();
+}
+
 function eliminarCategoria(id) {
   const categoria = categoriaPorId(id);
   if (!categoria || esCategoriaPermanente(id)) return alert("Las categorías predeterminadas no se pueden eliminar.");
@@ -227,7 +243,10 @@ function renderCategorias() {
       <input type="checkbox" data-categoria="${escapeHtml(c.id)}" ${categoriasSeleccionadas.has(c.id) ? "checked" : ""}>
       <span class="dot-categoria" style="--cat-color:${escapeHtml(c.color)}"></span>
       <span>${escapeHtml(c.nombre)}</span>
-      ${esCategoriaPermanente(c.id) ? "" : `<button type="button" class="btn-eliminar-categoria" data-eliminar-categoria="${escapeHtml(c.id)}" title="Eliminar categoría">×</button>`}
+      ${esCategoriaPermanente(c.id) ? "" : `
+        <button type="button" class="btn-editar-categoria" data-editar-categoria="${escapeHtml(c.id)}" title="Cambiar nombre">✏️</button>
+        <button type="button" class="btn-eliminar-categoria" data-eliminar-categoria="${escapeHtml(c.id)}" title="Eliminar categoría">🗑️</button>
+      `}
     </label>
   `).join("");
 
@@ -241,6 +260,13 @@ function renderCategorias() {
       if (input.checked) categoriasSeleccionadas.add(input.dataset.categoria);
       else categoriasSeleccionadas.delete(input.dataset.categoria);
       renderMarcadores();
+    });
+  });
+  lista.querySelectorAll("button[data-editar-categoria]").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      renombrarCategoria(btn.dataset.editarCategoria);
     });
   });
   lista.querySelectorAll("button[data-eliminar-categoria]").forEach(btn => {
@@ -361,7 +387,11 @@ function eliminarRegistro() {
   const id = document.getElementById("mapaId").value;
   const registro = clientesMapa.find(c => String(c.id) === String(id));
   if (!registro) return;
-  if (!confirm(`¿Eliminar "${registro.nombre}" del mapa?`)) return;
+  const esClienteReal = esReal(registro);
+  const mensaje = esClienteReal
+    ? `¿Eliminar a "${registro.nombre}" del mapa?\n\nEl cliente seguirá existiendo en Visitas.`
+    : `¿Eliminar a "${registro.nombre}" del mapa?`;
+  if (!confirm(mensaje)) return;
   clientesMapa = clientesMapa.filter(c => String(c.id) !== String(id));
   guardarMapa();
   cerrarModal();
