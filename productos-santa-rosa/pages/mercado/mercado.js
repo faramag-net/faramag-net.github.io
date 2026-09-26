@@ -1,26 +1,65 @@
-import {
-    inicializarClientesUI
+/**
+ * Productos Santa Rosa
+ * Módulo: Mercado
+ * Versión: 1.0.0
+ * Build: 20260925.2225
+ * Objetivo: Catálogo de productos, precios, lugares, fotos y captura rápida.
+ */
+
+import {getPlaces,productNames,observationsForProduct,purchasesForProduct,placeById,upsertPlace,addObservation,addPurchase,savePhoto,getPhoto,normalize} from './mercado-store.js';
+
+const root=document.getElementById('app');
+let query=''; let typeFilter=''; let selectedProduct=''; let captureMode='price'; let selectedPhotoIds=[]; let currentPlace=null;
+
+const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const nav=(active)=>`<nav class="app-navbar"><div class="app-brand">🍓 Santa Rosa</div><a class="app-navlink ${active==='mercado'?'active':''}" href="/productos-santa-rosa/pages/mercado/">🏪 Mercado</a><a class="app-navlink ${active==='insumos'?'active':''}" href="/productos-santa-rosa/pages/insumos/">📦 Compras</a><a class="app-navlink" href="/productos-santa-rosa/pages/mapa/">🗺️ Mapa</a></nav>`;
+
+function shell(content){root.innerHTML=nav('mercado')+content; bind();}
+function products(){return productNames().filter(p=>!query||normalize(p).includes(normalize(query)));}
+function render(){
+ if(selectedProduct){renderProduct();return;}
+ const places=getPlaces();
+ const types=[...new Set(places.map(p=>p.tipo).filter(Boolean))];
+ const ps=products().filter(p=>!typeFilter || observationsForProduct(p).some(o=>placeById(o.clienteId)?.tipo===typeFilter));
+ shell(`<div class="app-head"><div><h1>Mercado</h1><div class="muted">Productos y precios del mercado</div></div><button class="btn" id="newPlace">+ Lugar</button></div>
+ <div class="search-row"><input id="q" class="search" value="${esc(query)}" placeholder="🔎 Buscar producto..."><button class="btn secondary filter-btn" id="filterBtn">☰ Filtros</button></div>
+ <div id="filters" class="filter-panel"><button class="filter-chip ${!typeFilter?'active':''}" data-type="">Todos</button>${types.map(t=>`<button class="filter-chip ${typeFilter===t?'active':''}" data-type="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+ <div class="grid">${ps.map(p=>{const obs=observationsForProduct(p);const prices=obs.map(o=>Number(o.precio)).filter(Boolean);const last=prices.length?prices[prices.length-1]:0;return `<button class="tile" data-product="${esc(p)}"><span class="tile-icon">🛒</span><span class="tile-name">${esc(p)}</span><span class="tile-meta">${last?'$'+last.toFixed(2):'Sin precio'} · ${obs.length} reg.</span></button>`}).join('')}</div>
+ ${!ps.length?'<div class="empty">No hay productos que coincidan. Puedes registrarlo desde una captura nueva.</div>':''}
+ <div class="section"><button class="section-title" data-section="marketHelp">⚡ Captura rápida <span>▼</span></button><div class="section-body" id="marketHelp"><div class="hint">Selecciona un producto para ver precios, lugares y fotos. Desde ahí puedes registrar un precio o una compra sin repetir datos.</div></div></div>
+ <div class="modal" id="modal"></div>`);
 }
-from "./ui/clientes-ui.js";
 
-window.addEventListener(
-    "DOMContentLoaded",
-    () => {
+function renderProduct(){
+ const obs=observationsForProduct(selectedProduct).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+ const purchases=purchasesForProduct(selectedProduct).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+ const places=getPlaces();
+ const photos=[]; obs.forEach(o=>(o.photoIds||[]).forEach(id=>photos.push({id,place:placeById(o.clienteId)?.nombre||'Lugar'}))); purchases.forEach(o=>(o.photoIds||[]).forEach(id=>photos.push({id,place:o.tienda||placeById(o.clienteId)?.nombre||'Lugar'})));
+ const prices=obs.map(o=>Number(o.precio)).filter(Boolean); const last=prices[0]||0;
+ shell(`<div class="app-head"><div><button class="btn secondary small" id="back">← Productos</button></div><div class="app-actions"><button class="btn small" id="quickPrice">⚡ Precio</button><button class="btn small" id="quickBuy">🛒 Comprar</button></div></div>
+ <div class="product-detail"><div class="detail-top"><div><h1 class="detail-title">${esc(selectedProduct)}</h1><div class="muted">Entidad de producto</div></div><div class="price">${last?'$'+last.toFixed(2):'—'}</div></div>
+ <div class="stats"><span class="stat">${obs.length} precios</span><span class="stat">${new Set(obs.map(o=>o.clienteId)).size} lugares</span><span class="stat">${purchases.length} compras</span><span class="stat">${photos.length} fotos</span></div>
+ <div class="section"><button class="section-title" data-section="prices">💰 Precios <span>▼</span></button><div class="section-body list" id="prices">${obs.length?obs.map(o=>{const p=placeById(o.clienteId);return `<div class="row-card"><div class="row-main"><div><b>${esc(p?.nombre||'Lugar no registrado')}</b><div class="muted">${esc(p?.tipo||'')} · ${new Date(o.createdAt).toLocaleDateString('es-MX')}</div></div><span class="price">$${Number(o.precio||0).toFixed(2)}</span></div>${o.presentacion?`<div class="hint">Presentación: ${esc(o.presentacion)}</div>`:''}</div>`}).join(''):'<div class="empty">Todavía no hay precios.</div>'}</div></div>
+ <div class="section"><button class="section-title" data-section="places">🏪 Lugares <span>▼</span></button><div class="section-body list" id="places">${[...new Map(obs.map(o=>[o.clienteId,o])).values()].map(o=>{const p=placeById(o.clienteId);return `<div class="row-card"><b>${esc(p?.nombre||'Lugar')}</b><div class="muted">${esc(p?.tipo||'')}${p?.contacto?' · '+esc(p.contacto):''}</div><div class="hint">${esc(p?.direccion||'Ubicación registrada')}</div></div>`}).join('')||'<div class="empty">No hay lugares asociados.</div>'}</div></div>
+ <div class="section"><button class="section-title" data-section="photos">📷 Fotos <span>▼</span></button><div class="section-body"><div class="photo-grid" id="photoGrid"></div><div id="photoEmpty" class="empty">Cargando fotos…</div></div></div>
+ <div class="section"><button class="section-title" data-section="purchases">🛒 Compras <span>▼</span></button><div class="section-body list" id="purchases">${purchases.length?purchases.map(o=>`<div class="row-card"><div class="row-main"><div><b>${esc(o.tienda||'Lugar')}</b><div class="muted">${new Date(o.fecha).toLocaleDateString('es-MX')} · ${Number(o.cantidad||0)} ${esc(o.presentacion||'u')}</div></div><span class="price">$${Number(o.total||0).toFixed(2)}</span></div></div>`).join(''):'<div class="empty">Todavía no hay compras.</div>'}</div></div>
+ </div><div class="modal" id="modal"></div>`);
+ loadPhotos(photos);
+}
 
-        inicializarClientesUI();
+async function loadPhotos(items){const grid=document.getElementById('photoGrid');const empty=document.getElementById('photoEmpty');if(!grid)return;grid.innerHTML='';for(const item of items){const p=await getPhoto(item.id);if(!p)continue;const url=URL.createObjectURL(p.blob);grid.insertAdjacentHTML('beforeend',`<div class="photo-card"><img src="${url}" alt="${esc(p.name)}"><div><b>${esc(p.placeName||item.place)}</b><br><span class="hint">${esc(p.name)}</span></div></div>`);}if(grid.children.length)empty.style.display='none';else empty.textContent='No hay fotos almacenadas para este producto.';}
 
-    }
-);
+function placeOptions(){return getPlaces().map(p=>`<option value="${p.id}">${esc(p.nombre)}${p.tipo?' · '+esc(p.tipo):''}</option>`).join('');}
+function openCapture(mode){captureMode=mode;selectedPhotoIds=[];currentPlace=null;const modal=document.getElementById('modal');modal.className='modal open';modal.innerHTML=`<div class="modal-box"><h2>${mode==='buy'?'🛒 Registrar compra':'⚡ Registrar precio'}</h2><div class="hint">${esc(selectedProduct)}</div><div class="form-grid"><div class="field full"><label>Lugar</label><select id="capPlace"><option value="">Selecciona un lugar</option>${placeOptions()}</select></div><div class="field"><label>Precio</label><input id="capPrice" type="number" min="0" step="0.01" inputmode="decimal"></div><div class="field"><label>Presentación</label><input id="capPresentation" placeholder="kg, pza, caja..."></div>${mode==='buy'?`<div class="field"><label>Cantidad</label><input id="capQty" type="number" min="0.01" step="0.01" value="1" inputmode="decimal"></div><div class="field"><label>Comprador</label><select id="capBuyer"><option>Fara</option><option>Martha</option><option>Ambos</option><option>Otro</option></select></div>`:''}<div class="field full"><label>Foto (se comprime automáticamente)</label><input id="capPhoto" type="file" accept="image/*" capture="environment"><div class="hint">La cámara puede generar 2 MB o más; la app guardará una versión reducida.</div><div class="photo-preview" id="photoPreview"></div></div></div><div class="modal-actions"><button class="btn secondary" id="cancel">Cancelar</button><button class="btn" id="saveCapture">Guardar</button></div></div>`;
+ document.getElementById('capPhoto').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;const place=getPlaces().find(p=>p.id===document.getElementById('capPlace').value);if(!place){alert('Selecciona primero el lugar para asociar correctamente la foto.');e.target.value='';return;}try{const id=await savePhoto(f,place.nombre);selectedPhotoIds.push(id);document.getElementById('photoPreview').innerHTML='<span class="hint">✓ Foto comprimida y lista</span>';}catch(err){alert(err.message);}});
+ document.getElementById('capPlace').addEventListener('change',()=>currentPlace=placeById(document.getElementById('capPlace').value));
+ document.getElementById('cancel').onclick=()=>modal.className='modal';document.getElementById('saveCapture').onclick=saveCapture;
+}
 
+async function saveCapture(){const place=placeById(document.getElementById('capPlace').value);const price=Number(document.getElementById('capPrice').value);if(!place||!selectedProduct||!(price>=0)){alert('Selecciona un lugar y captura un precio.');return;}const presentation=document.getElementById('capPresentation').value; if(captureMode==='buy'){const qty=Number(document.getElementById('capQty').value)||0;const buyer=document.getElementById('capBuyer').value;addPurchase({producto:selectedProduct,presentacion:presentation,tienda:place.nombre,clienteId:place.id,comprador:buyer,cantidad:qty,precio:price,total:qty*price,contacto:place.contacto||place.telefono,direccion:place.direccion,latitud:place.latitud,longitud:place.longitud,photoIds:selectedPhotoIds});} addObservation({producto:selectedProduct,presentacion,precio:price,clienteId:place.id,photoIds:selectedPhotoIds});document.getElementById('modal').className='modal';renderProduct();}
 
+function openPlace(){const modal=document.getElementById('modal');modal.className='modal open';modal.innerHTML=`<div class="modal-box"><h2>🏪 Nuevo lugar</h2><div class="form-grid"><div class="field full"><label>Nombre *</label><input id="pName" autofocus></div><div class="field"><label>Contacto *</label><input id="pContact" placeholder="Teléfono o persona"></div><div class="field"><label>Tipo *</label><select id="pType"><option>Tienda</option><option>Mercado</option><option>Abarrotes</option><option>Abastos</option><option>Proveedor</option><option>Otro</option></select></div><div class="field full"><label>Dirección o ubicación</label><input id="pAddress" placeholder="Dirección o referencia"><button class="btn secondary" id="locate">📍 Usar ubicación actual</button></div></div><div class="hint">En V1 guardaremos la dirección y/o coordenadas. El mapa interactivo puede editarse desde el módulo Mapa.</div><div class="modal-actions"><button class="btn secondary" id="cancelPlace">Cancelar</button><button class="btn" id="savePlace">Guardar lugar</button></div></div>`;document.getElementById('cancelPlace').onclick=()=>modal.className='modal';document.getElementById('locate').onclick=()=>navigator.geolocation?.getCurrentPosition(pos=>{modal.dataset.lat=pos.coords.latitude;modal.dataset.lng=pos.coords.longitude;document.getElementById('pAddress').placeholder='Ubicación capturada ✓';},()=>alert('No se pudo obtener la ubicación.'));document.getElementById('savePlace').onclick=()=>{const name=document.getElementById('pName').value.trim();const contact=document.getElementById('pContact').value.trim();if(!name||!contact){alert('Nombre y contacto son obligatorios.');return;}upsertPlace({nombre:name,contacto:contact,telefono:contact,tipo:document.getElementById('pType').value,direccion:document.getElementById('pAddress').value,latitud:modal.dataset.lat||null,longitud:modal.dataset.lng||null});modal.className='modal';render();};}
 
+function bind(){document.getElementById('q')?.addEventListener('input',e=>{query=e.target.value;render();});document.getElementById('filterBtn')?.addEventListener('click',()=>document.getElementById('filters').classList.toggle('open'));document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{typeFilter=b.dataset.type;render();});document.querySelectorAll('[data-product]').forEach(b=>b.onclick=()=>{selectedProduct=b.dataset.product;render();});document.getElementById('newPlace')?.addEventListener('click',openPlace);document.querySelectorAll('[data-section]').forEach(b=>b.onclick=()=>{const id=b.dataset.section;document.getElementById(id)?.parentElement.classList.toggle('closed');});document.getElementById('back')?.addEventListener('click',()=>{selectedProduct='';render();});document.getElementById('quickPrice')?.addEventListener('click',()=>openCapture('price'));document.getElementById('quickBuy')?.addEventListener('click',()=>openCapture('buy'));}
 
-
-
-
-
-
-
-
-
-
+render();
