@@ -1,3 +1,10 @@
+/*
+ * Productos Santa Rosa
+ * Módulo: Mapa
+ * Versión: 1.1.0
+ * Build: 20260926.1030
+ * Objetivo: Separar tiendas de clientes/prospectos y mantener el mapa como módulo propio.
+ */
 const MAP_KEY = "psr_map_clients";
 const ROUTE_KEY = "psr_route_clients";
 const CATEGORIES_KEY = "psr_map_categories";
@@ -186,6 +193,7 @@ function crearIconoCategoria(categoria) {
 }
 
 function obtenerNombreTipo(tipo) {
+  if (tipo === "tienda") return "🏪 Tienda";
   return tipo === "prospecto" ? "🎯 Prospecto" : "👤 Cliente real";
 }
 
@@ -343,7 +351,7 @@ function popupHtml(registro) {
       ${registro.direccion ? `<div>📍 ${escapeHtml(registro.direccion)}</div>` : ""}
       ${comentario}
       <div class="popup-botones">
-        <button type="button" data-accion="editar" data-id="${escapeHtml(registro.id)}">✏️ Editar</button>
+        ${registro.tipo === "tienda" ? '<span class="popup-solo-info">ℹ️ Solo información</span>' : `<button type="button" data-accion="editar" data-id="${escapeHtml(registro.id)}">✏️ Editar</button>`}
         <button type="button" data-accion="google" data-id="${escapeHtml(registro.id)}">🗺️ Google Maps</button>
       </div>
     </div>
@@ -451,7 +459,10 @@ function abrirModal({ registro = null, lat = null, lon = null, obtenerDireccion 
   document.getElementById("mapaCategoria").value = registro?.categoriaId || categorias[0]?.id || "";
   document.querySelector(`input[name="tipoRegistro"][value="${registro?.tipo || "real"}"]`).checked = true;
   document.getElementById("tituloModalMapa").textContent = nuevo ? "📍 Nuevo registro" : `✏️ Editar ${registro.nombre}`;
-  document.getElementById("subtituloModalMapa").textContent = nuevo ? "Cliente o prospecto" : obtenerNombreTipo(registro.tipo);
+  document.getElementById("subtituloModalMapa").textContent = nuevo ? "Cliente, prospecto o tienda" : obtenerNombreTipo(registro.tipo);
+  const tipoActual = registro?.tipo || "real";
+  document.querySelectorAll('input[name="tipoRegistro"]').forEach(input => { input.checked = input.value === tipoActual; input.disabled = !!registro && tipoActual === "tienda"; });
+  document.getElementById("mapaCategoria").disabled = !!registro && tipoActual === "tienda";
   document.getElementById("btnEliminarRegistro").hidden = nuevo;
   document.getElementById("coordenadasTexto").textContent = `${Number(registro?.latitud ?? lat).toFixed(7)}, ${Number(registro?.longitud ?? lon).toFixed(7)}`;
   modal.classList.add("visible");
@@ -507,7 +518,7 @@ form.addEventListener("submit", event => {
   if (!nombre) return alert("Escribe el nombre del cliente o prospecto.");
   if (!Number.isFinite(latitud) || !Number.isFinite(longitud)) return alert("La ubicación del pin no es válida.");
 
-  const categoriaId = document.getElementById("mapaCategoria").value;
+  const categoriaId = tipo === "tienda" ? "tienda" : document.getElementById("mapaCategoria").value;
   const datos = {
     nombre,
     telefono: document.getElementById("mapaTelefono").value.trim(),
@@ -523,6 +534,7 @@ form.addEventListener("submit", event => {
   if (id) {
     const registro = clientesMapa.find(c => String(c.id) === String(id));
     if (!registro) return;
+    if (registro.tipo === "tienda") return alert("Las tiendas se muestran como información en el mapa y no se pueden editar ni cambiar de categoría desde aquí.");
 
     const tipoAnterior = registro.tipo;
 
@@ -557,7 +569,7 @@ form.addEventListener("submit", event => {
   guardarMapa();
   cerrarModal();
   renderMarcadores();
-  actualizarEstado(`✓ ${tipo === "prospecto" ? "Prospecto" : "Cliente"} guardado.`);
+  actualizarEstado(`✓ ${tipo === "tienda" ? "Tienda" : (tipo === "prospecto" ? "Prospecto" : "Cliente")} guardado.`);
 });
 
 function abrirModalExistente() {
