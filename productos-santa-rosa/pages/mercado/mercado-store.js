@@ -1,8 +1,8 @@
 /**
  * Productos Santa Rosa
  * Módulo: Mercado · almacenamiento
- * Versión: 1.1.0
- * Build: 20260926.1030
+ * Versión: 1.1.3
+ * Build: 20260926.1235
  * Objetivo: Catálogo de productos/presentaciones, empresas, precios, fotos y compras.
  */
 import LocalDB from '../../core/storage/local-db.js';
@@ -76,7 +76,7 @@ export function updatePresentation(id,data){const all=read(PRESENTATION_KEY);con
 export function deactivatePresentation(id){const all=read(PRESENTATION_KEY);const p=all.find(x=>x.id===id);if(!p)throw new Error('Presentación no encontrada.');p.active=false;p.updatedAt=now();write(PRESENTATION_KEY,all);return p;}
 export function deletePresentation(id){write(PRESENTATION_KEY,read(PRESENTATION_KEY).filter(p=>p.id!==id));}
 
-export function upsertPlace(data){const places=getPlaces();const stamp=now();if(data.id){const i=places.findIndex(p=>p.id===data.id);if(i>=0){places[i]={...places[i],...data,updatedAt:stamp};savePlaces(places);return places[i];}}const p={id:uid(),nombre:String(data.nombre||'').trim(),encargado:String(data.encargado||'').trim(),telefono:String(data.telefono||'').trim(),contacto:String(data.contacto||data.telefono||data.encargado||'').trim(),tipo:String(data.tipo||'Tienda').trim(),direccion:String(data.direccion||'').trim(),latitud:data.latitud??null,longitud:data.longitud??null,comentarios:String(data.comentarios||'').trim(),estatus:'activo',createdAt:stamp,updatedAt:stamp};places.push(p);savePlaces(places);return p;}
+export function upsertPlace(data){const places=getPlaces();const stamp=now();if(data.id){const i=places.findIndex(p=>p.id===data.id);if(i>=0){places[i]={...places[i],...data,updatedAt:stamp};savePlaces(places);return places[i];}}const p={id:uid(),nombre:String(data.nombre||'').trim(),encargado:String(data.encargado||'').trim(),telefono:String(data.telefono||'').trim(),contacto:String(data.contacto||data.telefono||data.encargado||'').trim(),tipo:String(data.tipo||'Tienda').trim(),direccion:String(data.direccion||'').trim(),tiendaVirtual:String(data.tiendaVirtual||'').trim(),latitud:data.latitud??null,longitud:data.longitud??null,comentarios:String(data.comentarios||'').trim(),estatus:'activo',createdAt:stamp,updatedAt:stamp};places.push(p);savePlaces(places);return p;}
 export function deactivatePlace(id){const places=getPlaces();const p=places.find(x=>x.id===id);if(!p)throw new Error('Empresa no encontrada.');p.estatus='inactivo';p.updatedAt=now();savePlaces(places);return p;}
 export function deletePlace(id){savePlaces(getPlaces().filter(p=>p.id!==id));}
 
@@ -85,8 +85,13 @@ export function deleteObservation(id){saveObservations(getObservations().filter(
 export function addPurchase(data){const rows=getPurchases();const stamp=now();const row={id:uid(),fecha:stamp,producto:String(data.producto).trim(),presentacion:String(data.presentacion||'').trim(),presentationId:data.presentationId||'',tienda:String(data.tienda||'').trim(),clienteId:data.clienteId||'',comprador:data.comprador||'Fara',compradorNombre:data.compradorNombre||'',contacto:data.contacto||'',cantidad:Number(data.cantidad)||0,precio:Number(data.precio)||0,total:Number(data.total??((Number(data.cantidad)||0)*(Number(data.precio)||0))),diferencia:Number(data.diferencia)||0,comentarios:data.comentarios||'',direccion:data.direccion||'',latitud:data.latitud??null,longitud:data.longitud??null,photoIds:[...(data.photoIds||[])]};rows.push(row);savePurchases(rows);return row;}
 export function deletePurchase(id){savePurchases(getPurchases().filter(p=>p.id!==id));}
 
-export function latestPriceForPresentationPlace(presentationId,placeId){return getObservations().filter(o=>String(o.presentationId)===String(presentationId)&&String(o.clienteId)===String(placeId)).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0]||null;}
-export function pricesForPresentation(presentationId){return getObservations().filter(o=>String(o.presentationId)===String(presentationId)).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));}
+export function marketPriceRecords(){
+  const observations=getObservations().map(o=>({...o,source:'mercado',priceDate:o.createdAt}));
+  const purchases=getPurchases().map(p=>({id:`purchase:${p.id}`,clienteId:p.clienteId,presentationId:p.presentationId,precio:Number(p.precio)||0,createdAt:p.fecha,priceDate:p.fecha,producto:p.producto,presentacion:p.presentacion,photoIds:p.photoIds||[],source:'compra',purchaseId:p.id,tienda:p.tienda}));
+  return [...observations,...purchases];
+}
+export function latestPriceForPresentationPlace(presentationId,placeId){return marketPriceRecords().filter(o=>String(o.presentationId)===String(presentationId)&&String(o.clienteId)===String(placeId)).sort((a,b)=>new Date(b.priceDate)-new Date(a.priceDate))[0]||null;}
+export function pricesForPresentation(presentationId){return marketPriceRecords().filter(o=>String(o.presentationId)===String(presentationId)).sort((a,b)=>new Date(b.priceDate)-new Date(a.priceDate));}
 export function ensurePresentation(productId,name){const found=presentationsForProduct(productId).find(p=>normalize(p.nombre)===normalize(name||'Sin presentación'));return found||createPresentation({productId,nombre:name||'Sin presentación'});}
 
 export function photoFileName(placeName,date=new Date()){const clean=normalize(placeName||'lugar').replace(/[^a-z0-9]+/g,'');const d=date.toISOString().slice(0,10).replaceAll('-','');return `${clean||'lugar'}-${d}-${Date.now().toString().slice(-4)}.jpg`;}
