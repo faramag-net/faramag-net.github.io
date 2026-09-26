@@ -1,8 +1,8 @@
 /*
  * Productos Santa Rosa
  * Módulo: Mapa
- * Versión: 1.1.0
- * Build: 20260926.1030
+ * Versión: 1.1.1
+ * Build: 20260926.1135
  * Objetivo: Separar tiendas de clientes/prospectos y mantener el mapa como módulo propio.
  */
 const MAP_KEY = "psr_map_clients";
@@ -406,6 +406,13 @@ function renderMarcadores() {
       registro.longitud = nuevaLng;
       registro.updatedAt = new Date().toISOString();
       guardarMapa();
+      if (registro.tipo === 'tienda' && registro.marketPlaceId) {
+        try {
+          const market = JSON.parse(localStorage.getItem('psr_market_clients')) || [];
+          const tienda = market.find(p => String(p.id) === String(registro.marketPlaceId));
+          if (tienda) { tienda.latitud = nuevaLat; tienda.longitud = nuevaLng; tienda.updatedAt = new Date().toISOString(); localStorage.setItem('psr_market_clients', JSON.stringify(market)); }
+        } catch (_) {}
+      }
       if (esReal(registro)) sincronizarClienteReal(registro);
       actualizarEstado(`✓ Ubicación de ${registro.nombre} actualizada.`);
       marker.bindPopup(popupHtml(registro));
@@ -759,3 +766,31 @@ if (clientesMapa.length) {
     .map(c => [Number(c.latitud), Number(c.longitud)]);
   if (puntos.length) mapa.fitBounds(puntos, { padding: [40, 40], maxZoom: 15 });
 }
+
+// Mercado: sincroniza las empresas geolocalizadas como categoría Tienda, sin mezclarlas con clientes/prospectos.
+function sincronizarEmpresasMercadoEnMapa() {
+  let market = [];
+  try { market = JSON.parse(localStorage.getItem('psr_market_clients')) || []; } catch (_) { market = []; }
+  let changed = false;
+  market.filter(p => p && p.estatus !== 'inactivo' && Number.isFinite(Number(p.latitud)) && Number.isFinite(Number(p.longitud))).forEach(p => {
+    let registro = clientesMapa.find(c => c.marketPlaceId && String(c.marketPlaceId) === String(p.id));
+    if (!registro) {
+      registro = clientesMapa.find(c => c.tipo === 'tienda' && normalizar(c.nombre) === normalizar(p.nombre));
+    }
+    if (!registro) {
+      clientesMapa.push(registro = { id: crearId(), marketPlaceId: p.id, nombre: p.nombre, telefono: p.contacto || p.telefono || '', direccion: p.direccion || '', comentarios: p.comentarios || '', categoriaId: 'tienda', tipo: 'tienda', latitud: Number(p.latitud), longitud: Number(p.longitud), mapVisible: true, createdAt: p.createdAt || new Date().toISOString(), updatedAt: p.updatedAt || new Date().toISOString() });
+      changed = true;
+    } else {
+      if (registro.marketPlaceId !== p.id) { registro.marketPlaceId = p.id; changed = true; }
+      if (registro.categoriaId !== 'tienda') { registro.categoriaId = 'tienda'; changed = true; }
+      if (registro.tipo !== 'tienda') { registro.tipo = 'tienda'; changed = true; }
+      if (Number(registro.latitud) !== Number(p.latitud) || Number(registro.longitud) !== Number(p.longitud)) { registro.latitud = Number(p.latitud); registro.longitud = Number(p.longitud); changed = true; }
+      if (registro.nombre !== p.nombre) { registro.nombre = p.nombre; changed = true; }
+    }
+  });
+  if (changed) guardarMapa();
+}
+
+// Se ejecuta una vez al cargar para que las tiendas geolocalizadas de Mercado aparezcan en el mapa.
+sincronizarEmpresasMercadoEnMapa();
+renderMarcadores();
