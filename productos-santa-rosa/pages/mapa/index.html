@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Productos Santa Rosa · Mapa · Versión 1.1.0 · Build 20260926.1030 -->
+<!-- Productos Santa Rosa · Mapa · Versión 1.1.2 · Build 20260926.1130 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../../styles/global.css">
 <link rel="stylesheet" href="./mapa.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-</head>
+<link rel="stylesheet" href="../../components/navbar.css"></head>
 <body>
 <div id="mapa"></div>
 
@@ -129,5 +129,8 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module" src="./mapa.js"></script>
-</body>
+<script type="module">
+import { crearNavbar } from "../../components/navbar.js";
+document.body.insertAdjacentHTML("afterbegin", crearNavbar());
+</script></body>
 </html>

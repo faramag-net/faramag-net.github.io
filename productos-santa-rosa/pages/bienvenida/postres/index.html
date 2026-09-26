@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#2f2f2f">
   <title>Postres Santa Rosa</title>
   <link rel="stylesheet" href="postres.css">
-</head>
+<link rel="stylesheet" href="../../components/navbar.css"></head>
 <body>
 
   <nav class="nav">
@@ -37,5 +37,8 @@
   </div>
 
   <script src="postres.js"></script>
-</body>
+<script type="module">
+import { crearNavbar } from "../../components/navbar.js";
+document.body.insertAdjacentHTML("afterbegin", crearNavbar());
+</script></body>
 </html>

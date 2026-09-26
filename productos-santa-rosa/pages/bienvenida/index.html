@@ -13,7 +13,7 @@
         rel="stylesheet"
         href="./bienvenida.css"
     >
-</head>
+<link rel="stylesheet" href="../components/navbar.css"></head>
 <body>
 
     <main class="landing">
@@ -79,5 +79,8 @@
 
     </main>
 
-</body>
+<script type="module">
+import { crearNavbar } from "../components/navbar.js";
+document.body.insertAdjacentHTML("afterbegin", crearNavbar());
+</script></body>
 </html>

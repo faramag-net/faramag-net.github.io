@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#2f2f2f">
   <title>Productos Frescos y Tradicionales Santa Rosa</title>
   <link rel="stylesheet" href="frescos.css">
-</head>
+<link rel="stylesheet" href="../../components/navbar.css"></head>
 <body>
   <nav class="nav">
     <a href="../">🏠 Inicio</a>
@@ -35,5 +35,8 @@
   </div>
 
   <script src="frescos.js"></script>
-</body>
+<script type="module">
+import { crearNavbar } from "../../components/navbar.js";
+document.body.insertAdjacentHTML("afterbegin", crearNavbar());
+</script></body>
 </html>

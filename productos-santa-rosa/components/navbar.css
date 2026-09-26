@@ -1,65 +1,7 @@
-.navbar{
-
-    width:100%;
-
-    background:#111;
-
-    color:white;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:15px 25px;
-
-    box-sizing:border-box;
-
-    position:sticky;
-
-    top:0;
-
-    z-index:1000;
-
-}
-
-.logo-navbar{
-
-    font-size:20px;
-
-    font-weight:bold;
-
-}
-
-.links-navbar{
-
-    display:flex;
-
-    gap:15px;
-
-    flex-wrap:wrap;
-
-}
-
-.links-navbar a{
-
-    color:white;
-
-    text-decoration:none;
-
-    background:#222;
-
-    padding:10px 15px;
-
-    border-radius:10px;
-
-    transition:.2s;
-
-}
-
-.links-navbar a:hover{
-
-    background:#444;
-
-}
+/*
+ * Productos Santa Rosa
+ * Componente: Navbar global
+ * Versión: 1.1.2
+ * Build: 20260926.1130
+ */
+.navbar{width:100%;background:#111;color:white;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 18px;box-sizing:border-box;position:sticky;top:0;z-index:1000}.logo-navbar{font-size:20px;font-weight:bold;white-space:nowrap}.links-navbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.links-navbar a{color:white;text-decoration:none;background:#222;padding:9px 12px;border-radius:10px;transition:.2s;white-space:nowrap}.links-navbar a:hover{background:#444}@media(max-width:900px){.navbar{align-items:flex-start;overflow-x:auto}.links-navbar{flex-wrap:nowrap}.links-navbar a{flex:0 0 auto}}
