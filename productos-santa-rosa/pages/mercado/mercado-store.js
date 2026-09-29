@@ -1,8 +1,8 @@
 /**
  * Productos Santa Rosa
  * Módulo: Mercado · almacenamiento
- * Versión: 1.1.3
- * Build: 20260926.1235
+ * Versión: 1.4.0
+ * Build: 20260928.0830
  * Objetivo: Catálogo de productos/presentaciones, empresas, precios, fotos y compras.
  */
 import LocalDB from '../../core/storage/local-db.js';
@@ -18,7 +18,42 @@ const now=()=>new Date().toISOString();
 const read=(key)=>{try{return JSON.parse(localStorage.getItem(key))||[];}catch{return[];}};
 const write=(key,data)=>localStorage.setItem(key,JSON.stringify(data));
 
-export function getPlaces(){return LocalDB.getMarketClients().map(p=>({...p,tipo:p.tipo||'Sin tipo',estatus:p.estatus||'activo'}));}
+function readMapStores(){
+  try {
+    const rows=JSON.parse(localStorage.getItem('psr_map_clients'))||[];
+    return Array.isArray(rows)?rows.filter(p=>p&&p.tipo==='tienda'):[];
+  } catch { return []; }
+}
+
+function syncMapStoresToMarket(){
+  const market=LocalDB.getMarketClients();
+  let mapRows=[]; try { mapRows=JSON.parse(localStorage.getItem('psr_map_clients'))||[]; } catch { mapRows=[]; }
+  if(!Array.isArray(mapRows)) mapRows=[];
+  const mapStores=mapRows.filter(p=>p&&p.tipo==='tienda');
+  let changedMarket=false, changedMap=false;
+  const byId=new Map(market.map(p=>[String(p.id),p]));
+  mapStores.forEach(m=>{
+    const sharedId=String(m.marketPlaceId||m.id);
+    let p=byId.get(sharedId) || market.find(x=>normalize(x.nombre)===normalize(m.nombre));
+    if(!p){
+      p={
+        id:sharedId, nombre:m.nombre||'Tienda', encargado:m.encargado||'', telefono:m.telefono||'',
+        contacto:m.contacto||m.telefono||'', tipo:'Tienda', direccion:m.direccion||'',
+        tiendaVirtual:m.tiendaVirtual||'', latitud:m.latitud??null, longitud:m.longitud??null,
+        comentarios:m.comentarios||'', estatus:m.estatus||'activo', createdAt:m.createdAt||now(), updatedAt:m.updatedAt||now()
+      };
+      market.push(p); byId.set(sharedId,p); changedMarket=true;
+    }
+    if(String(m.marketPlaceId||'')!==sharedId){ m.marketPlaceId=sharedId; changedMap=true; }
+  });
+  if(changedMarket) LocalDB.saveMarketClients(market);
+  if(changedMap) localStorage.setItem('psr_map_clients',JSON.stringify(mapRows));
+}
+
+export function getPlaces(){
+  syncMapStoresToMarket();
+  return LocalDB.getMarketClients().map(p=>({...p,tipo:p.tipo||'Tienda',estatus:p.estatus||'activo'}));
+}
 export function savePlaces(data){LocalDB.saveMarketClients(data);}
 export function placeById(id){return getPlaces().find(p=>String(p.id)===String(id));}
 export function getObservations(){return LocalDB.getClientProducts();}
@@ -76,13 +111,42 @@ export function updatePresentation(id,data){const all=read(PRESENTATION_KEY);con
 export function deactivatePresentation(id){const all=read(PRESENTATION_KEY);const p=all.find(x=>x.id===id);if(!p)throw new Error('Presentación no encontrada.');p.active=false;p.updatedAt=now();write(PRESENTATION_KEY,all);return p;}
 export function deletePresentation(id){write(PRESENTATION_KEY,read(PRESENTATION_KEY).filter(p=>p.id!==id));}
 
-export function upsertPlace(data){const places=getPlaces();const stamp=now();if(data.id){const i=places.findIndex(p=>p.id===data.id);if(i>=0){places[i]={...places[i],...data,updatedAt:stamp};savePlaces(places);return places[i];}}const p={id:uid(),nombre:String(data.nombre||'').trim(),encargado:String(data.encargado||'').trim(),telefono:String(data.telefono||'').trim(),contacto:String(data.contacto||data.telefono||data.encargado||'').trim(),tipo:String(data.tipo||'Tienda').trim(),direccion:String(data.direccion||'').trim(),tiendaVirtual:String(data.tiendaVirtual||'').trim(),latitud:data.latitud??null,longitud:data.longitud??null,comentarios:String(data.comentarios||'').trim(),estatus:'activo',createdAt:stamp,updatedAt:stamp};places.push(p);savePlaces(places);return p;}
-export function deactivatePlace(id){const places=getPlaces();const p=places.find(x=>x.id===id);if(!p)throw new Error('Empresa no encontrada.');p.estatus='inactivo';p.updatedAt=now();savePlaces(places);return p;}
-export function deletePlace(id){savePlaces(getPlaces().filter(p=>p.id!==id));}
+function syncPlaceToMap(place, {remove=false}={}){
+  let rows=[]; try { rows=JSON.parse(localStorage.getItem('psr_map_clients'))||[]; } catch { rows=[]; }
+  if(!Array.isArray(rows)) rows=[];
+  const index=rows.findIndex(m=>String(m.id)===String(place.id)||String(m.marketPlaceId||'')===String(place.id));
+  if(remove){
+    if(index>=0) rows.splice(index,1);
+  } else {
+    const data={
+      id:index>=0?rows[index].id:place.id, marketPlaceId:place.id, nombre:place.nombre,
+      telefono:place.telefono||'', contacto:place.contacto||'', direccion:place.direccion||'',
+      comentarios:place.comentarios||'', categoriaId:'tienda', tipo:'tienda',
+      latitud:place.latitud??null, longitud:place.longitud??null, estatus:place.estatus||'activo',
+      tiendaVirtual:place.tiendaVirtual||'', mapVisible:place.estatus!=='inactivo',
+      createdAt:index>=0?(rows[index].createdAt||place.createdAt):place.createdAt, updatedAt:place.updatedAt
+    };
+    if(index>=0) rows[index]={...rows[index],...data}; else rows.push(data);
+  }
+  localStorage.setItem('psr_map_clients',JSON.stringify(rows));
+}
+
+export function upsertPlace(data){
+  const places=getPlaces(); const stamp=now();
+  if(data.id){
+    const i=places.findIndex(p=>String(p.id)===String(data.id));
+    if(i>=0){ places[i]={...places[i],...data,updatedAt:stamp}; savePlaces(places); syncPlaceToMap(places[i]); return places[i]; }
+  }
+  const p={id:data.id||uid(),nombre:String(data.nombre||'').trim(),encargado:String(data.encargado||'').trim(),telefono:String(data.telefono||'').trim(),contacto:String(data.contacto||data.telefono||data.encargado||'').trim(),tipo:String(data.tipo||'Tienda').trim(),direccion:String(data.direccion||'').trim(),tiendaVirtual:String(data.tiendaVirtual||'').trim(),latitud:data.latitud??null,longitud:data.longitud??null,comentarios:String(data.comentarios||'').trim(),estatus:data.estatus||'activo',createdAt:data.createdAt||stamp,updatedAt:stamp};
+  places.push(p); savePlaces(places); syncPlaceToMap(p); return p;
+}
+export function deactivatePlace(id){const places=getPlaces();const p=places.find(x=>String(x.id)===String(id));if(!p)throw new Error('Empresa no encontrada.');p.estatus='inactivo';p.updatedAt=now();savePlaces(places);syncPlaceToMap(p);return p;}
+export function activatePlace(id){const places=getPlaces();const p=places.find(x=>String(x.id)===String(id));if(!p)throw new Error('Empresa no encontrada.');p.estatus='activo';p.updatedAt=now();savePlaces(places);syncPlaceToMap(p);return p;}
+export function deletePlace(id){const places=getPlaces();savePlaces(places.filter(p=>String(p.id)!==String(id)));const p=places.find(x=>String(x.id)===String(id));if(p)syncPlaceToMap(p,{remove:true});}
 
 export function addObservation({producto,presentacion='',presentationId='',precio=0,clienteId='',photoIds=[],comentarios=''}){const rows=getObservations();const stamp=now();const row={id:uid(),clienteId,producto:String(producto).trim(),presentacion:String(presentacion||'').trim(),presentationId,precio:Number(precio)||0,comentarios:String(comentarios||'').trim(),photoIds:[...photoIds],createdAt:stamp,updatedAt:stamp};rows.push(row);saveObservations(rows);return row;}
 export function deleteObservation(id){saveObservations(getObservations().filter(o=>o.id!==id));}
-export function addPurchase(data){const rows=getPurchases();const stamp=now();const row={id:uid(),fecha:stamp,producto:String(data.producto).trim(),presentacion:String(data.presentacion||'').trim(),presentationId:data.presentationId||'',tienda:String(data.tienda||'').trim(),clienteId:data.clienteId||'',comprador:data.comprador||'Fara',compradorNombre:data.compradorNombre||'',contacto:data.contacto||'',cantidad:Number(data.cantidad)||0,precio:Number(data.precio)||0,total:Number(data.total??((Number(data.cantidad)||0)*(Number(data.precio)||0))),diferencia:Number(data.diferencia)||0,comentarios:data.comentarios||'',direccion:data.direccion||'',latitud:data.latitud??null,longitud:data.longitud??null,photoIds:[...(data.photoIds||[])]};rows.push(row);savePurchases(rows);return row;}
+export function addPurchase(data){const rows=getPurchases();const stamp=now();const row={id:data.id||uid(),fecha:data.fecha||stamp,producto:String(data.producto).trim(),presentacion:String(data.presentacion||'').trim(),presentationId:data.presentationId||'',tienda:String(data.tienda||'').trim(),clienteId:data.clienteId||'',comprador:data.comprador||'Fara',compradorNombre:data.compradorNombre||'',contacto:data.contacto||'',cantidad:Number(data.cantidad)||0,precio:Number(data.precio)||0,total:Number(data.total??((Number(data.cantidad)||0)*(Number(data.precio)||0))),diferencia:Number(data.diferencia)||0,comentarios:data.comentarios||'',direccion:data.direccion||'',latitud:data.latitud??null,longitud:data.longitud??null,photoIds:[...(data.photoIds||[])]};rows.push(row);savePurchases(rows);return row;}
 export function deletePurchase(id){savePurchases(getPurchases().filter(p=>p.id!==id));}
 
 export function marketPriceRecords(){
