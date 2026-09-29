@@ -33,3 +33,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .danger-mini{color:var(--danger)}
 .form-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 @media(max-width:380px){.form-two{grid-template-columns:1fr}}
+
+/* V1.5.0 · Listas y búsqueda móvil */
+.need-suggestions{display:grid;gap:6px;margin-top:8px;max-height:42vh;overflow:auto}.need-suggestion{display:flex;align-items:center;gap:9px;width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;cursor:pointer}.need-suggestion span{font-size:16px}.need-suggestion strong{font-size:13px}.need-create-area{margin-top:10px;padding:10px;border:1px dashed #c9ced7;border-radius:10px;background:#fafbfc}.need-create-area p{margin:0 0 7px}.need-row[hidden],.company-card-wrap[hidden],.product-card-wrap[hidden]{display:none!important}

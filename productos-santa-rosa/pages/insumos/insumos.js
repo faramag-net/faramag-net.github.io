@@ -1,8 +1,8 @@
 /**
  * Productos Santa Rosa
  * Módulo: 🛒 Compras (remodelación de Insumos)
- * Versión: 1.4.0
- * Build: 20260928.0830
+ * Versión: 1.5.0
+ * Build: 20260928.2045
  * Objetivo: Empresas, productos, presentaciones, lista manual, carritos, compras e historiales.
  *
  * Regla V1:
@@ -131,7 +131,7 @@ function homeView(){
 }
 function storeCard(p){
   const cart=cartFor(p.id);
-  return `<div class="company-card-wrap"><button class="company-card" data-company="${esc(p.id)}"><span class="company-icon">🏪</span><strong>${esc(p.nombre)}</strong><small>${esc(storeTypeLabel(p.tipo))}</small>${cart.length?`<em>🛒 ${cart.length}</em>`:""}</button><div class="entity-actions"><button data-edit-company="${esc(p.id)}" title="Editar">✏️</button><button data-toggle-company="${esc(p.id)}" title="Desactivar">${p.estatus==='inactivo'?'🔄':'⏸️'}</button><button data-delete-company="${esc(p.id)}" title="Borrar">🗑️</button></div></div>`;
+  return `<div class="company-card-wrap" data-company-card-name="${esc(p.nombre)}"><button class="company-card" data-company="${esc(p.id)}"><span class="company-icon">🏪</span><strong>${esc(p.nombre)}</strong><small>${esc(storeTypeLabel(p.tipo))}</small>${cart.length?`<em>🛒 ${cart.length}</em>`:""}</button><div class="entity-actions"><button data-edit-company="${esc(p.id)}" title="Editar">✏️</button><button data-toggle-company="${esc(p.id)}" title="Desactivar">${p.estatus==='inactivo'?'🔄':'⏸️'}</button><button data-delete-company="${esc(p.id)}" title="Borrar">🗑️</button></div></div>`;
 }
 
 function listView(){
@@ -139,7 +139,7 @@ function listView(){
   const filtered=needs.filter(n=>!state.listSearch||normalize(n.nombre).includes(normalize(state.listSearch)));
   const carts=openCartEntries();
   const cartProductIds=new Set(carts.flatMap(c=>c.items.map(i=>String(i.productId))));
-  return `${header("📝 Lista",true)}<section class="list-screen"><p class="muted">Esta es tu lista personal de lo que necesitas. Aquí agregas manualmente lo que vas requiriendo.</p><div class="search-wrap"><span>🔎</span><input id="listSearch" value="${esc(state.listSearch)}" placeholder="Buscar en mi lista..."></div><div class="need-list">${filtered.map(n=>`<div class="need-row"><button class="need-check ${cartProductIds.has(String(n.productId))?'checked':''}" data-toggle-need="${esc(n.id)}">${cartProductIds.has(String(n.productId))?'✓':''}</button><span>${esc(n.nombre)}</span><button class="mini-danger" data-delete-need="${esc(n.id)}">×</button></div>`).join("")||`<div class="empty-card">Tu lista está vacía.</div>`}</div><button class="wide-action" id="addNeedBtn">＋ Agregar producto</button></section>`;
+  return `${header("📝 Lista",true)}<section class="list-screen"><p class="muted">Esta es tu lista personal de lo que necesitas. Aquí agregas manualmente lo que vas requiriendo.</p><div class="search-wrap"><span>🔎</span><input id="listSearch" value="${esc(state.listSearch)}" placeholder="Buscar en mi lista..."></div><div class="need-list">${filtered.map(n=>`<div class="need-row" data-need-name="${esc(n.nombre)}"><button class="need-check ${cartProductIds.has(String(n.productId))?'checked':''}" data-toggle-need="${esc(n.id)}">${cartProductIds.has(String(n.productId))?'✓':''}</button><span>${esc(n.nombre)}</span><button class="mini-danger" data-delete-need="${esc(n.id)}">×</button></div>`).join("")||`<div class="empty-card">Tu lista está vacía.</div>`}</div><button class="wide-action" id="addNeedBtn">＋ Agregar producto</button></section>`;
 }
 
 function companyView(){
@@ -154,7 +154,7 @@ function companyView(){
     <section class="section-head"><h2>📦 Productos</h2><span>${products.length}</span></section><section class="product-grid">${products.map(productCard).join("")||`<div class="empty-card">No hay productos que coincidan.</div>`}</section>`;
 }
 function productCard(p){
-  return `<div class="product-card-wrap"><button class="product-card" data-product="${esc(p.id)}"><span>📦</span><strong>${esc(p.nombre)}</strong><small>${presentationsForProduct(p.id).length} ${presentationsForProduct(p.id).length===1?'presentación':'presentaciones'}</small></button><div class="entity-actions"><button data-edit-product="${esc(p.id)}">✏️</button><button data-toggle-product="${esc(p.id)}">⏸️</button><button data-delete-product="${esc(p.id)}">🗑️</button></div></div>`;
+  return `<div class="product-card-wrap" data-product-card-name="${esc(p.nombre)}"><button class="product-card" data-product="${esc(p.id)}"><span>📦</span><strong>${esc(p.nombre)}</strong><small>${presentationsForProduct(p.id).length} ${presentationsForProduct(p.id).length===1?'presentación':'presentaciones'}</small></button><div class="entity-actions"><button data-edit-product="${esc(p.id)}">✏️</button><button data-toggle-product="${esc(p.id)}">⏸️</button><button data-delete-product="${esc(p.id)}">🗑️</button></div></div>`;
 }
 
 function productModal(productId){
@@ -191,7 +191,69 @@ function newProductModal(){
   const modal=document.createElement("div");modal.className="modal visible";modal.innerHTML=`<div class="modal-box small-modal"><div class="modal-head"><h2>＋ Nuevo producto</h2><button class="close-btn" data-close>×</button></div><label>Nombre *</label><input id="newProductName" class="modal-input" placeholder="Ej. Nutella"><div class="modal-actions"><button class="btn secondary" data-close>Cancelar</button><button class="btn" id="saveProduct">Guardar</button></div></div>`;document.body.appendChild(modal);modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());modal.querySelector("#newProductName").focus();modal.querySelector("#saveProduct").onclick=()=>{const nombre=modal.querySelector("#newProductName").value.trim();if(!nombre)return alert("Escribe el nombre.");try{const p=createProduct({nombre});logEvent("Producto añadido",nombre);modal.remove();state.productSearch=nombre;render();}catch(e){alert(e.message);}};
 }
 function newNeedModal(){
-  const modal=document.createElement("div");modal.className="modal visible";modal.innerHTML=`<div class="modal-box small-modal"><div class="modal-head"><h2>📝 Agregar a mi lista</h2><button class="close-btn" data-close>×</button></div><label>Producto *</label><input id="needName" class="modal-input" list="catalogNeedList" placeholder="Escribe lo que necesitas"><datalist id="catalogNeedList">${getProducts().map(p=>`<option value="${esc(p.nombre)}">`).join("")}</datalist><p class="muted">Si ya existe en el catálogo, se relacionará con ese producto. Si no existe, puedes crearlo con el mismo nombre.</p><div class="modal-actions"><button class="btn secondary" data-close>Cancelar</button><button class="btn" id="saveNeed">Agregar</button></div></div>`;document.body.appendChild(modal);modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());modal.querySelector("#needName").focus();modal.querySelector("#saveNeed").onclick=()=>{const nombre=modal.querySelector("#needName").value.trim();if(!nombre)return alert("Escribe el producto.");let p=getProducts().find(x=>normalize(x.nombre)===normalize(nombre));if(!p){try{p=createProduct({nombre});logEvent("Producto añadido",nombre);}catch(e){return alert(e.message);}}const needs=setting(NEEDS_SETTING,[]);if(needs.some(n=>normalize(n.nombre)===normalize(nombre)))return alert("Ese producto ya está en tu lista.");needs.push({id:uid(),productId:p.id,nombre:p.nombre,createdAt:new Date().toISOString()});saveSetting(NEEDS_SETTING,needs);logEvent("Necesidad añadida",p.nombre);modal.remove();render();};
+  const products=getProducts().filter(p=>p.active!==false);
+  const modal=document.createElement("div");
+  modal.className="modal visible";
+  modal.innerHTML=`<div class="modal-box small-modal">
+    <div class="modal-head"><h2>📝 Agregar a mi lista</h2><button class="close-btn" data-close>×</button></div>
+    <label>Buscar producto existente</label>
+    <input id="needName" class="modal-input" autocomplete="off" placeholder="Ej. Nutella">
+    <div id="needSuggestions" class="need-suggestions"></div>
+    <div id="needCreateArea" class="need-create-area" style="display:none">
+      <p class="muted">No encontré un producto con ese nombre.</p>
+      <button class="btn secondary" id="createNeedProduct">＋ Crear producto nuevo</button>
+    </div>
+    <p class="muted">Selecciona un producto existente para evitar duplicados. Solo crea uno nuevo si realmente no existe.</p>
+  </div></div>`;
+  document.body.appendChild(modal);
+  modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());
+
+  const input=modal.querySelector("#needName");
+  const suggestions=modal.querySelector("#needSuggestions");
+  const createArea=modal.querySelector("#needCreateArea");
+  const needs=setting(NEEDS_SETTING,[]);
+
+  const addNeed=(product)=>{
+    if(needs.some(n=>String(n.productId)===String(product.id))){
+      return alert(`${product.nombre} ya está en tu lista.`);
+    }
+    const current=setting(NEEDS_SETTING,[]);
+    current.push({id:uid(),productId:product.id,nombre:product.nombre,createdAt:new Date().toISOString()});
+    saveSetting(NEEDS_SETTING,current);
+    logEvent("Necesidad añadida",product.nombre);
+    modal.remove();
+    render();
+  };
+
+  const renderSuggestions=()=>{
+    const q=normalize(input.value);
+    const matches=products.filter(p=>!q||normalize(p.nombre).includes(q)).slice(0,12);
+    suggestions.innerHTML=matches.map(p=>`<button type="button" class="need-suggestion" data-product-choice="${esc(p.id)}"><span>📦</span><strong>${esc(p.nombre)}</strong></button>`).join("");
+    suggestions.querySelectorAll("[data-product-choice]").forEach(b=>b.onclick=()=>{
+      const product=products.find(p=>String(p.id)===String(b.dataset.productChoice));
+      if(product)addNeed(product);
+    });
+    const exact=products.find(p=>normalize(p.nombre)===q);
+    createArea.style.display=q&&!exact?"block":"none";
+  };
+
+  input.addEventListener("input",renderSuggestions);
+  modal.querySelector("#createNeedProduct").onclick=()=>{
+    const nombre=input.value.trim();
+    if(!nombre)return;
+    const existing=getProducts().find(p=>normalize(p.nombre)===normalize(nombre));
+    if(existing)return addNeed(existing);
+    const currentNeeds=setting(NEEDS_SETTING,[]);
+    if(currentNeeds.some(n=>normalize(n.nombre)===normalize(nombre)))return alert("Ese producto ya está en tu lista.");
+    try{
+      const product=createProduct({nombre});
+      logEvent("Producto añadido",nombre);
+      addNeed(product);
+    }catch(e){alert(e.message);}
+  };
+
+  input.focus();
+  renderSuggestions();
 }
 function newPresentationModal(productId){
   const product=productById(productId);if(!product)return;const modal=document.createElement("div");modal.className="modal visible";modal.innerHTML=`<div class="modal-box small-modal"><div class="modal-head"><h2>＋ Nueva presentación</h2><button class="close-btn" data-close>×</button></div><small>${esc(product.nombre)}</small><label>Presentación *</label><input id="presentationName" class="modal-input" placeholder="Ej. Nutella 1 kg"><label>Unidad / medida (opcional)</label><input id="presentationUnit" class="modal-input" placeholder="1 kg"><div class="modal-actions"><button class="btn secondary" data-close>Cancelar</button><button class="btn" id="savePresentation">Guardar</button></div></div>`;document.body.appendChild(modal);modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());modal.querySelector("#presentationName").focus();modal.querySelector("#savePresentation").onclick=()=>{const nombre=modal.querySelector("#presentationName").value.trim();if(!nombre)return alert("Escribe la presentación.");try{createPresentation({productId,nombre,unidad:modal.querySelector("#presentationUnit").value.trim()});logEvent("Presentación añadida",`${product.nombre} · ${nombre}`);modal.remove();productModal(productId);}catch(e){alert(e.message);}};
@@ -329,9 +391,27 @@ function editProductModal(id){const p=productById(id);if(!p)return;const modal=d
 function editPresentationModal(id){const p=presentationById(id);if(!p)return;const modal=document.createElement("div");modal.className="modal visible";modal.innerHTML=`<div class="modal-box small-modal"><div class="modal-head"><h2>✏️ Editar presentación</h2><button class="close-btn" data-close>×</button></div><label>Presentación *</label><input id="editPresName" class="modal-input" value="${esc(p.nombre)}"><label>Unidad / medida</label><input id="editPresUnit" class="modal-input" value="${esc(p.unidad||"")}"><div class="modal-actions"><button class="btn secondary" data-close>Cancelar</button><button class="btn" id="saveEditPres">Guardar</button></div></div>`;document.body.appendChild(modal);modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());modal.querySelector("#saveEditPres").onclick=()=>{const nombre=modal.querySelector("#editPresName").value.trim();if(!nombre)return alert("Escribe la presentación.");try{updatePresentation(id,{nombre,unidad:modal.querySelector("#editPresUnit").value.trim()});logEvent("Presentación editada",`${p.nombre} → ${nombre}`);modal.remove();render();}catch(e){alert(e.message);}};}
 
 function bind(){
-  document.getElementById("companySearch")?.addEventListener("input",e=>{state.companySearch=e.target.value;render();focusInput("companySearch");});
-  document.getElementById("listSearch")?.addEventListener("input",e=>{state.listSearch=e.target.value;render();focusInput("listSearch");});
-  document.getElementById("productSearch")?.addEventListener("input",e=>{state.productSearch=e.target.value;render();focusInput("productSearch");});
+  document.getElementById("companySearch")?.addEventListener("input",e=>{
+    state.companySearch=e.target.value;
+    const q=normalize(state.companySearch);
+    document.querySelectorAll("[data-company-card-name]").forEach(card=>{
+      card.hidden=!!q&&!normalize(card.dataset.companyCardName).includes(q);
+    });
+  });
+  document.getElementById("listSearch")?.addEventListener("input",e=>{
+    state.listSearch=e.target.value;
+    const q=normalize(state.listSearch);
+    document.querySelectorAll("[data-need-name]").forEach(row=>{
+      row.hidden=!!q&&!normalize(row.dataset.needName).includes(q);
+    });
+  });
+  document.getElementById("productSearch")?.addEventListener("input",e=>{
+    state.productSearch=e.target.value;
+    const q=normalize(state.productSearch);
+    document.querySelectorAll("[data-product-card-name]").forEach(card=>{
+      card.hidden=!!q&&!normalize(card.dataset.productCardName).includes(q);
+    });
+  });
   document.getElementById("newCompanyBtn")?.addEventListener("click",()=>newCompanyModal());document.getElementById("newCompanyEmpty")?.addEventListener("click",()=>newCompanyModal());
   document.getElementById("listBtn")?.addEventListener("click",()=>{state.screen="list";state.listSearch="";render();});document.getElementById("companyListBtn")?.addEventListener("click",()=>{state.screen="list";state.listSearch="";render();});
   document.getElementById("addProductBtn")?.addEventListener("click",newProductModal);document.getElementById("addNeedBtn")?.addEventListener("click",newNeedModal);document.getElementById("calculatorBtn")?.addEventListener("click",calculatorModal);document.getElementById("cartBtn")?.addEventListener("click",()=>{state.screen="cart";render();});
