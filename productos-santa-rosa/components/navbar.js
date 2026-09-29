@@ -16,7 +16,7 @@ export function crearNavbar(){
       <a href="https://faramag-net.github.io/productos-santa-rosa/pages/ventas">💰 Ventas</a>
       <a href="https://faramag-net.github.io/productos-santa-rosa/pages/visitas">📍 Visitas</a>
       <a href="https://faramag-net.github.io/productos-santa-rosa/pages/insumos">🛒 Compras</a>
-      <a href="https://faramag-net.github.io/mapa/">🗺️ Mapa</a>
+      <a href="https://faramag-net.github.io/productos-santa-rosa/pages/mapa/">🗺️ Mapa</a>
     </div>
   </nav>`;
 }

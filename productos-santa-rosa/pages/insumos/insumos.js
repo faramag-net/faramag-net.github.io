@@ -1,8 +1,8 @@
 /**
  * Productos Santa Rosa
  * Módulo: 🛒 Compras (remodelación de Insumos)
- * Versión: 1.5.0
- * Build: 20260928.2045
+ * Versión: 1.6.0
+ * Build: 20260928.2205
  * Objetivo: Empresas, productos, presentaciones, lista manual, carritos, compras e historiales.
  *
  * Regla V1:
@@ -61,7 +61,8 @@ let state = {
   listSearch: "",
   purchasesPage: 1,
   eventsPage: 1,
-  priceHistoryPage: 1
+  priceHistoryPage: 1,
+  listReturnScreen: "home"
 };
 
 const esc = value => String(value ?? "")
@@ -261,7 +262,7 @@ function newPresentationModal(productId){
 
 function newCompanyModal(companyId=null,onSaved=null){
   const existing=companyId?placeById(companyId):null;const modal=document.createElement("div");modal.className="modal visible";modal.innerHTML=`<div class="modal-box"><div class="modal-head"><div><h2>${existing?"✏️ Editar empresa":"🏪 Nueva empresa"}</h2><small>Se guarda como 🏪 Tienda compartida con Mapa.</small></div><button class="close-btn" data-close>×</button></div><label>Nombre *</label><input id="companyName" class="modal-input" value="${esc(existing?.nombre||"")}"><label>Contacto</label><input id="companyContact" class="modal-input" value="${esc(existing?.contacto||existing?.encargado||"")}"><label>Tipo *</label><select id="companyType" class="modal-input">${["Tienda","Supermercado","Mayorista","Mercado","Distribuidor","Otro"].map(t=>`<option ${existing?.tipo===t?'selected':''}>${t}</option>`).join("")}</select><label>Dirección</label><textarea id="companyAddress" class="modal-input" rows="2">${esc(existing?.direccion||"")}</textarea><label>Tienda virtual</label><input id="companyWeb" class="modal-input" type="url" value="${esc(existing?.tiendaVirtual||"")}" placeholder="https://..."><div class="location-box"><div><strong>📍 Ubicación</strong><small id="locationText">${existing?.latitud!=null&&existing?.longitud!=null?`${existing.latitud}, ${existing.longitud}`:"Sin ubicación"}</small></div><button class="btn secondary" id="useLocation">Usar ubicación actual</button></div><input type="hidden" id="companyLat" value="${existing?.latitud??""}"><input type="hidden" id="companyLon" value="${existing?.longitud??""}"><div class="modal-actions"><button class="btn secondary" data-close>Cancelar</button><button class="btn" id="saveCompany">Guardar</button></div></div>`;document.body.appendChild(modal);modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());
-  modal.querySelector("#useLocation").onclick=()=>{if(!navigator.geolocation)return alert("Este dispositivo no permite obtener ubicación.");modal.querySelector("#locationText").textContent="Obteniendo ubicación…";navigator.geolocation.getCurrentPosition(pos=>{const lat=pos.coords.latitude,lon=pos.coords.longitude;modal.querySelector("#companyLat").value=lat;modal.querySelector("#companyLon").value=lon;modal.querySelector("#locationText").textContent=`${lat.toFixed(6)}, ${lon.toFixed(6)}`;},()=>alert("No se pudo obtener la ubicación."),{enableHighAccuracy:true,timeout:10000});};
+  modal.querySelector("#useLocation").onclick=()=>{if(!navigator.geolocation)return alert("Este dispositivo no permite obtener ubicación.");const addressField=modal.querySelector("#companyAddress");modal.querySelector("#locationText").textContent="Obteniendo ubicación…";navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude,lon=pos.coords.longitude;modal.querySelector("#companyLat").value=lat;modal.querySelector("#companyLon").value=lon;modal.querySelector("#locationText").textContent=`${lat.toFixed(6)}, ${lon.toFixed(6)}`;addressField.value="Obteniendo dirección…";try{const response=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&zoom=18&addressdetails=1`,{headers:{Accept:"application/json"}});if(!response.ok)throw new Error("Geocodificación falló");const data=await response.json();addressField.value=String(data.display_name||"").trim();if(!addressField.value)addressField.value="";}catch(error){console.warn("No fue posible obtener la dirección:",error);addressField.value="";}},()=>alert("No se pudo obtener la ubicación."),{enableHighAccuracy:true,timeout:10000,maximumAge:0});};
   modal.querySelector("#saveCompany").onclick=()=>{const nombre=modal.querySelector("#companyName").value.trim();if(!nombre)return alert("Escribe el nombre.");const p=upsertPlace({id:existing?.id,nombre,contacto:modal.querySelector("#companyContact").value.trim(),encargado:modal.querySelector("#companyContact").value.trim(),tipo:modal.querySelector("#companyType").value,direccion:modal.querySelector("#companyAddress").value.trim(),tiendaVirtual:modal.querySelector("#companyWeb").value.trim(),latitud:modal.querySelector("#companyLat").value?Number(modal.querySelector("#companyLat").value):null,longitud:modal.querySelector("#companyLon").value?Number(modal.querySelector("#companyLon").value):null});logEvent(existing?"Empresa editada":"Empresa añadida",p.nombre);modal.remove();if(onSaved){onSaved(p);return;}if(existing){render();}else{state.companyId=p.id;state.screen="company";state.productSearch="";render();}};
 }
 
@@ -413,10 +414,10 @@ function bind(){
     });
   });
   document.getElementById("newCompanyBtn")?.addEventListener("click",()=>newCompanyModal());document.getElementById("newCompanyEmpty")?.addEventListener("click",()=>newCompanyModal());
-  document.getElementById("listBtn")?.addEventListener("click",()=>{state.screen="list";state.listSearch="";render();});document.getElementById("companyListBtn")?.addEventListener("click",()=>{state.screen="list";state.listSearch="";render();});
+  document.getElementById("listBtn")?.addEventListener("click",()=>{state.listReturnScreen="home";state.companyId=null;state.screen="list";state.listSearch="";render();});document.getElementById("companyListBtn")?.addEventListener("click",()=>{state.listReturnScreen="company";state.screen="list";state.listSearch="";render();});
   document.getElementById("addProductBtn")?.addEventListener("click",newProductModal);document.getElementById("addNeedBtn")?.addEventListener("click",newNeedModal);document.getElementById("calculatorBtn")?.addEventListener("click",calculatorModal);document.getElementById("cartBtn")?.addEventListener("click",()=>{state.screen="cart";render();});
   document.getElementById("openCartsTop")?.addEventListener("click",openCartsModal);document.getElementById("openCartsBanner")?.addEventListener("click",openCartsModal);document.getElementById("purchasesHistoryBtn")?.addEventListener("click",()=>{state.purchasesPage=1;purchasesHistoryModal();});document.getElementById("eventsHistoryBtn")?.addEventListener("click",()=>{state.eventsPage=1;eventsHistoryModal();});
-  document.getElementById("backBtn")?.addEventListener("click",()=>{if(state.screen==="cart"){state.screen="company";}else if(state.screen==="company"||state.screen==="list"){state.screen="home";state.companyId=null;}render();});
+  document.getElementById("backBtn")?.addEventListener("click",()=>{if(state.screen==="cart"){state.screen="company";}else if(state.screen==="list"){if(state.listReturnScreen==="company"&&state.companyId){state.screen="company";}else{state.screen="home";state.companyId=null;}}else if(state.screen==="company"){state.screen="home";state.companyId=null;}render();});
   document.querySelectorAll("[data-company]").forEach(b=>b.onclick=()=>{state.companyId=b.dataset.company;state.screen="company";state.productSearch="";render();});document.querySelectorAll("[data-product]").forEach(b=>b.onclick=()=>productModal(b.dataset.product));
   document.querySelectorAll("[data-remove-cart]").forEach(b=>b.onclick=()=>{setCart(state.companyId,cartFor(state.companyId).filter(i=>String(i.id)!==String(b.dataset.removeCart)));render();});
   document.querySelectorAll("[data-qty]").forEach(i=>i.onchange=()=>{const items=cartFor(state.companyId),item=items.find(x=>String(x.id)===String(i.dataset.qty)),qty=Number(i.value);if(!item)return;if(qty>0){item.cantidad=qty;setCart(state.companyId,items);}else setCart(state.companyId,items.filter(x=>x.id!==item.id));render();});
