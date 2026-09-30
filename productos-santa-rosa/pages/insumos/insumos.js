@@ -14,7 +14,7 @@
  * - No se crea psr_compras_*: carritos, eventos y lista viven en psr_settings.
  */
 
-import { renderPhotoPicker, movePhotos } from "../core/media/fotos.js";
+import { renderPhotoPicker, movePhotos } from "../../core/media/fotos.js";
 
 import {
   getProducts,
