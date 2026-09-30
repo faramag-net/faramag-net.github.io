@@ -1,6 +1,8 @@
 import LocalDB
 from "../../../core/storage/local-db.js";
 
+import { renderPhotoPicker } from "../../../core/media/fotos.js";
+
 import {
     mostrarTicketConsignacion
 }
@@ -340,6 +342,8 @@ setTimeout(() => {
             <input id="editarClienteTelefono" type="tel" value="${escapeHtml(cliente.telefono || "")}" placeholder="Teléfono">
             <input id="editarClienteDireccion" type="text" value="${escapeHtml(cliente.direccion || "")}" placeholder="Dirección">
 
+            <div id="editarClienteFotos"></div>
+
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
                 <button type="button" id="btnObtenerUbicacionCliente">📍 Obtener ubicación</button>
                 <button type="button" id="btnGuardarCliente">💾 Guardar cambios</button>
@@ -435,6 +439,7 @@ setTimeout(() => {
     });
 
     conectarEdicionCliente();
+    renderPhotoPicker({ container: document.getElementById("editarClienteFotos"), entityType: "cliente", entityId: clienteId, label: "Fotografías" });
 }
 
     function renderVisitasTab(){

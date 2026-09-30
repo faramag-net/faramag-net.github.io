@@ -80,6 +80,20 @@
 
     </div>
 
+
+    <section class="backup-panel">
+        <h2>💾 Respaldos</h2>
+        <p>Datos y fotografías se respaldan por separado.</p>
+        <div class="backup-actions">
+            <button id="backupDataExport" type="button">⬇️ Exportar datos</button>
+            <button id="backupDataImport" type="button">⬆️ Importar datos</button>
+            <input id="backupDataFile" type="file" accept=".json,.psr.json" hidden>
+            <button id="backupPhotoExport" type="button">📷 Exportar fotos</button>
+            <button id="backupPhotoImport" type="button">📷 Importar fotos</button>
+            <input id="backupPhotoFile" type="file" accept=".json,.psr.json" hidden>
+        </div>
+    </section>
+
     <section class="top-clientes-dashboard">
         <div class="top-clientes-header">
             <h3>👥 Top clientes</h3>
@@ -107,8 +121,11 @@
 
     </script>
         
-    <script type="module"
-            src="./dashboard.js"></script>
+    <script type="module" src="./dashboard.js"></script>
+    <script type="module">
+        import { bindBackupUI } from "./core/backup/backup.js";
+        bindBackupUI();
+    </script>
 
 </body>
 

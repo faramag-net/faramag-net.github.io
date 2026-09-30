@@ -301,3 +301,6 @@ a{
 
     min-width: 300px;
 }
+
+/* Fotografías compartidas Productos Santa Rosa */
+.psr-photo-section{margin:12px 0;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa}.psr-photo-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}.psr-photo-limit{font-size:11px;color:#666}.psr-photo-add{display:inline-block;border:1px solid #cfd4da;border-radius:9px;padding:9px 11px;background:#fff;cursor:pointer;font-weight:700}.psr-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,86px);gap:7px;margin-top:8px}.psr-photo-card{width:86px;border:1px solid #ddd;border-radius:8px;overflow:hidden;background:#fff}.psr-photo-card img{display:block;width:86px;height:66px;object-fit:cover}.psr-photo-card div{display:flex;justify-content:space-between;align-items:center;padding:4px;font-size:10px}.psr-photo-card button{border:0;background:none;cursor:pointer;padding:0}

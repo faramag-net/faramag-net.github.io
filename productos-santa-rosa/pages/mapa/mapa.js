@@ -1,3 +1,5 @@
+import { renderPhotoPicker, movePhotos } from "../../core/media/fotos.js";
+
 /*
  * Productos Santa Rosa
  * Módulo: Mapa
@@ -351,7 +353,7 @@ function popupHtml(registro) {
       ${registro.direccion ? `<div>📍 ${escapeHtml(registro.direccion)}</div>` : ""}
       ${comentario}
       <div class="popup-botones">
-        ${registro.tipo === "tienda" ? '<span class="popup-solo-info">ℹ️ Solo información</span>' : `<button type="button" data-accion="editar" data-id="${escapeHtml(registro.id)}">✏️ Editar</button>`}
+        <button type="button" data-accion="editar" data-id="${escapeHtml(registro.id)}">✏️ Editar</button>
         <button type="button" data-accion="google" data-id="${escapeHtml(registro.id)}">🗺️ Google Maps</button>
       </div>
     </div>
@@ -456,6 +458,9 @@ async function obtenerDireccionEscrita(latitud, longitud) {
 
 function abrirModal({ registro = null, lat = null, lon = null, obtenerDireccion = true } = {}) {
   const nuevo = !registro;
+  const draftId = registro?.id || crearId();
+  modal.dataset.photoEntityId = registro?.routeClientId || registro?.marketPlaceId || draftId;
+  modal.dataset.photoEntityType = registro?.tipo === "real" ? "cliente" : (registro?.tipo === "tienda" ? "empresa" : "mapa");
   document.getElementById("mapaId").value = registro?.id || "";
   document.getElementById("mapaLatitud").value = Number(registro?.latitud ?? lat).toFixed(7);
   document.getElementById("mapaLongitud").value = Number(registro?.longitud ?? lon).toFixed(7);
@@ -474,6 +479,7 @@ function abrirModal({ registro = null, lat = null, lon = null, obtenerDireccion 
   document.getElementById("coordenadasTexto").textContent = `${Number(registro?.latitud ?? lat).toFixed(7)}, ${Number(registro?.longitud ?? lon).toFixed(7)}`;
   modal.classList.add("visible");
   modal.setAttribute("aria-hidden", "false");
+  renderPhotoPicker({ container: document.getElementById("mapaFotos"), entityType: modal.dataset.photoEntityType, entityId: modal.dataset.photoEntityId, label: "Fotografías" });
   setTimeout(() => document.getElementById("mapaNombre").focus(), 50);
 
   // Al crear un registro nuevo, obtener automáticamente la dirección
@@ -541,7 +547,6 @@ form.addEventListener("submit", event => {
   if (id) {
     const registro = clientesMapa.find(c => String(c.id) === String(id));
     if (!registro) return;
-    if (registro.tipo === "tienda") return alert("Las tiendas se muestran como información en el mapa y no se pueden editar ni cambiar de categoría desde aquí.");
 
     const tipoAnterior = registro.tipo;
 
@@ -568,9 +573,12 @@ form.addEventListener("submit", event => {
       marcarRouteClientComoProspecto(registro);
     }
   } else {
-    const registro = { id: crearId(), createdAt: new Date().toISOString(), mapVisible: true, ...datos };
+    const draftPhotoId = modal.dataset.photoEntityId || crearId();
+    const registro = { id: draftPhotoId, createdAt: new Date().toISOString(), mapVisible: true, ...datos };
     if (tipo === "real") crearClienteRealDesdeMapa(registro);
     clientesMapa.push(registro);
+    if (tipo === "real" && registro.routeClientId) movePhotos("cliente", id, registro.routeClientId).catch(() => {});
+    if (tipo === "tienda" && registro.marketPlaceId) movePhotos("empresa", id, registro.marketPlaceId).catch(() => {});
   }
 
   guardarMapa();
@@ -735,7 +743,8 @@ function mostrarMiUbicacion(centrar = false) {
   );
 }
 
-document.getElementById("btnMiUbicacion").addEventListener("click", () => mostrarMiUbicacion(true));
+document.getElementById("btnMiUbicacion")?.addEventListener("click", () => mostrarMiUbicacion(true));
+document.getElementById("btnUbicacionPermanente").addEventListener("click", () => mostrarMiUbicacion(true));
 document.getElementById("btnNuevaCategoria").addEventListener("click", crearCategoria);
 
 mapa.on("click", e => {

@@ -1,6 +1,8 @@
 import LocalDB
 from "../../core/storage/local-db.js";
 
+import { renderPhotoPicker, movePhotos } from "../../core/media/fotos.js";
+
 LocalDB.recuperarProductosHistoricos();
 
 import {
@@ -52,10 +54,13 @@ window.openCrearClienteModal = () => {
         getComputedStyle(form)
         .display !== "none";
 
-    form.style.display =
-        visible
-        ? "none"
-        : "grid";
+    form.style.display = visible ? "none" : "grid";
+
+    if (!visible) {
+        const draftId = crypto.randomUUID();
+        form.dataset.photoDraftId = draftId;
+        renderPhotoPicker({ container: document.getElementById("clienteFotosNuevo"), entityType: "cliente", entityId: draftId, label: "Fotografías" });
+    }
 
 };
 

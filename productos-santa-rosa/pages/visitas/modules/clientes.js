@@ -44,7 +44,7 @@ export function crearCliente() {
         return;
     }
 
-    LocalDB.addClient({
+    const nuevoCliente = LocalDB.addClient({
 
     nombre,
 
@@ -61,6 +61,9 @@ export function crearCliente() {
     notas:""
 
     });
+
+    const draftId = document.querySelector(".form-cliente")?.dataset.photoDraftId;
+    if (draftId) movePhotos("cliente", draftId, nuevoCliente.id).catch(() => {});
     renderClientes();
 
     document.getElementById(

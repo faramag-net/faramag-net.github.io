@@ -43,6 +43,7 @@
   <small id="estadoUbicacion">Toca el mapa para colocar un nuevo cliente o prospecto.</small>
 </div>
 
+<button id="btnUbicacionPermanente" class="btn-ubicacion-permanente" type="button" aria-label="Actualizar ubicación">📍</button>
 <button id="btnAbrirPanel" class="btn-flotante" type="button" aria-label="Abrir controles">☰</button>
 
 <div id="modalCliente" class="modal-mapa" aria-hidden="true">
@@ -91,6 +92,8 @@
         <label for="mapaComentarios">Comentarios</label>
         <textarea id="mapaComentarios" rows="3" maxlength="500" placeholder="Notas, horarios, contacto, interés, etc."></textarea>
       </div>
+
+      <div id="mapaFotos" class="mapa-fotos"></div>
 
       <div class="coordenadas-modal">
         <span>📍 <b>Ubicación</b></span>
