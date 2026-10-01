@@ -36,3 +36,209 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
 /* V1.5.0 · Listas y búsqueda móvil */
 .need-suggestions{display:grid;gap:6px;margin-top:8px;max-height:42vh;overflow:auto}.need-suggestion{display:flex;align-items:center;gap:9px;width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;cursor:pointer}.need-suggestion span{font-size:16px}.need-suggestion strong{font-size:13px}.need-create-area{margin-top:10px;padding:10px;border:1px dashed #c9ced7;border-radius:10px;background:#fafbfc}.need-create-area p{margin:0 0 7px}.need-row[hidden],.company-card-wrap[hidden],.product-card-wrap[hidden]{display:none!important}
+
+/* Compras · FIX UI móvil 1.6.0
+   Neutraliza los estilos globales de button (width:100%, margin y color blanco)
+   que estaban afectando los botones compactos de este módulo. */
+.compras-page button,
+.modal button{
+  box-sizing:border-box;
+}
+
+/* Botones compactos: nunca ocupar toda la pantalla */
+.compras-page .icon-btn,
+.compras-page .cart-indicator,
+.compras-page .close-btn,
+.compras-page .text-btn,
+.compras-page .entity-actions button,
+.compras-page .entity-toolbar button,
+.compras-page .mini-danger,
+.compras-page .icon-danger,
+.modal .close-btn,
+.modal .text-btn,
+.modal .btn,
+.modal .mini-edit,
+.modal .danger-mini{
+  width:auto;
+  min-width:0;
+  margin:0;
+}
+
+/* Navegación y encabezados */
+.compras-page .icon-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:42px;
+  height:42px;
+  padding:0;
+  color:var(--text);
+  background:transparent;
+  font-size:25px;
+  line-height:1;
+}
+.compras-page .cart-indicator{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  width:42px;
+  height:42px;
+  padding:0;
+  color:var(--text);
+  background:transparent;
+  font-size:22px;
+  line-height:1;
+}
+.compras-page .cart-indicator b{
+  width:auto;
+  margin:0;
+  padding:0;
+  color:#fff;
+}
+
+/* Todas las X de modales: pequeñas, visibles y sin fondo de botón global */
+.modal .close-btn{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;
+  height:34px;
+  padding:0;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:var(--danger);
+  font-size:27px;
+  line-height:1;
+}
+
+.modal .close-btn:hover{background:#fff1f0;opacity:1}
+
+/* Acciones de empresa/producto/presentación */
+.compras-page .entity-actions{
+  display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.compras-page .entity-actions button,
+.compras-page .entity-toolbar button{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+  color:var(--text);
+  background:#fff;
+  line-height:1.2;
+}
+.compras-page .entity-actions button{min-height:30px;height:30px}
+.compras-page .entity-toolbar button{min-height:34px}
+.compras-page .entity-actions button[data-delete-company],
+.compras-page .entity-actions button[data-delete-product],
+.compras-page .entity-actions button[data-delete-presentation],
+.compras-page .entity-toolbar button[data-delete-company],
+.compras-page .entity-toolbar button[data-delete-product],
+.compras-page .entity-toolbar button[data-delete-presentation]{color:var(--danger)}
+
+/* Lista: la X solo ocupa el espacio de la X */
+.compras-page .need-row .mini-danger{
+  flex:0 0 28px;
+  width:28px;
+  height:28px;
+  min-height:28px;
+  padding:0;
+  border:1px solid #e7aaa5;
+  border-radius:7px;
+  background:#fff;
+  color:var(--danger);
+  font-size:19px;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Botones normales de Compras: tamaño natural, no ancho forzado */
+.compras-page .action-btn,
+.compras-page .btn{
+  width:auto;
+  min-width:0;
+  margin:0;
+}
+.compras-page .wide-action,
+.compras-page .primary-full{
+  margin-top:12px;
+}
+.compras-page .wide-action{width:100%}
+.compras-page .primary-full{width:100%}
+
+/* Modal: los botones de Cancelar/Guardar quedan compactos */
+.modal .modal-actions .btn{
+  flex:0 0 auto;
+  color:var(--text);
+  background:#fff;
+  border:1px solid #d7dce4;
+}
+.modal .modal-actions .btn:not(.secondary){
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
+.modal .modal-actions .btn.secondary{color:var(--text)}
+
+/* Botones de sugerencias/lista */
+.modal .need-suggestion{
+  width:100%;
+  margin:0;
+  color:var(--text);
+  background:#fff;
+}
+.modal .need-suggestion strong{color:var(--text)}
+
+/* Carritos abiertos: la X/flecha del encabezado nunca crece */
+.compras-page .open-carts-banner{
+  width:100%;
+  margin-top:0;
+}
+.compras-page .open-carts-banner span:last-child{
+  width:18px;
+  margin:0;
+  padding:0;
+  color:var(--text);
+  text-align:center;
+}
+
+/* Filas de carrito: el botón de eliminar permanece compacto */
+.compras-page .cart-row .icon-danger{
+  flex:0 0 30px;
+  width:30px;
+  height:30px;
+  min-height:30px;
+  padding:0;
+  margin:0;
+  background:transparent;
+  color:var(--danger);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Historial: controles compactos */
+.modal .history-value .mini-edit,
+.modal .history-value .danger-mini{
+  width:auto;
+  min-width:28px;
+  height:28px;
+  min-height:28px;
+  padding:0 6px;
+  margin:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+}
+.modal .history-value .danger-mini{color:var(--danger)}
