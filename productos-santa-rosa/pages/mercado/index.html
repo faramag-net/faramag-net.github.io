@@ -1,7 +1,20 @@
 <!doctype html>
-<!-- Productos Santa Rosa · Mercado · Versión 1.1.2 · Build 20260926.1130 -->
-<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Mercado · Santa Rosa</title><link rel="stylesheet" href="./mercado.css"><link rel="stylesheet" href="../../styles/global.css">
-<link rel="stylesheet" href="../../components/navbar.css"></head><body><main id="app" class="app-page"></main><script type="module" src="./mercado.js"></script><script type="module">
+<!-- Productos Santa Rosa · Compras · V1.6.0 · Integrado en Mercado · Build 20261001 -->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Compras · Santa Rosa</title>
+<link rel="stylesheet" href="../../styles/global.css">
+<link rel="stylesheet" href="../../components/navbar.css">
+<link rel="stylesheet" href="./compras/compras.css">
+</head>
+<body>
+<main id="app" class="compras-page"></main>
+<script type="module">
 import { crearNavbar } from "../../components/navbar.js";
 document.body.insertAdjacentHTML("afterbegin", crearNavbar());
-</script></body></html>
+</script>
+<script type="module" src="./compras/compras.js"></script>
+</body>
+</html>

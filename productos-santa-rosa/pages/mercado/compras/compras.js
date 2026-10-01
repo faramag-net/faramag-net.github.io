@@ -14,7 +14,7 @@
  * - No se crea psr_compras_*: carritos, eventos y lista viven en psr_settings.
  */
 
-import { renderPhotoPicker, movePhotos } from "../../core/media/fotos.js";
+import { renderPhotoPicker, movePhotos } from "../../../core/media/fotos.js";
 
 import {
   getProducts,
@@ -44,7 +44,7 @@ import {
   deletePurchase,
   normalize,
   uid
-} from "../mercado/mercado-store.js";
+} from "../mercado-store.js";
 
 const root = document.getElementById("app");
 const SETTINGS_KEY = "psr_settings";

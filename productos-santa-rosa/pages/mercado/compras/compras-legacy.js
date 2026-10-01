@@ -1,5 +1,5 @@
 import LocalDB
-from "../../core/storage/local-db.js";
+from "../../../core/storage/local-db.js";
 
 const btnExportar =
     document.getElementById(
