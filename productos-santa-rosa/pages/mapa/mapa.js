@@ -1,4 +1,4 @@
-import { renderPhotoPicker, movePhotos } from "../../core/media/fotos.js";
+import { renderPhotoPicker, movePhotos, getPhotos } from "../../core/media/fotos.js";
 
 /*
  * Productos Santa Rosa
@@ -338,7 +338,22 @@ function abrirGoogleMaps(registro) {
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
-function popupHtml(registro) {
+function photoEntityForRegistro(registro) {
+  return {
+    entityType: registro?.tipo === "real" ? "cliente" : (registro?.tipo === "tienda" ? "empresa" : "mapa"),
+    entityId: registro?.routeClientId || registro?.marketPlaceId || registro?.id || ""
+  };
+}
+
+async function popupHtml(registro) {
+  const photoRef = photoEntityForRegistro(registro);
+  let tieneFotos = false;
+  try {
+    const fotos = await getPhotos(photoRef.entityType, photoRef.entityId);
+    tieneFotos = fotos.length > 0;
+  } catch (error) {
+    console.warn("No fue posible consultar las fotografías del registro:", error);
+  }
   const categoria = categoriaPorId(registro.categoriaId);
   const tipo = obtenerNombreTipo(registro.tipo);
   const comentario = registro.comentarios
@@ -347,7 +362,7 @@ function popupHtml(registro) {
 
   return `
     <div class="popup-cliente">
-      <div class="popup-titulo"><span class="popup-dot" style="--cat-color:${escapeHtml(categoria.color)}"></span><b>${escapeHtml(registro.nombre)}</b></div>
+      <div class="popup-titulo"><span class="popup-dot" style="--cat-color:${escapeHtml(categoria.color)}"></span><b>${escapeHtml(registro.nombre)}</b>${tieneFotos ? `<button type="button" class="popup-fotos-btn" data-accion="fotos" data-id="${escapeHtml(registro.id)}" aria-label="Ver fotografías" title="Ver fotografías">📷</button>` : ""}</div>
       <div class="popup-meta">${tipo} · ${escapeHtml(categoria.nombre)}</div>
       ${registro.telefono ? `<div>📞 ${escapeHtml(registro.telefono)}</div>` : ""}
       ${registro.direccion ? `<div>📍 ${escapeHtml(registro.direccion)}</div>` : ""}
@@ -373,7 +388,10 @@ function renderMarcadores() {
       icon: crearIconoCategoria(categoria)
     }).addTo(mapa);
 
-    marker.bindPopup(popupHtml(registro));
+    marker.bindPopup("<div class=\"popup-cargando-fotos\">Cargando…</div>");
+    marker.once("popupopen", async () => {
+      marker.setPopupContent(await popupHtml(registro));
+    });
 
     // La nueva ubicación no se guarda hasta que el usuario la confirme.
     let ubicacionAnterior = {
@@ -417,7 +435,10 @@ function renderMarcadores() {
       }
       if (esReal(registro)) sincronizarClienteReal(registro);
       actualizarEstado(`✓ Ubicación de ${registro.nombre} actualizada.`);
-      marker.bindPopup(popupHtml(registro));
+      marker.bindPopup("<div class=\"popup-cargando-fotos\">Cargando…</div>");
+    marker.once("popupopen", async () => {
+      marker.setPopupContent(await popupHtml(registro));
+    });
     });
     marcadores.set(String(registro.id), marker);
   });
@@ -685,6 +706,8 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") {
     cerrarModal();
     cerrarModalExistente();
+    cerrarGaleriaFotosMapa();
+    document.getElementById("fotoGrandeMapaWrap")?.classList.remove("visible");
   }
 });
 
@@ -751,17 +774,76 @@ mapa.on("click", e => {
   abrirModal({ lat: e.latlng.lat, lon: e.latlng.lng });
 });
 
-document.addEventListener("click", event => {
+async function abrirGaleriaFotosMapa(registro) {
+  const ref = photoEntityForRegistro(registro);
+  try {
+    const fotos = await getPhotos(ref.entityType, ref.entityId);
+    if (!fotos.length) return;
+    const modalFotos = document.getElementById("modalFotosMapa");
+    const grid = document.getElementById("galeriaFotosMapa");
+    const grande = document.getElementById("fotoGrandeMapa");
+    const titulo = document.getElementById("tituloFotosMapa");
+    titulo.textContent = `📷 ${registro.nombre}`;
+    grid.innerHTML = "";
+    const urls = fotos.map(foto => ({ foto, url: URL.createObjectURL(foto.blob) }));
+    urls.forEach(({ foto, url }, index) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "mapa-foto-miniatura";
+      btn.innerHTML = `<img src="${url}" alt="Fotografía ${index + 1}"><span>${Math.round(foto.size / 1024)} KB</span>`;
+      btn.addEventListener("click", () => {
+        grande.src = url;
+        grande.alt = `Fotografía ${index + 1} de ${registro.nombre}`;
+        document.getElementById("fotoGrandeMapaWrap").classList.add("visible");
+      });
+      grid.appendChild(btn);
+    });
+    modalFotos.classList.add("visible");
+    modalFotos.setAttribute("aria-hidden", "false");
+    modalFotos._photoUrls = urls.map(item => item.url);
+  } catch (error) {
+    console.error(error);
+    alert("No fue posible cargar las fotografías.");
+  }
+}
+
+function cerrarGaleriaFotosMapa() {
+  const modalFotos = document.getElementById("modalFotosMapa");
+  const grandeWrap = document.getElementById("fotoGrandeMapaWrap");
+  grandeWrap.classList.remove("visible");
+  modalFotos.classList.remove("visible");
+  modalFotos.setAttribute("aria-hidden", "true");
+  (modalFotos._photoUrls || []).forEach(url => URL.revokeObjectURL(url));
+  modalFotos._photoUrls = [];
+  document.getElementById("galeriaFotosMapa").innerHTML = "";
+  document.getElementById("fotoGrandeMapa").removeAttribute("src");
+}
+
+document.addEventListener("click", async event => {
   const boton = event.target.closest("button[data-accion]");
   if (!boton) return;
   const registro = clientesMapa.find(c => String(c.id) === String(boton.dataset.id));
   if (!registro) return;
   const marker = marcadores.get(String(registro.id));
+  if (boton.dataset.accion === "fotos") {
+    if (marker) marker.closePopup();
+    await abrirGaleriaFotosMapa(registro);
+    return;
+  }
   if (boton.dataset.accion === "editar") {
     if (marker) marker.closePopup();
     abrirModal({ registro });
   }
   if (boton.dataset.accion === "google") abrirGoogleMaps(registro);
+});
+
+document.getElementById("btnCerrarFotosMapa")?.addEventListener("click", cerrarGaleriaFotosMapa);
+document.getElementById("btnCerrarFotoGrandeMapa")?.addEventListener("click", () => document.getElementById("fotoGrandeMapaWrap").classList.remove("visible"));
+document.getElementById("modalFotosMapa")?.addEventListener("click", event => {
+  if (event.target.id === "modalFotosMapa") cerrarGaleriaFotosMapa();
+});
+document.getElementById("fotoGrandeMapaWrap")?.addEventListener("click", event => {
+  if (event.target.id === "fotoGrandeMapaWrap") event.currentTarget.classList.remove("visible");
 });
 
 sincronizarClientesVisitasEnMapa();
