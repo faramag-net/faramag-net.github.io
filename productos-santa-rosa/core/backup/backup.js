@@ -34,6 +34,14 @@ export function buildDataBackup() {
     const value = read(key);
     if (value !== null) data[key] = value;
   });
+  const settings = read("psr_settings");
+  if (settings && typeof settings === "object" && !Array.isArray(settings)) {
+    const comprasSettings = {};
+    ["comprasCarritos","comprasLista","comprasHistorialEventos","comprasCarritosV1","comprasListaV1","comprasHistorialEventosV1"].forEach(key => {
+      if (settings[key] !== undefined) comprasSettings[key] = settings[key];
+    });
+    if (Object.keys(comprasSettings).length) data.comprasSettings = comprasSettings;
+  }
   return { format: DATA_FORMAT, version: VERSION, exportedAt: new Date().toISOString(), data };
 }
 
@@ -60,6 +68,7 @@ export async function importDataBackup(file) {
   const payload = JSON.parse(await file.text());
   if (payload?.format !== DATA_FORMAT || !payload?.data || typeof payload.data !== "object") throw new Error("Archivo de datos no válido.");
   Object.entries(payload.data).forEach(([key, value]) => {
+    if (key === "comprasSettings") return;
     if (!DATA_KEYS.includes(key)) return;
     let incoming = value;
     const current = read(key);
@@ -70,6 +79,28 @@ export async function importDataBackup(file) {
     }
     localStorage.setItem(key, JSON.stringify(incoming));
   });
+  if (payload.data.comprasSettings && typeof payload.data.comprasSettings === "object") {
+    const settings = read("psr_settings") || {};
+    const incoming = payload.data.comprasSettings;
+    const pairs = [["comprasCarritosV1","comprasCarritos"],["comprasListaV1","comprasLista"],["comprasHistorialEventosV1","comprasHistorialEventos"]];
+    for (const [oldKey,newKey] of pairs) {
+      const value = incoming[newKey] !== undefined ? incoming[newKey] : incoming[oldKey];
+      if (value === undefined) continue;
+      if (newKey === "comprasCarritos") {
+        settings[newKey] = {...(settings[newKey] || {}), ...(value || {})};
+      } else {
+        const current = Array.isArray(settings[newKey]) ? settings[newKey] : [];
+        const rows = Array.isArray(value) ? value : [];
+        const map = new Map(current.map(x => [String(x?.id), x]));
+        rows.forEach(x => { if (x && x.id) map.set(String(x.id), {...(map.get(String(x.id)) || {}), ...x}); });
+        settings[newKey] = [...map.values()];
+      }
+    }
+    delete settings.comprasCarritosV1;
+    delete settings.comprasListaV1;
+    delete settings.comprasHistorialEventosV1;
+    localStorage.setItem("psr_settings", JSON.stringify(settings));
+  }
 }
 
 export async function importPhotoBackup(file) {

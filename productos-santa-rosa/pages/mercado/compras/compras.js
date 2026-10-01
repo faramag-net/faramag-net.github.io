@@ -48,9 +48,9 @@ import {
 
 const root = document.getElementById("app");
 const SETTINGS_KEY = "psr_settings";
-const CARTS_SETTING = "comprasCarritosV1";
-const NEEDS_SETTING = "comprasListaV1";
-const EVENTS_SETTING = "comprasHistorialEventosV1";
+const CARTS_SETTING = "comprasCarritos";
+const NEEDS_SETTING = "comprasLista";
+const EVENTS_SETTING = "comprasHistorialEventos";
 const BUYERS = ["Ambos", "Martha", "Fara", "Otro"];
 
 let state = {
@@ -96,6 +96,34 @@ function storeTypeLabel(tipo){
   return map[tipo]||`🏪 ${tipo||"Tienda"}`;
 }
 
+function migrateCompraSettings(){
+  const settings=readSettings();
+  let changed=false;
+  const migrations=[
+    ["comprasCarritosV1",CARTS_SETTING,{}],
+    ["comprasListaV1",NEEDS_SETTING,[]],
+    ["comprasHistorialEventosV1",EVENTS_SETTING,[]]
+  ];
+  for(const [oldKey,newKey,empty] of migrations){
+    if(settings[oldKey]===undefined) continue;
+    const oldValue=settings[oldKey];
+    const current=settings[newKey];
+    if(newKey===CARTS_SETTING){
+      settings[newKey]={...(oldValue&&typeof oldValue==='object'?oldValue:{}),...(current&&typeof current==='object'?current:{})};
+    }else{
+      const currentRows=Array.isArray(current)?current:[];
+      const oldRows=Array.isArray(oldValue)?oldValue:[];
+      const map=new Map(currentRows.map(x=>[String(x?.id),x]));
+      oldRows.forEach(x=>{if(x&&x.id&&!map.has(String(x.id)))map.set(String(x.id),x);});
+      settings[newKey]=[...map.values()];
+    }
+    delete settings[oldKey];
+    changed=true;
+  }
+  if(changed) writeSettings(settings);
+}
+
+migrateCompraSettings();
 function events(){ return setting(EVENTS_SETTING,[]); }
 function logEvent(tipo,detalle){
   const rows=events(); rows.unshift({id:uid(),fecha:new Date().toISOString(),tipo,detalle}); saveSetting(EVENTS_SETTING,rows.slice(0,1000));
@@ -316,12 +344,35 @@ function purchasesHistoryModal(){
   modal.querySelector("[data-page-next]")?.addEventListener("click",()=>{state.purchasesPage++;modal.remove();purchasesHistoryModal();});
 }
 
+function editEventModal(id){
+  const event=events().find(x=>String(x.id)===String(id)); if(!event)return;
+  const localDate=new Date(event.fecha);
+  const pad=n=>String(n).padStart(2,"0");
+  const dateValue=Number.isNaN(localDate.getTime())?"":`${localDate.getFullYear()}-${pad(localDate.getMonth()+1)}-${pad(localDate.getDate())}T${pad(localDate.getHours())}:${pad(localDate.getMinutes())}`;
+  const modal=document.createElement("div"); modal.className="modal visible";
+  modal.innerHTML=`<div class="modal-box"><div class="modal-head"><h2>✏️ Editar evento</h2><button class="close-btn" data-close>×</button></div><label>Evento *</label><input id="eventType" class="modal-input" value="${esc(event.tipo)}"><label>Detalle</label><textarea id="eventDetail" class="modal-input" rows="3">${esc(event.detalle||"")}</textarea><label>Fecha y hora</label><input id="eventDate" class="modal-input" type="datetime-local" value="${dateValue}"><div class="modal-actions"><button class="btn secondary" data-close>Cancelar</button><button class="btn" id="saveEvent">Guardar cambios</button></div></div>`;
+  document.body.appendChild(modal);
+  modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());
+  modal.querySelector("#saveEvent").onclick=()=>{
+    const tipo=modal.querySelector("#eventType").value.trim();
+    const detalle=modal.querySelector("#eventDetail").value.trim();
+    const fechaInput=modal.querySelector("#eventDate").value;
+    if(!tipo)return alert("Escribe el tipo de evento.");
+    const fecha=fechaInput?new Date(fechaInput).toISOString():event.fecha;
+    const rows=events().map(x=>String(x.id)===String(id)?{...x,tipo,detalle,fecha}:x);
+    saveSetting(EVENTS_SETTING,rows);
+    modal.remove(); eventsHistoryModal();
+  };
+}
+
 function eventsHistoryModal(){
   const rows=events().slice().sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
   const pg=pageSlice(rows,state.eventsPage); state.eventsPage=pg.page;
   const modal=document.createElement("div"); modal.className="modal visible";
-  modal.innerHTML=`<div class="modal-box history-modal"><div class="modal-head"><h2>🕘 Historial de eventos</h2><button class="close-btn" data-close>×</button></div><div class="history-list">${pg.rows.map(e=>`<div class="history-row"><div><strong>${esc(e.tipo)}</strong><small>${formatDate(e.fecha)}</small></div><span>${esc(e.detalle)}</span></div>`).join("")||`<div class="empty-card">No hay eventos registrados.</div>`}</div>${paginationHtml(pg.page,pg.totalPages,'events')}</div>`;
+  modal.innerHTML=`<div class="modal-box history-modal"><div class="modal-head"><h2>🕘 Historial de eventos</h2><button class="close-btn" data-close>×</button></div><div class="history-list">${pg.rows.map(e=>`<div class="history-row"><div><strong>${esc(e.tipo)}</strong><small>${formatDate(e.fecha)}</small></div><div class="history-value"><span>${esc(e.detalle)}</span><span class="history-actions"><button class="mini-edit" data-edit-event="${esc(e.id)}">✏️</button><button class="mini-edit danger-mini" data-delete-event="${esc(e.id)}">🗑️</button></span></div></div>`).join("")||`<div class="empty-card">No hay eventos registrados.</div>`}</div>${paginationHtml(pg.page,pg.totalPages,'events')}</div>`;
   document.body.appendChild(modal); modal.querySelector("[data-close]").onclick=()=>modal.remove();
+  modal.querySelectorAll("[data-edit-event]").forEach(b=>b.onclick=()=>{modal.remove();editEventModal(b.dataset.editEvent);});
+  modal.querySelectorAll("[data-delete-event]").forEach(b=>b.onclick=()=>{const event=events().find(x=>String(x.id)===String(b.dataset.deleteEvent));if(!event)return;if(!confirm(`¿Borrar el evento «${event.tipo}»?`))return;saveSetting(EVENTS_SETTING,events().filter(x=>String(x.id)!==String(event.id)));modal.remove();eventsHistoryModal();});
   modal.querySelector("[data-page-prev]")?.addEventListener("click",()=>{state.eventsPage--;modal.remove();eventsHistoryModal();});
   modal.querySelector("[data-page-next]")?.addEventListener("click",()=>{state.eventsPage++;modal.remove();eventsHistoryModal();});
 }
