@@ -11,6 +11,7 @@ const MAP_KEY = "psr_map_clients";
 const ROUTE_KEY = "psr_route_clients";
 const CATEGORIES_KEY = "psr_map_categories";
 const TRAZOS_KEY = "psr_map_trazos";
+const MAP_LONG_PRESS_MS = 500;
 
 const DEFAULT_CATEGORIES = [
   { id: "cliente", nombre: "Cliente", color: "#16803c" },
@@ -44,6 +45,9 @@ let trazando = false;
 let puntosTrazoActual = [];
 let lineaTrazoActual = null;
 let puntosTrazoMarcadores = [];
+let inicioToqueMapa = 0;
+let ultimoToqueMapaLargo = false;
+let huboToqueMapa = false;
 
 function cargarJSON(key, fallback) {
   try {
@@ -547,6 +551,19 @@ async function popupHtml(registro) {
   `;
 }
 
+function registrarInicioToqueMapa(event) {
+  if (!event.touches || event.touches.length !== 1) return;
+  inicioToqueMapa = Date.now();
+  ultimoToqueMapaLargo = false;
+}
+
+function registrarFinToqueMapa(event) {
+  if (!inicioToqueMapa) return;
+  const duracion = Date.now() - inicioToqueMapa;
+  ultimoToqueMapaLargo = duracion >= MAP_LONG_PRESS_MS;
+  inicioToqueMapa = 0;
+}
+
 function renderMarcadores() {
   marcadores.forEach(marker => marker.remove());
   marcadores.clear();
@@ -559,6 +576,31 @@ function renderMarcadores() {
       draggable: true,
       icon: crearIconoCategoria(categoria)
     }).addTo(mapa);
+
+    // En móvil, mover un pin requiere mantenerlo presionado al menos 500 ms.
+    // Un toque breve no debe iniciar un arrastre accidental.
+    marker.on("touchstart", () => {
+      marker._psrTouchStartedAt = Date.now();
+    });
+    marker.getElement()?.addEventListener("touchstart", () => {
+      marker._psrTouchStartedAt = Date.now();
+    }, { passive: true, capture: true });
+
+    marker.on("dragstart", () => {
+      const inicio = Number(marker._psrTouchStartedAt || 0);
+      const esToque = inicio > 0;
+      const duracion = esToque ? Date.now() - inicio : MAP_LONG_PRESS_MS;
+      if (esToque && duracion < MAP_LONG_PRESS_MS) {
+        const actual = marker.getLatLng();
+        marker.setLatLng([ubicacionAnterior.lat, ubicacionAnterior.lng]);
+        marker.dragging.disable();
+        setTimeout(() => marker.dragging.enable(), 0);
+        marker._psrArrastreRechazado = true;
+        actualizarEstado(`⏱️ Mantén presionado el pin al menos ${MAP_LONG_PRESS_MS / 1000} s para moverlo.`);
+        return;
+      }
+      marker._psrArrastreRechazado = false;
+    });
 
     marker.bindPopup("<div class=\"popup-cargando-fotos\">Cargando…</div>");
     marker.once("popupopen", async () => {
@@ -578,6 +620,12 @@ function renderMarcadores() {
     });
 
     marker.on("dragend", () => {
+      if (marker._psrArrastreRechazado) {
+        marker.setLatLng([ubicacionAnterior.lat, ubicacionAnterior.lng]);
+        marker._psrArrastreRechazado = false;
+        return;
+      }
+      marker._psrTouchStartedAt = 0;
       const nueva = marker.getLatLng();
       const nuevaLat = Number(nueva.lat);
       const nuevaLng = Number(nueva.lng);
@@ -946,11 +994,29 @@ document.getElementById("btnFinalizarTrazo")?.addEventListener("click", finaliza
 document.getElementById("btnDeshacerTrazo")?.addEventListener("click", deshacerUltimoPuntoTrazo);
 document.getElementById("btnCancelarTrazo")?.addEventListener("click", cancelarTrazo);
 
+const mapaDom = mapa.getContainer();
+mapaDom.addEventListener("touchstart", event => {
+  huboToqueMapa = true;
+  registrarInicioToqueMapa(event);
+}, { passive: true, capture: true });
+mapaDom.addEventListener("touchend", registrarFinToqueMapa, { passive: true, capture: true });
+mapaDom.addEventListener("touchcancel", () => { inicioToqueMapa = 0; ultimoToqueMapaLargo = false; huboToqueMapa = false; }, { passive: true, capture: true });
+
 mapa.on("click", e => {
   if (trazando) {
     agregarPuntoTrazo(e.latlng.lat, e.latlng.lng);
     return;
   }
+
+  // En dispositivos táctiles, crear un registro nuevo requiere una pulsación
+  // sostenida de al menos 500 ms. En escritorio, el clic normal sigue funcionando.
+  const esToque = huboToqueMapa || Boolean(e.originalEvent?.type && /touch|pointer/.test(e.originalEvent.type));
+  if (esToque && !ultimoToqueMapaLargo) {
+    actualizarEstado(`⏱️ Mantén presionado el mapa al menos ${MAP_LONG_PRESS_MS / 1000} s para crear un registro.`);
+    return;
+  }
+  ultimoToqueMapaLargo = false;
+  huboToqueMapa = false;
   abrirModal({ lat: e.latlng.lat, lon: e.latlng.lng });
 });
 
