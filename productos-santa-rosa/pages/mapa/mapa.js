@@ -553,6 +553,7 @@ async function popupHtml(registro) {
 
 function registrarInicioToqueMapa(event) {
   if (!event.touches || event.touches.length !== 1) return;
+  if (event.target?.closest?.(".leaflet-marker-icon")) return;
   inicioToqueMapa = Date.now();
   ultimoToqueMapaLargo = false;
 }
@@ -572,75 +573,141 @@ function renderMarcadores() {
   visibles.forEach(registro => {
     if (!Number.isFinite(Number(registro.latitud)) || !Number.isFinite(Number(registro.longitud))) return;
     const categoria = categoriaPorId(registro.categoriaId);
-    const esDispositivoTactil = window.matchMedia?.("(pointer: coarse)")?.matches || "ontouchstart" in window;
     const marker = L.marker([Number(registro.latitud), Number(registro.longitud)], {
-      draggable: !esDispositivoTactil,
+      draggable: true,
       icon: crearIconoCategoria(categoria)
     }).addTo(mapa);
 
-    // En móvil el pin NO es arrastrable al tocarlo. Primero hay que mantenerlo
-    // presionado 500 ms; así un toque breve sigue dejando al mapa desplazarse
-    // normalmente con un solo dedo.
-    if (esDispositivoTactil) {
-      let timerMovimiento = 0;
-      let touchActivo = false;
-      let arrastreArmado = false;
-      let inicioX = 0;
-      let inicioY = 0;
+    // En móvil el movimiento del pin se controla de forma explícita.
+    // Así un toque corto sigue abriendo la información y nunca se confunde
+    // con la pulsación larga del mapa para crear una empresa.
+    const elementoPin = marker.getElement();
+    const esDispositivoTactil = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    if (elementoPin && esDispositivoTactil) {
+      L.DomEvent.disableClickPropagation(elementoPin);
+      L.DomEvent.disableScrollPropagation(elementoPin);
+      marker.dragging.disable();
 
-      marker.on("touchstart", event => {
-        touchActivo = true;
-        arrastreArmado = false;
-        const touch = event.originalEvent?.touches?.[0];
-        inicioX = touch?.clientX ?? 0;
-        inicioY = touch?.clientY ?? 0;
-        marker.dragging.disable();
-        clearTimeout(timerMovimiento);
-        timerMovimiento = setTimeout(() => {
-          if (!touchActivo) return;
-          arrastreArmado = true;
-          marker.dragging.enable();
-          actualizarEstado(`📍 Mantén presionado y arrastra para mover ${registro.nombre}.`);
-        }, MAP_LONG_PRESS_MS);
-      });
+      let pinTimer = null;
+      let pinInicio = null;
+      let pinMoviendo = false;
+      let pinCancelado = false;
+      let pinAnterior = null;
 
-      marker.on("touchmove", event => {
-        const touch = event.originalEvent?.touches?.[0];
-        if (!touch) return;
-        const dx = touch.clientX - inicioX;
-        const dy = touch.clientY - inicioY;
-        if (!arrastreArmado && Math.hypot(dx, dy) > 10) {
-          clearTimeout(timerMovimiento);
-          timerMovimiento = 0;
-          touchActivo = false;
-          marker.dragging.disable();
-        }
-      });
-
-      const terminarTouchPin = () => {
-        touchActivo = false;
-        clearTimeout(timerMovimiento);
-        timerMovimiento = 0;
-        if (!arrastreArmado) marker.dragging.disable();
-        marker._psrTouchStartedAt = 0;
+      const cancelarPin = () => {
+        if (pinTimer) { clearTimeout(pinTimer); pinTimer = null; }
       };
-      marker.on("touchend", terminarTouchPin);
-      marker.on("touchcancel", terminarTouchPin);
 
-      marker.on("dragstart", () => {
-        if (!arrastreArmado) {
-          marker.dragging.disable();
-          marker._psrArrastreRechazado = true;
+      elementoPin.addEventListener("touchstart", event => {
+        if (!event.touches || event.touches.length !== 1) return;
+        pinInicio = {
+          x: event.touches[0].clientX,
+          y: event.touches[0].clientY
+        };
+        pinMoviendo = false;
+        pinCancelado = false;
+        pinAnterior = marker.getLatLng();
+        cancelarPin();
+        pinTimer = setTimeout(() => {
+          if (pinCancelado) return;
+          pinMoviendo = true;
+          mapa.dragging.disable();
+          actualizarEstado(`📍 Moviendo el pin de ${registro.nombre}…`);
+          try { navigator.vibrate?.(30); } catch (_) {}
+        }, MAP_LONG_PRESS_MS);
+      }, { passive: true });
+
+      elementoPin.addEventListener("touchmove", event => {
+        if (!event.touches || event.touches.length !== 1 || !pinInicio) return;
+        const touch = event.touches[0];
+        const dx = touch.clientX - pinInicio.x;
+        const dy = touch.clientY - pinInicio.y;
+        const distancia = Math.hypot(dx, dy);
+
+        if (!pinMoviendo && distancia > 10) {
+          pinCancelado = true;
+          cancelarPin();
+          pinInicio = null;
           return;
         }
-        marker._psrArrastreRechazado = false;
-      });
 
-      marker.on("dragend", () => {
-        arrastreArmado = false;
-        marker.dragging.disable();
-      });
+        if (!pinMoviendo) return;
+        event.preventDefault();
+        const punto = mapa.mouseEventToLatLng({ clientX: touch.clientX, clientY: touch.clientY });
+        marker.setLatLng(punto);
+      }, { passive: false });
+
+      elementoPin.addEventListener("touchend", event => {
+        const fueMovimiento = pinMoviendo;
+        cancelarPin();
+        pinInicio = null;
+
+        if (!fueMovimiento) {
+          pinCancelado = false;
+          return;
+        }
+
+        mapa.dragging.enable();
+        pinMoviendo = false;
+        const nueva = marker.getLatLng();
+        const nuevaLat = Number(nueva.lat);
+        const nuevaLng = Number(nueva.lng);
+        const mensaje =
+          `¿Quieres actualizar el pin de "${registro.nombre}" a esta nueva ubicación?\n\n` +
+          `Si eliges "Aceptar", se guardará la nueva ubicación.\n` +
+          `Si eliges "Cancelar", el pin regresará a su ubicación anterior.`;
+
+        if (!window.confirm(mensaje)) {
+          marker.setLatLng(pinAnterior);
+          actualizarEstado(`↩️ El pin de ${registro.nombre} regresó a su ubicación anterior.`);
+          return;
+        }
+
+        registro.latitud = nuevaLat;
+        registro.longitud = nuevaLng;
+        registro.updatedAt = new Date().toISOString();
+        guardarMapa();
+        if (registro.tipo === 'tienda' && registro.marketPlaceId) {
+          try {
+            const market = JSON.parse(localStorage.getItem('psr_market_clients')) || [];
+            const tienda = market.find(p => String(p.id) === String(registro.marketPlaceId));
+            if (tienda) {
+              tienda.latitud = nuevaLat;
+              tienda.longitud = nuevaLng;
+              tienda.updatedAt = new Date().toISOString();
+              localStorage.setItem('psr_market_clients', JSON.stringify(market));
+            }
+          } catch (_) {}
+        }
+        if (esReal(registro)) sincronizarClienteReal(registro);
+        actualizarEstado(`✓ Ubicación de ${registro.nombre} actualizada.`);
+        marker.bindPopup("<div class=\"popup-cargando-fotos\">Cargando…</div>");
+        marker.once("popupopen", async () => {
+          marker.setPopupContent(await popupHtml(registro));
+        });
+      }, { passive: true });
+
+      elementoPin.addEventListener("touchcancel", () => {
+        cancelarPin();
+        pinInicio = null;
+        pinMoviendo = false;
+        pinCancelado = true;
+        mapa.dragging.enable();
+      }, { passive: true });
     }
+
+    marker.on("dragstart", () => {
+      const inicio = Number(marker._psrTouchStartedAt || 0);
+      const esToque = inicio > 0;
+      const duracion = esToque ? Date.now() - inicio : MAP_LONG_PRESS_MS;
+      if (esToque && duracion < MAP_LONG_PRESS_MS) {
+        marker.dragging.disable();
+        marker._psrArrastreRechazado = true;
+        actualizarEstado(`⏱️ Mantén presionado el pin al menos ${MAP_LONG_PRESS_MS / 1000} s para moverlo.`);
+        return;
+      }
+      marker._psrArrastreRechazado = false;
+    });
 
     marker.bindPopup("<div class=\"popup-cargando-fotos\">Cargando…</div>");
     marker.once("popupopen", async () => {
@@ -1035,87 +1102,29 @@ document.getElementById("btnDeshacerTrazo")?.addEventListener("click", deshacerU
 document.getElementById("btnCancelarTrazo")?.addEventListener("click", cancelarTrazo);
 
 const mapaDom = mapa.getContainer();
-let timerCrearMapa = 0;
-let crearMapaArmado = false;
-let cancelarCrearMapa = false;
-let inicioMapaX = 0;
-let inicioMapaY = 0;
-let puntoCrearMapa = null;
-
 mapaDom.addEventListener("touchstart", event => {
-  // Si el toque comenzó sobre un pin, el control de pulsación larga pertenece
-  // exclusivamente al pin. Nunca iniciar el temporizador de "nuevo registro".
-  if (event.target?.closest?.(".leaflet-marker-icon")) return;
-  if (!event.touches || event.touches.length !== 1 || trazando) return;
-  const touch = event.touches[0];
-  inicioMapaX = touch.clientX;
-  inicioMapaY = touch.clientY;
-  puntoCrearMapa = mapa.mouseEventToLatLng({ clientX: touch.clientX, clientY: touch.clientY });
-  crearMapaArmado = false;
-  cancelarCrearMapa = false;
-  clearTimeout(timerCrearMapa);
-  timerCrearMapa = setTimeout(() => {
-    if (cancelarCrearMapa || !puntoCrearMapa) return;
-    crearMapaArmado = true;
-    abrirModal({ lat: puntoCrearMapa.lat, lon: puntoCrearMapa.lng });
-    actualizarEstado("📍 Nuevo registro: completa los datos de la empresa.");
-  }, MAP_LONG_PRESS_MS);
+  huboToqueMapa = true;
+  registrarInicioToqueMapa(event);
 }, { passive: true, capture: true });
-
-mapaDom.addEventListener("touchmove", event => {
-  if (event.target?.closest?.(".leaflet-marker-icon")) return;
-  if (!event.touches || event.touches.length !== 1 || crearMapaArmado) return;
-  const touch = event.touches[0];
-  const dx = touch.clientX - inicioMapaX;
-  const dy = touch.clientY - inicioMapaY;
-  if (Math.hypot(dx, dy) > 10) {
-    cancelarCrearMapa = true;
-    clearTimeout(timerCrearMapa);
-    timerCrearMapa = 0;
-  }
-}, { passive: true, capture: true });
-
-mapaDom.addEventListener("touchend", event => {
-  if (event.target?.closest?.(".leaflet-marker-icon")) return;
-  clearTimeout(timerCrearMapa);
-  timerCrearMapa = 0;
-  if (crearMapaArmado) {
-    // Leaflet puede emitir click después del touchend; evitamos abrir el modal dos veces.
-    ultimoToqueMapaLargo = true;
-    huboToqueMapa = true;
-  }
-  crearMapaArmado = false;
-  puntoCrearMapa = null;
-}, { passive: true, capture: true });
-
-mapaDom.addEventListener("touchcancel", event => {
-  if (event.target?.closest?.(".leaflet-marker-icon")) return;
-  clearTimeout(timerCrearMapa);
-  timerCrearMapa = 0;
-  crearMapaArmado = false;
-  cancelarCrearMapa = true;
-  puntoCrearMapa = null;
-  ultimoToqueMapaLargo = false;
-  huboToqueMapa = false;
-}, { passive: true, capture: true });
+mapaDom.addEventListener("touchend", registrarFinToqueMapa, { passive: true, capture: true });
+mapaDom.addEventListener("touchcancel", () => { inicioToqueMapa = 0; ultimoToqueMapaLargo = false; huboToqueMapa = false; }, { passive: true, capture: true });
 
 mapa.on("click", e => {
+  if (e.originalEvent?.target?.closest?.(".leaflet-marker-icon")) return;
   if (trazando) {
     agregarPuntoTrazo(e.latlng.lat, e.latlng.lng);
     return;
   }
 
+  // En dispositivos táctiles, crear un registro nuevo requiere una pulsación
+  // sostenida de al menos 500 ms. En escritorio, el clic normal sigue funcionando.
   const esToque = huboToqueMapa || Boolean(e.originalEvent?.type && /touch|pointer/.test(e.originalEvent.type));
-  if (esToque) {
-    // En táctil, el formulario ya se abrió por el temporizador de pulsación larga.
-    // Un toque corto se ignora deliberadamente para que el mapa siga siendo desplazable.
-    const fueLargo = ultimoToqueMapaLargo;
-    ultimoToqueMapaLargo = false;
-    huboToqueMapa = false;
-    if (!fueLargo) actualizarEstado(`⏱️ Mantén presionado el mapa al menos ${MAP_LONG_PRESS_MS / 1000} s para crear un registro.`);
+  if (esToque && !ultimoToqueMapaLargo) {
+    actualizarEstado(`⏱️ Mantén presionado el mapa al menos ${MAP_LONG_PRESS_MS / 1000} s para crear un registro.`);
     return;
   }
-
+  ultimoToqueMapaLargo = false;
+  huboToqueMapa = false;
   abrirModal({ lat: e.latlng.lat, lon: e.latlng.lng });
 });
 
