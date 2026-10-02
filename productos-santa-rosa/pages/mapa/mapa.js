@@ -1043,6 +1043,9 @@ let inicioMapaY = 0;
 let puntoCrearMapa = null;
 
 mapaDom.addEventListener("touchstart", event => {
+  // Si el toque comenzó sobre un pin, el control de pulsación larga pertenece
+  // exclusivamente al pin. Nunca iniciar el temporizador de "nuevo registro".
+  if (event.target?.closest?.(".leaflet-marker-icon")) return;
   if (!event.touches || event.touches.length !== 1 || trazando) return;
   const touch = event.touches[0];
   inicioMapaX = touch.clientX;
@@ -1060,6 +1063,7 @@ mapaDom.addEventListener("touchstart", event => {
 }, { passive: true, capture: true });
 
 mapaDom.addEventListener("touchmove", event => {
+  if (event.target?.closest?.(".leaflet-marker-icon")) return;
   if (!event.touches || event.touches.length !== 1 || crearMapaArmado) return;
   const touch = event.touches[0];
   const dx = touch.clientX - inicioMapaX;
@@ -1071,7 +1075,8 @@ mapaDom.addEventListener("touchmove", event => {
   }
 }, { passive: true, capture: true });
 
-mapaDom.addEventListener("touchend", () => {
+mapaDom.addEventListener("touchend", event => {
+  if (event.target?.closest?.(".leaflet-marker-icon")) return;
   clearTimeout(timerCrearMapa);
   timerCrearMapa = 0;
   if (crearMapaArmado) {
@@ -1083,7 +1088,8 @@ mapaDom.addEventListener("touchend", () => {
   puntoCrearMapa = null;
 }, { passive: true, capture: true });
 
-mapaDom.addEventListener("touchcancel", () => {
+mapaDom.addEventListener("touchcancel", event => {
+  if (event.target?.closest?.(".leaflet-marker-icon")) return;
   clearTimeout(timerCrearMapa);
   timerCrearMapa = 0;
   crearMapaArmado = false;
