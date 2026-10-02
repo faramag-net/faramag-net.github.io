@@ -10,7 +10,7 @@ const DATA_KEYS = [
   "psr_products", "psr_movements", "psr_inventory", "psr_sales", "psr_clients",
   "psr_market_clients", "psr_route_clients", "psr_client_products", "psr_client_history",
   "psr_visits", "psr_history", "psr_mercado_history", "psr_insumos", "psr_consignations",
-  "psr_map_clients", "psr_map_categories", "psr_mercado_products", "psr_mercado_presentations"
+  "psr_map_clients", "psr_map_categories", "psr_map_trazos", "psr_mercado_products", "psr_mercado_presentations"
 ];
 
 const DATA_FORMAT = "productos-santa-rosa-datos";

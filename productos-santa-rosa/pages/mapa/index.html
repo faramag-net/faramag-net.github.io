@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Productos Santa Rosa · Mapa · Versión 1.1.2 · Build 20260926.1130 -->
+<!-- Productos Santa Rosa · Mapa · Versión 1.2.0 · Trazos -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -36,10 +36,19 @@
 
   <div class="mapa-acciones">
     <button id="btnMiUbicacion" type="button">📍 Mi ubicación</button>
+    <button id="btnTrazar" type="button">✏️ Trazar ruta</button>
     <button id="btnQuitarFiltros" type="button">✕ Quitar</button>
     <button id="btnLimpiarFiltros" type="button">↺ Limpiar</button>
   </div>
 
+  <div id="controlesTrazo" class="controles-trazo" hidden>
+    <div id="estadoTrazo" class="estado-trazo">0 puntos.</div>
+    <div class="acciones-trazo">
+      <button id="btnDeshacerTrazo" type="button">↶ Deshacer</button>
+      <button id="btnCancelarTrazo" type="button">✕ Cancelar</button>
+      <button id="btnFinalizarTrazo" type="button" class="btn-finalizar-trazo">✓ Finalizar trazo</button>
+    </div>
+  </div>
   <small id="estadoUbicacion">Toca el mapa para colocar un nuevo cliente o prospecto.</small>
 </div>
 

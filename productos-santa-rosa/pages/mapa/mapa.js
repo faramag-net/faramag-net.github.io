@@ -10,6 +10,7 @@ import { renderPhotoPicker, movePhotos, getPhotos } from "../../core/media/fotos
 const MAP_KEY = "psr_map_clients";
 const ROUTE_KEY = "psr_route_clients";
 const CATEGORIES_KEY = "psr_map_categories";
+const TRAZOS_KEY = "psr_map_trazos";
 
 const DEFAULT_CATEGORIES = [
   { id: "cliente", nombre: "Cliente", color: "#16803c" },
@@ -20,6 +21,9 @@ const DEFAULT_CATEGORIES = [
 ];
 
 const mapa = L.map("mapa", { zoomControl: true }).setView([19.0414, -98.2063], 12);
+mapa.createPane("trazosPane");
+mapa.getPane("trazosPane").style.zIndex = 350;
+const capaTrazos = L.layerGroup().addTo(mapa);
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution: "© OpenStreetMap"
@@ -35,6 +39,11 @@ let categorias = cargarJSON(CATEGORIES_KEY, DEFAULT_CATEGORIES);
 let categoriasSeleccionadas = new Set(categorias.map(c => c.id));
 let marcadorNuevo = null;
 let marcadorMiUbicacion = null;
+let trazosMapa = cargarJSON(TRAZOS_KEY, []);
+let trazando = false;
+let puntosTrazoActual = [];
+let lineaTrazoActual = null;
+let puntosTrazoMarcadores = [];
 
 function cargarJSON(key, fallback) {
   try {
@@ -51,6 +60,169 @@ function guardarMapa() {
 
 function guardarCategorias() {
   localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categorias));
+}
+
+function guardarTrazos() {
+  localStorage.setItem(TRAZOS_KEY, JSON.stringify(trazosMapa));
+}
+
+function crearIdTrazo() {
+  return `trazo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function limpiarVistaTrazoActual() {
+  if (lineaTrazoActual) {
+    lineaTrazoActual.remove();
+    lineaTrazoActual = null;
+  }
+  puntosTrazoMarcadores.forEach(m => m.remove());
+  puntosTrazoMarcadores = [];
+}
+
+function dibujarTrazo(trazo) {
+  const puntos = (trazo.puntos || [])
+    .map(p => [Number(p.lat), Number(p.lng)])
+    .filter(p => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  if (puntos.length < 2) return;
+
+  const halo = L.polyline(puntos, {
+    pane: "trazosPane",
+    color: "#ffffff",
+    weight: 8,
+    opacity: 0.55,
+    lineCap: "round",
+    lineJoin: "round",
+    interactive: false
+  });
+  const linea = L.polyline(puntos, {
+    pane: "trazosPane",
+    color: "#16a34a",
+    weight: 4,
+    opacity: 0.52,
+    dashArray: "12 8",
+    lineCap: "round",
+    lineJoin: "round",
+    interactive: true
+  });
+  const grupo = L.layerGroup([halo, linea]).addTo(capaTrazos);
+  linea.bindPopup(`
+    <div class="popup-cliente popup-trazo">
+      <div class="popup-titulo"><span class="popup-dot popup-trazo-dot"></span><b>📏 Trazo</b></div>
+      <div class="popup-meta">${escapeHtml(formatearFechaTrazo(trazo.createdAt))} · ${puntos.length} puntos</div>
+      <div class="popup-botones popup-botones-trazo">
+        <button type="button" data-accion="eliminar-trazo" data-trazo-id="${escapeHtml(trazo.id)}">🗑️ Eliminar</button>
+      </div>
+    </div>
+  `);
+  trazo._layer = grupo;
+}
+
+function formatearFechaTrazo(iso) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "Fecha desconocida";
+  return d.toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
+}
+
+function renderTrazos() {
+  capaTrazos.clearLayers();
+  trazosMapa.forEach(dibujarTrazo);
+}
+
+function actualizarControlesTrazo() {
+  const btn = document.getElementById("btnTrazar");
+  const controles = document.getElementById("controlesTrazo");
+  const texto = document.getElementById("estadoTrazo");
+  if (!btn || !controles || !texto) return;
+  btn.textContent = trazando ? "✏️ Trazando…" : "✏️ Trazar ruta";
+  btn.classList.toggle("activo", trazando);
+  controles.hidden = !trazando;
+  texto.textContent = trazando
+    ? `${puntosTrazoActual.length} ${puntosTrazoActual.length === 1 ? "punto" : "puntos"}. Toca el mapa para continuar.`
+    : "Puedes dibujar rutas o calles sobre el mapa sin modificar sus objetos.";
+}
+
+function iniciarTrazo() {
+  if (trazando) return;
+  trazando = true;
+  puntosTrazoActual = [];
+  limpiarVistaTrazoActual();
+  actualizarControlesTrazo();
+  actualizarEstado("✏️ Trazo iniciado. Toca el mapa para marcar puntos.");
+}
+
+function actualizarTrazoActual() {
+  limpiarVistaTrazoActual();
+  if (puntosTrazoActual.length === 0) {
+    actualizarControlesTrazo();
+    return;
+  }
+  const latlngs = puntosTrazoActual.map(p => [p.lat, p.lng]);
+  if (puntosTrazoActual.length >= 2) {
+    const halo = L.polyline(latlngs, { pane: "trazosPane", color: "#ffffff", weight: 8, opacity: 0.55, lineCap: "round", lineJoin: "round", interactive: false });
+    const linea = L.polyline(latlngs, { pane: "trazosPane", color: "#16a34a", weight: 4, opacity: 0.52, dashArray: "12 8", lineCap: "round", lineJoin: "round", interactive: false });
+    lineaTrazoActual = L.layerGroup([halo, linea]).addTo(capaTrazos);
+  }
+  puntosTrazoActual.forEach((p, i) => {
+    const punto = L.circleMarker([p.lat, p.lng], { pane: "trazosPane", radius: 4, color: "#15803d", weight: 2, fillColor: "#bbf7d0", fillOpacity: 0.95, interactive: false }).addTo(capaTrazos);
+    puntosTrazoMarcadores.push(punto);
+  });
+  actualizarControlesTrazo();
+}
+
+function agregarPuntoTrazo(lat, lng) {
+  if (!trazando) return;
+  puntosTrazoActual.push({ lat: Number(lat), lng: Number(lng) });
+  actualizarTrazoActual();
+  actualizarEstado(`📍 Punto ${puntosTrazoActual.length} marcado.`);
+}
+
+function deshacerUltimoPuntoTrazo() {
+  if (!trazando || !puntosTrazoActual.length) return;
+  puntosTrazoActual.pop();
+  actualizarTrazoActual();
+  actualizarEstado(puntosTrazoActual.length ? `↶ Último punto eliminado. Quedan ${puntosTrazoActual.length}.` : "↶ Trazo vacío.");
+}
+
+function cancelarTrazo() {
+  if (!trazando) return;
+  trazando = false;
+  puntosTrazoActual = [];
+  limpiarVistaTrazoActual();
+  actualizarControlesTrazo();
+  actualizarEstado("Trazo cancelado.");
+}
+
+function finalizarTrazo() {
+  if (!trazando) return;
+  if (puntosTrazoActual.length < 2) {
+    alert("Marca al menos 2 puntos para finalizar el trazo.");
+    return;
+  }
+  const now = new Date().toISOString();
+  const trazo = {
+    id: crearIdTrazo(),
+    puntos: puntosTrazoActual.map(p => ({ lat: Number(p.lat), lng: Number(p.lng) })),
+    createdAt: now,
+    updatedAt: now
+  };
+  trazosMapa.push(trazo);
+  guardarTrazos();
+  trazando = false;
+  puntosTrazoActual = [];
+  limpiarVistaTrazoActual();
+  renderTrazos();
+  actualizarControlesTrazo();
+  actualizarEstado(`✓ Trazo guardado con ${trazo.puntos.length} puntos.`);
+}
+
+function eliminarTrazo(id) {
+  const trazo = trazosMapa.find(t => String(t.id) === String(id));
+  if (!trazo) return;
+  if (!window.confirm("¿Eliminar este trazo del mapa?")) return;
+  trazosMapa = trazosMapa.filter(t => String(t.id) !== String(id));
+  guardarTrazos();
+  renderTrazos();
+  actualizarEstado("🗑️ Trazo eliminado.");
 }
 
 function esCategoriaPermanente(id) {
@@ -769,8 +941,16 @@ function mostrarMiUbicacion(centrar = false) {
 document.getElementById("btnMiUbicacion")?.addEventListener("click", () => mostrarMiUbicacion(true));
 document.getElementById("btnUbicacionPermanente").addEventListener("click", () => mostrarMiUbicacion(true));
 document.getElementById("btnNuevaCategoria").addEventListener("click", crearCategoria);
+document.getElementById("btnTrazar")?.addEventListener("click", () => trazando ? cancelarTrazo() : iniciarTrazo());
+document.getElementById("btnFinalizarTrazo")?.addEventListener("click", finalizarTrazo);
+document.getElementById("btnDeshacerTrazo")?.addEventListener("click", deshacerUltimoPuntoTrazo);
+document.getElementById("btnCancelarTrazo")?.addEventListener("click", cancelarTrazo);
 
 mapa.on("click", e => {
+  if (trazando) {
+    agregarPuntoTrazo(e.latlng.lat, e.latlng.lng);
+    return;
+  }
   abrirModal({ lat: e.latlng.lat, lon: e.latlng.lng });
 });
 
@@ -835,6 +1015,10 @@ document.addEventListener("click", async event => {
     abrirModal({ registro });
   }
   if (boton.dataset.accion === "google") abrirGoogleMaps(registro);
+  if (boton.dataset.accion === "eliminar-trazo") {
+    if (boton.closest(".leaflet-popup")) mapa.closePopup();
+    eliminarTrazo(boton.dataset.trazoId);
+  }
 });
 
 document.getElementById("btnCerrarFotosMapa")?.addEventListener("click", cerrarGaleriaFotosMapa);
@@ -849,6 +1033,8 @@ document.getElementById("fotoGrandeMapaWrap")?.addEventListener("click", event =
 sincronizarClientesVisitasEnMapa();
 renderCategorias();
 renderMarcadores();
+renderTrazos();
+actualizarControlesTrazo();
 mostrarMiUbicacion(false);
 
 if (clientesMapa.length) {
