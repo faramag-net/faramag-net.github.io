@@ -48,6 +48,9 @@ let puntosTrazoMarcadores = [];
 let inicioToqueMapa = 0;
 let ultimoToqueMapaLargo = false;
 let huboToqueMapa = false;
+let consumirSiguienteClickMapa = false;
+let puntoInicioToqueMapa = null;
+let toqueMapaMovido = false;
 
 function cargarJSON(key, fallback) {
   try {
@@ -554,15 +557,47 @@ async function popupHtml(registro) {
 function registrarInicioToqueMapa(event) {
   if (!event.touches || event.touches.length !== 1) return;
   if (event.target?.closest?.(".leaflet-marker-icon")) return;
+  const touch = event.touches[0];
   inicioToqueMapa = Date.now();
+  puntoInicioToqueMapa = { x: touch.clientX, y: touch.clientY };
+  toqueMapaMovido = false;
   ultimoToqueMapaLargo = false;
+  consumirSiguienteClickMapa = false;
+}
+
+function registrarMovimientoToqueMapa(event) {
+  if (!inicioToqueMapa || !puntoInicioToqueMapa || !event.touches || event.touches.length !== 1) return;
+  const touch = event.touches[0];
+  const dx = touch.clientX - puntoInicioToqueMapa.x;
+  const dy = touch.clientY - puntoInicioToqueMapa.y;
+  if (Math.hypot(dx, dy) > 10) {
+    toqueMapaMovido = true;
+    inicioToqueMapa = 0;
+    puntoInicioToqueMapa = null;
+    ultimoToqueMapaLargo = false;
+  }
 }
 
 function registrarFinToqueMapa(event) {
   if (!inicioToqueMapa) return;
   const duracion = Date.now() - inicioToqueMapa;
-  ultimoToqueMapaLargo = duracion >= MAP_LONG_PRESS_MS;
+  const fueLargo = duracion >= MAP_LONG_PRESS_MS && !toqueMapaMovido;
+  ultimoToqueMapaLargo = fueLargo;
+  consumirSiguienteClickMapa = true;
+
+  if (fueLargo && puntoInicioToqueMapa) {
+    const rect = mapaDom.getBoundingClientRect();
+    const punto = L.point(
+      puntoInicioToqueMapa.x - rect.left,
+      puntoInicioToqueMapa.y - rect.top
+    );
+    const latlng = mapa.containerPointToLatLng(punto);
+    abrirModal({ lat: latlng.lat, lon: latlng.lng });
+    try { navigator.vibrate?.(30); } catch (_) {}
+  }
+
   inicioToqueMapa = 0;
+  puntoInicioToqueMapa = null;
 }
 
 function renderMarcadores() {
@@ -644,6 +679,8 @@ function renderMarcadores() {
 
         if (!fueMovimiento) {
           pinCancelado = false;
+          // Toque corto: mostrar la información del pin, sin moverlo.
+          try { marker.openPopup(); } catch (_) {}
           return;
         }
 
@@ -1106,11 +1143,24 @@ mapaDom.addEventListener("touchstart", event => {
   huboToqueMapa = true;
   registrarInicioToqueMapa(event);
 }, { passive: true, capture: true });
+mapaDom.addEventListener("touchmove", registrarMovimientoToqueMapa, { passive: true, capture: true });
 mapaDom.addEventListener("touchend", registrarFinToqueMapa, { passive: true, capture: true });
-mapaDom.addEventListener("touchcancel", () => { inicioToqueMapa = 0; ultimoToqueMapaLargo = false; huboToqueMapa = false; }, { passive: true, capture: true });
+mapaDom.addEventListener("touchcancel", () => {
+  inicioToqueMapa = 0;
+  puntoInicioToqueMapa = null;
+  ultimoToqueMapaLargo = false;
+  huboToqueMapa = false;
+  consumirSiguienteClickMapa = true;
+}, { passive: true, capture: true });
 
 mapa.on("click", e => {
   if (e.originalEvent?.target?.closest?.(".leaflet-marker-icon")) return;
+  if (consumirSiguienteClickMapa) {
+    consumirSiguienteClickMapa = false;
+    huboToqueMapa = false;
+    ultimoToqueMapaLargo = false;
+    return;
+  }
   if (trazando) {
     agregarPuntoTrazo(e.latlng.lat, e.latlng.lng);
     return;
