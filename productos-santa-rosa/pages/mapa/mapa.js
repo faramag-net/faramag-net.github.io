@@ -26,8 +26,7 @@ mapa.createPane("trazosPane");
 mapa.getPane("trazosPane").style.zIndex = 350;
 const capaTrazos = L.layerGroup().addTo(mapa);
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxNativeZoom: 19,
-  maxZoom: 21,
+  maxZoom: 19,
   attribution: "© OpenStreetMap"
 }).addTo(mapa);
 
@@ -52,7 +51,6 @@ let huboToqueMapa = false;
 let mapaLongPressTimer = null;
 let mapaToqueInicio = null;
 let mapaLongPressCancelado = false;
-let multiToqueActivo = false;
 
 function cargarJSON(key, fallback) {
   try {
@@ -565,7 +563,6 @@ function cancelarLongPressMapa() {
 
 function registrarInicioToqueMapa(event) {
   if (!event.touches || event.touches.length !== 1) return;
-  if (multiToqueActivo) return;
   if (event.target?.closest?.(".leaflet-marker-icon")) return;
   const touch = event.touches[0];
   inicioToqueMapa = Date.now();
@@ -575,7 +572,7 @@ function registrarInicioToqueMapa(event) {
   cancelarLongPressMapa();
 
   mapaLongPressTimer = setTimeout(() => {
-    if (mapaLongPressCancelado || multiToqueActivo || !mapaToqueInicio || trazando) return;
+    if (mapaLongPressCancelado || !mapaToqueInicio || trazando) return;
     ultimoToqueMapaLargo = true;
     mapaLongPressTimer = null;
     const punto = mapa.mouseEventToLatLng({ clientX: mapaToqueInicio.x, clientY: mapaToqueInicio.y });
@@ -641,7 +638,7 @@ function renderMarcadores() {
       };
 
       elementoPin.addEventListener("touchstart", event => {
-        if (!event.touches || event.touches.length !== 1 || multiToqueActivo) return;
+        if (!event.touches || event.touches.length !== 1) return;
         pinInicio = {
           x: event.touches[0].clientX,
           y: event.touches[0].clientY
@@ -651,7 +648,7 @@ function renderMarcadores() {
         pinAnterior = marker.getLatLng();
         cancelarPin();
         pinTimer = setTimeout(() => {
-          if (pinCancelado || multiToqueActivo) return;
+          if (pinCancelado) return;
           pinMoviendo = true;
           mapa.dragging.disable();
           actualizarEstado(`📍 Moviendo el pin de ${registro.nombre}…`);
@@ -660,7 +657,7 @@ function renderMarcadores() {
       }, { passive: true });
 
       elementoPin.addEventListener("touchmove", event => {
-        if (!event.touches || event.touches.length !== 1 || !pinInicio || multiToqueActivo) return;
+        if (!event.touches || event.touches.length !== 1 || !pinInicio) return;
         const touch = event.touches[0];
         const dx = touch.clientX - pinInicio.x;
         const dy = touch.clientY - pinInicio.y;
@@ -680,12 +677,6 @@ function renderMarcadores() {
       }, { passive: false });
 
       elementoPin.addEventListener("touchend", event => {
-        if (multiToqueActivo) {
-          cancelarPin();
-          pinInicio = null;
-          pinMoviendo = false;
-          return;
-        }
         const fueMovimiento = pinMoviendo;
         cancelarPin();
         pinInicio = null;
@@ -1153,45 +1144,11 @@ document.getElementById("btnCancelarTrazo")?.addEventListener("click", cancelarT
 
 const mapaDom = mapa.getContainer();
 mapaDom.addEventListener("touchstart", event => {
-  // Dos dedos = gesto de zoom/pan. Nunca debe disparar long-press de mapa ni de pin.
-  if (event.touches && event.touches.length >= 2) {
-    multiToqueActivo = true;
-    cancelarLongPressMapa();
-    mapaToqueInicio = null;
-    inicioToqueMapa = 0;
-    ultimoToqueMapaLargo = false;
-    mapaLongPressCancelado = true;
-    huboToqueMapa = false;
-    return;
-  }
-  if (multiToqueActivo) return;
   huboToqueMapa = true;
   registrarInicioToqueMapa(event);
 }, { passive: true, capture: true });
-mapaDom.addEventListener("touchmove", event => {
-  if (event.touches && event.touches.length >= 2) {
-    multiToqueActivo = true;
-    cancelarLongPressMapa();
-    mapaToqueInicio = null;
-    inicioToqueMapa = 0;
-    ultimoToqueMapaLargo = false;
-    mapaLongPressCancelado = true;
-    return;
-  }
-  if (multiToqueActivo) return;
-  registrarMovimientoToqueMapa(event);
-}, { passive: true, capture: true });
-mapaDom.addEventListener("touchend", event => {
-  if (multiToqueActivo) {
-    if (!event.touches || event.touches.length === 0) {
-      multiToqueActivo = false;
-      mapaLongPressCancelado = false;
-      huboToqueMapa = false;
-    }
-    return;
-  }
-  registrarFinToqueMapa(event);
-}, { passive: true, capture: true });
+mapaDom.addEventListener("touchmove", registrarMovimientoToqueMapa, { passive: true, capture: true });
+mapaDom.addEventListener("touchend", registrarFinToqueMapa, { passive: true, capture: true });
 mapaDom.addEventListener("touchcancel", () => {
   cancelarLongPressMapa();
   inicioToqueMapa = 0;
