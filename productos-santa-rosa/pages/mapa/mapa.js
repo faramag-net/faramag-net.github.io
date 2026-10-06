@@ -21,13 +21,19 @@ const DEFAULT_CATEGORIES = [
   { id: "otro", nombre: "Otro", color: "#64748b" }
 ];
 
-const mapa = L.map("mapa", { zoomControl: true }).setView([19.0414, -98.2063], 12);
+const mapa = L.map("mapa", {
+  zoomControl: true,
+  touchZoom: true,
+  zoomAnimation: false,
+  zoomSnap: 0.25,
+  zoomDelta: 1
+}).setView([19.0414, -98.2063], 12);
 mapa.createPane("trazosPane");
 mapa.getPane("trazosPane").style.zIndex = 350;
 const capaTrazos = L.layerGroup().addTo(mapa);
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxNativeZoom: 19,
-  maxZoom: 21,
+  maxZoom: 22,
   attribution: "© OpenStreetMap"
 }).addTo(mapa);
 
@@ -53,6 +59,7 @@ let mapaLongPressTimer = null;
 let mapaToqueInicio = null;
 let mapaLongPressCancelado = false;
 let multiToqueActivo = false;
+let cancelarGestorPinActivo = null;
 
 function cargarJSON(key, fallback) {
   try {
@@ -566,7 +573,8 @@ function cancelarLongPressMapa() {
 function registrarInicioToqueMapa(event) {
   if (!event.touches || event.touches.length !== 1) return;
   if (multiToqueActivo) return;
-  if (event.target?.closest?.(".leaflet-marker-icon")) return;
+  // Un toque que inicia sobre un pin también debe poder convertirse en
+  // arrastre del mapa. Solo el toque corto del pin se resolverá como popup.
   const touch = event.touches[0];
   inicioToqueMapa = Date.now();
   mapaToqueInicio = { x: touch.clientX, y: touch.clientY, latlng: null };
@@ -640,6 +648,13 @@ function renderMarcadores() {
         if (pinTimer) { clearTimeout(pinTimer); pinTimer = null; }
       };
 
+      const cancelarGestorPin = () => {
+        cancelarPin();
+        pinCancelado = true;
+        pinInicio = null;
+        pinMoviendo = false;
+      };
+
       elementoPin.addEventListener("touchstart", event => {
         if (!event.touches || event.touches.length !== 1 || multiToqueActivo) return;
         pinInicio = {
@@ -650,6 +665,9 @@ function renderMarcadores() {
         pinCancelado = false;
         pinAnterior = marker.getLatLng();
         cancelarPin();
+        cancelarLongPressMapa();
+        mapaLongPressCancelado = true;
+        cancelarGestorPinActivo = cancelarGestorPin;
         pinTimer = setTimeout(() => {
           if (pinCancelado || multiToqueActivo) return;
           pinMoviendo = true;
@@ -681,14 +699,14 @@ function renderMarcadores() {
 
       elementoPin.addEventListener("touchend", event => {
         if (multiToqueActivo) {
-          cancelarPin();
-          pinInicio = null;
-          pinMoviendo = false;
+          cancelarGestorPin();
+          if (cancelarGestorPinActivo === cancelarGestorPin) cancelarGestorPinActivo = null;
           return;
         }
         const fueMovimiento = pinMoviendo;
         cancelarPin();
         pinInicio = null;
+        if (cancelarGestorPinActivo === cancelarGestorPin) cancelarGestorPinActivo = null;
 
         if (!fueMovimiento) {
           pinCancelado = false;
@@ -1147,16 +1165,30 @@ document.getElementById("btnMiUbicacion")?.addEventListener("click", () => mostr
 document.getElementById("btnUbicacionPermanente").addEventListener("click", () => mostrarMiUbicacion(true));
 document.getElementById("btnNuevaCategoria").addEventListener("click", crearCategoria);
 document.getElementById("btnTrazar")?.addEventListener("click", () => trazando ? cancelarTrazo() : iniciarTrazo());
-document.getElementById("btnFinalizarTrazo")?.addEventListener("click", finalizarTrazo);
+const btnFinalizarTrazo = document.getElementById("btnFinalizarTrazo");
+btnFinalizarTrazo?.addEventListener("click", finalizarTrazo);
+btnFinalizarTrazo?.addEventListener("touchend", event => {
+  event.preventDefault();
+  event.stopPropagation();
+  finalizarTrazo();
+}, { passive: false });
 document.getElementById("btnDeshacerTrazo")?.addEventListener("click", deshacerUltimoPuntoTrazo);
 document.getElementById("btnCancelarTrazo")?.addEventListener("click", cancelarTrazo);
 
 const mapaDom = mapa.getContainer();
+
+function esControlInteractivoMapa(target) {
+  return Boolean(target?.closest?.("button, input, select, textarea, a, label, .mapa-panel"));
+}
+
 mapaDom.addEventListener("touchstart", event => {
-  // Dos dedos = gesto de zoom/pan. Nunca debe disparar long-press de mapa ni de pin.
+  if (esControlInteractivoMapa(event.target)) return;
+  // Dos dedos: cancelar absolutamente todos los long-press/gestos de pin.
   if (event.touches && event.touches.length >= 2) {
     multiToqueActivo = true;
     cancelarLongPressMapa();
+    cancelarGestorPinActivo?.();
+    cancelarGestorPinActivo = null;
     mapaToqueInicio = null;
     inicioToqueMapa = 0;
     ultimoToqueMapaLargo = false;
@@ -1168,10 +1200,13 @@ mapaDom.addEventListener("touchstart", event => {
   huboToqueMapa = true;
   registrarInicioToqueMapa(event);
 }, { passive: true, capture: true });
+
 mapaDom.addEventListener("touchmove", event => {
   if (event.touches && event.touches.length >= 2) {
     multiToqueActivo = true;
     cancelarLongPressMapa();
+    cancelarGestorPinActivo?.();
+    cancelarGestorPinActivo = null;
     mapaToqueInicio = null;
     inicioToqueMapa = 0;
     ultimoToqueMapaLargo = false;
@@ -1181,6 +1216,7 @@ mapaDom.addEventListener("touchmove", event => {
   if (multiToqueActivo) return;
   registrarMovimientoToqueMapa(event);
 }, { passive: true, capture: true });
+
 mapaDom.addEventListener("touchend", event => {
   if (multiToqueActivo) {
     if (!event.touches || event.touches.length === 0) {
@@ -1192,8 +1228,11 @@ mapaDom.addEventListener("touchend", event => {
   }
   registrarFinToqueMapa(event);
 }, { passive: true, capture: true });
+
 mapaDom.addEventListener("touchcancel", () => {
   cancelarLongPressMapa();
+  cancelarGestorPinActivo?.();
+  cancelarGestorPinActivo = null;
   inicioToqueMapa = 0;
   mapaToqueInicio = null;
   ultimoToqueMapaLargo = false;
@@ -1202,7 +1241,7 @@ mapaDom.addEventListener("touchcancel", () => {
 }, { passive: true, capture: true });
 
 mapa.on("click", e => {
-  if (e.originalEvent?.target?.closest?.(".leaflet-marker-icon")) return;
+  if (e.originalEvent?.target?.closest?.(".leaflet-marker-icon, button, input, select, textarea, a, label, .mapa-panel")) return;
   if (trazando) {
     agregarPuntoTrazo(e.latlng.lat, e.latlng.lng);
     return;
