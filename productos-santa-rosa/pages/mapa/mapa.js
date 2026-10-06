@@ -637,8 +637,10 @@ function renderMarcadores() {
     const elementoPin = marker.getElement();
     const esDispositivoTactil = "ontouchstart" in window || navigator.maxTouchPoints > 0;
     if (elementoPin && esDispositivoTactil) {
-      L.DomEvent.disableClickPropagation(elementoPin);
-      L.DomEvent.disableScrollPropagation(elementoPin);
+          // No bloquear la propagación táctil del pin: el mapa debe poder
+      // iniciar pan/zoom aunque el primer dedo caiga sobre un pin.
+      // El gesto corto del pin se resuelve como popup; el arrastre largo
+      // se controla abajo.
       marker.dragging.disable();
 
       let pinTimer = null;
@@ -713,8 +715,8 @@ function renderMarcadores() {
 
         if (!fueMovimiento) {
           pinCancelado = false;
-          // Toque corto: mostrar la información del pin.
-          marker.openPopup();
+          // Toque corto: Leaflet generará el click y abrirá el popup.
+          // No lo abrimos manualmente para no interferir con pan/zoom.
           return;
         }
 
@@ -1169,12 +1171,38 @@ document.getElementById("btnUbicacionPermanente").addEventListener("click", () =
 document.getElementById("btnNuevaCategoria").addEventListener("click", crearCategoria);
 document.getElementById("btnTrazar")?.addEventListener("click", () => trazando ? cancelarTrazo() : iniciarTrazo());
 const btnFinalizarTrazo = document.getElementById("btnFinalizarTrazo");
-btnFinalizarTrazo?.addEventListener("click", finalizarTrazo);
+let finalizarTrazoPorToque = false;
+
+btnFinalizarTrazo?.addEventListener("pointerdown", event => {
+  event.stopPropagation();
+  if (event.pointerType === "touch") {
+    event.preventDefault();
+    finalizarTrazoPorToque = true;
+    finalizarTrazo();
+  }
+}, { passive: false });
+
+btnFinalizarTrazo?.addEventListener("touchstart", event => {
+  event.preventDefault();
+  event.stopPropagation();
+}, { passive: false });
+
 btnFinalizarTrazo?.addEventListener("touchend", event => {
   event.preventDefault();
   event.stopPropagation();
-  finalizarTrazo();
+  if (!finalizarTrazoPorToque) finalizarTrazo();
+  finalizarTrazoPorToque = false;
 }, { passive: false });
+
+btnFinalizarTrazo?.addEventListener("click", event => {
+  event.preventDefault();
+  event.stopPropagation();
+  if (finalizarTrazoPorToque) {
+    finalizarTrazoPorToque = false;
+    return;
+  }
+  finalizarTrazo();
+});
 document.getElementById("btnDeshacerTrazo")?.addEventListener("click", deshacerUltimoPuntoTrazo);
 document.getElementById("btnCancelarTrazo")?.addEventListener("click", cancelarTrazo);
 
@@ -1244,7 +1272,12 @@ mapaDom.addEventListener("touchcancel", () => {
 }, { passive: true, capture: true });
 
 mapa.on("click", e => {
-  if (e.originalEvent?.target?.closest?.(".leaflet-marker-icon, button, input, select, textarea, a, label, .mapa-panel")) return;
+  const target = e.originalEvent?.target;
+  if (target?.closest?.(".leaflet-marker-icon, button, input, select, textarea, a, label, .mapa-panel")) {
+    huboToqueMapa = false;
+    ultimoToqueMapaLargo = false;
+    return;
+  }
   if (trazando) {
     agregarPuntoTrazo(e.latlng.lat, e.latlng.lng);
     return;
