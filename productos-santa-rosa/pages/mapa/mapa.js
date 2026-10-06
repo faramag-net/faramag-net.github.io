@@ -25,8 +25,11 @@ const mapa = L.map("mapa", {
   zoomControl: true,
   touchZoom: true,
   zoomAnimation: false,
-  zoomSnap: 0.25,
-  zoomDelta: 1
+  // En móvil el pinch debe poder cambiar el zoom de forma continua.
+  // Con 0.25 el gesto se siente a saltos y obliga a repetir el pellizco.
+  zoomSnap: 0,
+  zoomDelta: 1,
+  bounceAtZoomLimits: false
 }).setView([19.0414, -98.2063], 12);
 mapa.createPane("trazosPane");
 mapa.getPane("trazosPane").style.zIndex = 350;

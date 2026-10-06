@@ -31,6 +31,14 @@
         
     <h1>Dashboard</h1>
 
+    <section class="app-version-panel" aria-label="Versión de la aplicación">
+        <div class="app-version-title">⚙️ Información de la aplicación</div>
+        <div class="app-version-values">
+            <div><span>VERSION:</span><strong id="appVersion">—</strong></div>
+            <div><span>BUILD:</span><strong id="appBuild">—</strong></div>
+        </div>
+    </section>
+
     <div class="dashboard">
 
         <div class="card">
@@ -121,6 +129,11 @@
 
     </script>
         
+    <script type="module">
+        import { APP_VERSION, APP_BUILD } from "./core/app-version.js";
+        document.getElementById("appVersion").textContent = APP_VERSION;
+        document.getElementById("appBuild").textContent = APP_BUILD;
+    </script>
     <script type="module" src="./dashboard.js"></script>
     <script type="module">
         import { bindBackupUI } from "./core/backup/backup.js";

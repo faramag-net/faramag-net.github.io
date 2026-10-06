@@ -167,3 +167,49 @@ body{
 .psr-photo-section{margin:12px 0;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa}.psr-photo-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}.psr-photo-limit{font-size:11px;color:#666}.psr-photo-add{display:inline-block;border:1px solid #cfd4da;border-radius:9px;padding:9px 11px;background:#fff;cursor:pointer;font-weight:700}.psr-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,86px);gap:7px;margin-top:8px}.psr-photo-card{width:86px;border:1px solid #ddd;border-radius:8px;overflow:hidden;background:#fff}.psr-photo-card img{display:block;width:86px;height:66px;object-fit:cover}.psr-photo-card div{display:flex;justify-content:space-between;align-items:center;padding:4px;font-size:10px}.psr-photo-card button{border:0;background:none;cursor:pointer;padding:0}
 
 .backup-panel{margin:18px 0;padding:14px;border:1px solid #d9dde3;border-radius:14px;background:#fff}.backup-panel h2{margin:0 0 5px}.backup-panel p{margin:0 0 10px;color:#666;font-size:13px}.backup-actions{display:flex;gap:8px;flex-wrap:wrap}.backup-actions button{border:0;border-radius:9px;padding:9px 11px;background:#243447;color:#fff;font-weight:700;cursor:pointer}
+
+/* Identificación de versión/build */
+.app-version-panel {
+    width: min(95%, 1100px);
+    margin: 0 auto 18px;
+    padding: 12px 15px;
+    border: 1px solid #d9dde3;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+}
+.app-version-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 8px;
+}
+.app-version-values {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+.app-version-values > div {
+    min-width: 0;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: #f5f6f8;
+}
+.app-version-values span {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #666;
+    letter-spacing: .04em;
+}
+.app-version-values strong {
+    display: block;
+    margin-top: 2px;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+@media(max-width:600px) {
+    .app-version-panel { width: 95%; padding: 10px 12px; }
+    .app-version-values { grid-template-columns: 1fr; gap: 6px; }
+}
