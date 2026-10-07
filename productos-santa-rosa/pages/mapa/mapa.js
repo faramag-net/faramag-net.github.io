@@ -51,6 +51,7 @@ let categoriasSeleccionadas = new Set(categorias.map(c => c.id));
 let marcadorNuevo = null;
 let marcadorMiUbicacion = null;
 let trazosMapa = cargarJSON(TRAZOS_KEY, []);
+let modoQuitarTrazos = false;
 let trazando = false;
 let puntosTrazoActual = [];
 let lineaTrazoActual = null;
@@ -121,7 +122,7 @@ function dibujarTrazo(trazo) {
     dashArray: "12 8",
     lineCap: "round",
     lineJoin: "round",
-    interactive: true
+    interactive: modoQuitarTrazos
   });
   const grupo = L.layerGroup([halo, linea]).addTo(capaTrazos);
   linea.bindPopup(`
@@ -148,19 +149,39 @@ function renderTrazos() {
 
 function actualizarControlesTrazo() {
   const btn = document.getElementById("btnTrazar");
+  const btnQuitar = document.getElementById("btnQuitarTrazos");
   const controles = document.getElementById("controlesTrazo");
   const texto = document.getElementById("estadoTrazo");
   if (!btn || !controles || !texto) return;
   btn.textContent = trazando ? "✏️ Trazando…" : "✏️ Trazar ruta";
   btn.classList.toggle("activo", trazando);
+  if (btnQuitar) {
+    btnQuitar.textContent = modoQuitarTrazos ? "✕ Salir de quitar trazos" : "🗑️ Quitar trazos";
+    btnQuitar.classList.toggle("activo", modoQuitarTrazos);
+    btnQuitar.setAttribute("aria-pressed", String(modoQuitarTrazos));
+  }
   controles.hidden = !trazando;
   texto.textContent = trazando
     ? `${puntosTrazoActual.length} ${puntosTrazoActual.length === 1 ? "punto" : "puntos"}. Toca el mapa para continuar.`
-    : "Puedes dibujar rutas o calles sobre el mapa sin modificar sus objetos.";
+    : modoQuitarTrazos
+      ? "Modo quitar trazos activo. Toca una línea para eliminarla."
+      : "Puedes dibujar rutas o calles sobre el mapa sin modificar sus objetos.";
+}
+
+function alternarModoQuitarTrazos() {
+  if (trazando) cancelarTrazo();
+  modoQuitarTrazos = !modoQuitarTrazos;
+  renderTrazos();
+  actualizarControlesTrazo();
+  actualizarEstado(modoQuitarTrazos ? "🗑️ Modo quitar trazos activado. Toca una línea para seleccionarla." : "Modo quitar trazos desactivado.");
 }
 
 function iniciarTrazo() {
   if (trazando) return;
+  if (modoQuitarTrazos) {
+    modoQuitarTrazos = false;
+    renderTrazos();
+  }
   trazando = true;
   puntosTrazoActual = [];
   limpiarVistaTrazoActual();
@@ -1169,6 +1190,7 @@ document.getElementById("btnMiUbicacion")?.addEventListener("click", () => mostr
 document.getElementById("btnUbicacionPermanente").addEventListener("click", () => mostrarMiUbicacion(true));
 document.getElementById("btnNuevaCategoria").addEventListener("click", crearCategoria);
 document.getElementById("btnTrazar")?.addEventListener("click", () => trazando ? cancelarTrazo() : iniciarTrazo());
+document.getElementById("btnQuitarTrazos")?.addEventListener("click", alternarModoQuitarTrazos);
 const btnFinalizarTrazo = document.getElementById("btnFinalizarTrazo");
 let finalizarTrazoPorToque = false;
 
