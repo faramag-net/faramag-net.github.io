@@ -169,6 +169,12 @@ function actualizarControlesTrazo() {
 }
 
 function alternarModoQuitarTrazos() {
+  if (!modoQuitarTrazos) {
+    const confirmar = window.confirm(
+      "⚠️ MODO QUITAR TRAZOS\n\nEn este modo podrás seleccionar y eliminar líneas del mapa.\n\n¿Deseas continuar?"
+    );
+    if (!confirmar) return;
+  }
   if (trazando) cancelarTrazo();
   modoQuitarTrazos = !modoQuitarTrazos;
   renderTrazos();
@@ -1364,6 +1370,15 @@ function cerrarGaleriaFotosMapa() {
 document.addEventListener("click", async event => {
   const boton = event.target.closest("button[data-accion]");
   if (!boton) return;
+
+  // Los botones de trazos no pertenecen a un cliente/empresa.
+  // Deben procesarse antes de buscar el registro del mapa.
+  if (boton.dataset.accion === "eliminar-trazo") {
+    if (boton.closest(".leaflet-popup")) mapa.closePopup();
+    eliminarTrazo(boton.dataset.trazoId);
+    return;
+  }
+
   const registro = clientesMapa.find(c => String(c.id) === String(boton.dataset.id));
   if (!registro) return;
   const marker = marcadores.get(String(registro.id));
@@ -1377,10 +1392,6 @@ document.addEventListener("click", async event => {
     abrirModal({ registro });
   }
   if (boton.dataset.accion === "google") abrirGoogleMaps(registro);
-  if (boton.dataset.accion === "eliminar-trazo") {
-    if (boton.closest(".leaflet-popup")) mapa.closePopup();
-    eliminarTrazo(boton.dataset.trazoId);
-  }
 });
 
 document.getElementById("btnCerrarFotosMapa")?.addEventListener("click", cerrarGaleriaFotosMapa);
