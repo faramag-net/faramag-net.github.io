@@ -1,8 +1,8 @@
 /**
  * Productos Santa Rosa
  * Módulo: 🛒 Compras (remodelación de Insumos)
- * Versión: 1.1.0.3
- * Build: 20261008.172800
+ * Versión: 1.1.0.4
+ * Build: 20261008.174000
  * Objetivo: Empresas, productos, presentaciones, lista manual, carritos, compras e historiales.
  *
  * Regla V1:
@@ -14,7 +14,7 @@
  * - No se crea psr_compras_*: carritos, eventos y lista viven en psr_settings.
  */
 
-import { renderPhotoPicker, movePhotos } from "../../../core/media/fotos.js";
+import { renderPhotoPicker, movePhotos, getPhotos } from "../../../core/media/fotos.js";
 
 import {
   getProducts,
@@ -233,10 +233,17 @@ function productModal(productId){
   const company=placeById(state.companyId); const presentations=presentationsForProduct(productId);
   const rows=pricesForProduct(productId).map(r=>{const pres=presentationById(r.presentationId),place=placeById(r.clienteId),cmp=calculateComparable(r.precio,r.contenidoTotal??pres?.contenidoTotal,r.unidad??pres?.unidad);return {r,pres,place,cmp};}).filter(x=>x.pres&&x.place);
   const modal=document.createElement("div"); modal.className="modal visible";
-  modal.innerHTML=`<div class="modal-box presentation-modal"><div class="modal-head"><div><h2>📦 ${esc(product.nombre)}</h2><small>${esc(categoryById(product.categoryId)?.nombre||'Sin categoría')} · todas las tiendas</small></div><button class="close-btn" data-close>×</button></div><div class="entity-toolbar"><button data-edit-product="${esc(product.id)}">✏️ Editar</button><button data-toggle-product="${esc(product.id)}">⏸️ Desactivar</button><button data-delete-product="${esc(product.id)}">🗑️ Borrar</button></div>${productTopFiveHtml(productId)}<h3 class="subsection-title">📊 Presentaciones y precios</h3><div class="comparison-list">${rows.map(x=>`<div class="comparison-row"><div><strong>${esc(x.pres.nombre)}</strong><small>${esc(x.place.nombre)} · ${formatDate(x.r.priceDate||x.r.createdAt).split(',')[0]}${x.r.oferta?` · 🏷️ ${esc(x.r.oferta)}`:''}</small></div><div><b>${money(x.r.precio)}</b><small>${x.cmp?`${money(x.cmp.valor)} ${esc(x.cmp.label.replace('$/','/'))}`:'Sin comparación'}</small></div><div class="comparison-actions"><button data-presentation="${esc(x.pres.id)}" title="Abrir presentación">→</button><button data-edit-presentation="${esc(x.pres.id)}" title="Editar presentación">✏️</button></div></div>`).join('')||`<div class="empty-card">Este producto todavía no tiene precios registrados.</div>`}</div><div class="modal-actions split"><button class="btn secondary" data-new-presentation>＋ Nueva presentación</button><button class="btn secondary" data-close>Cerrar</button></div></div>`;
+  modal.innerHTML=`<div class="modal-box presentation-modal"><div class="modal-head"><div><h2>📦 ${esc(product.nombre)}</h2><small>${esc(categoryById(product.categoryId)?.nombre||'Sin categoría')} · todas las tiendas</small></div><button class="close-btn" data-close>×</button></div><div class="entity-toolbar"><button data-edit-product="${esc(product.id)}">✏️ Editar</button><button data-toggle-product="${esc(product.id)}">⏸️ Desactivar</button><button data-delete-product="${esc(product.id)}">🗑️ Borrar</button></div>${productTopFiveHtml(productId)}<h3 class="subsection-title">📊 Presentaciones y precios</h3><div class="comparison-list">${rows.map(x=>`<div class="comparison-row"><div><strong>${esc(x.pres.nombre)}</strong><small>${esc(x.place.nombre)} · ${formatDate(x.r.priceDate||x.r.createdAt).split(',')[0]}${x.r.oferta?` · 🏷️ ${esc(x.r.oferta)}`:''}</small></div><div><b>${money(x.r.precio)}</b><small>${x.cmp?`${money(x.cmp.valor)} ${esc(x.cmp.label.replace('$/','/'))}`:'Sin comparación'}</small></div><div class="comparison-actions"><button class="photo-action" data-photo-presentation="${esc(x.pres.id)}" title="Ver fotografías" aria-label="Ver fotografías">📷</button><button data-presentation="${esc(x.pres.id)}" title="Abrir presentación">→</button><button data-edit-presentation="${esc(x.pres.id)}" title="Editar presentación">✏️</button></div></div>`).join('')||`<div class="empty-card">Este producto todavía no tiene precios registrados.</div>`}</div><div class="modal-actions split"><button class="btn secondary" data-new-presentation>＋ Nueva presentación</button><button class="btn secondary" data-close>Cerrar</button></div></div>`;
   document.body.appendChild(modal); modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());
   modal.querySelector("[data-new-presentation]").onclick=()=>{modal.remove();newPresentationModal(productId);};
   modal.querySelectorAll('[data-presentation]').forEach(b=>b.onclick=()=>{modal.remove();presentationDetail(productId,b.dataset.presentation);});
+  modal.querySelectorAll('[data-photo-presentation]').forEach(b=>b.onclick=()=>{modal.remove();presentationDetail(productId,b.dataset.photoPresentation);});
+  modal.querySelectorAll('[data-photo-presentation]').forEach(async b=>{
+    try{
+      const photos=await getPhotos('presentacion',b.dataset.photoPresentation);
+      if(photos.length && document.body.contains(b)) b.style.visibility='visible';
+    }catch(e){/* La ausencia de fotos no debe bloquear la pantalla. */}
+  });
   modal.querySelector('#topPeriod')?.addEventListener('change',e=>{state.topPeriod=e.target.value;modal.remove();productModal(productId);});
   bindEntityActions(modal);
 }

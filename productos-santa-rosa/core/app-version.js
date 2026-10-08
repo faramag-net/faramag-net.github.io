@@ -3,5 +3,5 @@
  * Identificación de la aplicación
  */
 
-export const APP_VERSION = "1.1.0.3";
-export const APP_BUILD = "20261008.172800";
+export const APP_VERSION = "1.1.0.4";
+export const APP_BUILD = "20261008.174000";
