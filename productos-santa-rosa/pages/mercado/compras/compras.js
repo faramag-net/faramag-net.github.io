@@ -2,7 +2,7 @@
  * Productos Santa Rosa
  * Módulo: 🛒 Compras (remodelación de Insumos)
  * Versión: 1.7.0
- * Build: 20261008.123000
+ * Build: 20261008.135100
  * Objetivo: Empresas, productos, presentaciones, lista manual, carritos, compras e historiales.
  *
  * Regla V1:
@@ -274,12 +274,13 @@ function editCategoryModal(id){const c=categoryById(id);if(!c)return;const modal
 function newProductModal(){
   const photoDraftId=uid();
   const modal=document.createElement("div");modal.className="modal visible";
-  modal.innerHTML=`<div class="modal-box small-modal"><div class="modal-head"><h2>＋ Nuevo producto</h2><button class="close-btn" data-close>×</button></div><label>Nombre *</label><input id="newProductName" class="modal-input" placeholder="Ej. Leche"><label>Categoría *</label><select id="newProductCategory" class="modal-input">${getCategories().map(c=>`<option value="${esc(c.id)}">${esc(c.nombre)}</option>`).join("")}</select><div id="productFormPhotos"></div><div class="modal-actions"><button class="btn secondary" data-close>Cancelar</button><button class="btn" id="saveProduct">Guardar</button></div></div>`;
+  const currentCategoryId=state.categoryId||"";
+  modal.innerHTML=`<div class="modal-box small-modal"><div class="modal-head"><h2>＋ Nuevo producto</h2><button class="close-btn" data-close>×</button></div><label>Nombre *</label><input id="newProductName" class="modal-input" placeholder="Ej. Leche"><label>Categoría *</label><select id="newProductCategory" class="modal-input">${getCategories().map(c=>`<option value="${esc(c.id)}" ${String(c.id)===String(currentCategoryId)?"selected":""}>${esc(c.nombre)}</option>`).join("")}</select><div id="productFormPhotos"></div><div class="modal-actions"><button class="btn secondary" data-close>Cancelar</button><button class="btn" id="saveProduct">Guardar</button></div></div>`;
   document.body.appendChild(modal);
   renderPhotoPicker({container:modal.querySelector('#productFormPhotos'),entityType:'producto',entityId:photoDraftId,label:'Fotografías'});
   modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());
   modal.querySelector("#newProductName").focus();
-  modal.querySelector("#saveProduct").onclick=async()=>{const nombre=modal.querySelector("#newProductName").value.trim();if(!nombre)return alert("Escribe el nombre.");try{const p=createProduct({nombre});await movePhotos('producto',photoDraftId,p.id);logEvent("Producto añadido",nombre);modal.remove();state.productSearch=nombre;render();}catch(e){alert(e.message);}};
+  modal.querySelector("#saveProduct").onclick=async()=>{const nombre=modal.querySelector("#newProductName").value.trim();const categoryId=modal.querySelector("#newProductCategory")?.value||state.categoryId||"";if(!nombre)return alert("Escribe el nombre.");if(!categoryId)return alert("Selecciona una categoría.");try{const p=createProduct({nombre,categoryId});await movePhotos('producto',photoDraftId,p.id);logEvent("Producto añadido",`${nombre} · ${categoryById(categoryId)?.nombre||"Sin categoría"}`);modal.remove();state.productSearch=nombre;render();}catch(e){alert(e.message);}};
 }
 function newNeedModal(){
   const products=getProducts().filter(p=>p.active!==false);

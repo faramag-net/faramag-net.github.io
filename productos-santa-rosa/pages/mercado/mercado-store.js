@@ -2,7 +2,7 @@
  * Productos Santa Rosa
  * Módulo: Mercado · almacenamiento
  * Versión: 1.7.0
- * Build: 20261008.123000
+ * Build: 20261008.135100
  * Objetivo: Catálogo de productos/presentaciones, empresas, precios, fotos y compras.
  */
 import LocalDB from '../../core/storage/local-db.js';
@@ -62,7 +62,13 @@ export function getAllPresentations(){return read(PRESENTATION_KEY);}
 export function productById(id){return read(PRODUCT_KEY).find(p=>String(p.id)===String(id));}
 export function presentationById(id){return read(PRESENTATION_KEY).find(p=>String(p.id)===String(id));}
 export function presentationsForProduct(productId){return getPresentations().filter(p=>String(p.productId)===String(productId));}
-export function productsForCategory(categoryId){return getProducts().filter(p=>String(p.categoryId||'')===String(categoryId));}
+export function productsForCategory(categoryId){
+  const category=categoryById(categoryId);
+  if(!category)return [];
+  const targetId=String(category.id);
+  const targetName=normalize(category.nombre);
+  return getProducts().filter(p=>String(p.categoryId||'')===targetId || (!p.categoryId && normalize(p.categoria||'')===targetName));
+}
 
 function ensureCatalog(){
   const products=read(PRODUCT_KEY); const categories=read(CATEGORY_KEY); const presentations=read(PRESENTATION_KEY);
