@@ -196,7 +196,7 @@ function categoryView(){
 }
 function companyView(){
   const company=placeById(state.companyId); if(!company){state.screen="home";return homeView();}
-  const categories=getCategories().filter(c=>!state.productSearch||productsForCategory(c.id).some(p=>normalize(p.nombre).includes(normalize(state.productSearch))));
+  const q=normalize(state.productSearch); const categories=getCategories().filter(c=>!q||normalize(c.nombre).includes(q)||productsForCategory(c.id).some(p=>normalize(p.nombre).includes(q)));
   const cart=cartFor(company.id);
   const purchased=getPurchases().filter(p=>String(p.clienteId)===String(company.id)).reduce((s,p)=>s+Number(p.total||0),0);
   return `${header(`🏪 ${esc(company.nombre)}`,true)}<div class="context-line">${esc(storeTypeLabel(company.tipo))}${company.direccion?` · ${esc(company.direccion)}`:""}</div>
@@ -207,7 +207,7 @@ function companyView(){
 }
 function categoryCard(c){
   const count=productsForCategory(c.id).length;
-  return `<div class="category-card-wrap"><button class="category-card" data-category="${esc(c.id)}"><span>📂</span><strong>${esc(c.nombre)}</strong><small>${count} ${count===1?'producto':'productos'}</small></button><div class="entity-actions"><button data-edit-category="${esc(c.id)}">✏️</button><button data-toggle-category="${esc(c.id)}">⏸️</button></div></div>`;
+  return `<div class="category-card-wrap" data-category-card-name="${esc(c.nombre)}"><button class="category-card" data-category="${esc(c.id)}"><span>📂</span><strong>${esc(c.nombre)}</strong><small>${count} ${count===1?'producto':'productos'}</small></button><div class="entity-actions"><button data-edit-category="${esc(c.id)}">✏️</button><button data-toggle-category="${esc(c.id)}">⏸️</button></div></div>`;
 }
 
 function productCard(p){
@@ -260,7 +260,7 @@ function presentationDetail(productId,presentationId){
   const targetToBase=(value,unit)=>{const u=normalize(unit),base=normalize(baseUnit());if((u==='kg'&&base==='g')||(u==='kg'&&base==='kg'))return toBase(value,'kg');if((u==='l'&&['ml','l'].includes(base)))return toBase(value,'l');if(u==='ue'&&base==='ue')return value;if(u==='unidad'&&['unidad','unidades'].includes(base))return value;return null;};
   const updateTarget=()=>{if(mode.value!=='target'){targetResult.textContent='';return;}const total=baseContent(),want=Number(target.value);const baseWant=targetToBase(want,targetUnit.value);if(!(total>0)||!(baseWant>0)){targetResult.textContent='Completa contenido y cantidad.';return;}const packs=Math.ceil(baseWant/total);const actual=packs*total;const priceNow=Number(price?.precio||modal.querySelector('#storePrice').value||0);targetResult.textContent=`Necesitas ${packs} presentación${packs===1?'':'es'} · recibirás ${formatContent(actual,baseUnit())} · costo ${money(packs*priceNow)}`;};
   mode.onchange=()=>{const targetMode=mode.value==='target';targetWrap.style.display=targetMode?'block':'none';modal.querySelector('#cartQtyLabel').style.display=targetMode?'none':'block';qty.style.display=targetMode?'none':'block';updateTarget();};[target,targetUnit,modal.querySelector('#contentTotal'),modal.querySelector('#contentUnit'),modal.querySelector('#storePrice')].forEach(el=>el?.addEventListener('input',updateTarget));
-  modal.querySelector('#savePrice').onclick=()=>{const value=Number(modal.querySelector('#storePrice').value);const content=Number(modal.querySelector('#contentTotal').value);const unit=modal.querySelector('#contentUnit').value;if(!(value>=0)||!(content>0)||!unit)return alert('Completa precio y contenido total.');updatePresentation(presentation.id,{contenidoTotal:content,unidad:unit,oferta:modal.querySelector('#offer').value.trim()});addObservation({producto:product.nombre,presentacion:presentation.nombre,presentationId:presentation.id,precio:value,clienteId:company.id,contenidoTotal:content,unidad,oferta:modal.querySelector('#offer').value.trim()});logEvent("Precio",`${esc(company.nombre)} · ${esc(presentation.nombre)} → ${money(value)}`);modal.remove();productModal(productId);};
+  modal.querySelector('#savePrice').onclick=()=>{const value=Number(modal.querySelector('#storePrice').value);const content=Number(modal.querySelector('#contentTotal').value);const unit=String(modal.querySelector('#contentUnit').value||'').trim().toLowerCase();const offer=modal.querySelector('#offer').value.trim();if(!(value>=0)||!(content>0)||!unit)return alert('Completa precio y contenido total.');updatePresentation(presentation.id,{contenidoTotal:content,unidad:unit,oferta:offer});addObservation({producto:product.nombre,presentacion:presentation.nombre,presentationId:presentation.id,precio:value,clienteId:company.id,contenidoTotal:content,unidad:unit,oferta:offer});logEvent("Precio",`${company.nombre} · ${presentation.nombre} → ${money(value)}`);modal.remove();productModal(productId);};
   modal.querySelector('#addToCart').onclick=()=>{const priceNow=price?Number(price.precio):Number(modal.querySelector('#storePrice').value||0);if(!(priceNow>=0))return alert('Registra primero un precio.');let quantity=Number(qty.value);let desired=null;if(mode.value==='target'){const total=baseContent(),want=Number(target.value),baseWant=targetToBase(want,targetUnit.value);if(!(total>0)||!(baseWant>0))return alert('Completa el contenido y la cantidad deseada.');quantity=Math.ceil(baseWant/total);desired={cantidadDeseada:want,unidadDeseada:targetUnit.value};}if(!(quantity>0))return alert('La cantidad debe ser mayor que 0.');const items=cartFor(company.id);const item={id:existing?.id||uid(),productId:product.id,presentationId:presentation.id,producto:product.nombre,presentacion:presentation.nombre,precio:priceNow,cantidad:quantity,comprador:existing?.comprador||'Fara',compradorNombre:existing?.compradorNombre||'',contenidoTotal:baseContent(),unidad:baseUnit(),...desired};const idx=items.findIndex(i=>String(i.presentationId)===String(presentation.id));if(idx>=0)items[idx]=item;else items.push(item);setCart(company.id,items);modal.remove();render();};
   bindEntityActions(modal);
 }
@@ -544,15 +544,24 @@ function bind(){
   document.getElementById("productSearch")?.addEventListener("input",e=>{
     state.productSearch=e.target.value;
     const q=normalize(state.productSearch);
-    document.querySelectorAll("[data-product-card-name]").forEach(card=>{
-      card.hidden=!!q&&!normalize(card.dataset.productCardName).includes(q);
-    });
+    if(state.screen==="company"){
+      document.querySelectorAll("[data-category-card-name]").forEach(card=>{
+        const name=normalize(card.dataset.categoryCardName);
+        const categoryId=card.querySelector("[data-category]")?.dataset.category;
+        const productMatch=categoryId&&productsForCategory(categoryId).some(p=>normalize(p.nombre).includes(q));
+        card.hidden=!!q&&!name.includes(q)&&!productMatch;
+      });
+    }else{
+      document.querySelectorAll("[data-product-card-name]").forEach(card=>{
+        card.hidden=!!q&&!normalize(card.dataset.productCardName).includes(q);
+      });
+    }
   });
   document.getElementById("newCompanyBtn")?.addEventListener("click",()=>newCompanyModal());document.getElementById("newCompanyEmpty")?.addEventListener("click",()=>newCompanyModal());
   document.getElementById("listBtn")?.addEventListener("click",()=>{state.listReturnScreen="home";state.companyId=null;state.screen="list";state.listSearch="";render();});document.getElementById("companyListBtn")?.addEventListener("click",()=>{state.listReturnScreen="company";state.screen="list";state.listSearch="";render();});
   document.getElementById("addCategoryBtn")?.addEventListener("click",newCategoryModal);document.getElementById("addProductBtn")?.addEventListener("click",newProductModal);document.getElementById("addNeedBtn")?.addEventListener("click",newNeedModal);document.getElementById("calculatorBtn")?.addEventListener("click",calculatorModal);document.getElementById("cartBtn")?.addEventListener("click",()=>{state.screen="cart";render();});
   document.getElementById("openCartsTop")?.addEventListener("click",openCartsModal);document.getElementById("openCartsBanner")?.addEventListener("click",openCartsModal);document.getElementById("purchasesHistoryBtn")?.addEventListener("click",()=>{state.purchasesPage=1;purchasesHistoryModal();});document.getElementById("eventsHistoryBtn")?.addEventListener("click",()=>{state.eventsPage=1;eventsHistoryModal();});
-  document.getElementById("backBtn")?.addEventListener("click",()=>{if(state.screen==="cart"){state.screen="company";}else if(state.screen==="list"){if(state.listReturnScreen==="company"&&state.companyId){state.screen="company";}else{state.screen="home";state.companyId=null;}}else if(state.screen==="category"){state.screen="company";state.categoryId=null;}else if(state.screen==="company"){state.screen="home";state.companyId=null;}render();});
+  document.getElementById("backBtn")?.addEventListener("click",()=>{if(state.screen==="cart"){state.screen="company";}else if(state.screen==="list"){if(state.listReturnScreen==="company"&&state.companyId){state.screen="company";}else{state.screen="home";state.companyId=null;}}else if(state.screen==="category"){state.screen="company";state.categoryId=null;state.productSearch="";}else if(state.screen==="company"){state.screen="home";state.companyId=null;state.productSearch="";}render();});
   document.querySelectorAll("[data-company]").forEach(b=>b.onclick=()=>{state.companyId=b.dataset.company;state.screen="company";state.categoryId=null;state.productSearch="";render();});document.querySelectorAll("[data-category]").forEach(b=>b.onclick=()=>{state.categoryId=b.dataset.category;state.screen="category";state.productSearch="";render();});document.querySelectorAll("[data-product]").forEach(b=>b.onclick=()=>productModal(b.dataset.product));
   document.querySelectorAll("[data-remove-cart]").forEach(b=>b.onclick=()=>{setCart(state.companyId,cartFor(state.companyId).filter(i=>String(i.id)!==String(b.dataset.removeCart)));render();});
   document.querySelectorAll("[data-qty]").forEach(i=>i.onchange=()=>{const items=cartFor(state.companyId),item=items.find(x=>String(x.id)===String(i.dataset.qty)),qty=Number(i.value);if(!item)return;if(qty>0){item.cantidad=qty;setCart(state.companyId,items);}else setCart(state.companyId,items.filter(x=>x.id!==item.id));render();});

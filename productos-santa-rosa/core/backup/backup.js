@@ -10,7 +10,7 @@ const DATA_KEYS = [
   "psr_products", "psr_movements", "psr_inventory", "psr_sales", "psr_clients",
   "psr_market_clients", "psr_route_clients", "psr_client_products", "psr_client_history",
   "psr_visits", "psr_history", "psr_mercado_history", "psr_insumos", "psr_consignations",
-  "psr_map_clients", "psr_map_categories", "psr_map_trazos", "psr_mercado_products", "psr_mercado_presentations"
+  "psr_map_clients", "psr_map_categories", "psr_map_trazos", "psr_mercado_categories", "psr_mercado_products", "psr_mercado_presentations"
 ];
 
 const DATA_FORMAT = "productos-santa-rosa-datos";
@@ -79,6 +79,17 @@ export async function importDataBackup(file) {
     }
     localStorage.setItem(key, JSON.stringify(incoming));
   });
+  // Reconciliar el catálogo de Mercado inmediatamente. Esto permite que un
+  // respaldo antiguo que conserve psr_client_products pero no tenga todavía
+  // el catálogo nuevo pueda reconstruir productos/presentaciones, y evita
+  // duplicados lógicos por nombre o referencias antiguas.
+  try {
+    const { normalizeMarketCatalog } = await import("../../pages/mercado/mercado-store.js");
+    normalizeMarketCatalog();
+  } catch (error) {
+    console.warn("No fue posible reconciliar el catálogo de Mercado después de importar:", error);
+  }
+
   if (payload.data.comprasSettings && typeof payload.data.comprasSettings === "object") {
     const settings = read("psr_settings") || {};
     const incoming = payload.data.comprasSettings;

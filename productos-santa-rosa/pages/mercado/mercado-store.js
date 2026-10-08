@@ -109,6 +109,98 @@ function ensureCatalog(){
 }
 ensureCatalog();
 
+// Reconciliación del catálogo de Mercado después de importaciones/restauraciones.
+// Conserva un registro canónico por categoría, producto y presentación, y
+// repara las referencias de observaciones/compras cuando hubo duplicados.
+export function normalizeMarketCatalog(){
+  ensureCatalog();
+  let categories=read(CATEGORY_KEY), products=read(PRODUCT_KEY), presentations=read(PRESENTATION_KEY);
+  const categoryMap=new Map(), categoryIdMap=new Map();
+  for(const c of categories){
+    const key=normalize(c.nombre);
+    if(!key) continue;
+    const canonical=categoryMap.get(key);
+    if(!canonical){categoryMap.set(key,c);continue;}
+    categoryIdMap.set(String(c.id),String(canonical.id));
+  }
+  categories=categories.filter(c=>!categoryIdMap.has(String(c.id)));
+  for(const p of products){
+    if(p.categoryId && categoryIdMap.has(String(p.categoryId))) p.categoryId=categoryIdMap.get(String(p.categoryId));
+  }
+
+  const productMap=new Map(), productIdMap=new Map();
+  for(const p of products){
+    const key=normalize(p.nombre);
+    if(!key) continue;
+    const canonical=productMap.get(key);
+    if(!canonical){productMap.set(key,p);continue;}
+    // Prefer the record that already has a valid category.
+    const canonicalHasCat=!!canonical.categoryId;
+    const currentHasCat=!!p.categoryId;
+    if(!canonicalHasCat && currentHasCat){
+      Object.assign(canonical,p);
+      productIdMap.set(String(canonical.id),String(p.id));
+      // The old canonical id is now replaced by p.id.
+      productIdMap.set(String(canonical.id),String(p.id));
+      productMap.set(key,p);
+    }else{
+      productIdMap.set(String(p.id),String(canonical.id));
+    }
+  }
+  // Rebuild product map after possible canonical replacement.
+  const canonicalProducts=[]; const seenProductIds=new Set();
+  for(const p of products){
+    const canonicalId=productIdMap.get(String(p.id))||String(p.id);
+    if(seenProductIds.has(canonicalId)) continue;
+    const canonical=products.find(x=>String(x.id)===canonicalId)||p;
+    seenProductIds.add(canonicalId); canonicalProducts.push(canonical);
+  }
+  products=canonicalProducts;
+
+  // Repoint and deduplicate presentations by canonical product + name.
+  for(const pr of presentations){
+    const mapped=productIdMap.get(String(pr.productId));
+    if(mapped) pr.productId=mapped;
+  }
+  const presentationMap=new Map(), presentationIdMap=new Map(), canonicalPresentations=[];
+  for(const pr of presentations){
+    const key=`${String(pr.productId)}|${normalize(pr.nombre)}`;
+    const canonical=presentationMap.get(key);
+    if(!canonical){presentationMap.set(key,pr);canonicalPresentations.push(pr);continue;}
+    // Keep the most complete presentation data.
+    if((canonical.contenidoTotal==null||canonical.contenidoTotal==='') && pr.contenidoTotal!=null) canonical.contenidoTotal=pr.contenidoTotal;
+    if(!canonical.unidad && pr.unidad) canonical.unidad=pr.unidad;
+    if(!canonical.oferta && pr.oferta) canonical.oferta=pr.oferta;
+    canonical.updatedAt=canonical.updatedAt||pr.updatedAt||now();
+    presentationIdMap.set(String(pr.id),String(canonical.id));
+  }
+  presentations=canonicalPresentations;
+
+  const rewriteRows=(rows)=>{
+    let changed=false;
+    const out=rows.map(r=>{
+      const next={...r};
+      const pm=productIdMap.get(String(next.productId));
+      if(pm){next.productId=pm;changed=true;}
+      const pr=presentationIdMap.get(String(next.presentationId));
+      if(pr){next.presentationId=pr;changed=true;}
+      return next;
+    });
+    return {out,changed};
+  };
+  const obs=getObservations(); const obsResult=rewriteRows(obs); if(obsResult.changed)saveObservations(obsResult.out);
+  const purchases=getPurchases(); const purchaseResult=rewriteRows(purchases); if(purchaseResult.changed)savePurchases(purchaseResult.out);
+
+  // Reconstruct the new catalog from legacy Mercado/Cliente products if an
+  // older backup did not contain psr_mercado_products/presentations.
+  if(!products.length){
+    ensureCatalog();
+    products=read(PRODUCT_KEY); presentations=read(PRESENTATION_KEY);
+  }
+  write(CATEGORY_KEY,categories); write(PRODUCT_KEY,products); write(PRESENTATION_KEY,presentations);
+  return {categories:categories.length,products:products.length,presentations:presentations.length};
+}
+
 export function productNames(){return getProducts().map(p=>p.nombre).sort((a,b)=>a.localeCompare(b,'es'));}
 export function observationsForProduct(name){return getObservations().filter(o=>normalize(o.producto)===normalize(name));}
 export function purchasesForProduct(name){return getPurchases().filter(o=>normalize(o.producto)===normalize(name));}
