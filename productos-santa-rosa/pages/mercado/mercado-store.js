@@ -1,7 +1,7 @@
 /**
  * Productos Santa Rosa
  * Módulo: Mercado · almacenamiento
- * Versión: 1.7.0
+ * Versión: 1.1.0.1
  * Build: 20261008.135100
  * Objetivo: Catálogo de productos/presentaciones, empresas, precios, fotos y compras.
  */

@@ -1,7 +1,7 @@
 /**
  * Productos Santa Rosa
  * Módulo: 🛒 Compras (remodelación de Insumos)
- * Versión: 1.7.0
+ * Versión: 1.1.0.1
  * Build: 20261008.135100
  * Objetivo: Empresas, productos, presentaciones, lista manual, carritos, compras e historiales.
  *
@@ -156,7 +156,7 @@ function homeView(){
   const carts=openCartEntries();
   const purchases=getPurchases();
   const totals=BUYERS.map(b=>({buyer:b,total:purchases.filter(p=>(p.comprador||"Fara")===b).reduce((s,p)=>s+Number(p.total||0),0)}));
-  return `${header("🛒 Compras",false)}
+  return `${header("Compras",false)}
     ${carts.length?`<button class="open-carts-banner" id="openCartsBanner"><span>🛒</span><span><strong>${carts.length} carrito${carts.length===1?'':'s'} abierto${carts.length===1?'':'s'}</strong><small>${carts.map(c=>esc(c.company.nombre)).join(" · ")}</small></span><span>→</span></button>`:""}
     <section class="home-tools">
       <div class="search-wrap"><span>🔎</span><input id="companySearch" value="${esc(state.companySearch)}" placeholder="Buscar empresa..."></div>
@@ -280,7 +280,7 @@ function newProductModal(){
   renderPhotoPicker({container:modal.querySelector('#productFormPhotos'),entityType:'producto',entityId:photoDraftId,label:'Fotografías'});
   modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());
   modal.querySelector("#newProductName").focus();
-  modal.querySelector("#saveProduct").onclick=async()=>{const nombre=modal.querySelector("#newProductName").value.trim();const categoryId=modal.querySelector("#newProductCategory")?.value||state.categoryId||"";if(!nombre)return alert("Escribe el nombre.");if(!categoryId)return alert("Selecciona una categoría.");try{const p=createProduct({nombre,categoryId});await movePhotos('producto',photoDraftId,p.id);logEvent("Producto añadido",`${nombre} · ${categoryById(categoryId)?.nombre||"Sin categoría"}`);modal.remove();state.productSearch=nombre;render();}catch(e){alert(e.message);}};
+  modal.querySelector("#saveProduct").onclick=async()=>{const nombre=modal.querySelector("#newProductName").value.trim();const categoryId=modal.querySelector("#newProductCategory")?.value||state.categoryId||"";if(!nombre)return alert("Escribe el nombre.");if(!categoryId)return alert("Selecciona una categoría.");try{const p=createProduct({nombre,categoryId});await movePhotos('producto',photoDraftId,p.id);logEvent("Producto añadido",`${nombre} · ${categoryById(categoryId)?.nombre||"Sin categoría"}`);modal.remove();state.productSearch="";render();}catch(e){alert(e.message);}};
 }
 function newNeedModal(){
   const products=getProducts().filter(p=>p.active!==false);
@@ -562,5 +562,5 @@ function bind(){
   bindEntityActions(document);
 }
 function focusInput(id){setTimeout(()=>{const el=document.getElementById(id);if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}},0);}
-function render(){let html="";if(state.screen==="home")html=homeView();if(state.screen==="list")html=listView();if(state.screen==="company")html=companyView();if(state.screen==="cart")html=cartView();root.innerHTML=html;bind();}
+function render(){let html="";if(state.screen==="home")html=homeView();if(state.screen==="list")html=listView();if(state.screen==="company")html=companyView();if(state.screen==="category")html=categoryView();if(state.screen==="cart")html=cartView();root.innerHTML=html;bind();}
 render();
