@@ -317,3 +317,10 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .comparison-row.edit-mode .comparison-actions .reassign-row-action,.comparison-row.edit-mode .comparison-actions .edit-row-action,.comparison-row.edit-mode .comparison-actions .delete-row-action{display:inline-flex!important;visibility:visible!important}
 .presentation-modal.edit-mode .comparison-actions .photo-action,.presentation-modal.edit-mode .comparison-actions .open-row-action{display:none!important;visibility:hidden!important}
 .presentation-modal.edit-mode .comparison-actions .reassign-row-action,.presentation-modal.edit-mode .comparison-actions .edit-row-action,.presentation-modal.edit-mode .comparison-actions .delete-row-action{display:inline-flex!important;visibility:visible!important}
+
+
+/* FIX 18.0.2 · Un precio cuyo registro apunta a una empresa eliminada sigue siendo editable, reasignable y eliminable. */
+.comparison-row.orphan-price-row .reassign-row-action:not(:disabled),
+.comparison-row.orphan-price-row .delete-row-action:not(:disabled){opacity:1!important;cursor:pointer!important;}
+.comparison-row.orphan-price-row .reassign-row-action:not(:disabled){color:#7a3d57!important;}
+.comparison-row.orphan-price-row .delete-row-action:not(:disabled){color:var(--danger)!important;}
