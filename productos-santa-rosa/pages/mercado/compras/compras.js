@@ -234,22 +234,50 @@ function productTopFiveHtml(productId){
 function productModal(productId){
   state.productId=productId;
   const product=productById(productId); if(!product)return;
-  const company=placeById(state.companyId);
-  const rows=pricesForProduct(productId).map(r=>{const pres=presentationById(r.presentationId),place=placeById(r.clienteId),cmp=calculateComparable(r.precio,r.contenidoTotal??pres?.contenidoTotal,r.unidad??pres?.unidad);return {r,pres,place,cmp};}).filter(x=>x.pres);
+  const allPresentations=presentationsForProduct(productId);
+  const priceRows=pricesForProduct(productId).map(r=>{
+    const pres=presentationById(r.presentationId),place=placeById(r.clienteId),cmp=pres?calculateComparable(r.precio,r.contenidoTotal??pres.contenidoTotal,r.unidad??pres.unidad):null;
+    return {r,pres,place,cmp};
+  }).filter(x=>x.pres);
+  const rows=[];
+  allPresentations.forEach(pres=>{
+    const matches=priceRows.filter(x=>String(x.pres.id)===String(pres.id));
+    if(matches.length) matches.forEach(x=>rows.push(x));
+    else rows.push({r:{id:'',presentationId:pres.id,precio:null,priceDate:pres.updatedAt,source:'none',clienteId:'',tienda:''},pres,place:null,cmp:null});
+  });
   const modal=document.createElement("div"); modal.className="modal visible";
-  modal.innerHTML=`<div class="modal-box presentation-modal"><div class="modal-head"><div><h2>📦 ${esc(product.nombre)}</h2><small>${esc(categoryById(product.categoryId)?.nombre||'Sin categoría')} · todas las tiendas</small></div><button class="close-btn" data-close>×</button></div><div class="product-mode-bar"><button class="action-btn" id="toggleProductEditMode">✏️ Editar / borrar</button></div>${productTopFiveHtml(productId)}<h3 class="subsection-title">📊 Presentaciones y precios</h3><div class="comparison-list">${rows.map(x=>`<div class="comparison-row" data-presentation-row="${esc(x.pres.id)}"><div><strong>${esc(x.pres.nombre)}</strong><small>${x.place?esc(x.place.nombre):`⚠️ Empresa eliminada${x.r.tienda?` · ${esc(x.r.tienda)}`:''}`} · ${formatDate(x.r.priceDate||x.r.createdAt).split(',')[0]}${x.r.oferta?` · 🏷️ ${esc(x.r.oferta)}`:''}</small></div><div><b>${money(x.r.precio)}</b><small>${x.cmp?`${money(x.cmp.valor)} ${esc(x.cmp.label.replace('$/','/'))}`:'Sin comparación'}</small></div><div class="comparison-actions"><button class="photo-action" data-photo-presentation="${esc(x.pres.id)}" title="Ver fotografías" aria-label="Ver fotografías">📷</button><button data-presentation="${esc(x.pres.id)}" title="Abrir presentación">→</button><button class="reassign-row-action" data-reassign-price="${esc(x.r.id)}" data-price-source="${esc(x.r.source||'mercado')}" title="Reasignar empresa" aria-label="Reasignar empresa">🔗</button><button class="edit-row-action" data-edit-presentation="${esc(x.pres.id)}" title="Editar presentación" aria-label="Editar presentación">✏️</button><button class="delete-row-action" data-delete-price="${esc(x.r.id)}" data-price-source="${esc(x.r.source||'mercado')}" title="Eliminar este registro de precio" aria-label="Eliminar este registro de precio">×</button></div></div>`).join('')||`<div class="empty-card">Este producto todavía no tiene precios registrados.</div>`}</div><div class="modal-actions split"><button class="btn secondary" data-new-presentation>＋ Nueva presentación</button><button class="btn secondary" data-close>Cerrar</button></div></div>`;
+  modal.innerHTML=`<div class="modal-box presentation-modal"><div class="modal-head"><div><h2>📦 ${esc(product.nombre)}</h2><small>${esc(categoryById(product.categoryId)?.nombre||'Sin categoría')} · todas las tiendas</small></div><button class="close-btn" data-close>×</button></div><div class="product-mode-bar"><button class="action-btn" id="toggleProductEditMode">✏️ Editar / borrar</button></div>${productTopFiveHtml(productId)}<h3 class="subsection-title">📊 Presentaciones y precios</h3><div class="comparison-list">${rows.map(x=>{
+    const hasPrice=Number.isFinite(Number(x.r.precio));
+    const priceId=hasPrice?esc(x.r.id):'';
+    const source=esc(x.r.source||'mercado');
+    const companyLabel=x.place?esc(x.place.nombre):(x.r.tienda?`⚠️ ${esc(x.r.tienda)}`:(hasPrice?'⚠️ Empresa eliminada':'Sin precio registrado'));
+    const dateLabel=hasPrice?` · ${formatDate(x.r.priceDate||x.r.createdAt).split(',')[0]}`:'';
+    const offer=x.r.oferta?` · 🏷️ ${esc(x.r.oferta)}`:'';
+    return `<div class="comparison-row ${hasPrice?'':'no-price-row'}" data-presentation-row="${esc(x.pres.id)}"><div><strong>${esc(x.pres.nombre)}</strong><small>${companyLabel}${dateLabel}${offer}</small></div><div><b>${hasPrice?money(x.r.precio):'—'}</b><small>${hasPrice?(x.cmp?`${money(x.cmp.valor)} ${esc(x.cmp.label.replace('$/','/'))}`:'Sin comparación'):'Sin precio registrado'}</small></div><div class="comparison-actions"><button class="photo-action" data-photo-presentation="${esc(x.pres.id)}" title="Ver fotografías" aria-label="Ver fotografías" style="display:none;visibility:hidden">📷</button><button class="open-row-action" data-presentation="${esc(x.pres.id)}" title="Abrir presentación" aria-label="Abrir presentación">→</button><button class="reassign-row-action" data-reassign-price="${priceId}" data-price-source="${source}" title="Reasignar empresa" aria-label="Reasignar empresa" ${!hasPrice?'disabled':''}>🔗</button><button class="edit-row-action" data-edit-presentation="${esc(x.pres.id)}" title="Editar presentación" aria-label="Editar presentación">✏️</button><button class="delete-row-action" data-delete-price="${priceId}" data-price-source="${source}" title="Eliminar este registro de precio" aria-label="Eliminar este registro de precio" ${!hasPrice?'disabled':''}>×</button></div></div>`;
+  }).join('')||`<div class="empty-card">Este producto todavía no tiene presentaciones.</div>`}</div><div class="modal-actions split"><button class="btn secondary" data-new-presentation>＋ Nueva presentación</button><button class="btn secondary" data-close>Cerrar</button></div></div>`;
   document.body.appendChild(modal); modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());
   modal.querySelector("[data-new-presentation]").onclick=()=>{modal.remove();newPresentationModal(productId);};
   modal.querySelectorAll('[data-presentation]').forEach(b=>b.onclick=()=>{modal.remove();presentationDetail(productId,b.dataset.presentation);});
   modal.querySelectorAll('[data-photo-presentation]').forEach(b=>b.onclick=()=>{modal.remove();presentationDetail(productId,b.dataset.photoPresentation);});
-  modal.querySelectorAll('[data-photo-presentation]').forEach(async b=>{try{const photos=await getPhotos('presentacion',b.dataset.photoPresentation);if(document.body.contains(b)){b.dataset.hasPhoto=photos.length?'1':'0';b.style.display=photos.length?'inline-flex':'none';}}catch{}});
+  modal.querySelectorAll('[data-photo-presentation]').forEach(async b=>{try{const photos=await getPhotos('presentacion',b.dataset.photoPresentation);if(document.body.contains(b)&&photos.length){b.style.display='inline-flex';b.style.visibility='visible';b.dataset.hasPhoto='1';}}catch{}});
   modal.querySelector('#toggleProductEditMode').onclick=()=>{
     const editing=modal.classList.toggle('edit-mode');
     modal.querySelector('#toggleProductEditMode').textContent=editing?'✓ Terminar edición':'✏️ Editar / borrar';
     modal.querySelectorAll('.comparison-actions').forEach(box=>{
-      const photo=box.querySelector('.photo-action'), arrow=box.querySelector('[data-presentation]'), link=box.querySelector('.reassign-row-action'), edit=box.querySelector('.edit-row-action'), del=box.querySelector('.delete-row-action');
-      if(editing){if(photo)photo.style.display='none';if(arrow)arrow.style.display='none';if(link)link.style.display='inline-flex';if(edit)edit.style.display='inline-flex';if(del)del.style.display='inline-flex';}
-      else{if(photo)photo.style.display=photo.dataset.hasPhoto==='1'?'inline-flex':'none';if(arrow)arrow.style.display='inline-flex';if(link)link.style.display='none';if(edit)edit.style.display='none';if(del)del.style.display='none';}
+      const photo=box.querySelector('.photo-action'), arrow=box.querySelector('.open-row-action'), link=box.querySelector('.reassign-row-action'), edit=box.querySelector('.edit-row-action'), del=box.querySelector('.delete-row-action');
+      if(editing){
+        if(photo){photo.style.display='none';photo.style.visibility='hidden';}
+        if(arrow){arrow.style.display='none';arrow.style.visibility='hidden';}
+        if(link){link.style.display='inline-flex';link.style.visibility='visible';}
+        if(edit){edit.style.display='inline-flex';edit.style.visibility='visible';}
+        if(del){del.style.display='inline-flex';del.style.visibility='visible';}
+      }else{
+        if(photo){photo.style.display=photo.dataset.hasPhoto==='1'?'inline-flex':'none';photo.style.visibility=photo.dataset.hasPhoto==='1'?'visible':'hidden';}
+        if(arrow){arrow.style.display='inline-flex';arrow.style.visibility='visible';}
+        if(link){link.style.display='none';link.style.visibility='hidden';}
+        if(edit){edit.style.display='none';edit.style.visibility='hidden';}
+        if(del){del.style.display='none';del.style.visibility='hidden';}
+      }
     });
   };
   modal.querySelector('#topPeriod')?.addEventListener('change',e=>{state.topPeriod=e.target.value;modal.remove();productModal(productId);});

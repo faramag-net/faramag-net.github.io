@@ -305,3 +305,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .comparison-actions button{flex:0 0 30px}
 .comparison-row{grid-template-columns:minmax(0,1fr) auto 96px}
 @media(max-width:520px){.comparison-row{grid-template-columns:minmax(0,1fr) auto 96px}.comparison-row .comparison-actions{width:96px;flex-basis:96px;grid-template-columns:repeat(3,30px)}}
+
+/* FIX12: presentación sin precio + acciones visibles en modo edición */
+.comparison-row .comparison-actions{display:grid!important;grid-template-columns:repeat(3,30px)!important;width:96px!important;flex:0 0 96px!important;gap:3px!important;align-items:center}
+.comparison-row .comparison-actions button{display:inline-flex;visibility:visible}
+.comparison-row .comparison-actions .photo-action{display:none;visibility:hidden}
+.comparison-row .comparison-actions .reassign-row-action,.comparison-row .comparison-actions .edit-row-action,.comparison-row .comparison-actions .delete-row-action{display:none;visibility:hidden}
+.comparison-row .comparison-actions button:disabled{opacity:.25;cursor:not-allowed}
+.comparison-row.no-price-row .comparison-actions .reassign-row-action,.comparison-row.no-price-row .comparison-actions .delete-row-action{opacity:.25}
+.comparison-row.edit-mode .comparison-actions .photo-action,.comparison-row.edit-mode .comparison-actions .open-row-action{display:none!important;visibility:hidden!important}
+.comparison-row.edit-mode .comparison-actions .reassign-row-action,.comparison-row.edit-mode .comparison-actions .edit-row-action,.comparison-row.edit-mode .comparison-actions .delete-row-action{display:inline-flex!important;visibility:visible!important}
+.presentation-modal.edit-mode .comparison-actions .photo-action,.presentation-modal.edit-mode .comparison-actions .open-row-action{display:none!important;visibility:hidden!important}
+.presentation-modal.edit-mode .comparison-actions .reassign-row-action,.presentation-modal.edit-mode .comparison-actions .edit-row-action,.presentation-modal.edit-mode .comparison-actions .delete-row-action{display:inline-flex!important;visibility:visible!important}
