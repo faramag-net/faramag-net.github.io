@@ -275,7 +275,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
 
 /* FIX 1.1.0.6 · Fotos del catálogo y modo editar/borrar */
-.photo-indicator{font-size:11px;line-height:1;margin-top:1px;display:inline-block}
+.photo-indicator{font-size:11px;line-height:1;margin-top:1px;display:none;min-width:14px;text-align:center}
 .category-add-product{display:flex;justify-content:flex-end;margin:-2px 0 9px}
 .product-mode-bar{display:flex;justify-content:flex-end;margin:-2px 0 9px}
 .product-mode-bar .action-btn{min-height:34px;padding:6px 9px;font-size:12px}
@@ -289,3 +289,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .comparison-actions .photo-action{visibility:hidden}
 .comparison-actions .photo-action[style*="visible"]{visibility:visible}
 .comparison-actions .delete-row-action{display:inline-flex!important}
+
+/* FIX 1.1.0.8 · Eliminar solo el registro de precio, nunca la presentación desde la fila */
+.comparison-actions .delete-row-action{color:var(--danger)!important;font-size:22px!important;font-weight:800}

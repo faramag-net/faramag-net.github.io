@@ -35,6 +35,7 @@ import {
   upsertPlace,
   deletePlace,
   addObservation,
+  getObservations,
   deleteObservation,
   latestPriceForPresentationPlace,
   pricesForPresentation,
@@ -175,7 +176,7 @@ function homeView(){
 }
 function storeCard(p){
   const cart=cartFor(p.id);
-  return `<div class="company-card-wrap" data-company-card-name="${esc(p.nombre)}"><button class="company-card" data-company="${esc(p.id)}"><span class="company-icon">🏪</span><strong>${esc(p.nombre)}</strong><small>${esc(storeTypeLabel(p.tipo))}</small><span class="photo-indicator" data-photo-indicator="empresa:${esc(p.id)}" hidden>📷</span>${cart.length?`<em>🛒 ${cart.length}</em>`:""}</button><div class="entity-actions"><button data-edit-company="${esc(p.id)}" title="Editar">✏️</button><button data-toggle-company="${esc(p.id)}" title="Desactivar">${p.estatus==='inactivo'?'🔄':'⏸️'}</button><button data-delete-company="${esc(p.id)}" title="Borrar">🗑️</button></div></div>`;
+  return `<div class="company-card-wrap" data-company-card-name="${esc(p.nombre)}"><button class="company-card" data-company="${esc(p.id)}"><span class="company-icon">🏪</span><strong>${esc(p.nombre)}</strong><small>${esc(storeTypeLabel(p.tipo))}</small><span class="photo-indicator" data-photo-indicator="empresa:${esc(p.id)}" aria-hidden="true"></span>${cart.length?`<em>🛒 ${cart.length}</em>`:""}</button><div class="entity-actions"><button data-edit-company="${esc(p.id)}" title="Editar">✏️</button><button data-toggle-company="${esc(p.id)}" title="Desactivar">${p.estatus==='inactivo'?'🔄':'⏸️'}</button><button data-delete-company="${esc(p.id)}" title="Borrar">🗑️</button></div></div>`;
 }
 
 function listView(){
@@ -208,12 +209,12 @@ function companyView(){
 }
 function categoryCard(c){
   const count=productsForCategory(c.id).length;
-  return `<div class="category-card-wrap" data-category-card-name="${esc(c.nombre)}"><button class="category-card" data-category="${esc(c.id)}"><span>📂</span><strong>${esc(c.nombre)}</strong><small>${count} ${count===1?'producto':'productos'}</small><span class="photo-indicator" data-photo-indicator="categoria:${esc(c.id)}" hidden>📷</span></button><div class="entity-actions"><button data-edit-category="${esc(c.id)}">✏️</button><button data-toggle-category="${esc(c.id)}">⏸️</button><button data-delete-category="${esc(c.id)}">🗑️</button></div></div>`;
+  return `<div class="category-card-wrap" data-category-card-name="${esc(c.nombre)}"><button class="category-card" data-category="${esc(c.id)}"><span>📂</span><strong>${esc(c.nombre)}</strong><small>${count} ${count===1?'producto':'productos'}</small><span class="photo-indicator" data-photo-indicator="categoria:${esc(c.id)}" aria-hidden="true"></span></button><div class="entity-actions"><button data-edit-category="${esc(c.id)}">✏️</button><button data-toggle-category="${esc(c.id)}">⏸️</button><button data-delete-category="${esc(c.id)}">🗑️</button></div></div>`;
 }
 
 function productCard(p){
   const count=presentationsForProduct(p.id).length;
-  return `<div class="product-card-wrap" data-product-card-name="${esc(p.nombre)}"><button class="product-card" data-product="${esc(p.id)}"><span>📦</span><strong>${esc(p.nombre)}</strong><small>${count} ${count===1?'presentación':'presentaciones'}</small><span class="photo-indicator" data-photo-indicator="producto:${esc(p.id)}" hidden>📷</span></button><div class="entity-actions"><button data-edit-product="${esc(p.id)}">✏️</button><button data-toggle-product="${esc(p.id)}">⏸️</button><button data-delete-product="${esc(p.id)}">🗑️</button></div></div>`;
+  return `<div class="product-card-wrap" data-product-card-name="${esc(p.nombre)}"><button class="product-card" data-product="${esc(p.id)}"><span>📦</span><strong>${esc(p.nombre)}</strong><small>${count} ${count===1?'presentación':'presentaciones'}</small><span class="photo-indicator" data-photo-indicator="producto:${esc(p.id)}" aria-hidden="true"></span></button><div class="entity-actions"><button data-edit-product="${esc(p.id)}">✏️</button><button data-toggle-product="${esc(p.id)}">⏸️</button><button data-delete-product="${esc(p.id)}">🗑️</button></div></div>`;
 }
 function periodStart(key){
   if(key==='all')return null;
@@ -230,11 +231,12 @@ function productTopFiveHtml(productId){
   const rows=topFiveForProduct(productId);return `<section class="top5-box"><div class="top5-head"><div><strong>🏆 Top 5 mejores precios</strong><small>Comparación por ${esc((presentationById(rows[0]?.r.presentationId)?.unidad||'unidad').toUpperCase())}</small></div><select id="topPeriod"><option value="all" ${state.topPeriod==='all'?'selected':''}>Histórico</option><option value="year" ${state.topPeriod==='year'?'selected':''}>1 año</option><option value="month6" ${state.topPeriod==='month6'?'selected':''}>6 meses</option><option value="month3" ${state.topPeriod==='month3'?'selected':''}>3 meses</option><option value="month1" ${state.topPeriod==='month1'?'selected':''}>1 mes</option><option value="days15" ${state.topPeriod==='days15'?'selected':''}>15 días</option><option value="days7" ${state.topPeriod==='days7'?'selected':''}>7 días</option></select></div><div class="top5-list">${rows.map((x,i)=>`<div class="top5-row"><span class="top5-rank">${['🥇','🥈','🥉','4','5'][i]}</span><div><strong>${esc(x.pres.nombre)}</strong><small>${esc(x.place.nombre)} · ${formatDate(x.r.priceDate||x.r.createdAt).split(',')[0]}</small></div><div class="top5-values"><b>${money(x.r.precio)}</b><small>${money(x.cmp.valor)} ${esc(x.cmp.label.replace('$/','/'))}</small></div></div>`).join('')||`<div class="muted">No hay precios comparables en este periodo.</div>`}</div></section>`;
 }
 function productModal(productId){
+  state.productId=productId;
   const product=productById(productId); if(!product)return;
   const company=placeById(state.companyId);
   const rows=pricesForProduct(productId).map(r=>{const pres=presentationById(r.presentationId),place=placeById(r.clienteId),cmp=calculateComparable(r.precio,r.contenidoTotal??pres?.contenidoTotal,r.unidad??pres?.unidad);return {r,pres,place,cmp};}).filter(x=>x.pres&&x.place);
   const modal=document.createElement("div"); modal.className="modal visible";
-  modal.innerHTML=`<div class="modal-box presentation-modal"><div class="modal-head"><div><h2>📦 ${esc(product.nombre)}</h2><small>${esc(categoryById(product.categoryId)?.nombre||'Sin categoría')} · todas las tiendas</small></div><button class="close-btn" data-close>×</button></div><div class="product-mode-bar"><button class="action-btn" id="toggleProductEditMode">✏️ Editar / borrar</button></div>${productTopFiveHtml(productId)}<h3 class="subsection-title">📊 Presentaciones y precios</h3><div class="comparison-list">${rows.map(x=>`<div class="comparison-row" data-presentation-row="${esc(x.pres.id)}"><div><strong>${esc(x.pres.nombre)}</strong><small>${esc(x.place.nombre)} · ${formatDate(x.r.priceDate||x.r.createdAt).split(',')[0]}${x.r.oferta?` · 🏷️ ${esc(x.r.oferta)}`:''}</small></div><div><b>${money(x.r.precio)}</b><small>${x.cmp?`${money(x.cmp.valor)} ${esc(x.cmp.label.replace('$/','/'))}`:'Sin comparación'}</small></div><div class="comparison-actions"><button class="photo-action" data-photo-presentation="${esc(x.pres.id)}" title="Ver fotografías" aria-label="Ver fotografías">📷</button><button data-presentation="${esc(x.pres.id)}" title="Abrir presentación">→</button><button class="edit-row-action" data-edit-presentation="${esc(x.pres.id)}" title="Editar presentación" aria-label="Editar presentación">✏️</button><button class="delete-row-action" data-delete-presentation="${esc(x.pres.id)}" title="Eliminar presentación" aria-label="Eliminar presentación">×</button></div></div>`).join('')||`<div class="empty-card">Este producto todavía no tiene precios registrados.</div>`}</div><div class="modal-actions split"><button class="btn secondary" data-new-presentation>＋ Nueva presentación</button><button class="btn secondary" data-close>Cerrar</button></div></div>`;
+  modal.innerHTML=`<div class="modal-box presentation-modal"><div class="modal-head"><div><h2>📦 ${esc(product.nombre)}</h2><small>${esc(categoryById(product.categoryId)?.nombre||'Sin categoría')} · todas las tiendas</small></div><button class="close-btn" data-close>×</button></div><div class="product-mode-bar"><button class="action-btn" id="toggleProductEditMode">✏️ Editar / borrar</button></div>${productTopFiveHtml(productId)}<h3 class="subsection-title">📊 Presentaciones y precios</h3><div class="comparison-list">${rows.map(x=>`<div class="comparison-row" data-presentation-row="${esc(x.pres.id)}"><div><strong>${esc(x.pres.nombre)}</strong><small>${esc(x.place.nombre)} · ${formatDate(x.r.priceDate||x.r.createdAt).split(',')[0]}${x.r.oferta?` · 🏷️ ${esc(x.r.oferta)}`:''}</small></div><div><b>${money(x.r.precio)}</b><small>${x.cmp?`${money(x.cmp.valor)} ${esc(x.cmp.label.replace('$/','/'))}`:'Sin comparación'}</small></div><div class="comparison-actions"><button class="photo-action" data-photo-presentation="${esc(x.pres.id)}" title="Ver fotografías" aria-label="Ver fotografías">📷</button><button data-presentation="${esc(x.pres.id)}" title="Abrir presentación">→</button><button class="edit-row-action" data-edit-presentation="${esc(x.pres.id)}" title="Editar presentación" aria-label="Editar presentación">✏️</button><button class="delete-row-action" data-delete-price="${esc(x.r.id)}" data-price-source="${esc(x.r.source||'mercado')}" title="Eliminar este registro de precio" aria-label="Eliminar este registro de precio">×</button></div></div>`).join('')||`<div class="empty-card">Este producto todavía no tiene precios registrados.</div>`}</div><div class="modal-actions split"><button class="btn secondary" data-new-presentation>＋ Nueva presentación</button><button class="btn secondary" data-close>Cerrar</button></div></div>`;
   document.body.appendChild(modal); modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());
   modal.querySelector("[data-new-presentation]").onclick=()=>{modal.remove();newPresentationModal(productId);};
   modal.querySelectorAll('[data-presentation]').forEach(b=>b.onclick=()=>{modal.remove();presentationDetail(productId,b.dataset.presentation);});
@@ -561,6 +563,11 @@ Esta acción NO se puede deshacer.`))return;const result=deleteProduct(p.id);rem
   scope.querySelectorAll("[data-edit-presentation]").forEach(b=>b.onclick=e=>{e.stopPropagation();editPresentationModal(b.dataset.editPresentation);});
   scope.querySelectorAll("[data-toggle-presentation]").forEach(b=>b.onclick=e=>{e.stopPropagation();const p=presentationById(b.dataset.togglePresentation);if(!p)return;if(p.active===false){updatePresentation(p.id,{active:true});logEvent("Presentación activada",p.nombre);}else{if(!confirm(`¿Desactivar ${p.nombre}?`))return;deactivatePresentation(p.id);logEvent("Presentación desactivada",p.nombre);}render();});
   scope.querySelectorAll("[data-price-history]").forEach(b=>b.onclick=e=>{e.stopPropagation();state.priceHistoryPage=1;priceHistoryModal(b.dataset.priceHistory);});
+  scope.querySelectorAll("[data-delete-price]").forEach(b=>b.onclick=async e=>{e.stopPropagation();const source=b.dataset.priceSource||"mercado";const rawId=b.dataset.deletePrice;let record=null;if(source==="compra"){const purchaseId=rawId?.startsWith("purchase:")?rawId.slice(9):rawId;record=getPurchases().find(x=>String(x.id)===String(purchaseId));}else{record=getObservations().find(x=>String(x.id)===String(rawId));}if(!record)return;const presentation=record.presentationId?presentationById(record.presentationId):null;const company=record.clienteId?placeById(record.clienteId):null;const detail=`${presentation?.nombre||record.presentacion||"Sin presentación"} · ${company?.nombre||record.tienda||"Sin empresa"} · ${money(record.precio)}`;if(!confirm(`¿Eliminar únicamente este registro de precio?
+
+${detail}
+
+La presentación, sus fotografías y los demás precios NO se eliminarán.`))return;if(source==="compra"){const purchaseId=record.id;deletePurchase(purchaseId);}else{deleteObservation(record.id);}logEvent("Registro de precio eliminado",detail);if(scope.classList?.contains("modal")){scope.remove();if(state.productId){productModal(state.productId);}else{render();}}else{render();}});
   scope.querySelectorAll("[data-delete-presentation]").forEach(b=>b.onclick=async e=>{e.stopPropagation();const p=presentationById(b.dataset.deletePresentation);if(!p)return;const photoCount=await getPhotos("presentacion",p.id).then(r=>r.length).catch(()=>0);if(!confirm(`⚠️ ELIMINAR PRESENTACIÓN COMPLETAMENTE
 
 ${p.nombre}
@@ -631,8 +638,8 @@ function bind(){
   bindPhotoIndicators(document);
 }
 async function bindPhotoIndicators(scope=document){
-  // Regla estricta: el icono 📷 representa SOLO fotografías del elemento actual.
-  // Nunca se heredan fotografías de hijos: empresa ≠ categoría ≠ producto ≠ presentación.
+  // Regla estricta: 📷 SOLO representa fotografías guardadas directamente en ese elemento.
+  // No se heredan fotografías de hijos ni de padres.
   const nodes=[...scope.querySelectorAll('[data-photo-indicator]')];
   await Promise.all(nodes.map(async node=>{
     const parts=String(node.dataset.photoIndicator||'').split(':');
@@ -642,10 +649,12 @@ async function bindPhotoIndicators(scope=document){
     try{
       const photos=await getPhotos(entityType,entityId);
       if(!document.contains(node))return;
-      node.hidden=photos.length===0;
+      node.textContent=photos.length?'📷':'';
+      node.style.display=photos.length?'inline-block':'none';
       node.dataset.hasPhoto=photos.length?'1':'0';
+      node.setAttribute('aria-hidden',photos.length?'false':'true');
     }catch{
-      if(document.contains(node)){node.hidden=true;node.dataset.hasPhoto='0';}
+      if(document.contains(node)){node.textContent='';node.style.display='none';node.dataset.hasPhoto='0';node.setAttribute('aria-hidden','true');}
     }
   }));
 }
