@@ -18,6 +18,8 @@ export const normalize=(value='')=>String(value).normalize('NFD').replace(/[\u03
 const now=()=>new Date().toISOString();
 const read=(key)=>{try{return JSON.parse(localStorage.getItem(key))||[];}catch{return[];}};
 const write=(key,data)=>localStorage.setItem(key,JSON.stringify(data));
+const SYNC_META_KEY='psr_mercado_sync_meta';
+function markDeleted(entityType,id){try{const m=JSON.parse(localStorage.getItem(SYNC_META_KEY)||'{"deviceId":null,"tombstones":[]}');m.deviceId=m.deviceId||((crypto.randomUUID&&crypto.randomUUID())||String(Date.now()));localStorage.setItem('psr_device_id',m.deviceId);m.tombstones=Array.isArray(m.tombstones)?m.tombstones:[];m.tombstones=m.tombstones.filter(t=>!(t.entityType===entityType&&String(t.id)===String(id)));m.tombstones.push({entityType,id:String(id),deletedAt:now(),deviceId:m.deviceId});localStorage.setItem(SYNC_META_KEY,JSON.stringify(m));}catch(e){console.warn('No se pudo registrar eliminación para sincronización',e);}}
 
 function syncMapStoresToMarket(){
   const market=LocalDB.getMarketClients();
@@ -71,6 +73,9 @@ export function deleteCategory(id){
   write(PRESENTATION_KEY,presentations.filter(p=>!presentationIds.has(String(p.id))));
   write(PRODUCT_KEY,products.filter(p=>!productIds.has(String(p.id))));
   write(CATEGORY_KEY,categories.filter(c=>String(c.id)!==String(id)));
+  markDeleted('category',id);
+  productIds.forEach(pid=>markDeleted('product',pid));
+  presentationIds.forEach(pid=>markDeleted('presentation',pid));
   return {category,productIds:[...productIds],presentationIds:[...presentationIds]};
 }
 export function categoriesForProducts(){return getCategories();}
@@ -237,6 +242,8 @@ export function deleteProduct(id){
   savePurchases(getPurchases().filter(r=>!presentationIds.has(String(r.presentationId||'')) && !(normalize(r.product||r.producto)===normalize(product.nombre))));
   write(PRESENTATION_KEY,presentations.filter(p=>!presentationIds.has(String(p.id))));
   write(PRODUCT_KEY,products.filter(p=>String(p.id)!==String(id)));
+  markDeleted('product',id);
+  presentationIds.forEach(pid=>markDeleted('presentation',pid));
   return {product,presentationIds:[...presentationIds]};
 }
 
@@ -253,15 +260,16 @@ export function deletePresentation(id){
   savePurchases(getPurchases().filter(r=>String(r.presentationId||'')!==String(id) && !(product && normalize(r.product||r.producto)===normalize(product.nombre) && normalize(r.presentacion)===normalize(presentation.nombre))));
   all.splice(i,1);
   write(PRESENTATION_KEY,all);
+  markDeleted('presentation',id);
   return presentation;
 }
 
 export function addObservation({producto,presentacion='',presentationId='',precio=0,clienteId='',photoIds=[],comentarios='',contenidoTotal=null,unidad='',oferta=''}){const rows=getObservations();const stamp=now();const row={id:uid(),clienteId,producto:String(producto).trim(),presentacion:String(presentacion||'').trim(),presentationId,precio:Number(precio)||0,contenidoTotal:contenidoTotal===''||contenidoTotal==null?null:Number(contenidoTotal),unidad:String(unidad||'').trim().toLowerCase(),oferta:String(oferta||'').trim(),comentarios:String(comentarios||'').trim(),photoIds:[...photoIds],createdAt:stamp,updatedAt:stamp};rows.push(row);saveObservations(rows);return row;}
 export function updateObservation(id,data){const rows=getObservations();const i=rows.findIndex(o=>String(o.id)===String(id));if(i<0)throw new Error('Registro de precio no encontrado.');rows[i]={...rows[i],...data,updatedAt:now()};saveObservations(rows);return rows[i];}
-export function deleteObservation(id){saveObservations(getObservations().filter(o=>o.id!==id));}
+export function deleteObservation(id){saveObservations(getObservations().filter(o=>o.id!==id));markDeleted('price',id);}
 export function addPurchase(data){const rows=getPurchases();const stamp=now();const row={id:data.id||uid(),fecha:data.fecha||stamp,producto:String(data.producto).trim(),presentacion:String(data.presentacion||'').trim(),presentationId:data.presentationId||'',tienda:String(data.tienda||'').trim(),clienteId:data.clienteId||'',comprador:data.comprador||'Fara',compradorNombre:data.compradorNombre||'',contacto:data.contacto||'',cantidad:Number(data.cantidad)||0,precio:Number(data.precio)||0,total:Number(data.total??((Number(data.cantidad)||0)*(Number(data.precio)||0))),diferencia:Number(data.diferencia)||0,contenidoTotal:data.contenidoTotal===''||data.contenidoTotal==null?null:Number(data.contenidoTotal),unidad:String(data.unidad||'').trim().toLowerCase(),oferta:String(data.oferta||'').trim(),cantidadDeseada:data.cantidadDeseada??null,unidadDeseada:String(data.unidadDeseada||'').trim(),comentarios:data.comentarios||'',direccion:data.direccion||'',latitud:data.latitud??null,longitud:data.longitud??null,photoIds:[...(data.photoIds||[])]};rows.push(row);savePurchases(rows);return row;}
 export function updatePurchase(id,data){const rows=getPurchases();const i=rows.findIndex(p=>String(p.id)===String(id));if(i<0)throw new Error('Compra no encontrada.');rows[i]={...rows[i],...data};savePurchases(rows);return rows[i];}
-export function deletePurchase(id){savePurchases(getPurchases().filter(p=>p.id!==id));}
+export function deletePurchase(id){savePurchases(getPurchases().filter(p=>p.id!==id));markDeleted('purchase',id);}
 
 export function marketPriceRecords(){
   const observations=getObservations().map(o=>({...o,source:'mercado',priceDate:o.createdAt}));
@@ -318,7 +326,7 @@ export function upsertPlace(data){
 }
 export function deactivatePlace(id){const places=getPlaces();const p=places.find(x=>String(x.id)===String(id));if(!p)throw new Error('Empresa no encontrada.');p.estatus='inactivo';p.updatedAt=now();savePlaces(places);syncPlaceToMap(p);return p;}
 export function activatePlace(id){const places=getPlaces();const p=places.find(x=>String(x.id)===String(id));if(!p)throw new Error('Empresa no encontrada.');p.estatus='activo';p.updatedAt=now();savePlaces(places);syncPlaceToMap(p);return p;}
-export function deletePlace(id){const places=getPlaces();savePlaces(places.filter(p=>String(p.id)!==String(id)));const p=places.find(x=>String(x.id)===String(id));if(p)syncPlaceToMap(p,{remove:true});}
+export function deletePlace(id){const places=getPlaces();savePlaces(places.filter(p=>String(p.id)!==String(id)));const p=places.find(x=>String(x.id)===String(id));if(p)syncPlaceToMap(p,{remove:true});markDeleted('place',id);}
 
 export function photoFileName(placeName,date=new Date()){const clean=normalize(placeName||'lugar').replace(/[^a-z0-9]+/g,'');const d=date.toISOString().slice(0,10).replaceAll('-','');return `${clean||'lugar'}-${d}-${Date.now().toString().slice(-4)}.jpg`;}
 function openPhotoDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(PHOTO_DB,1);req.onupgradeneeded=()=>req.result.createObjectStore(PHOTO_STORE,{keyPath:'id'});req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}
