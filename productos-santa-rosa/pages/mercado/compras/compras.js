@@ -52,6 +52,7 @@ import {
   pricesForCategory,
   pricesForPlace,
   addPurchase,
+  updatePurchase,
   getPurchases,
   deletePurchase,
   normalize,
@@ -234,21 +235,21 @@ function productModal(productId){
   state.productId=productId;
   const product=productById(productId); if(!product)return;
   const company=placeById(state.companyId);
-  const rows=pricesForProduct(productId).map(r=>{const pres=presentationById(r.presentationId),place=placeById(r.clienteId),cmp=calculateComparable(r.precio,r.contenidoTotal??pres?.contenidoTotal,r.unidad??pres?.unidad);return {r,pres,place,cmp};}).filter(x=>x.pres&&x.place);
+  const rows=pricesForProduct(productId).map(r=>{const pres=presentationById(r.presentationId),place=placeById(r.clienteId),cmp=calculateComparable(r.precio,r.contenidoTotal??pres?.contenidoTotal,r.unidad??pres?.unidad);return {r,pres,place,cmp};}).filter(x=>x.pres);
   const modal=document.createElement("div"); modal.className="modal visible";
-  modal.innerHTML=`<div class="modal-box presentation-modal"><div class="modal-head"><div><h2>📦 ${esc(product.nombre)}</h2><small>${esc(categoryById(product.categoryId)?.nombre||'Sin categoría')} · todas las tiendas</small></div><button class="close-btn" data-close>×</button></div><div class="product-mode-bar"><button class="action-btn" id="toggleProductEditMode">✏️ Editar / borrar</button></div>${productTopFiveHtml(productId)}<h3 class="subsection-title">📊 Presentaciones y precios</h3><div class="comparison-list">${rows.map(x=>`<div class="comparison-row" data-presentation-row="${esc(x.pres.id)}"><div><strong>${esc(x.pres.nombre)}</strong><small>${esc(x.place.nombre)} · ${formatDate(x.r.priceDate||x.r.createdAt).split(',')[0]}${x.r.oferta?` · 🏷️ ${esc(x.r.oferta)}`:''}</small></div><div><b>${money(x.r.precio)}</b><small>${x.cmp?`${money(x.cmp.valor)} ${esc(x.cmp.label.replace('$/','/'))}`:'Sin comparación'}</small></div><div class="comparison-actions"><button class="photo-action" data-photo-presentation="${esc(x.pres.id)}" title="Ver fotografías" aria-label="Ver fotografías">📷</button><button data-presentation="${esc(x.pres.id)}" title="Abrir presentación">→</button><button class="edit-row-action" data-edit-presentation="${esc(x.pres.id)}" title="Editar presentación" aria-label="Editar presentación">✏️</button><button class="delete-row-action" data-delete-price="${esc(x.r.id)}" data-price-source="${esc(x.r.source||'mercado')}" title="Eliminar este registro de precio" aria-label="Eliminar este registro de precio">×</button></div></div>`).join('')||`<div class="empty-card">Este producto todavía no tiene precios registrados.</div>`}</div><div class="modal-actions split"><button class="btn secondary" data-new-presentation>＋ Nueva presentación</button><button class="btn secondary" data-close>Cerrar</button></div></div>`;
+  modal.innerHTML=`<div class="modal-box presentation-modal"><div class="modal-head"><div><h2>📦 ${esc(product.nombre)}</h2><small>${esc(categoryById(product.categoryId)?.nombre||'Sin categoría')} · todas las tiendas</small></div><button class="close-btn" data-close>×</button></div><div class="product-mode-bar"><button class="action-btn" id="toggleProductEditMode">✏️ Editar / borrar</button></div>${productTopFiveHtml(productId)}<h3 class="subsection-title">📊 Presentaciones y precios</h3><div class="comparison-list">${rows.map(x=>`<div class="comparison-row" data-presentation-row="${esc(x.pres.id)}"><div><strong>${esc(x.pres.nombre)}</strong><small>${x.place?esc(x.place.nombre):`⚠️ Empresa eliminada${x.r.tienda?` · ${esc(x.r.tienda)}`:''}`} · ${formatDate(x.r.priceDate||x.r.createdAt).split(',')[0]}${x.r.oferta?` · 🏷️ ${esc(x.r.oferta)}`:''}</small></div><div><b>${money(x.r.precio)}</b><small>${x.cmp?`${money(x.cmp.valor)} ${esc(x.cmp.label.replace('$/','/'))}`:'Sin comparación'}</small></div><div class="comparison-actions"><button class="photo-action" data-photo-presentation="${esc(x.pres.id)}" title="Ver fotografías" aria-label="Ver fotografías">📷</button><button data-presentation="${esc(x.pres.id)}" title="Abrir presentación">→</button><button class="reassign-row-action" data-reassign-price="${esc(x.r.id)}" data-price-source="${esc(x.r.source||'mercado')}" title="Reasignar empresa" aria-label="Reasignar empresa">🔗</button><button class="edit-row-action" data-edit-presentation="${esc(x.pres.id)}" title="Editar presentación" aria-label="Editar presentación">✏️</button><button class="delete-row-action" data-delete-price="${esc(x.r.id)}" data-price-source="${esc(x.r.source||'mercado')}" title="Eliminar este registro de precio" aria-label="Eliminar este registro de precio">×</button></div></div>`).join('')||`<div class="empty-card">Este producto todavía no tiene precios registrados.</div>`}</div><div class="modal-actions split"><button class="btn secondary" data-new-presentation>＋ Nueva presentación</button><button class="btn secondary" data-close>Cerrar</button></div></div>`;
   document.body.appendChild(modal); modal.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal.remove());
   modal.querySelector("[data-new-presentation]").onclick=()=>{modal.remove();newPresentationModal(productId);};
   modal.querySelectorAll('[data-presentation]').forEach(b=>b.onclick=()=>{modal.remove();presentationDetail(productId,b.dataset.presentation);});
   modal.querySelectorAll('[data-photo-presentation]').forEach(b=>b.onclick=()=>{modal.remove();presentationDetail(productId,b.dataset.photoPresentation);});
-  modal.querySelectorAll('[data-photo-presentation]').forEach(async b=>{try{const photos=await getPhotos('presentacion',b.dataset.photoPresentation);if(document.body.contains(b)){b.dataset.hasPhoto=photos.length?'1':'0';b.style.visibility=photos.length?'visible':'hidden';}}catch{}});
+  modal.querySelectorAll('[data-photo-presentation]').forEach(async b=>{try{const photos=await getPhotos('presentacion',b.dataset.photoPresentation);if(document.body.contains(b)){b.dataset.hasPhoto=photos.length?'1':'0';b.style.display=photos.length?'inline-flex':'none';}}catch{}});
   modal.querySelector('#toggleProductEditMode').onclick=()=>{
     const editing=modal.classList.toggle('edit-mode');
     modal.querySelector('#toggleProductEditMode').textContent=editing?'✓ Terminar edición':'✏️ Editar / borrar';
     modal.querySelectorAll('.comparison-actions').forEach(box=>{
-      const photo=box.querySelector('.photo-action'), arrow=box.querySelector('[data-presentation]'), edit=box.querySelector('.edit-row-action'), del=box.querySelector('.delete-row-action');
-      if(editing){if(photo)photo.style.visibility='hidden';if(arrow)arrow.style.visibility='hidden';if(edit)edit.style.visibility='visible';if(del)del.style.visibility='visible';}
-      else{if(photo)photo.style.visibility=photo.dataset.hasPhoto==='1'?'visible':'hidden';if(arrow)arrow.style.visibility='visible';if(edit)edit.style.visibility='hidden';if(del)del.style.visibility='hidden';}
+      const photo=box.querySelector('.photo-action'), arrow=box.querySelector('[data-presentation]'), link=box.querySelector('.reassign-row-action'), edit=box.querySelector('.edit-row-action'), del=box.querySelector('.delete-row-action');
+      if(editing){if(photo)photo.style.display='none';if(arrow)arrow.style.display='none';if(link)link.style.display='inline-flex';if(edit)edit.style.display='inline-flex';if(del)del.style.display='inline-flex';}
+      else{if(photo)photo.style.display=photo.dataset.hasPhoto==='1'?'inline-flex':'none';if(arrow)arrow.style.display='inline-flex';if(link)link.style.display='none';if(edit)edit.style.display='none';if(del)del.style.display='none';}
     });
   };
   modal.querySelector('#topPeriod')?.addEventListener('change',e=>{state.topPeriod=e.target.value;modal.remove();productModal(productId);});
@@ -538,6 +539,19 @@ function removeCatalogReferences(productIds=[],presentationIds=[]){
   saveSetting(NEEDS_SETTING,needs);
 }
 
+function reassignPriceModal(rawId,source='mercado'){
+  let record=null;
+  if(source==='compra'){const id=String(rawId).startsWith('purchase:')?String(rawId).slice(9):String(rawId);record=getPurchases().find(x=>String(x.id)===id);}
+  else record=getObservations().find(x=>String(x.id)===String(rawId));
+  if(!record)return;
+  const places=getPlaces().filter(p=>p.estatus!=='inactivo');
+  const current=placeById(record.clienteId);
+  const modal=document.createElement('div');modal.className='modal visible';
+  modal.innerHTML=`<div class="modal-box small-modal"><div class="modal-head"><h2>🔗 Reasignar empresa</h2><button class="close-btn" data-close>×</button></div><p class="muted">${esc(record.presentacion||'Sin presentación')} · ${money(record.precio)}</p><label>Empresa *</label><select id="reassignCompany" class="modal-input"><option value="">Selecciona una empresa</option>${places.map(p=>`<option value="${esc(p.id)}" ${String(p.id)===String(record.clienteId)?'selected':''}>${esc(p.nombre)}</option>`).join('')}</select><div class="modal-actions"><button class="btn secondary" data-close>Cancelar</button><button class="btn" id="saveReassign">🔗 Reasignar</button></div></div>`;
+  document.body.appendChild(modal);modal.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>modal.remove());
+  modal.querySelector('#saveReassign').onclick=()=>{const clienteId=modal.querySelector('#reassignCompany').value;if(!clienteId)return alert('Selecciona una empresa.');const place=placeById(clienteId);try{if(source==='compra'){const id=String(rawId).startsWith('purchase:')?String(rawId).slice(9):String(rawId);updatePurchase(id,{clienteId,tienda:place?.nombre||record.tienda||''});}else updateObservation(rawId,{clienteId});logEvent('Empresa reasignada',`${record.presentacion||'Sin presentación'} · ${current?.nombre||'Empresa eliminada'} → ${place?.nombre||'Empresa'}`);modal.remove();const parent=document.querySelector('.presentation-modal');if(parent){parent.remove();productModal(state.productId);}else render();}catch(err){alert(err.message||'No se pudo reasignar la empresa.');}};
+}
+
 function bindEntityActions(scope=document){
   scope.querySelectorAll("[data-store-history]").forEach(b=>b.onclick=e=>{e.stopPropagation();scopeHistoryModal("store",b.dataset.storeHistory);});
   scope.querySelectorAll("[data-category-history]").forEach(b=>b.onclick=e=>{e.stopPropagation();scopeHistoryModal("category",b.dataset.categoryHistory);});
@@ -581,6 +595,7 @@ Esta acción NO se puede deshacer.`))return;const result=deleteProduct(p.id);rem
   scope.querySelectorAll("[data-edit-presentation]").forEach(b=>b.onclick=e=>{e.stopPropagation();editPresentationModal(b.dataset.editPresentation);});
   scope.querySelectorAll("[data-toggle-presentation]").forEach(b=>b.onclick=e=>{e.stopPropagation();const p=presentationById(b.dataset.togglePresentation);if(!p)return;if(p.active===false){updatePresentation(p.id,{active:true});logEvent("Presentación activada",p.nombre);}else{if(!confirm(`¿Desactivar ${p.nombre}?`))return;deactivatePresentation(p.id);logEvent("Presentación desactivada",p.nombre);}render();});
   scope.querySelectorAll("[data-price-history]").forEach(b=>b.onclick=e=>{e.stopPropagation();state.priceHistoryPage=1;priceHistoryModal(b.dataset.priceHistory);});
+  scope.querySelectorAll("[data-reassign-price]").forEach(b=>b.onclick=e=>{e.stopPropagation();reassignPriceModal(b.dataset.reassignPrice,b.dataset.priceSource||'mercado');});
   scope.querySelectorAll("[data-delete-price]").forEach(b=>b.onclick=async e=>{e.stopPropagation();const source=b.dataset.priceSource||"mercado";const rawId=b.dataset.deletePrice;let record=null;if(source==="compra"){const purchaseId=rawId?.startsWith("purchase:")?rawId.slice(9):rawId;record=getPurchases().find(x=>String(x.id)===String(purchaseId));}else{record=getObservations().find(x=>String(x.id)===String(rawId));}if(!record)return;const presentation=record.presentationId?presentationById(record.presentationId):null;const company=record.clienteId?placeById(record.clienteId):null;const detail=`${presentation?.nombre||record.presentacion||"Sin presentación"} · ${company?.nombre||record.tienda||"Sin empresa"} · ${money(record.precio)}`;if(!confirm(`¿Eliminar únicamente este registro de precio?
 
 ${detail}
