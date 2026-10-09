@@ -95,6 +95,20 @@ export async function getPhotos(entityType, entityId) {
   });
 }
 
+export async function deletePhotosForEntity(entityType, entityId) {
+  const rows = await getPhotos(entityType, entityId);
+  if (!rows.length) return 0;
+  const db = await openDB();
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, "readwrite");
+    const store = tx.objectStore(STORE);
+    rows.forEach(row => store.delete(row.id));
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+  return rows.length;
+}
+
 export async function deletePhoto(id) {
   const db = await openDB();
   await new Promise((resolve, reject) => {

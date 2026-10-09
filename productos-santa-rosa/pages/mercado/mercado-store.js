@@ -53,6 +53,26 @@ export function categoryById(id){return read(CATEGORY_KEY).find(c=>String(c.id)=
 export function createCategory(data){const all=read(CATEGORY_KEY);const nombre=String(data.nombre||'').trim();if(!nombre)throw new Error('Escribe el nombre de la categoría.');if(all.some(c=>c.active!==false&&normalize(c.nombre)===normalize(nombre)))throw new Error('Ya existe esa categoría.');const c={id:uid(),nombre,active:true,createdAt:now(),updatedAt:now()};all.push(c);write(CATEGORY_KEY,all);return c;}
 export function updateCategory(id,data){const all=read(CATEGORY_KEY);const i=all.findIndex(c=>String(c.id)===String(id));if(i<0)throw new Error('Categoría no encontrada.');const nombre=String(data.nombre??all[i].nombre).trim();if(all.some((c,j)=>j!==i&&c.active!==false&&normalize(c.nombre)===normalize(nombre)))throw new Error('Ya existe otra categoría con ese nombre.');all[i]={...all[i],...data,nombre,updatedAt:now()};write(CATEGORY_KEY,all);return all[i];}
 export function deactivateCategory(id){const all=read(CATEGORY_KEY);const c=all.find(x=>String(x.id)===String(id));if(!c)throw new Error('Categoría no encontrada.');c.active=false;c.updatedAt=now();write(CATEGORY_KEY,all);return c;}
+
+export function deleteCategory(id){
+  const categories=read(CATEGORY_KEY);
+  const category=categories.find(c=>String(c.id)===String(id));
+  if(!category) return null;
+  const products=read(PRODUCT_KEY);
+  const productIds=new Set(products.filter(p=>String(p.categoryId)===String(id) || (!p.categoryId && normalize(p.categoria||"")===normalize(category.nombre))).map(p=>String(p.id)));
+  const presentations=read(PRESENTATION_KEY);
+  const presentationIds=new Set(presentations.filter(p=>productIds.has(String(p.productId))).map(p=>String(p.id)));
+  const observations=getObservations().filter(r=>{
+    const pid=String(r.presentationId||'');
+    return !presentationIds.has(pid) && !productIds.has(String(r.productId||'')) && !(productIds.size && r.product && products.some(p=>productIds.has(String(p.id)) && normalize(p.nombre)===normalize(r.product)));
+  });
+  const purchases=getPurchases().filter(r=>!presentationIds.has(String(r.presentationId||'')) && !(productIds.size && r.product && products.some(p=>productIds.has(String(p.id)) && normalize(p.nombre)===normalize(r.product))));
+  saveObservations(observations); savePurchases(purchases);
+  write(PRESENTATION_KEY,presentations.filter(p=>!presentationIds.has(String(p.id))));
+  write(PRODUCT_KEY,products.filter(p=>!productIds.has(String(p.id))));
+  write(CATEGORY_KEY,categories.filter(c=>String(c.id)!==String(id)));
+  return {category,productIds:[...productIds],presentationIds:[...presentationIds]};
+}
 export function categoriesForProducts(){return getCategories();}
 
 export function getProducts(){return read(PRODUCT_KEY).filter(p=>p.active!==false);}
@@ -207,12 +227,34 @@ export function purchasesForProduct(name){return getPurchases().filter(o=>normal
 export function createProduct(data){const all=read(PRODUCT_KEY);const nombre=String(data.nombre||'').trim();if(!nombre)throw new Error('Escribe el nombre del producto.');if(all.some(p=>p.active!==false&&normalize(p.nombre)===normalize(nombre)))throw new Error('Ya existe ese producto.');const categoryId=String(data.categoryId||'').trim();const cat=categoryId?categoryById(categoryId):null;const p={id:uid(),nombre,categoryId:cat?.id||'',categoria:cat?.nombre||String(data.categoria||'').trim(),unidadComparacion:data.unidadComparacion||'auto',active:true,createdAt:now(),updatedAt:now()};all.push(p);write(PRODUCT_KEY,all);return p;}
 export function updateProduct(id,data){const all=read(PRODUCT_KEY);const i=all.findIndex(p=>String(p.id)===String(id));if(i<0)throw new Error('Producto no encontrado.');const nombre=String(data.nombre??all[i].nombre).trim();if(all.some((p,j)=>j!==i&&p.active!==false&&normalize(p.nombre)===normalize(nombre)))throw new Error('Ya existe otro producto con ese nombre.');const categoryId=data.categoryId!==undefined?String(data.categoryId||''):all[i].categoryId||'';const cat=categoryId?categoryById(categoryId):null;all[i]={...all[i],...data,nombre,categoryId,categoria:cat?.nombre??all[i].categoria??'',updatedAt:now()};write(PRODUCT_KEY,all);return all[i];}
 export function deactivateProduct(id){const all=read(PRODUCT_KEY);const p=all.find(x=>String(x.id)===String(id));if(!p)throw new Error('Producto no encontrado.');p.active=false;p.updatedAt=now();write(PRODUCT_KEY,all);return p;}
-export function deleteProduct(id){const all=read(PRODUCT_KEY);const i=all.findIndex(p=>String(p.id)===String(id));if(i<0)return null;all[i]={...all[i],active:false,deletedAt:now(),updatedAt:now()};write(PRODUCT_KEY,all);const presentations=read(PRESENTATION_KEY).map(p=>String(p.productId)===String(id)?{...p,active:false,deletedAt:now(),updatedAt:now()}:p);write(PRESENTATION_KEY,presentations);return all[i];}
+export function deleteProduct(id){
+  const products=read(PRODUCT_KEY);
+  const product=products.find(p=>String(p.id)===String(id));
+  if(!product)return null;
+  const presentations=read(PRESENTATION_KEY);
+  const presentationIds=new Set(presentations.filter(p=>String(p.productId)===String(id)).map(p=>String(p.id)));
+  saveObservations(getObservations().filter(r=>!presentationIds.has(String(r.presentationId||'')) && !(normalize(r.product||r.producto)===normalize(product.nombre))));
+  savePurchases(getPurchases().filter(r=>!presentationIds.has(String(r.presentationId||'')) && !(normalize(r.product||r.producto)===normalize(product.nombre))));
+  write(PRESENTATION_KEY,presentations.filter(p=>!presentationIds.has(String(p.id))));
+  write(PRODUCT_KEY,products.filter(p=>String(p.id)!==String(id)));
+  return {product,presentationIds:[...presentationIds]};
+}
 
 export function createPresentation(data){const all=read(PRESENTATION_KEY);if(all.some(p=>p.active!==false&&String(p.productId)===String(data.productId)&&normalize(p.nombre)===normalize(data.nombre)))throw new Error('Ya existe esa presentación para el producto.');const contenido=data.contenidoTotal===''||data.contenidoTotal==null?null:Number(data.contenidoTotal);const p={id:uid(),productId:data.productId,nombre:String(data.nombre||'').trim(),unidad:String(data.unidad||'').trim().toLowerCase(),contenidoTotal:Number.isFinite(contenido)?contenido:null,oferta:String(data.oferta||'').trim(),active:true,createdAt:now(),updatedAt:now()};all.push(p);write(PRESENTATION_KEY,all);return p;}
 export function updatePresentation(id,data){const all=read(PRESENTATION_KEY);const i=all.findIndex(p=>String(p.id)===String(id));if(i<0)throw new Error('Presentación no encontrada.');const nombre=String(data.nombre??all[i].nombre).trim();if(all.some((p,j)=>j!==i&&p.active!==false&&String(p.productId)===String(all[i].productId)&&normalize(p.nombre)===normalize(nombre)))throw new Error('Ya existe otra presentación con ese nombre para este producto.');const contenido=data.contenidoTotal===undefined?all[i].contenidoTotal:(data.contenidoTotal===''||data.contenidoTotal==null?null:Number(data.contenidoTotal));all[i]={...all[i],...data,nombre,unidad:String(data.unidad??all[i].unidad??'').trim().toLowerCase(),contenidoTotal:Number.isFinite(contenido)?contenido:null,oferta:String(data.oferta??all[i].oferta??'').trim(),updatedAt:now()};write(PRESENTATION_KEY,all);return all[i];}
 export function deactivatePresentation(id){const all=read(PRESENTATION_KEY);const p=all.find(x=>String(x.id)===String(id));if(!p)throw new Error('Presentación no encontrada.');p.active=false;p.updatedAt=now();write(PRESENTATION_KEY,all);return p;}
-export function deletePresentation(id){const all=read(PRESENTATION_KEY);const i=all.findIndex(p=>String(p.id)===String(id));if(i<0)return null;all[i]={...all[i],active:false,deletedAt:now(),updatedAt:now()};write(PRESENTATION_KEY,all);return all[i];}
+export function deletePresentation(id){
+  const all=read(PRESENTATION_KEY);
+  const i=all.findIndex(p=>String(p.id)===String(id));
+  if(i<0)return null;
+  const presentation=all[i];
+  const product=productById(presentation.productId);
+  saveObservations(getObservations().filter(r=>String(r.presentationId||'')!==String(id) && !(product && normalize(r.product||r.producto)===normalize(product.nombre) && normalize(r.presentacion)===normalize(presentation.nombre))));
+  savePurchases(getPurchases().filter(r=>String(r.presentationId||'')!==String(id) && !(product && normalize(r.product||r.producto)===normalize(product.nombre) && normalize(r.presentacion)===normalize(presentation.nombre))));
+  all.splice(i,1);
+  write(PRESENTATION_KEY,all);
+  return presentation;
+}
 
 export function addObservation({producto,presentacion='',presentationId='',precio=0,clienteId='',photoIds=[],comentarios='',contenidoTotal=null,unidad='',oferta=''}){const rows=getObservations();const stamp=now();const row={id:uid(),clienteId,producto:String(producto).trim(),presentacion:String(presentacion||'').trim(),presentationId,precio:Number(precio)||0,contenidoTotal:contenidoTotal===''||contenidoTotal==null?null:Number(contenidoTotal),unidad:String(unidad||'').trim().toLowerCase(),oferta:String(oferta||'').trim(),comentarios:String(comentarios||'').trim(),photoIds:[...photoIds],createdAt:stamp,updatedAt:stamp};rows.push(row);saveObservations(rows);return row;}
 export function deleteObservation(id){saveObservations(getObservations().filter(o=>o.id!==id));}

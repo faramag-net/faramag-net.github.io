@@ -14,7 +14,7 @@
  * - No se crea psr_compras_*: carritos, eventos y lista viven en psr_settings.
  */
 
-import { renderPhotoPicker, movePhotos, getPhotos } from "../../../core/media/fotos.js";
+import { renderPhotoPicker, movePhotos, getPhotos, deletePhotosForEntity } from "../../../core/media/fotos.js";
 
 import {
   getProducts,
@@ -23,6 +23,7 @@ import {
   createCategory,
   updateCategory,
   deactivateCategory,
+  deleteCategory,
   productsForCategory,
   getPresentations,
   getAllPresentations,
@@ -191,7 +192,7 @@ function categoryView(){
   const products=productsForCategory(category.id).filter(p=>!state.productSearch||normalize(p.nombre).includes(normalize(state.productSearch)));
   return `${header(`📂 ${esc(category.nombre)}`,true)}<div class="context-line">🏪 ${esc(company.nombre)}</div>
     <section class="company-tools"><div class="search-wrap"><span>🔎</span><input id="productSearch" value="${esc(state.productSearch)}" placeholder="Buscar producto..."></div></section>
-    <section class="entity-toolbar"><button data-category-history="${esc(category.id)}">📜 Historial categoría</button><button data-edit-category="${esc(category.id)}">✏️ Editar categoría</button><button data-toggle-category="${esc(category.id)}">⏸️ Desactivar</button></section>
+    <section class="entity-toolbar"><button data-category-history="${esc(category.id)}">📜 Historial categoría</button><button data-edit-category="${esc(category.id)}">✏️ Editar categoría</button><button data-toggle-category="${esc(category.id)}">⏸️ Desactivar</button><button data-delete-category="${esc(category.id)}">🗑️ Eliminar todo</button></section>
     <section class="section-head"><h2>🥛 Productos</h2><span>${products.length}</span></section><section class="product-grid">${products.map(productCard).join("")||`<div class="empty-card">No hay productos en esta categoría.</div>`}</section>`;
 }
 function companyView(){
@@ -207,7 +208,7 @@ function companyView(){
 }
 function categoryCard(c){
   const count=productsForCategory(c.id).length;
-  return `<div class="category-card-wrap" data-category-card-name="${esc(c.nombre)}"><button class="category-card" data-category="${esc(c.id)}"><span>📂</span><strong>${esc(c.nombre)}</strong><small>${count} ${count===1?'producto':'productos'}</small></button><div class="entity-actions"><button data-edit-category="${esc(c.id)}">✏️</button><button data-toggle-category="${esc(c.id)}">⏸️</button></div></div>`;
+  return `<div class="category-card-wrap" data-category-card-name="${esc(c.nombre)}"><button class="category-card" data-category="${esc(c.id)}"><span>📂</span><strong>${esc(c.nombre)}</strong><small>${count} ${count===1?'producto':'productos'}</small></button><div class="entity-actions"><button data-edit-category="${esc(c.id)}">✏️</button><button data-toggle-category="${esc(c.id)}">⏸️</button><button data-delete-category="${esc(c.id)}">🗑️</button></div></div>`;
 }
 
 function productCard(p){
@@ -505,21 +506,78 @@ function registerPurchase(){
   logEvent("Compra registrada",`${company.nombre} · ${items.length} productos · ${money(cartTotal(items))}`);setCart(company.id,[]);alert("Compra registrada correctamente.");state.screen="company";render();
 }
 
+async function deleteCatalogPhotos(productIds=[],presentationIds=[]){
+  let deleted=0;
+  for(const id of productIds) deleted+=await deletePhotosForEntity("producto",id);
+  for(const id of presentationIds) deleted+=await deletePhotosForEntity("presentacion",id);
+  return deleted;
+}
+function removeCatalogReferences(productIds=[],presentationIds=[]){
+  const pids=new Set(productIds.map(String)), presIds=new Set(presentationIds.map(String));
+  const carts=getCarts();
+  for(const [companyId,items] of Object.entries(carts)){
+    const kept=(Array.isArray(items)?items:[]).filter(item=>!pids.has(String(item.productId||""))&&!presIds.has(String(item.presentationId||"")));
+    if(kept.length)carts[companyId]=kept; else delete carts[companyId];
+  }
+  saveCarts(carts);
+  const needs=setting(NEEDS_SETTING,[]).filter(n=>!pids.has(String(n.productId||"")));
+  saveSetting(NEEDS_SETTING,needs);
+}
+
 function bindEntityActions(scope=document){
   scope.querySelectorAll("[data-store-history]").forEach(b=>b.onclick=e=>{e.stopPropagation();scopeHistoryModal("store",b.dataset.storeHistory);});
   scope.querySelectorAll("[data-category-history]").forEach(b=>b.onclick=e=>{e.stopPropagation();scopeHistoryModal("category",b.dataset.categoryHistory);});
   scope.querySelectorAll("[data-edit-category]").forEach(b=>b.onclick=e=>{e.stopPropagation();editCategoryModal(b.dataset.editCategory);});
-  scope.querySelectorAll("[data-toggle-category]").forEach(b=>b.onclick=e=>{e.stopPropagation();const c=categoryById(b.dataset.toggleCategory);if(!c)return;if(!confirm(`¿Desactivar ${c.nombre}?`))return;deactivateCategory(c.id);logEvent("Categoría desactivada",c.nombre);render();});
+  scope.querySelectorAll("[data-toggle-category]").forEach(b=>b.onclick=e=>{e.stopPropagation();const c=categoryById(b.dataset.toggleCategory);if(!c)return;if(!confirm(`¿Desactivar ${c.nombre}?
+
+Sus productos, presentaciones, fotografías y precios se conservarán.`))return;deactivateCategory(c.id);logEvent("Categoría desactivada",c.nombre);render();});
+  scope.querySelectorAll("[data-delete-category]").forEach(b=>b.onclick=async e=>{e.stopPropagation();const c=categoryById(b.dataset.deleteCategory);if(!c)return;const products=productsForCategory(c.id);const productIds=products.map(p=>String(p.id));const presentationIds=products.flatMap(p=>presentationsForProduct(p.id).map(pr=>String(pr.id)));let photoCount=0;for(const id of productIds)photoCount+=await getPhotos("producto",id).then(rows=>rows.length).catch(()=>0);for(const id of presentationIds)photoCount+=await getPhotos("presentacion",id).then(rows=>rows.length).catch(()=>0);const msg=`⚠️ ELIMINAR CATEGORÍA COMPLETA
+
+${c.nombre}
+
+Se eliminarán definitivamente:
+• ${products.length} producto${products.length===1?'':'s'}
+• ${presentationIds.length} presentación${presentationIds.length===1?'':'es'}
+• ${photoCount} fotografía${photoCount===1?'':'s'}
+• precios, observaciones y compras relacionadas
+• referencias en carritos y listas
+
+Esta acción NO se puede deshacer.`;if(!confirm(msg))return;const result=deleteCategory(c.id);removeCatalogReferences(result?.productIds||productIds,result?.presentationIds||presentationIds);await deleteCatalogPhotos(result?.productIds||productIds,result?.presentationIds||presentationIds);logEvent("Categoría eliminada definitivamente",`${c.nombre} · ${products.length} productos · ${presentationIds.length} presentaciones`);if(state.categoryId===c.id){state.categoryId=null;state.screen="company";}render();});
   scope.querySelectorAll("[data-edit-company]").forEach(b=>b.onclick=e=>{e.stopPropagation();newCompanyModal(b.dataset.editCompany);});
   scope.querySelectorAll("[data-toggle-company]").forEach(b=>b.onclick=e=>{e.stopPropagation();const p=placeById(b.dataset.toggleCompany);if(!p)return;if(p.estatus==='inactivo'){upsertPlace({id:p.id,estatus:'activo'});logEvent("Empresa activada",p.nombre);}else{if(!confirm(`¿Desactivar ${p.nombre}?`))return;upsertPlace({id:p.id,estatus:'inactivo'});logEvent("Empresa desactivada",p.nombre);}render();});
-  scope.querySelectorAll("[data-delete-company]").forEach(b=>b.onclick=e=>{e.stopPropagation();const p=placeById(b.dataset.deleteCompany);if(!p)return;if(!confirm(`¿Borrar ${p.nombre}? Esta acción elimina la empresa del catálogo de Compras/Mapa.`))return;const carts=getCarts();delete carts[p.id];saveCarts(carts);deletePlace(p.id);logEvent("Empresa borrada",p.nombre);if(state.companyId===p.id){state.companyId=null;state.screen="home";}render();});
+  scope.querySelectorAll("[data-delete-company]").forEach(b=>b.onclick=async e=>{e.stopPropagation();const p=placeById(b.dataset.deleteCompany);if(!p)return;if(!confirm(`¿Borrar ${p.nombre}?
+
+La empresa se eliminará de Empresas/Mapa y su carrito abierto.
+
+NO se eliminarán productos, categorías, presentaciones ni sus fotografías. Los registros históricos de precios/compras se conservarán.`))return;const carts=getCarts();delete carts[p.id];saveCarts(carts);await deletePhotosForEntity("empresa",p.id).catch(()=>{});deletePlace(p.id);logEvent("Empresa borrada",p.nombre);if(state.companyId===p.id){state.companyId=null;state.screen="home";}render();});
   scope.querySelectorAll("[data-edit-product]").forEach(b=>b.onclick=e=>{e.stopPropagation();editProductModal(b.dataset.editProduct);});
   scope.querySelectorAll("[data-toggle-product]").forEach(b=>b.onclick=e=>{e.stopPropagation();const p=productById(b.dataset.toggleProduct);if(!p)return;if(p.active===false){updateProduct(p.id,{active:true});logEvent("Producto activado",p.nombre);}else{if(!confirm(`¿Desactivar ${p.nombre}?`))return;deactivateProduct(p.id);logEvent("Producto desactivado",p.nombre);}render();});
-  scope.querySelectorAll("[data-delete-product]").forEach(b=>b.onclick=e=>{e.stopPropagation();const p=productById(b.dataset.deleteProduct);if(!p)return;if(!confirm(`¿Borrar ${p.nombre} y sus presentaciones?`))return;deleteProduct(p.id);logEvent("Producto borrado",p.nombre);if(scope.classList?.contains("modal"))scope.remove();render();});
+  scope.querySelectorAll("[data-delete-product]").forEach(b=>b.onclick=async e=>{e.stopPropagation();const p=productById(b.dataset.deleteProduct);if(!p)return;const pres=presentationsForProduct(p.id);const presIds=pres.map(x=>String(x.id));const photoCount=(await getPhotos("producto",p.id).then(r=>r.length).catch(()=>0))+ (await Promise.all(presIds.map(id=>getPhotos("presentacion",id).then(r=>r.length).catch(()=>0)))).reduce((a,n)=>a+n,0);if(!confirm(`⚠️ ELIMINAR PRODUCTO COMPLETAMENTE
+
+${p.nombre}
+
+Se eliminarán definitivamente:
+• 1 producto
+• ${pres.length} presentación${pres.length===1?'':'es'}
+• ${photoCount} fotografía${photoCount===1?'':'s'}
+• precios, observaciones y compras relacionadas
+• referencias en carritos y listas
+
+Esta acción NO se puede deshacer.`))return;const result=deleteProduct(p.id);removeCatalogReferences([p.id],result?.presentationIds||presIds);await deleteCatalogPhotos([p.id],result?.presentationIds||presIds);logEvent("Producto eliminado definitivamente",`${p.nombre} · ${pres.length} presentaciones`);if(scope.classList?.contains("modal"))scope.remove();render();});
   scope.querySelectorAll("[data-edit-presentation]").forEach(b=>b.onclick=e=>{e.stopPropagation();editPresentationModal(b.dataset.editPresentation);});
   scope.querySelectorAll("[data-toggle-presentation]").forEach(b=>b.onclick=e=>{e.stopPropagation();const p=presentationById(b.dataset.togglePresentation);if(!p)return;if(p.active===false){updatePresentation(p.id,{active:true});logEvent("Presentación activada",p.nombre);}else{if(!confirm(`¿Desactivar ${p.nombre}?`))return;deactivatePresentation(p.id);logEvent("Presentación desactivada",p.nombre);}render();});
   scope.querySelectorAll("[data-price-history]").forEach(b=>b.onclick=e=>{e.stopPropagation();state.priceHistoryPage=1;priceHistoryModal(b.dataset.priceHistory);});
-  scope.querySelectorAll("[data-delete-presentation]").forEach(b=>b.onclick=e=>{e.stopPropagation();const p=presentationById(b.dataset.deletePresentation);if(!p)return;if(!confirm(`¿Borrar la presentación ${p.nombre}?`))return;deletePresentation(p.id);logEvent("Presentación borrada",p.nombre);if(scope.classList?.contains("modal"))scope.remove();render();});
+  scope.querySelectorAll("[data-delete-presentation]").forEach(b=>b.onclick=async e=>{e.stopPropagation();const p=presentationById(b.dataset.deletePresentation);if(!p)return;const photoCount=await getPhotos("presentacion",p.id).then(r=>r.length).catch(()=>0);if(!confirm(`⚠️ ELIMINAR PRESENTACIÓN COMPLETAMENTE
+
+${p.nombre}
+
+Se eliminarán definitivamente:
+• 1 presentación
+• ${photoCount} fotografía${photoCount===1?'':'s'}
+• precios, observaciones y compras relacionadas
+• referencias en carritos
+
+Esta acción NO se puede deshacer.`))return;const result=deletePresentation(p.id);removeCatalogReferences([], [p.id]);await deleteCatalogPhotos([], [p.id]);logEvent("Presentación eliminada definitivamente",p.nombre);if(scope.classList?.contains("modal"))scope.remove();render();});
 }
 function editProductModal(id){
   const p=productById(id);if(!p)return;
