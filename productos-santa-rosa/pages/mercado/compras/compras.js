@@ -1,8 +1,8 @@
 /**
  * Productos Santa Rosa
  * Módulo: 🛒 Compras (remodelación de Insumos)
- * Versión: 1.1.0.4
- * Build: 20261008.174000
+ * Versión: 1.1.0.7
+ * Build: 20261008.190500
  * Objetivo: Empresas, productos, presentaciones, lista manual, carritos, compras e historiales.
  *
  * Regla V1:
@@ -631,12 +631,22 @@ function bind(){
   bindPhotoIndicators(document);
 }
 async function bindPhotoIndicators(scope=document){
+  // Regla estricta: el icono 📷 representa SOLO fotografías del elemento actual.
+  // Nunca se heredan fotografías de hijos: empresa ≠ categoría ≠ producto ≠ presentación.
   const nodes=[...scope.querySelectorAll('[data-photo-indicator]')];
   await Promise.all(nodes.map(async node=>{
     const parts=String(node.dataset.photoIndicator||'').split(':');
-    const entityType=parts.shift(); const entityId=parts.join(':');
+    const entityType=parts.shift();
+    const entityId=parts.join(':');
     if(!entityType||!entityId)return;
-    try{const photos=await getPhotos(entityType,entityId);if(photos.length&&document.contains(node))node.hidden=false;}catch{}
+    try{
+      const photos=await getPhotos(entityType,entityId);
+      if(!document.contains(node))return;
+      node.hidden=photos.length===0;
+      node.dataset.hasPhoto=photos.length?'1':'0';
+    }catch{
+      if(document.contains(node)){node.hidden=true;node.dataset.hasPhoto='0';}
+    }
   }));
 }
 function focusInput(id){setTimeout(()=>{const el=document.getElementById(id);if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}},0);}
