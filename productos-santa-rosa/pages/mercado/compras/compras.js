@@ -249,7 +249,7 @@ function productModal(productId){
   modal.innerHTML=`<div class="modal-box presentation-modal"><div class="modal-head"><div><h2>📦 ${esc(product.nombre)}</h2><small>${esc(categoryById(product.categoryId)?.nombre||'Sin categoría')} · todas las tiendas</small></div><button class="close-btn" data-close>×</button></div><div class="product-mode-bar"><button class="action-btn" id="toggleProductEditMode">✏️ Editar / borrar</button></div>${productTopFiveHtml(productId)}<h3 class="subsection-title">📊 Presentaciones y precios</h3><div class="comparison-list">${rows.map(x=>{
     const hasPrice=Number.isFinite(Number(x.r.precio));
     const rawPriceId=x.r?.id!=null?String(x.r.id).trim():'';
-    const canManagePrice=hasPrice && rawPriceId!=='';
+    const canManagePrice=hasPrice && rawPriceId!=='' && x.r.clienteId!==undefined;
     const priceId=canManagePrice?esc(rawPriceId):'';
     const source=esc(x.r.source||'mercado');
     const companyLabel=x.place?esc(x.place.nombre):(x.r.tienda?`⚠️ ${esc(x.r.tienda)}`:(hasPrice?'⚠️ Empresa eliminada':'Sin precio registrado'));

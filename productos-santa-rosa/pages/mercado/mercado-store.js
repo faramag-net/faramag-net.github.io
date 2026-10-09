@@ -44,7 +44,20 @@ function syncMapStoresToMarket(){
 export function getPlaces(){syncMapStoresToMarket();return LocalDB.getMarketClients().map(p=>({...p,tipo:p.tipo||'Tienda',estatus:p.estatus||'activo'}));}
 export function savePlaces(data){LocalDB.saveMarketClients(data);}
 export function placeById(id){return getPlaces().find(p=>String(p.id)===String(id));}
-export function getObservations(){return LocalDB.getClientProducts();}
+export function getObservations(){
+  const rows=LocalDB.getClientProducts();
+  if(!Array.isArray(rows)||!rows.length)return [];
+  let changed=false;
+  const out=rows.map((row,index)=>{
+    if(row && row.id!=null && String(row.id).trim()!=='')return row;
+    changed=true;
+    const base=[row?.producto||row?.product||'',row?.presentacion||'',row?.presentationId||'',row?.clienteId||'',row?.precio??'',row?.createdAt||row?.updatedAt||'',index].map(v=>String(v)).join('|');
+    let hash=0; for(let i=0;i<base.length;i++) hash=((hash<<5)-hash)+base.charCodeAt(i)|0;
+    return {...row,id:`legacy-price-${Math.abs(hash)}`};
+  });
+  if(changed)LocalDB.saveClientProducts(out);
+  return out;
+}
 export function saveObservations(data){LocalDB.saveClientProducts(data);}
 export function getPurchases(){return LocalDB.getInsumos();}
 export function savePurchases(data){LocalDB.saveInsumos(data);}
