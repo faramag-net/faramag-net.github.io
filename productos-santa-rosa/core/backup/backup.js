@@ -153,7 +153,10 @@ export function bindBackupUI() {
   marketSyncFile?.addEventListener("change", async e => {
     const file=e.target.files?.[0]; e.target.value=""; if(!file)return;
     try { await importMarketSync(file); }
-    catch(error){ alert(error.message||"No se pudo preparar la sincronización de Mercado."); }
+    catch(error){
+      document.getElementById("marketSyncModal")?.remove();
+      alert(error.message||"No se pudo preparar la sincronización de Mercado.");
+    }
   });
 }
 
@@ -167,6 +170,14 @@ const MARKET_SYNC_META = "psr_mercado_sync_meta";
 const MARKET_SYNC_FORMAT = "productos-santa-rosa-mercado-sync";
 const MARKET_SYNC_VERSION = 1;
 
+function esc(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#39;");
+}
 function syncRead(key, fallback){
   try { const v=JSON.parse(localStorage.getItem(key)||"null"); return v ?? fallback; } catch { return fallback; }
 }
