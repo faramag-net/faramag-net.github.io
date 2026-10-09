@@ -272,3 +272,20 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 @media(min-width:700px){.category-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.category-card{min-height:112px}}
 
 @media(max-width:520px){.comparison-actions{width:100px;flex-basis:100px;grid-template-columns:30px 30px 30px}.comparison-actions button{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important}.comparison-row{grid-template-columns:minmax(0,1fr) auto 100px;gap:6px;padding:9px}.comparison-row>div:nth-child(2){min-width:62px}}
+
+
+/* FIX 1.1.0.6 · Fotos del catálogo y modo editar/borrar */
+.photo-indicator{font-size:11px;line-height:1;margin-top:1px;display:inline-block}
+.category-add-product{display:flex;justify-content:flex-end;margin:-2px 0 9px}
+.product-mode-bar{display:flex;justify-content:flex-end;margin:-2px 0 9px}
+.product-mode-bar .action-btn{min-height:34px;padding:6px 9px;font-size:12px}
+.comparison-actions .delete-row-action{color:var(--danger)!important;font-size:22px!important;font-weight:800}
+.comparison-row .comparison-actions{width:66px;flex:0 0 66px;grid-template-columns:30px 30px}
+.comparison-row{grid-template-columns:minmax(0,1fr) auto 66px}
+.comparison-row .comparison-actions button{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important}
+@media(max-width:520px){.comparison-row{grid-template-columns:minmax(0,1fr) auto 66px;gap:5px;padding:8px}.comparison-row>div:nth-child(2){min-width:60px}.comparison-row>div:first-child strong{font-size:12px}.comparison-row>div:first-child small{font-size:10px}}
+
+.comparison-actions .edit-row-action,.comparison-actions .delete-row-action{visibility:hidden}
+.comparison-actions .photo-action{visibility:hidden}
+.comparison-actions .photo-action[style*="visible"]{visibility:visible}
+.comparison-actions .delete-row-action{display:inline-flex!important}
