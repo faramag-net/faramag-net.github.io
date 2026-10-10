@@ -285,10 +285,13 @@ export function updatePurchase(id,data){const rows=getPurchases();const i=rows.f
 export function deletePurchase(id){savePurchases(getPurchases().filter(p=>p.id!==id));markDeleted('purchase',id);}
 
 export function marketPriceRecords(){
-  const observations=getObservations().map(o=>({...o,source:'mercado',priceDate:o.createdAt}));
-  const purchases=getPurchases().map(p=>({id:`purchase:${p.id}`,clienteId:p.clienteId,presentationId:p.presentationId,precio:Number(p.precio)||0,createdAt:p.fecha,priceDate:p.fecha,producto:p.producto,presentacion:p.presentacion,contenidoTotal:p.contenidoTotal,unidad:p.unidad,oferta:p.oferta,photoIds:p.photoIds||[],source:'compra',purchaseId:p.id,tienda:p.tienda}));
-  return [...observations,...purchases];
+  return getObservations().map(o=>({
+    ...o,
+    source:'mercado',
+    priceDate:o.createdAt
+  }));
 }
+
 export function calculateComparable(precio,contenidoTotal,unidad){
   const price=Number(precio), qty=Number(contenidoTotal), u=normalize(unidad).replace(/\s+/g,'');
   if(!(price>=0)||!(qty>0))return null;
