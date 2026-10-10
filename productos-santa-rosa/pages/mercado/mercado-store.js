@@ -285,11 +285,15 @@ export function updatePurchase(id,data){const rows=getPurchases();const i=rows.f
 export function deletePurchase(id){savePurchases(getPurchases().filter(p=>p.id!==id));markDeleted('purchase',id);}
 
 export function marketPriceRecords(){
-  return getObservations().map(o=>({
+  const rows=getObservations().map(o=>({
     ...o,
     source:'mercado',
     priceDate:o.createdAt
   }));
+
+  console.log("🔎 marketPriceRecords:", rows);
+
+  return rows;
 }
 
 export function calculateComparable(precio,contenidoTotal,unidad){
