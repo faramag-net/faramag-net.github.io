@@ -1,9 +1,7 @@
 /**
  * Productos Santa Rosa
  * Módulo: 🛒 Compras (remodelación de Insumos)
- * Versión: 1.1.0.7
- * Build: 20261008.190500
- * Objetivo: Empresas, productos, presentaciones, lista manual, carritos, compras e historiales.
+ * Versión: 1.2.0.8ntaciones, lista manual, carritos, compras e historiales.
  *
  * Regla V1:
  * - Empresas reutilizan psr_market_clients / Mapa como fuente de 🏪 Tienda.
@@ -633,7 +631,47 @@ Se eliminarán definitivamente:
 
 Esta acción NO se puede deshacer.`))return;const result=deleteProduct(p.id);removeCatalogReferences([p.id],result?.presentationIds||presIds);await deleteCatalogPhotos([p.id],result?.presentationIds||presIds);logEvent("Producto eliminado definitivamente",`${p.nombre} · ${pres.length} presentaciones`);if(scope.classList?.contains("modal"))scope.remove();render();});
   scope.querySelectorAll("[data-edit-presentation]").forEach(b=>b.onclick=e=>{e.stopPropagation();editPresentationModal(b.dataset.editPresentation);});
-  scope.querySelectorAll("[data-toggle-presentation]").forEach(b=>b.onclick=e=>{e.stopPropagation();const p=presentationById(b.dataset.togglePresentation);if(!p)return;if(p.active===false){updatePresentation(p.id,{active:true});logEvent("Presentación activada",p.nombre);}else{if(!confirm(`¿Desactivar ${p.nombre}?`))return;deactivatePresentation(p.id);logEvent("Presentación desactivada",p.nombre);}render();});
+  scope.querySelectorAll("[data-toggle-presentation]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    const p=presentationById(b.dataset.togglePresentation);
+    if(!p)return;
+    if(p.active===false){
+      // Si ya existe otra presentación activa con el mismo nombre para el producto,
+      // pedir autorización antes de sustituirla para conservar la regla de unicidad.
+      const duplicate=getAllPresentations().find(x=>
+        String(x.id)!==String(p.id) &&
+        String(x.productId)===String(p.productId) &&
+        x.active!==false &&
+        normalize(x.nombre)===normalize(p.nombre)
+      );
+      if(duplicate){
+        const ok=confirm(`No se puede activar «${p.nombre}» porque ya existe una presentación activa con ese nombre.\n\n¿Deseas desactivar la presentación activa existente y activar esta?\n\nSe conservarán ambas presentaciones y sus registros relacionados; solo cambiará cuál queda activa.`);
+        if(!ok)return;
+        try{
+          deactivatePresentation(duplicate.id);
+          updatePresentation(p.id,{active:true});
+          logEvent("Presentación reactivada y duplicado desactivado",`${p.nombre} · anterior: ${duplicate.id} · activada: ${p.id}`);
+        }catch(err){
+          alert(`No se pudo activar la presentación: ${err.message||err}`);
+          render();
+          return;
+        }
+      }else{
+        try{
+          updatePresentation(p.id,{active:true});
+          logEvent("Presentación activada",p.nombre);
+        }catch(err){
+          alert(`No se pudo activar la presentación: ${err.message||err}`);
+          return;
+        }
+      }
+    }else{
+      if(!confirm(`¿Desactivar ${p.nombre}?`))return;
+      deactivatePresentation(p.id);
+      logEvent("Presentación desactivada",p.nombre);
+    }
+    render();
+  });
   scope.querySelectorAll("[data-price-history]").forEach(b=>b.onclick=e=>{e.stopPropagation();state.priceHistoryPage=1;priceHistoryModal(b.dataset.priceHistory);});
   scope.querySelectorAll("[data-reassign-price]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.disabled)return;reassignPriceModal(b.dataset.reassignPrice,b.dataset.priceSource||'mercado');});
   scope.querySelectorAll("[data-delete-price]").forEach(b=>b.onclick=async e=>{e.stopPropagation();if(b.disabled)return;const source=b.dataset.priceSource||"mercado";const rawId=b.dataset.deletePrice;let record=null;if(source==="compra"){const purchaseId=rawId?.startsWith("purchase:")?rawId.slice(9):rawId;record=getPurchases().find(x=>String(x.id)===String(purchaseId));}else{record=getObservations().find(x=>String(x.id)===String(rawId));}if(!record)return;const presentation=record.presentationId?presentationById(record.presentationId):null;const company=record.clienteId?placeById(record.clienteId):null;const detail=`${presentation?.nombre||record.presentacion||"Sin presentación"} · ${company?.nombre||record.tienda||"Sin empresa"} · ${money(record.precio)}`;if(!confirm(`¿Eliminar únicamente este registro de precio?
