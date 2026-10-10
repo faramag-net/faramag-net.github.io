@@ -18,6 +18,7 @@ import {
   getProducts,
   getAllProducts,
   getCategories,
+  getAllCategories,
   categoryById,
   createCategory,
   updateCategory,
@@ -79,7 +80,8 @@ let state = {
   priceHistoryPage: 1,
   listReturnScreen: "home",
   topPeriod: "all",
-  showInactive: false
+  showInactive: false,
+  showInactiveCategories: false
 };
 
 const esc = value => String(value ?? "")
@@ -197,23 +199,26 @@ function categoryView(){
     .filter(p=>!state.productSearch||normalize(p.nombre).includes(normalize(state.productSearch)));
   return `${header(`📂 ${esc(category.nombre)}`,true)}<div class="context-line">🏪 ${esc(company.nombre)}</div>
     <section class="company-tools"><div class="search-wrap"><span>🔎</span><input id="productSearch" value="${esc(state.productSearch)}" placeholder="Buscar producto..."></div><div class="tool-row"><button class="action-btn" id="toggleInactive">${state.showInactive?"🙈 Ocultar desactivados":"👁️ Ver desactivados"}</button></div></section>
-    <section class="entity-toolbar"><button data-category-history="${esc(category.id)}">📜 Historial categoría</button><button data-edit-category="${esc(category.id)}">✏️ Editar categoría</button><button data-toggle-category="${esc(category.id)}">⏸️ Desactivar</button><button data-delete-category="${esc(category.id)}">🗑️ Eliminar todo</button></section>
+    <section class="entity-toolbar"><button data-category-history="${esc(category.id)}">📜 Historial categoría</button><button data-edit-category="${esc(category.id)}">✏️ Editar categoría</button><button data-toggle-category="${esc(category.id)}">${category.active===false?"🔄 Activar categoría":"⏸️ Desactivar categoría"}</button><button data-delete-category="${esc(category.id)}">🗑️ Eliminar todo</button></section>
     <section class="section-head"><h2>🥛 Productos</h2><span>${products.length}</span></section><div class="category-add-product"><button class="action-btn primary" id="addProductBtn">＋ Producto</button></div><section class="product-grid">${products.map(productCard).join("")||`<div class="empty-card">No hay productos en esta categoría.</div>`}</section>`;
 }
 function companyView(){
   const company=placeById(state.companyId); if(!company){state.screen="home";return homeView();}
-  const q=normalize(state.productSearch); const categories=getCategories().filter(c=>!q||normalize(c.nombre).includes(q)||productsForCategory(c.id).some(p=>normalize(p.nombre).includes(q)));
+  const q=normalize(state.productSearch);
+  const categorySource=state.showInactiveCategories?getAllCategories():getCategories();
+  const categories=categorySource.filter(c=>!q||normalize(c.nombre).includes(q)||(state.showInactiveCategories?getAllProducts():getProducts()).some(p=>(String(p.categoryId||'')===String(c.id)||(!p.categoryId&&normalize(p.categoria||'')===normalize(c.nombre)))&&normalize(p.nombre).includes(q)));
   const cart=cartFor(company.id);
   const purchased=getPurchases().filter(p=>String(p.clienteId)===String(company.id)).reduce((s,p)=>s+Number(p.total||0),0);
   return `${header(`🏪 ${esc(company.nombre)}`,true)}<div class="context-line">${esc(storeTypeLabel(company.tipo))}${company.direccion?` · ${esc(company.direccion)}`:""}</div>
     <div class="company-kpi"><span>💰 Total comprado en esta empresa</span><strong>${money(purchased)}</strong></div><div id="companyPhotos"></div>
-    <section class="company-tools"><div class="search-wrap"><span>🔎</span><input id="productSearch" value="${esc(state.productSearch)}" placeholder="Buscar producto o categoría..."></div><div class="tool-grid"><button class="action-btn" id="addCategoryBtn">＋ Categoría</button><button class="action-btn" id="addProductBtn">＋ Producto</button><button class="action-btn" id="companyListBtn">📝 Lista</button><button class="action-btn" id="calculatorBtn">🧮 Calculadora</button><button class="action-btn primary" id="cartBtn">🛒 Carrito${cart.length?` (${cart.length})`:""}</button></div></section>
+    <section class="company-tools"><div class="search-wrap"><span>🔎</span><input id="productSearch" value="${esc(state.productSearch)}" placeholder="Buscar producto o categoría..."></div><div class="tool-grid"><button class="action-btn" id="addCategoryBtn">＋ Categoría</button><button class="action-btn" id="addProductBtn">＋ Producto</button><button class="action-btn" id="companyListBtn">📝 Lista</button><button class="action-btn" id="calculatorBtn">🧮 Calculadora</button><button class="action-btn primary" id="cartBtn">🛒 Carrito${cart.length?` (${cart.length})`:""}</button><button class="action-btn" id="toggleInactiveCategories">${state.showInactiveCategories?"🙈 Ocultar categorías desactivadas":"👁️ Ver categorías desactivadas"}</button></div></section>
     <section class="entity-toolbar"><button data-store-history="${esc(company.id)}">📜 Historial tienda</button><button data-edit-company="${esc(company.id)}">✏️ Editar empresa</button><button data-toggle-company="${esc(company.id)}">${company.estatus==='inactivo'?'🔄 Activar':'⏸️ Desactivar'}</button><button data-delete-company="${esc(company.id)}">🗑️ Borrar</button></section>
     <section class="section-head"><h2>📂 Categorías</h2><span>${categories.length}</span></section><section class="category-grid">${categories.map(c=>categoryCard(c)).join("")||`<div class="empty-card">No hay categorías registradas.</div>`}</section>`;
 }
 function categoryCard(c){
-  const count=productsForCategory(c.id).length;
-  return `<div class="category-card-wrap" data-category-card-name="${esc(c.nombre)}"><button class="category-card" data-category="${esc(c.id)}"><span>📂</span><strong>${esc(c.nombre)}</strong><small>${count} ${count===1?'producto':'productos'}</small><span class="photo-indicator" data-photo-indicator="categoria:${esc(c.id)}" aria-hidden="true"></span></button><div class="entity-actions"><button data-edit-category="${esc(c.id)}">✏️</button><button data-toggle-category="${esc(c.id)}">⏸️</button><button data-delete-category="${esc(c.id)}">🗑️</button></div></div>`;
+  const allProducts=state.showInactiveCategories?getAllProducts():getProducts();
+  const count=allProducts.filter(p=>String(p.categoryId||'')===String(c.id)||(!p.categoryId&&normalize(p.categoria||'')===normalize(c.nombre))).length;
+  return `<div class="category-card-wrap" data-category-card-name="${esc(c.nombre)}"><button class="category-card" data-category="${esc(c.id)}"><span>📂</span><strong>${esc(c.nombre)}</strong>${c.active===false?'<small>Desactivada</small>':''}<small>${count} ${count===1?'producto':'productos'}</small><span class="photo-indicator" data-photo-indicator="categoria:${esc(c.id)}" aria-hidden="true"></span></button><div class="entity-actions"><button data-edit-category="${esc(c.id)}">✏️</button><button data-toggle-category="${esc(c.id)}" title="${c.active===false?'Activar':'Desactivar'}">${c.active===false?'🔄 Activar':'⏸️ Desactivar'}</button><button data-delete-category="${esc(c.id)}">🗑️</button></div></div>`;
 }
 
 function productCard(p){
@@ -594,9 +599,7 @@ function bindEntityActions(scope=document){
   scope.querySelectorAll("[data-store-history]").forEach(b=>b.onclick=e=>{e.stopPropagation();scopeHistoryModal("store",b.dataset.storeHistory);});
   scope.querySelectorAll("[data-category-history]").forEach(b=>b.onclick=e=>{e.stopPropagation();scopeHistoryModal("category",b.dataset.categoryHistory);});
   scope.querySelectorAll("[data-edit-category]").forEach(b=>b.onclick=e=>{e.stopPropagation();editCategoryModal(b.dataset.editCategory);});
-  scope.querySelectorAll("[data-toggle-category]").forEach(b=>b.onclick=e=>{e.stopPropagation();const c=categoryById(b.dataset.toggleCategory);if(!c)return;if(!confirm(`¿Desactivar ${c.nombre}?
-
-Sus productos, presentaciones, fotografías y precios se conservarán.`))return;deactivateCategory(c.id);logEvent("Categoría desactivada",c.nombre);render();});
+  scope.querySelectorAll("[data-toggle-category]").forEach(b=>b.onclick=e=>{e.stopPropagation();const c=categoryById(b.dataset.toggleCategory);if(!c)return;if(c.active===false){try{updateCategory(c.id,{active:true});logEvent("Categoría activada",c.nombre);}catch(err){alert(err.message||"No se pudo activar la categoría.");return;}}else{if(!confirm(`¿Desactivar ${c.nombre}?\n\nSus productos, presentaciones, fotografías y precios se conservarán.`))return;deactivateCategory(c.id);logEvent("Categoría desactivada",c.nombre);}render();});
   scope.querySelectorAll("[data-delete-category]").forEach(b=>b.onclick=async e=>{e.stopPropagation();const c=categoryById(b.dataset.deleteCategory);if(!c)return;const products=productsForCategory(c.id);const productIds=products.map(p=>String(p.id));const presentationIds=products.flatMap(p=>presentationsForProduct(p.id).map(pr=>String(pr.id)));let photoCount=await getPhotos("categoria",c.id).then(rows=>rows.length).catch(()=>0);for(const id of productIds)photoCount+=await getPhotos("producto",id).then(rows=>rows.length).catch(()=>0);for(const id of presentationIds)photoCount+=await getPhotos("presentacion",id).then(rows=>rows.length).catch(()=>0);const msg=`⚠️ ELIMINAR CATEGORÍA COMPLETA
 
 ${c.nombre}
@@ -704,6 +707,7 @@ function editPresentationModal(id){const p=presentationById(id);if(!p)return;con
 
 function bind(){
   document.querySelectorAll("#toggleInactive").forEach(b=>b.onclick=()=>{state.showInactive=!state.showInactive;render();});
+  document.querySelectorAll("#toggleInactiveCategories").forEach(b=>b.onclick=()=>{state.showInactiveCategories=!state.showInactiveCategories;render();});
 
   if(state.screen==='company'&&state.companyId){const c=document.getElementById('companyPhotos');if(c)renderPhotoPicker({container:c,entityType:'empresa',entityId:state.companyId,label:'Fotografías'});}
   document.getElementById("companySearch")?.addEventListener("input",e=>{

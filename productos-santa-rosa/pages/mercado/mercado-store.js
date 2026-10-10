@@ -300,8 +300,6 @@ export function marketPriceRecords(){
     priceDate:o.createdAt
   }));
 
-  console.log("🔎 marketPriceRecords:", rows);
-
   return rows;
 }
 
