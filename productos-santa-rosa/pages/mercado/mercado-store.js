@@ -268,9 +268,18 @@ export function deletePresentation(id){
   const i=all.findIndex(p=>String(p.id)===String(id));
   if(i<0)return null;
   const presentation=all[i];
-  const product=productById(presentation.productId);
-  saveObservations(getObservations().filter(r=>String(r.presentationId||'')!==String(id) && !(product && normalize(r.product||r.producto)===normalize(product.nombre) && normalize(r.presentacion)===normalize(presentation.nombre))));
-  savePurchases(getPurchases().filter(r=>String(r.presentationId||'')!==String(id) && !(product && normalize(r.product||r.producto)===normalize(product.nombre) && normalize(r.presentacion)===normalize(presentation.nombre))));
+  
+  saveObservations(
+    getObservations().filter(r =>
+      String(r.presentationId || '') !== String(id)
+    )
+  );
+
+  savePurchases(
+    getPurchases().filter(r =>
+      String(r.presentationId || '') !== String(id)
+    )
+  );
   all.splice(i,1);
   write(PRESENTATION_KEY,all);
   markDeleted('presentation',id);
