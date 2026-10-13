@@ -143,3 +143,11 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; }
 .foto-temporal-card .foto-temporal-eliminar{color:#b91c1c}
 .fotos-temporales-vacio{grid-column:1/-1;padding:18px 10px;text-align:center;color:#6b7280;border:1px dashed #cbd5e1;border-radius:10px;font-size:13px}
 @media(max-width:380px){.lista-fotos-temporales{grid-template-columns:repeat(2,minmax(0,1fr))}.foto-temporal-card img{height:95px}}
+
+/* Clústeres de pines: menos elementos visibles cuando hay muchas empresas juntas. */
+.psr-cluster-wrapper { background: transparent; border: 0; }
+.psr-cluster { box-sizing: border-box; display:flex; align-items:center; justify-content:center; width:100%; height:100%; border:3px solid #fff; border-radius:50%; color:#fff; font-size:13px; font-weight:800; line-height:1; box-shadow:0 2px 7px rgba(0,0,0,.32); background:#2563eb; }
+.psr-cluster-small { background:#2563eb; }
+.psr-cluster-medium { background:#0f766e; font-size:14px; }
+.psr-cluster-large { background:#b45309; font-size:15px; }
+@media (prefers-reduced-motion: reduce) { .psr-cluster { transition:none !important; } }

@@ -34,6 +34,31 @@ const mapa = L.map("mapa", {
 mapa.createPane("trazosPane");
 mapa.getPane("trazosPane").style.zIndex = 350;
 const capaTrazos = L.layerGroup().addTo(mapa);
+// Agrupa pines cercanos para reducir elementos DOM durante zoom y movimiento.
+// chunkedLoading evita bloquear la pantalla si hay muchos registros.
+const capaMarcadores = L.markerClusterGroup({
+  chunkedLoading: true,
+  chunkInterval: 150,
+  chunkDelay: 25,
+  removeOutsideVisibleBounds: true,
+  showCoverageOnHover: false,
+  zoomToBoundsOnClick: true,
+  spiderfyOnMaxZoom: true,
+  animate: false,
+  animateAddingMarkers: false,
+  maxClusterRadius: 44,
+  disableClusteringAtZoom: 19,
+  iconCreateFunction(cluster) {
+    const count = cluster.getChildCount();
+    const size = count >= 100 ? 52 : count >= 10 ? 46 : 40;
+    return L.divIcon({
+      className: "psr-cluster-wrapper",
+      html: `<span class="psr-cluster psr-cluster-${count >= 100 ? "large" : count >= 10 ? "medium" : "small"}">${count}</span>`,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2]
+    });
+  }
+}).addTo(mapa);
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxNativeZoom: 19,
   maxZoom: 22,
@@ -645,25 +670,30 @@ function registrarFinToqueMapa(event) {
 }
 
 function renderMarcadores() {
-  marcadores.forEach(marker => marker.remove());
+  // Limpiar desde el grupo evita trabajo individual repetido al reconstruir cientos de pines.
+  capaMarcadores.clearLayers();
   marcadores.clear();
 
   const visibles = clientesMapa.filter(registroVisible);
+  const nuevosMarcadores = [];
   visibles.forEach(registro => {
     if (!Number.isFinite(Number(registro.latitud)) || !Number.isFinite(Number(registro.longitud))) return;
     const categoria = categoriaPorId(registro.categoriaId);
     const marker = L.marker([Number(registro.latitud), Number(registro.longitud)], {
       draggable: true,
       icon: crearIconoCategoria(categoria)
-    }).addTo(mapa);
+    });
+    nuevosMarcadores.push(marker);
 
     // En móvil el movimiento del pin se controla de forma explícita.
     // Así un toque corto sigue abriendo la información y nunca se confunde
     // con la pulsación larga del mapa para crear una empresa.
-    const elementoPin = marker.getElement();
     const esDispositivoTactil = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    if (elementoPin && esDispositivoTactil) {
-          // No bloquear la propagación táctil del pin: el mapa debe poder
+    const configurarGestosPin = () => {
+      const elementoPin = marker.getElement();
+      if (!elementoPin || !esDispositivoTactil || elementoPin.dataset.psrTouchConfigured === "1") return;
+      elementoPin.dataset.psrTouchConfigured = "1";
+      // No bloquear la propagación táctil del pin: el mapa debe poder
       // iniciar pan/zoom aunque el primer dedo caiga sobre un pin.
       // El gesto corto del pin se resuelve como popup; el arrastre largo
       // se controla abajo.
@@ -793,7 +823,11 @@ function renderMarcadores() {
         pinCancelado = true;
         mapa.dragging.enable();
       }, { passive: true });
-    }
+    };
+    // Los pines agrupados aún no tienen elemento DOM. Configuramos sus gestos
+    // cuando el clúster los despliega, y también inmediatamente si ya son visibles.
+    marker.on("add", configurarGestosPin);
+    configurarGestosPin();
 
     marker.on("dragstart", () => {
       const inicio = Number(marker._psrTouchStartedAt || 0);
@@ -868,6 +902,9 @@ function renderMarcadores() {
     });
     marcadores.set(String(registro.id), marker);
   });
+
+  // Cargar en lote permite que MarkerCluster procese cientos de pines por bloques.
+  capaMarcadores.addLayers(nuevosMarcadores);
 
   actualizarEstado(`${visibles.length} ${visibles.length === 1 ? "registro visible" : "registros visibles"}.`);
 }
