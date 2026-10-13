@@ -213,3 +213,5 @@ body{
     .app-version-panel { width: 95%; padding: 10px 12px; }
     .app-version-values { grid-template-columns: 1fr; gap: 6px; }
 }
+
+.psr-photo-add-actions{display:flex;flex-wrap:wrap;gap:7px}

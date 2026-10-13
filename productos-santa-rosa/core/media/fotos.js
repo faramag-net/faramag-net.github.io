@@ -119,6 +119,10 @@ export async function deletePhoto(id) {
   });
 }
 
+export async function deletePendingPhoto(id) {
+  return deletePhoto(id);
+}
+
 export async function movePhotos(entityType, fromId, toId) {
   if (!fromId || !toId || String(fromId) === String(toId)) return;
   const rows = await getPhotos(entityType, fromId);
@@ -131,24 +135,6 @@ export async function movePhotos(entityType, fromId, toId) {
     tx.oncomplete = resolve;
     tx.onerror = () => reject(tx.error);
   });
-}
-
-// Transfiere fotografías de una entidad temporal a su entidad definitiva.
-// A diferencia de movePhotos, permite cambiar también entityType.
-export async function movePhotosBetween(fromType, fromId, toType, toId) {
-  if (!fromId || !toId || (String(fromType) === String(toType) && String(fromId) === String(toId))) return 0;
-  const rows = await getPhotos(fromType, fromId);
-  if (!rows.length) return 0;
-  const db = await openDB();
-  await new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE, "readwrite");
-    const store = tx.objectStore(STORE);
-    rows.forEach(row => store.put({ ...row, entityType: String(toType), entityId: String(toId) }));
-    tx.oncomplete = resolve;
-    tx.onerror = () => reject(tx.error);
-    tx.onabort = () => reject(tx.error || new Error("No se pudieron asociar las fotografías al registro."));
-  });
-  return rows.length;
 }
 
 export async function getAllPhotos() {
@@ -207,10 +193,52 @@ export async function importPhotos(payload) {
   });
 }
 
+
+// Bandeja temporal del Mapa: fotos comprimidas que todavía no pertenecen a una empresa.
+const PENDING_ENTITY_TYPE = "mapa-pendiente";
+const PENDING_ENTITY_ID = "bandeja";
+
+export async function savePendingPhoto(file) {
+  return savePhoto(file, PENDING_ENTITY_TYPE, PENDING_ENTITY_ID, "Foto temporal");
+}
+
+export async function getPendingPhotos() {
+  return getPhotos(PENDING_ENTITY_TYPE, PENDING_ENTITY_ID);
+}
+
+export async function copyPendingPhoto(pendingId, entityType, entityId) {
+  const pending = (await getPendingPhotos()).find(photo => String(photo.id) === String(pendingId));
+  if (!pending) throw new Error("La fotografía temporal ya no está disponible.");
+  const record = { ...pending, id: uid(), entityType: String(entityType), entityId: String(entityId), createdAt: new Date().toISOString() };
+  const db = await openDB();
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, "readwrite");
+    tx.objectStore(STORE).put(record);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+  return record;
+}
+
+export async function movePhotosToEntity(fromType, fromId, toType, toId) {
+  if (!fromId || !toId) return 0;
+  const rows = await getPhotos(fromType, fromId);
+  if (!rows.length) return 0;
+  const db = await openDB();
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, "readwrite");
+    const store = tx.objectStore(STORE);
+    rows.forEach(row => store.put({ ...row, entityType: String(toType), entityId: String(toId) }));
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+  return rows.length;
+}
+
 export function renderPhotoPicker({ container, entityType, entityId, label = "Fotografías", draftId = null }) {
   if (!container) return;
   const ownerId = String(draftId || entityId);
-  container.innerHTML = `<div class="psr-photo-section"><div class="psr-photo-head"><strong>📷 ${label}</strong><span class="psr-photo-limit">máx. 80 KB</span></div><label class="psr-photo-add">📷 Tomar / seleccionar foto<input class="psr-photo-input" type="file" accept="image/*" capture="environment" hidden></label><div class="psr-photo-grid"></div></div>`;
+  container.innerHTML = `<div class="psr-photo-section"><div class="psr-photo-head"><strong>📷 ${label}</strong><span class="psr-photo-limit">máx. 80 KB</span></div><div class="psr-photo-add-actions"><label class="psr-photo-add">📷 Tomar foto<input class="psr-photo-input-camera" type="file" accept="image/*" capture="environment" hidden></label><label class="psr-photo-add">🖼️ Elegir de galería<input class="psr-photo-input-gallery" type="file" accept="image/*" multiple hidden></label></div><div class="psr-photo-grid"></div></div>`;
   const grid = container.querySelector(".psr-photo-grid");
 
   const render = async () => {
@@ -227,29 +255,16 @@ export function renderPhotoPicker({ container, entityType, entityId, label = "Fo
     });
   };
 
-  container.dataset.photoSaving = "false";
-  container._photoSavePromise = null;
-  container.querySelector(".psr-photo-input").addEventListener("change", event => {
-    const file = event.target.files?.[0];
+  const handleFiles = async event => {
+    const files = Array.from(event.target.files || []);
     event.target.value = "";
-    if (!file) return;
-
-    container.dataset.photoSaving = "true";
-    const pendingSave = (async () => {
-      try {
-        await savePhoto(file, entityType, ownerId, label);
-        await render();
-      } catch (error) {
-        alert(error.message || "No se pudo guardar la fotografía.");
-        throw error;
-      } finally {
-        container.dataset.photoSaving = "false";
-        if (container._photoSavePromise === pendingSave) container._photoSavePromise = null;
-      }
-    })();
-    container._photoSavePromise = pendingSave;
-    // Evita un rechazo sin gestionar cuando el usuario no pulsa Guardar.
-    pendingSave.catch(() => {});
-  });
+    if (!files.length) return;
+    try {
+      for (const file of files) await savePhoto(file, entityType, ownerId, label);
+      await render();
+    } catch (error) { alert(error.message || "No se pudo guardar la fotografía."); }
+  };
+  container.querySelector(".psr-photo-input-camera").addEventListener("change", handleFiles);
+  container.querySelector(".psr-photo-input-gallery").addEventListener("change", handleFiles);
   render();
 }

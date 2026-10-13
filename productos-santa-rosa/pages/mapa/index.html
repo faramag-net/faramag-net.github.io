@@ -36,6 +36,7 @@
 
   <div class="mapa-acciones">
     <button id="btnMiUbicacion" type="button">📍 Mi ubicación</button>
+    <button id="btnBandejaFotos" type="button">📷 Fotos rápidas</button>
     <button id="btnTrazar" type="button">✏️ Trazar ruta</button>
     <button id="btnQuitarTrazos" type="button">🗑️ Quitar trazos</button>
     <button id="btnQuitarFiltros" type="button">✕ Quitar</button>
@@ -72,8 +73,8 @@
       <input type="hidden" id="mapaLongitud">
 
       <div class="tipo-registro">
-        <label><input type="radio" name="tipoRegistro" value="real" checked> 👤 Cliente real</label>
-        <label><input type="radio" name="tipoRegistro" value="prospecto"> 🎯 Prospecto</label>
+        <label><input type="radio" name="tipoRegistro" value="real"> 👤 Cliente real</label>
+        <label><input type="radio" name="tipoRegistro" value="prospecto" checked> 🎯 Prospecto</label>
         <label><input type="radio" name="tipoRegistro" value="tienda"> 🏪 Tienda</label>
       </div>
 
@@ -104,6 +105,7 @@
       </div>
 
       <div id="mapaFotos" class="mapa-fotos"></div>
+      <button id="btnAdjuntarFotoTemporal" class="btn-secundario btn-adjuntar-temporal" type="button">📥 Adjuntar foto temporal</button>
 
       <div class="coordenadas-modal">
         <span>📍 <b>Ubicación</b></span>
@@ -127,6 +129,25 @@
       <button id="btnCerrarFotosMapa" type="button" aria-label="Cerrar fotografías">×</button>
     </div>
     <div id="galeriaFotosMapa" class="galeria-fotos-mapa"></div>
+  </div>
+</div>
+
+
+<div id="modalBandejaFotos" class="modal-mapa modal-bandeja-fotos" aria-hidden="true">
+  <div class="modal-mapa-card" role="dialog" aria-modal="true" aria-labelledby="tituloBandejaFotos">
+    <div class="modal-mapa-head">
+      <div><small>Mapa interactivo · almacenamiento temporal</small><h2 id="tituloBandejaFotos">📷 Fotos rápidas</h2></div>
+      <button id="btnCerrarBandejaFotos" type="button" aria-label="Cerrar fotos temporales">×</button>
+    </div>
+    <p class="bandeja-fotos-ayuda">Toma varias fotos ahora y asígnalas después a cada tienda o restaurante. Se guardan comprimidas en este dispositivo, no en la galería del teléfono.</p>
+    <div class="bandeja-fotos-acciones">
+      <button id="btnCapturarFotoTemporal" type="button">📷 Tomar foto</button>
+      <button id="btnElegirFotoGaleria" type="button">🖼️ Elegir de galería</button>
+      <input id="inputCapturarFotoTemporal" type="file" accept="image/*" capture="environment" hidden>
+      <input id="inputElegirFotoGaleria" type="file" accept="image/*" multiple hidden>
+    </div>
+    <div id="listaFotosTemporales" class="lista-fotos-temporales"></div>
+    <div class="modal-acciones"><button id="btnCerrarBandejaFotosAbajo" class="btn-secundario" type="button">Cerrar</button></div>
   </div>
 </div>
 

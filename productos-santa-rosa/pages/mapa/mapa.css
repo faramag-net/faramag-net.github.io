@@ -126,3 +126,20 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; }
   .acciones-trazo { grid-template-columns:1fr 1fr; }
   .acciones-trazo .btn-finalizar-trazo { grid-column:1 / -1; }
 }
+
+
+/* Fotos rápidas: bandeja temporal para capturar en campo y asignar después. */
+.psr-photo-add-actions,.bandeja-fotos-acciones{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0}
+.btn-adjuntar-temporal{width:100%;margin:4px 0 10px}
+.modal-bandeja-fotos{z-index:3200}
+.bandeja-fotos-ayuda{font-size:13px;line-height:1.45;color:#4b5563;margin:0 0 10px}
+.bandeja-fotos-acciones button,.foto-temporal-card button{border:1px solid #cbd5e1;background:#f8fafc;color:#111827;border-radius:9px;padding:9px 11px;font-weight:700;cursor:pointer}
+.lista-fotos-temporales{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}
+.foto-temporal-card{min-width:0;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;background:#fff}
+.foto-temporal-card img{display:block;width:100%;height:120px;object-fit:cover;background:#f3f4f6}
+.foto-temporal-card .foto-temporal-meta{padding:7px;display:flex;flex-direction:column;gap:6px;font-size:12px}
+.foto-temporal-card .foto-temporal-botones{display:flex;gap:5px}
+.foto-temporal-card button{flex:1;padding:7px 5px;font-size:12px}
+.foto-temporal-card .foto-temporal-eliminar{color:#b91c1c}
+.fotos-temporales-vacio{grid-column:1/-1;padding:18px 10px;text-align:center;color:#6b7280;border:1px dashed #cbd5e1;border-radius:10px;font-size:13px}
+@media(max-width:380px){.lista-fotos-temporales{grid-template-columns:repeat(2,minmax(0,1fr))}.foto-temporal-card img{height:95px}}
