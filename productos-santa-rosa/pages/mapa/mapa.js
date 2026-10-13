@@ -1587,8 +1587,25 @@ const modalActividad = document.getElementById("modalActividad");
 const selectActividadEmpresa = document.getElementById("actividadEmpresa");
 function renderAgendaEmpresa(empresaId) {
   const box = document.getElementById("agendaEmpresaLista");
-  const actividades = getActividades().filter(a => String(a.empresaId) === String(empresaId)).sort((a,b) => `${b.fecha}T${b.hora}`.localeCompare(`${a.fecha}T${a.hora}`));
-  box.innerHTML = actividades.length ? `<h3>Actividades</h3>${actividades.map(a => `<div class="agenda-item"><b>${escapeHtml(fechaCorta(a.fecha))} · ${escapeHtml(a.hora)}</b><div>${escapeHtml(a.motivo)}</div><small>${escapeHtml(a.estado)}</small>${a.estado === "pendiente" ? `<button type="button" data-agenda-estado="realizada" data-agenda-id="${escapeHtml(a.id)}">✓ Realizada</button><button type="button" data-agenda-estado="cancelada" data-agenda-id="${escapeHtml(a.id)}">Cancelar</button>` : ""}</div>`).join("") : '<p class="popup-meta">Sin actividades registradas.</p>';
+  if (!box) return;
+  const actividades = getActividades()
+    .filter(a => String(a.empresaId) === String(empresaId))
+    .sort((a, b) => String(b.fecha || "").concat("T", String(b.hora || ""))
+      .localeCompare(String(a.fecha || "").concat("T", String(a.hora || ""))));
+  if (!actividades.length) {
+    box.innerHTML = "<h3>Actividades</h3><p class=\"popup-meta\">Sin actividades registradas.</p>";
+    return;
+  }
+  const items = actividades.map(a => {
+    const botones = a.estado === "pendiente"
+      ? '<button type="button" data-agenda-estado="realizada" data-agenda-id="' + escapeHtml(a.id) + '">✓ Realizada</button>'
+        + '<button type="button" data-agenda-estado="cancelada" data-agenda-id="' + escapeHtml(a.id) + '">Cancelar</button>'
+      : "";
+    return '<div class="agenda-item"><b>' + escapeHtml(fechaCorta(a.fecha)) + ' · '
+      + escapeHtml(a.hora || "") + '</b><div>' + escapeHtml(a.motivo || "")
+      + '</div><small>' + escapeHtml(a.estado || "pendiente") + '</small>' + botones + '</div>';
+  }).join("");
+  box.innerHTML = "<h3>Actividades</h3>" + items;
 }
 function abrirAgenda(empresaId) {
   selectActividadEmpresa.innerHTML = clientesMapa.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.nombre)}</option>`).join("");
