@@ -19,28 +19,28 @@
   </div>
 
   <div class="mapa-busqueda">
-    <input id="buscarMapa" type="search" placeholder="🔎 Buscar cliente, prospecto, tienda, dirección…" autocomplete="off">
-    <button id="btnNuevoCliente" type="button">＋ Nuevo</button>
-    <button id="btnAgregarExistente" type="button">➕ Existente</button>
+    <input id="buscarMapa" type="search" placeholder="🔎 Buscar cliente, prospecto, tienda…" autocomplete="off">
+    <button id="btnActividad" type="button" aria-label="Programar actividad" title="Programar actividad">📅<span>Actividad</span></button>
   </div>
 
-  <div class="mapa-filtros">
-    <div class="filtros-head">
-      <span>Categorías</span>
-      <div class="filtros-head-acciones">
-        <button id="btnNuevaCategoria" type="button">＋ Categoría</button>
-      </div>
-    </div>
-    <div id="listaCategorias" class="lista-categorias"></div>
-  </div>
-
-  <div class="mapa-acciones">
+  <div class="mapa-panel-scroll">
+  <section class="mapa-herramientas">
+    <div class="herramientas-titulo">Herramientas</div>
+    <div class="mapa-acciones">
     <button id="btnMiUbicacion" type="button">📍 Mi ubicación</button>
     <button id="btnBandejaFotos" type="button">📷 Fotos rápidas</button>
     <button id="btnTrazar" type="button">✏️ Trazar ruta</button>
     <button id="btnQuitarTrazos" type="button">🗑️ Quitar trazos</button>
     <button id="btnQuitarFiltros" type="button">✕ Quitar</button>
-    <button id="btnLimpiarFiltros" type="button">↺ Limpiar</button>
+    <button id="btnLimpiarFiltros" type="button">↺ Restablecer</button>
+    </div>
+  </section>
+  <div class="mapa-filtros">
+    <div class="filtros-head">
+      <button id="btnToggleCategorias" type="button" aria-expanded="false">⌄ Categorías</button>
+      <div class="filtros-head-acciones"><button id="btnNuevaCategoria" type="button">＋ Categoría</button></div>
+    </div>
+    <div id="listaCategorias" class="lista-categorias" hidden></div>
   </div>
 
   <div id="controlesTrazo" class="controles-trazo" hidden>
@@ -51,7 +51,21 @@
       <button id="btnFinalizarTrazo" type="button" class="btn-finalizar-trazo">✓ Finalizar trazo</button>
     </div>
   </div>
-  <small id="estadoUbicacion">Toca el mapa para colocar un nuevo cliente o prospecto.</small>
+  <small id="estadoUbicacion">Mantén pulsado el mapa para crear un registro.</small>
+  </div>
+</div>
+
+<div id="modalActividad" class="modal-mapa" aria-hidden="true">
+  <div class="modal-mapa-card" role="dialog" aria-modal="true" aria-labelledby="tituloActividad">
+    <div class="modal-mapa-head"><div><small>Agenda de la empresa</small><h2 id="tituloActividad">📅 Nueva actividad</h2></div><button id="cerrarModalActividad" type="button" aria-label="Cerrar">×</button></div>
+    <form id="formActividad">
+      <div class="campo"><label for="actividadEmpresa">Empresa</label><select id="actividadEmpresa" required></select></div>
+      <div class="dos-columnas"><div class="campo"><label for="actividadFecha">Fecha</label><input id="actividadFecha" type="date" required></div><div class="campo"><label for="actividadHora">Hora</label><input id="actividadHora" type="time" required></div></div>
+      <div class="campo"><label for="actividadMotivo">Motivo</label><input id="actividadMotivo" maxlength="180" required placeholder="Motivo de la visita"></div>
+      <div class="modal-acciones"><button class="btn-secundario" id="cancelarActividad" type="button">Cancelar</button><button class="btn-principal" type="submit">Guardar actividad</button></div>
+    </form>
+    <div id="agendaEmpresaLista" class="agenda-empresa-lista"></div>
+  </div>
 </div>
 
 <button id="btnUbicacionPermanente" class="btn-ubicacion-permanente" type="button" aria-label="Actualizar ubicación">📍</button>

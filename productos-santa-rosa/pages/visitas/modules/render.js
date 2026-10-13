@@ -176,6 +176,7 @@ function clienteCard(
         <p class="direccion">
             📍 ${cliente.direccion || "-"}
         </p>
+        <p class="fecha-registro-cliente">📅 Registro: ${cliente.createdAt ? new Date(cliente.createdAt).toLocaleDateString("es-MX") : "No disponible"}</p>
 
         <div class="cliente-resumen-venta">
             💰 Vendido: <strong>$${totalVendido.toFixed(2)}</strong>

@@ -229,6 +229,7 @@ clientes.forEach(cliente => {
                     Dirección:
                     ${cliente.direccion || ""}
                 </p>
+                <p class="fecha-registro-mercado">📅 Registro: ${cliente.createdAt ? new Date(cliente.createdAt).toLocaleDateString("es-MX") : "No disponible"}</p>
             
                 <p>
                     Comentarios:
@@ -653,6 +654,7 @@ if(filtroProducto){
                 Dirección:
                 ${cliente.direccion || ""}
             </p>
+            <p class="fecha-registro-mercado">📅 Registro: ${cliente.createdAt ? new Date(cliente.createdAt).toLocaleDateString("es-MX") : "No disponible"}</p>
 
             <button
                 id="btnAgregarProducto"

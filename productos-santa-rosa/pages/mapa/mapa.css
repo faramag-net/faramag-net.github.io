@@ -143,3 +143,43 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; }
 .foto-temporal-card .foto-temporal-eliminar{color:#b91c1c}
 .fotos-temporales-vacio{grid-column:1/-1;padding:18px 10px;text-align:center;color:#6b7280;border:1px dashed #cbd5e1;border-radius:10px;font-size:13px}
 @media(max-width:380px){.lista-fotos-temporales{grid-template-columns:repeat(2,minmax(0,1fr))}.foto-temporal-card img{height:95px}}
+
+/* Menú móvil compacto: panel fijo y contenido interior desplazable. */
+.mapa-panel{display:flex;flex-direction:column;overflow:hidden;max-height:min(76dvh,680px)}
+.mapa-panel-head,.mapa-busqueda{flex:none}
+.mapa-busqueda{grid-template-columns:minmax(0,1fr) 66px;align-items:stretch}
+.mapa-busqueda input{width:100%;min-width:0}
+#btnActividad{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 3px;background:#f1f5f9;color:#243447;font-size:18px;line-height:1.1}
+#btnActividad span{font-size:11px;font-weight:600}
+.mapa-panel-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;flex:1}
+.mapa-herramientas{padding-top:9px}
+.herramientas-titulo{font-size:13px;font-weight:700;margin:0 0 7px}
+.mapa-acciones{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:0}
+.mapa-acciones button{min-width:0;min-height:48px;padding:7px 3px;font-size:11px;line-height:1.2;overflow-wrap:anywhere}
+.mapa-filtros{margin-top:10px;padding-top:8px}
+.filtros-head{margin:0;min-height:34px}
+#btnToggleCategorias{padding:5px 2px;background:transparent;color:#243447;font-size:13px;text-align:left}
+.filtros-head button#btnNuevaCategoria{padding:6px 8px;font-size:11px;min-height:30px}
+.lista-categorias{padding:8px 0 2px}
+.lista-categorias[hidden]{display:none!important}
+.popup-fecha{font-size:11px;color:#64748b;margin:2px 0 5px}
+.popup-semaforo{display:inline-block;width:9px;height:9px;border-radius:50%;margin-left:auto;flex:none;background:#16a34a;box-shadow:0 0 0 2px #fff,0 0 0 3px #d1d5db}
+.popup-semaforo.vencida{background:#dc2626}.popup-semaforo.proxima{background:#eab308}
+.popup-botones{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.popup-botones button{min-width:0;padding:8px 3px;font-size:11px;white-space:nowrap}
+.agenda-empresa-lista{margin-top:12px;display:grid;gap:7px}
+.agenda-item{padding:9px;border:1px solid #e2e8f0;border-radius:9px;font-size:13px}
+.agenda-item small{display:block;color:#64748b;margin-top:3px}
+.agenda-item button{padding:5px 7px;margin:5px 4px 0 0;font-size:11px}
+@media(max-width:600px){
+ .mapa-panel{top:auto;bottom:calc(8px + env(safe-area-inset-bottom));left:8px;width:calc(100vw - 16px);height:42dvh;max-height:42dvh;min-height:250px;padding:10px;border-radius:17px}
+ .mapa-panel-head{margin-bottom:7px}
+ .mapa-panel-head strong{font-size:15px}
+ .mapa-busqueda{grid-template-columns:minmax(0,1fr) 60px;gap:5px}
+ .mapa-busqueda input{font-size:13px;padding:9px 8px}
+ .mapa-acciones button{min-height:42px;font-size:10px}
+ .mapa-filtros{margin-top:8px}
+ .popup-botones button{font-size:10px}
+}
+@media(max-width:360px){.mapa-panel{height:45dvh;max-height:45dvh}.mapa-acciones{gap:4px}.mapa-acciones button{font-size:9px}}
+.pin-categoria{overflow:visible}.pin-semaforo{position:absolute;right:-7px;top:-7px;width:10px;height:10px;border-radius:50%;background:var(--semaforo-color);border:2px solid #fff;box-shadow:0 1px 4px #0006;transform:rotate(45deg)}

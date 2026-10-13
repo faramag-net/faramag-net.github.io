@@ -831,3 +831,15 @@ body{
 .cliente-resumen-venta strong{
     font-size:13px;
 }
+
+/* Agenda de visitas: acceso único en lugar de tarjetas KPI. */
+.visitas-agenda-acceso{margin:12px 0;padding:0 12px}
+#btnVerPendientes{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:12px 15px;border:0;border-radius:12px;background:#243447;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+#contadorPendientes{display:inline-flex;align-items:center;justify-content:center;min-width:27px;height:27px;padding:0 6px;border-radius:99px;background:#fff;color:#243447;font-weight:800}
+.lista-actividades-pendientes{padding:0 12px 12px;display:grid;gap:8px}
+.lista-actividades-pendientes[hidden]{display:none}
+.actividad-pendiente-card{padding:12px;border:1px solid #dbe2ea;border-radius:12px;background:#fff;display:grid;gap:5px;font-size:14px}
+.actividad-pendiente-acciones{display:flex;gap:7px;margin-top:5px}
+.actividad-pendiente-acciones button{border:0;border-radius:7px;padding:7px 9px;background:#243447;color:#fff;font-weight:600}
+.agenda-vacia{padding:12px;color:#64748b}
+.fecha-registro-cliente{font-size:12px;color:#64748b}

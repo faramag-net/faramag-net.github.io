@@ -1,3 +1,4 @@
+import { getActividades, actualizarActividad, fechaCorta, estadoActividad } from "../../core/agenda.js";
 import LocalDB
 from "../../core/storage/local-db.js";
 
@@ -227,3 +228,16 @@ document
 )
 .onchange =
     importarJSON;
+
+
+function renderAgendaPendientes(){
+ const all=getActividades();
+ const pendientes=all.filter(a=>a.estado==="pendiente").sort((a,b)=>`${a.fecha}T${a.hora}`.localeCompare(`${b.fecha}T${b.hora}`));
+ const contador=document.getElementById("contadorPendientes"); const lista=document.getElementById("listaActividadesPendientes");
+ if(contador)contador.textContent=pendientes.length;
+ if(!lista)return;
+ lista.innerHTML=pendientes.length?pendientes.map(a=>`<article class="actividad-pendiente-card"><strong>${String(a.empresaNombre||"Empresa").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</strong><div>📅 ${fechaCorta(a.fecha)} · ${a.hora}</div><div>🎯 ${String(a.motivo||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</div><div class="actividad-pendiente-acciones"><button data-agenda-estado="realizada" data-agenda-id="${a.id}">✓ Realizada</button><button data-agenda-estado="cancelada" data-agenda-id="${a.id}">Cancelar</button></div></article>`).join(""):'<p class="agenda-vacia">No hay visitas pendientes.</p>';
+}
+document.getElementById("btnVerPendientes")?.addEventListener("click",()=>{const el=document.getElementById("listaActividadesPendientes");el.hidden=!el.hidden;renderAgendaPendientes()});
+document.getElementById("listaActividadesPendientes")?.addEventListener("click",e=>{const b=e.target.closest("[data-agenda-estado]");if(!b)return;actualizarActividad(b.dataset.agendaId,b.dataset.agendaEstado);renderAgendaPendientes()});
+renderAgendaPendientes();

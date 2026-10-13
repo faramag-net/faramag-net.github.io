@@ -1,3 +1,4 @@
+import { getActividades, saveActividad, actualizarActividad, fechaCorta, estadoActividad } from "../../core/agenda.js";
 import { renderPhotoPicker, getPhotos, savePendingPhoto, getPendingPhotos, copyPendingPhoto, deletePhoto, deletePendingPhoto, movePhotosToEntity } from "../../core/media/fotos.js";
 
 /*
@@ -400,11 +401,14 @@ function categoriaPorId(id) {
   return categorias.find(c => c.id === id) || categorias[0];
 }
 
-function crearIconoCategoria(categoria) {
+function crearIconoCategoria(categoria, registro = null) {
   const color = categoria?.color || "#64748b";
+  const pendientes = registro ? getActividades().filter(a => String(a.empresaId) === String(registro.id) && a.estado === "pendiente") : [];
+  const urgente = pendientes.some(a => estadoActividad(a) === "vencida");
+  const semaforo = pendientes.length ? (urgente ? "#dc2626" : "#eab308") : "#16a34a";
   return L.divIcon({
     className: "pin-categoria-wrapper",
-    html: `<span class="pin-categoria" style="--pin-color:${escapeHtml(color)}"><span></span></span>`,
+    html: `<span class="pin-categoria" style="--pin-color:${escapeHtml(color)}"><span></span><i class="pin-semaforo" style="--semaforo-color:${semaforo}"></i></span>`,
     iconSize: [34, 42],
     iconAnchor: [17, 40],
     popupAnchor: [0, -38]
@@ -576,17 +580,24 @@ async function popupHtml(registro) {
   const comentario = registro.comentarios
     ? `<div class="popup-nota">💬 ${escapeHtml(registro.comentarios)}</div>`
     : "";
+  const actividades = getActividades().filter(a => String(a.empresaId) === String(registro.id) && a.estado === "pendiente");
+  const proxima = actividades.sort((a,b) => `${a.fecha}T${a.hora}`.localeCompare(`${b.fecha}T${b.hora}`))[0];
+  const estado = proxima ? estadoActividad(proxima) : "sin-pendientes";
+  const fechaRegistro = registro.createdAt ? new Date(registro.createdAt).toLocaleDateString("es-MX") : "No disponible";
 
   return `
     <div class="popup-cliente">
-      <div class="popup-titulo"><span class="popup-dot" style="--cat-color:${escapeHtml(categoria.color)}"></span><b>${escapeHtml(registro.nombre)}</b>${tieneFotos ? `<button type="button" class="popup-fotos-btn" data-accion="fotos" data-id="${escapeHtml(registro.id)}" aria-label="Ver fotografías" title="Ver fotografías">📷</button>` : ""}</div>
+      <div class="popup-titulo"><span class="popup-dot" style="--cat-color:${escapeHtml(categoria.color)}"></span><b>${escapeHtml(registro.nombre)}</b><span class="popup-semaforo ${estado === "vencida" ? "vencida" : (proxima ? "proxima" : "")}" title="${proxima ? (estado === "vencida" ? "Actividad vencida" : "Actividad pendiente") : "Sin pendientes"}"></span>${tieneFotos ? `<button type="button" class="popup-fotos-btn" data-accion="fotos" data-id="${escapeHtml(registro.id)}" aria-label="Ver fotografías" title="Ver fotografías">📷</button>` : ""}</div>
       <div class="popup-meta">${tipo} · ${escapeHtml(categoria.nombre)}</div>
+      <div class="popup-fecha">📅 Registro: ${fechaRegistro}</div>
+      ${proxima ? `<div class="popup-fecha">⏰ ${escapeHtml(fechaCorta(proxima.fecha))} · ${escapeHtml(proxima.hora)} — ${escapeHtml(proxima.motivo)}</div>` : ""}
       ${registro.telefono ? `<div>📞 ${escapeHtml(registro.telefono)}</div>` : ""}
       ${registro.direccion ? `<div>📍 ${escapeHtml(registro.direccion)}</div>` : ""}
       ${comentario}
       <div class="popup-botones">
         <button type="button" data-accion="editar" data-id="${escapeHtml(registro.id)}">✏️ Editar</button>
-        <button type="button" data-accion="google" data-id="${escapeHtml(registro.id)}">🗺️ Google Maps</button>
+        <button type="button" data-accion="actividad" data-id="${escapeHtml(registro.id)}">📅 Actividad</button>
+        <button type="button" data-accion="google" data-id="${escapeHtml(registro.id)}">🗺️ GMaps</button>
       </div>
     </div>
   `;
@@ -654,7 +665,7 @@ function renderMarcadores() {
     const categoria = categoriaPorId(registro.categoriaId);
     const marker = L.marker([Number(registro.latitud), Number(registro.longitud)], {
       draggable: true,
-      icon: crearIconoCategoria(categoria)
+      icon: crearIconoCategoria(categoria, registro)
     }).addTo(mapa);
 
     // En móvil el movimiento del pin se controla de forma explícita.
@@ -1160,7 +1171,7 @@ function agregarClienteExistente(clienteId) {
 
 document.getElementById("btnEliminarRegistro").addEventListener("click", eliminarRegistro);
 document.getElementById("btnCerrarModal").addEventListener("click", cerrarModal);
-document.getElementById("btnAgregarExistente").addEventListener("click", abrirModalExistente);
+
 document.getElementById("btnCerrarExistente").addEventListener("click", cerrarModalExistente);
 document.getElementById("btnCancelarExistente").addEventListener("click", cerrarModalExistente);
 document.getElementById("buscarClienteExistente").addEventListener("input", renderClientesExistentes);
@@ -1172,14 +1183,12 @@ document.addEventListener("keydown", e => {
     cerrarModalExistente();
     cerrarGaleriaFotosMapa();
     cerrarBandejaFotos();
+    cerrarAgenda();
     document.getElementById("fotoGrandeMapaWrap")?.classList.remove("visible");
   }
 });
 
-document.getElementById("btnNuevoCliente").addEventListener("click", () => {
-  const centro = mapa.getCenter();
-  abrirModal({ lat: centro.lat, lon: centro.lng });
-});
+
 document.getElementById("btnCerrarPanel").addEventListener("click", () => panel.classList.add("oculto"));
 document.getElementById("btnAbrirPanel").addEventListener("click", () => panel.classList.remove("oculto"));
 document.getElementById("buscarMapa").addEventListener("input", renderMarcadores);
@@ -1234,6 +1243,14 @@ function mostrarMiUbicacion(centrar = false) {
 document.getElementById("btnMiUbicacion")?.addEventListener("click", () => mostrarMiUbicacion(true));
 document.getElementById("btnUbicacionPermanente").addEventListener("click", () => mostrarMiUbicacion(true));
 document.getElementById("btnNuevaCategoria").addEventListener("click", crearCategoria);
+const btnToggleCategorias = document.getElementById("btnToggleCategorias");
+const listaCategoriasEl = document.getElementById("listaCategorias");
+btnToggleCategorias?.addEventListener("click", () => {
+  const expandida = btnToggleCategorias.getAttribute("aria-expanded") !== "true";
+  btnToggleCategorias.setAttribute("aria-expanded", String(expandida));
+  btnToggleCategorias.innerHTML = `${expandida ? "⌃" : "⌄"} Categorías`;
+  listaCategoriasEl.hidden = !expandida;
+});
 document.getElementById("btnTrazar")?.addEventListener("click", () => trazando ? cancelarTrazo() : iniciarTrazo());
 document.getElementById("btnQuitarTrazos")?.addEventListener("click", alternarModoQuitarTrazos);
 const btnFinalizarTrazo = document.getElementById("btnFinalizarTrazo");
@@ -1430,6 +1447,10 @@ document.addEventListener("click", async event => {
     if (marker) marker.closePopup();
     abrirModal({ registro });
   }
+  if (boton.dataset.accion === "actividad") {
+    if (marker) marker.closePopup();
+    abrirAgenda(registro.id);
+  }
   if (boton.dataset.accion === "google") abrirGoogleMaps(registro);
 });
 
@@ -1559,3 +1580,36 @@ function sincronizarEmpresasMercadoEnMapa() {
 // Se ejecuta una vez al cargar para que las tiendas geolocalizadas de Mercado aparezcan en el mapa.
 sincronizarEmpresasMercadoEnMapa();
 renderMarcadores();
+
+
+// Agenda simple compartida entre mapa y visitas.
+const modalActividad = document.getElementById("modalActividad");
+const selectActividadEmpresa = document.getElementById("actividadEmpresa");
+function renderAgendaEmpresa(empresaId) {
+  const box = document.getElementById("agendaEmpresaLista");
+  const actividades = getActividades().filter(a => String(a.empresaId) === String(empresaId)).sort((a,b) => `${b.fecha}T${b.hora}`.localeCompare(`${a.fecha}T${a.hora}`));
+  box.innerHTML = actividades.length ? `<h3>Actividades</h3>${actividades.map(a => `<div class="agenda-item"><b>${escapeHtml(fechaCorta(a.fecha))} · ${escapeHtml(a.hora)}</b><div>${escapeHtml(a.motivo)}</div><small>${escapeHtml(a.estado)}</small>${a.estado === "pendiente" ? `<button type="button" data-agenda-estado="realizada" data-agenda-id="${escapeHtml(a.id)}">✓ Realizada</button><button type="button" data-agenda-estado="cancelada" data-agenda-id="${escapeHtml(a.id)}">Cancelar</button>` : ""}</div>`).join("") : '<p class="popup-meta">Sin actividades registradas.</p>';
+}
+function abrirAgenda(empresaId) {
+  selectActividadEmpresa.innerHTML = clientesMapa.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.nombre)}</option>`).join("");
+  if (empresaId) selectActividadEmpresa.value = String(empresaId);
+  document.getElementById("actividadFecha").value ||= new Date().toISOString().slice(0,10);
+  document.getElementById("actividadHora").value ||= "09:00";
+  renderAgendaEmpresa(selectActividadEmpresa.value);
+  modalActividad.classList.add("visible"); modalActividad.setAttribute("aria-hidden","false");
+}
+function cerrarAgenda(){modalActividad.classList.remove("visible");modalActividad.setAttribute("aria-hidden","true")}
+document.getElementById("btnActividad")?.addEventListener("click", () => abrirAgenda());
+document.getElementById("cerrarModalActividad")?.addEventListener("click", cerrarAgenda);
+document.getElementById("cancelarActividad")?.addEventListener("click", cerrarAgenda);
+modalActividad?.addEventListener("click", e => {if(e.target===modalActividad) cerrarAgenda()});
+selectActividadEmpresa?.addEventListener("change", () => renderAgendaEmpresa(selectActividadEmpresa.value));
+document.getElementById("formActividad")?.addEventListener("submit", e => {
+  e.preventDefault();
+  const empresaId = selectActividadEmpresa.value;
+  if(!empresaId){alert("Selecciona una empresa.");return}
+  saveActividad({empresaId, empresaNombre: clientesMapa.find(c=>String(c.id)===String(empresaId))?.nombre || "Empresa", fecha:document.getElementById("actividadFecha").value, hora:document.getElementById("actividadHora").value, motivo:document.getElementById("actividadMotivo").value.trim()});
+  document.getElementById("actividadMotivo").value="";
+  renderAgendaEmpresa(empresaId); renderMarcadores(); actualizarEstado("✓ Actividad programada.");
+});
+document.getElementById("agendaEmpresaLista")?.addEventListener("click", e => {const b=e.target.closest("[data-agenda-estado]");if(!b)return;actualizarActividad(b.dataset.agendaId,b.dataset.agendaEstado);renderAgendaEmpresa(selectActividadEmpresa.value);renderMarcadores()});

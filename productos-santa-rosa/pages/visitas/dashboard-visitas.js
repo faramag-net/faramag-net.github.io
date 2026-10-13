@@ -5,14 +5,9 @@ export function renderDashboardVisitas(){
     const metrics =
         LocalDB.getDashboardMetrics();
 
-    document.getElementById(
-        "montoVendido"
-    ).innerText =
-        `$${metrics.totalSalesToday.toFixed(2)}`;
-
-    document.getElementById(
-        "visitasPendientes"
-    ).innerText =
-        metrics.pendingVisits;
+    const monto = document.getElementById("montoVendido");
+    const visitas = document.getElementById("visitasPendientes");
+    if (monto) monto.innerText = `$${metrics.totalSalesToday.toFixed(2)}`;
+    if (visitas) visitas.innerText = metrics.pendingVisits;
 
 }
