@@ -22,6 +22,10 @@ const DEFAULT_CATEGORIES = [
 ];
 
 const mapa = L.map("mapa", {
+  // Leaflet necesita un maxZoom definido en el mapa para calcular correctamente
+  // los límites de zoom, especialmente al expandir grupos de marcadores.
+  minZoom: 3,
+  maxZoom: 22,
   zoomControl: true,
   touchZoom: true,
   zoomAnimation: false,
