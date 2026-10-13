@@ -309,3 +309,145 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; }
   .mapa-panel-head strong { font-size: 12px !important; }
   .mapa-acciones button { font-size: 8px !important; }
 }
+
+
+/* v1.2.0.16 · Correcciones visibles solicitadas: cerrar actividad, controles superiores y panel más compacto. */
+#modalActividad .modal-mapa-head button#cerrarModalActividad {
+  color: #243447 !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #dbe3ec !important;
+  border-radius: 8px !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 23px !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  flex: 0 0 32px !important;
+}
+
+@media (max-width: 600px) {
+  /* Panel fijo y más bajo: deja más mapa visible y permite desplazar el contenido dentro. */
+  .mapa-panel {
+    position: fixed !important;
+    top: auto !important;
+    bottom: calc(5px + env(safe-area-inset-bottom)) !important;
+    left: 5px !important;
+    right: 5px !important;
+    width: auto !important;
+    height: min(40dvh, 330px) !important;
+    min-height: 238px !important;
+    max-height: min(40dvh, 330px) !important;
+    padding: 7px !important;
+    gap: 0 !important;
+  }
+  .mapa-panel-head {
+    min-height: 21px !important;
+    margin: 0 0 3px !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+  .mapa-panel-head strong {
+    font-size: 12px !important;
+    line-height: 1 !important;
+    font-weight: 700 !important;
+  }
+  .mapa-panel-head #btnCerrarPanel {
+    width: 24px !important;
+    height: 22px !important;
+    min-width: 24px !important;
+    min-height: 22px !important;
+    padding: 0 !important;
+    font-size: 19px !important;
+    line-height: 1 !important;
+    color: #243447 !important;
+    background: transparent !important;
+  }
+  .mapa-busqueda {
+    grid-template-columns: minmax(0, 1fr) 48px !important;
+    gap: 4px !important;
+    margin: 0 !important;
+  }
+  .mapa-busqueda input {
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 4px 7px !important;
+    font-size: 11px !important;
+    line-height: 1 !important;
+    border-radius: 8px !important;
+  }
+  #btnActividad {
+    width: 48px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 1px !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    border-radius: 8px !important;
+    color: #243447 !important;
+  }
+  #btnActividad span { font-size: 8px !important; line-height: 1 !important; }
+  .mapa-panel-scroll {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .mapa-herramientas { padding-top: 5px !important; }
+  .herramientas-titulo { font-size: 10px !important; margin: 0 0 3px !important; line-height: 1.1 !important; }
+  .mapa-acciones { gap: 4px !important; }
+  .mapa-acciones button {
+    min-height: 31px !important;
+    padding: 3px 2px !important;
+    font-size: 8px !important;
+    line-height: 1.05 !important;
+    border-radius: 6px !important;
+  }
+  .mapa-filtros { margin-top: 4px !important; padding-top: 3px !important; }
+  .filtros-head { min-height: 25px !important; gap: 4px !important; }
+  #btnToggleCategorias { min-height: 24px !important; padding: 3px 1px !important; font-size: 10px !important; }
+  .filtros-head button#btnNuevaCategoria { min-height: 24px !important; padding: 3px 6px !important; font-size: 9px !important; }
+  #estadoUbicacion { margin-top: 3px !important; font-size: 9px !important; line-height: 1.1 !important; }
+
+  /* position:fixed explícito evita que las reglas anteriores los dejen abajo del mapa. */
+  #btnAbrirPanel.btn-flotante {
+    position: fixed !important;
+    top: calc(7px + env(safe-area-inset-top)) !important;
+    bottom: auto !important;
+    left: 7px !important;
+    right: auto !important;
+    z-index: 3000 !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+    font-size: 17px !important;
+    line-height: 1 !important;
+  }
+  #btnUbicacionPermanente {
+    position: fixed !important;
+    top: calc(7px + env(safe-area-inset-top)) !important;
+    bottom: auto !important;
+    right: 7px !important;
+    left: auto !important;
+    z-index: 3000 !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+  }
+}
+@media (max-width: 360px) {
+  .mapa-panel { height: min(42dvh, 330px) !important; max-height: min(42dvh, 330px) !important; }
+  .mapa-panel-head strong { font-size: 11px !important; }
+  .mapa-acciones button { font-size: 7.5px !important; }
+}
