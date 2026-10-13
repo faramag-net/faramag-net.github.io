@@ -133,6 +133,24 @@ export async function movePhotos(entityType, fromId, toId) {
   });
 }
 
+// Transfiere fotografías de una entidad temporal a su entidad definitiva.
+// A diferencia de movePhotos, permite cambiar también entityType.
+export async function movePhotosBetween(fromType, fromId, toType, toId) {
+  if (!fromId || !toId || (String(fromType) === String(toType) && String(fromId) === String(toId))) return 0;
+  const rows = await getPhotos(fromType, fromId);
+  if (!rows.length) return 0;
+  const db = await openDB();
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, "readwrite");
+    const store = tx.objectStore(STORE);
+    rows.forEach(row => store.put({ ...row, entityType: String(toType), entityId: String(toId) }));
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error || new Error("No se pudieron asociar las fotografías al registro."));
+  });
+  return rows.length;
+}
+
 export async function getAllPhotos() {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -209,12 +227,29 @@ export function renderPhotoPicker({ container, entityType, entityId, label = "Fo
     });
   };
 
-  container.querySelector(".psr-photo-input").addEventListener("change", async event => {
+  container.dataset.photoSaving = "false";
+  container._photoSavePromise = null;
+  container.querySelector(".psr-photo-input").addEventListener("change", event => {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
-    try { await savePhoto(file, entityType, ownerId, label); await render(); }
-    catch (error) { alert(error.message || "No se pudo guardar la fotografía."); }
+
+    container.dataset.photoSaving = "true";
+    const pendingSave = (async () => {
+      try {
+        await savePhoto(file, entityType, ownerId, label);
+        await render();
+      } catch (error) {
+        alert(error.message || "No se pudo guardar la fotografía.");
+        throw error;
+      } finally {
+        container.dataset.photoSaving = "false";
+        if (container._photoSavePromise === pendingSave) container._photoSavePromise = null;
+      }
+    })();
+    container._photoSavePromise = pendingSave;
+    // Evita un rechazo sin gestionar cuando el usuario no pulsa Guardar.
+    pendingSave.catch(() => {});
   });
   render();
 }

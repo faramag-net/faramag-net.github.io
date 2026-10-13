@@ -1,4 +1,4 @@
-import { renderPhotoPicker, movePhotos, getPhotos } from "../../core/media/fotos.js";
+import { renderPhotoPicker, movePhotosBetween, getPhotos } from "../../core/media/fotos.js";
 
 /*
  * Productos Santa Rosa
@@ -926,7 +926,15 @@ function abrirModal({ registro = null, lat = null, lon = null, obtenerDireccion 
   document.getElementById("coordenadasTexto").textContent = `${Number(registro?.latitud ?? lat).toFixed(7)}, ${Number(registro?.longitud ?? lon).toFixed(7)}`;
   modal.classList.add("visible");
   modal.setAttribute("aria-hidden", "false");
-  renderPhotoPicker({ container: document.getElementById("mapaFotos"), entityType: modal.dataset.photoEntityType, entityId: modal.dataset.photoEntityId, label: "Fotografías" });
+  const contenedorFotos = document.getElementById("mapaFotos");
+  // Recupera fotografías de versiones anteriores que pudieron quedar guardadas
+  // con tipo "mapa" antes de que el registro tuviera su entidad definitiva.
+  const prepararFotos = registro?.id
+    ? movePhotosBetween("mapa", registro.id, modal.dataset.photoEntityType, modal.dataset.photoEntityId)
+    : Promise.resolve();
+  prepararFotos
+    .catch(error => console.warn("No fue posible recuperar fotografías previas:", error))
+    .finally(() => renderPhotoPicker({ container: contenedorFotos, entityType: modal.dataset.photoEntityType, entityId: modal.dataset.photoEntityId, label: "Fotografías" }));
   setTimeout(() => document.getElementById("mapaNombre").focus(), 50);
 
   // Al crear un registro nuevo, obtener automáticamente la dirección
@@ -967,71 +975,109 @@ function eliminarRegistro() {
   renderMarcadores();
 }
 
-form.addEventListener("submit", event => {
+form.addEventListener("submit", async event => {
   event.preventDefault();
-  const id = document.getElementById("mapaId").value;
-  const tipo = document.querySelector('input[name="tipoRegistro"]:checked')?.value || "real";
-  const nombre = document.getElementById("mapaNombre").value.trim();
-  const latitud = Number(document.getElementById("mapaLatitud").value);
-  const longitud = Number(document.getElementById("mapaLongitud").value);
+  if (form.dataset.saving === "true") return;
 
-  if (!nombre) return alert("Escribe el nombre del cliente o prospecto.");
-  if (!Number.isFinite(latitud) || !Number.isFinite(longitud)) return alert("La ubicación del pin no es válida.");
-
-  const categoriaId = tipo === "tienda" ? "tienda" : document.getElementById("mapaCategoria").value;
-  const datos = {
-    nombre,
-    telefono: document.getElementById("mapaTelefono").value.trim(),
-    direccion: document.getElementById("mapaDireccion").value.trim(),
-    comentarios: document.getElementById("mapaComentarios").value.trim(),
-    categoriaId,
-    tipo,
-    latitud,
-    longitud,
-    updatedAt: new Date().toISOString()
-  };
-
-  if (id) {
-    const registro = clientesMapa.find(c => String(c.id) === String(id));
-    if (!registro) return;
-
-    const tipoAnterior = registro.tipo;
-
-    if (tipoAnterior === "real" && tipo === "prospecto") {
-      const confirmarCambio = confirm(
-        `¿Cambiar a "${nombre}" de 👤 Cliente real a 🎯 Prospecto?\n\n` +
-        `Este cambio hará que deje de aparecer en Visitas.\n` +
-        `El registro permanecerá en el mapa como prospecto.`
-      );
-
-      if (!confirmarCambio) {
-        return;
-      }
-    }
-
-    Object.assign(registro, datos, { mapVisible: true });
-
-    if (tipo === "real") {
-      // Al volver a Cliente real, vuelve a quedar disponible en Visitas.
-      crearClienteRealDesdeMapa(registro);
-      sincronizarClienteReal(registro);
-    } else {
-      // Prospecto permanece en el mapa, pero deja de mostrarse en Visitas.
-      marcarRouteClientComoProspecto(registro);
-    }
-  } else {
-    const draftPhotoId = modal.dataset.photoEntityId || crearId();
-    const registro = { id: draftPhotoId, createdAt: new Date().toISOString(), mapVisible: true, ...datos };
-    if (tipo === "real") crearClienteRealDesdeMapa(registro);
-    clientesMapa.push(registro);
-    if (tipo === "real" && registro.routeClientId) movePhotos("cliente", id, registro.routeClientId).catch(() => {});
-    if (tipo === "tienda" && registro.marketPlaceId) movePhotos("empresa", id, registro.marketPlaceId).catch(() => {});
+  const botonGuardar = form.querySelector('[type="submit"]');
+  form.dataset.saving = "true";
+  if (botonGuardar) {
+    botonGuardar.disabled = true;
+    botonGuardar.dataset.textoOriginal = botonGuardar.textContent;
+    botonGuardar.textContent = "Guardando…";
   }
 
-  guardarMapa();
-  cerrarModal();
-  renderMarcadores();
-  actualizarEstado(`✓ ${tipo === "tienda" ? "Tienda" : (tipo === "prospecto" ? "Prospecto" : "Cliente")} guardado.`);
+  try {
+    // Si la compresión o escritura de una fotografía sigue en curso, esperamos
+    // a que termine antes de decidir a qué registro debe quedar asociada.
+    const contenedorFotos = document.getElementById("mapaFotos");
+    if (contenedorFotos?._photoSavePromise) {
+      try { await contenedorFotos._photoSavePromise; }
+      catch (_) { return; }
+    }
+
+    const id = document.getElementById("mapaId").value;
+    const tipo = document.querySelector('input[name="tipoRegistro"]:checked')?.value || "real";
+    const nombre = document.getElementById("mapaNombre").value.trim();
+    const latitud = Number(document.getElementById("mapaLatitud").value);
+    const longitud = Number(document.getElementById("mapaLongitud").value);
+
+    if (!nombre) return alert("Escribe el nombre del cliente o prospecto.");
+    if (!Number.isFinite(latitud) || !Number.isFinite(longitud)) return alert("La ubicación del pin no es válida.");
+
+    const categoriaId = tipo === "tienda" ? "tienda" : document.getElementById("mapaCategoria").value;
+    const datos = {
+      nombre,
+      telefono: document.getElementById("mapaTelefono").value.trim(),
+      direccion: document.getElementById("mapaDireccion").value.trim(),
+      comentarios: document.getElementById("mapaComentarios").value.trim(),
+      categoriaId,
+      tipo,
+      latitud,
+      longitud,
+      updatedAt: new Date().toISOString()
+    };
+
+    // El selector de fotos usa un ID temporal al crear. Guardamos su referencia
+    // para transferirlas al registro definitivo antes de cerrar el formulario.
+    const fotoOrigenTipo = modal.dataset.photoEntityType || "mapa";
+    const fotoOrigenId = modal.dataset.photoEntityId || id;
+    let registro;
+
+    if (id) {
+      registro = clientesMapa.find(c => String(c.id) === String(id));
+      if (!registro) return;
+
+      const tipoAnterior = registro.tipo;
+      if (tipoAnterior === "real" && tipo === "prospecto") {
+        const confirmarCambio = confirm(
+          `¿Cambiar a "${nombre}" de 👤 Cliente real a 🎯 Prospecto?\n\n` +
+          `Este cambio hará que deje de aparecer en Visitas.\n` +
+          `El registro permanecerá en el mapa como prospecto.`
+        );
+        if (!confirmarCambio) return;
+      }
+
+      Object.assign(registro, datos, { mapVisible: true });
+      if (tipo === "real") {
+        crearClienteRealDesdeMapa(registro);
+        sincronizarClienteReal(registro);
+      } else {
+        marcarRouteClientComoProspecto(registro);
+      }
+    } else {
+      const draftPhotoId = fotoOrigenId || crearId();
+      registro = { id: draftPhotoId, createdAt: new Date().toISOString(), mapVisible: true, ...datos };
+      if (tipo === "real") crearClienteRealDesdeMapa(registro);
+      clientesMapa.push(registro);
+      // Si falla la transferencia de fotos, el siguiente intento editará este
+      // registro en vez de crear un duplicado.
+      document.getElementById("mapaId").value = registro.id;
+    }
+
+    // Persistir primero el registro y después esperar a que las fotos queden
+    // vinculadas a su entidad definitiva (cliente, empresa o mapa).
+    guardarMapa();
+    const fotoDestino = photoEntityForRegistro(registro);
+    if (fotoOrigenId && fotoDestino.entityId &&
+        (String(fotoOrigenTipo) !== String(fotoDestino.entityType) || String(fotoOrigenId) !== String(fotoDestino.entityId))) {
+      await movePhotosBetween(fotoOrigenTipo, fotoOrigenId, fotoDestino.entityType, fotoDestino.entityId);
+    }
+
+    cerrarModal();
+    renderMarcadores();
+    actualizarEstado(`✓ ${tipo === "tienda" ? "Tienda" : (tipo === "prospecto" ? "Prospecto" : "Cliente")} guardado${fotoDestino.entityId ? " con fotografías sincronizadas" : ""}.`);
+  } catch (error) {
+    console.error("No fue posible guardar el registro y sus fotografías:", error);
+    alert("No se pudo completar el guardado de la fotografía. Los datos del registro se conservaron si ya se habían guardado. Intenta guardar nuevamente o abre Editar para reintentar.");
+  } finally {
+    form.dataset.saving = "false";
+    if (botonGuardar) {
+      botonGuardar.disabled = false;
+      botonGuardar.textContent = botonGuardar.dataset.textoOriginal || "Guardar";
+      delete botonGuardar.dataset.textoOriginal;
+    }
+  }
 });
 
 function abrirModalExistente() {
