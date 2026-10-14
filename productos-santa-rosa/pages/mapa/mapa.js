@@ -1192,26 +1192,22 @@ document.addEventListener("keydown", e => {
 const btnAbrirPanel = document.getElementById("btnAbrirPanel");
 const btnCerrarPanel = document.getElementById("btnCerrarPanel");
 
-function actualizarControlesPanel() {
-  const abierto = !panel.classList.contains("oculto");
-  btnAbrirPanel.setAttribute("aria-expanded", String(abierto));
-  btnAbrirPanel.setAttribute("aria-label", abierto ? "Cerrar controles" : "Abrir controles");
+function actualizarEstadoPanelMapa() {
+  const cerrado = panel.classList.contains("oculto");
+  btnAbrirPanel.setAttribute("aria-expanded", String(!cerrado));
+  btnAbrirPanel.setAttribute("aria-label", cerrado ? "Abrir controles" : "Cerrar controles");
+  btnAbrirPanel.title = cerrado ? "Abrir controles" : "Cerrar controles";
 }
 
 btnCerrarPanel.addEventListener("click", () => {
   panel.classList.add("oculto");
-  actualizarControlesPanel();
+  actualizarEstadoPanelMapa();
 });
 btnAbrirPanel.addEventListener("click", () => {
-  // El comportamiento de interruptor se limita a móvil; en escritorio conserva la apertura original.
-  if (window.matchMedia("(max-width: 600px)").matches) {
-    panel.classList.toggle("oculto");
-  } else {
-    panel.classList.remove("oculto");
-  }
-  actualizarControlesPanel();
+  panel.classList.toggle("oculto");
+  actualizarEstadoPanelMapa();
 });
-actualizarControlesPanel();
+actualizarEstadoPanelMapa();
 document.getElementById("buscarMapa").addEventListener("input", renderMarcadores);
 document.getElementById("btnQuitarFiltros").addEventListener("click", () => {
   categoriasSeleccionadas = new Set();

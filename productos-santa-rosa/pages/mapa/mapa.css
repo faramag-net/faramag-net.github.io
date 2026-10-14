@@ -459,21 +459,15 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; }
   .mapa-panel:not(.oculto) { top: 80px !important; }
 }
 @media (max-width: 600px) {
-  /* La navbar móvil ocupa la franja superior; controles flotantes debajo de ella. */
-  #btnAbrirPanel.btn-flotante,
+  /* Solo móvil: controles juntos en la esquina superior derecha, debajo de la navbar. */
+  #btnAbrirPanel.btn-flotante {
+    top: calc(68px + env(safe-area-inset-top)) !important;
+    right: 8px !important;
+    left: auto !important;
+  }
   #btnUbicacionPermanente {
     top: calc(68px + env(safe-area-inset-top)) !important;
-  }
-}
-
-/* v1.2.0.18 · Solo móvil: ambos controles juntos en la esquina superior derecha. */
-@media (max-width: 600px) {
-  #btnAbrirPanel.btn-flotante {
+    right: 50px !important;
     left: auto !important;
-    right: 47px !important;
-  }
-  #btnUbicacionPermanente {
-    left: auto !important;
-    right: 7px !important;
   }
 }
