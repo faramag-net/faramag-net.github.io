@@ -40,28 +40,6 @@ window.verVisitas =
 window.openClienteModal =
     openClienteModal;
 
-// Delegación de eventos: tocar la tarjeta abre la ficha; ✕ no propaga esa acción.
-const listaClientes = document.getElementById("listaClientes");
-listaClientes?.addEventListener("click", event => {
-    const botonEliminar = event.target.closest("[data-eliminar-cliente-id]");
-    if (botonEliminar) {
-        event.preventDefault();
-        event.stopPropagation();
-        window.eliminarClienteConfirm(botonEliminar.dataset.eliminarClienteId);
-        return;
-    }
-
-    const tarjeta = event.target.closest("[data-cliente-card-id]");
-    if (tarjeta) window.openClienteModal(tarjeta.dataset.clienteCardId);
-});
-listaClientes?.addEventListener("keydown", event => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    const tarjeta = event.target.closest("[data-cliente-card-id]");
-    if (!tarjeta || event.target.closest("button")) return;
-    event.preventDefault();
-    window.openClienteModal(tarjeta.dataset.clienteCardId);
-});
-
 window.openCrearClienteModal = () => {
 
     const form =
@@ -173,53 +151,29 @@ window.obtenerUbicacion = () => {
 
 };
 
-window.eliminarClienteConfirm = async (clienteId) => {
-    // La eliminación usa exclusivamente el ID único; nunca nombre ni categoría.
-    const id = String(clienteId ?? "");
-    if (!id) return;
+window.eliminarClienteConfirm =
+    (clienteId) => {
 
-    const clientesActuales = LocalDB.getRouteClients();
-    const cliente = clientesActuales.find(c => String(c.id) === id);
-    if (!cliente) {
-        alert("No se encontró el cliente con ese ID. No se eliminó ningún registro.");
+    if(
+        !confirm(
+            "¿Eliminar cliente?"
+        )
+    ){
         return;
     }
 
-    const nombre = String(cliente.nombre || "este cliente");
-    if (!confirm(`¿Deseas eliminar al cliente "${nombre}"?`)) return;
+    const clientes =
+        LocalDB.getRouteClients()
+        .filter(
+            c => c.id !== clienteId
+        );
 
-    if (!confirm(`CONFIRMACIÓN FINAL\n\nSe eliminará "${nombre}" de Visitas y también su pin asociado en el Mapa. Esta acción no se puede deshacer.\n\n¿Confirmas la eliminación definitiva?`)) return;
+    LocalDB.saveRouteClients(
+        clientes
+    );
 
-    try {
-        // El Mapa vincula los clientes reales mediante routeClientId.
-        // Solo se elimina el pin vinculado al ID exacto del cliente.
-        const mapKey = "psr_map_clients";
-        const mapaRaw = localStorage.getItem(mapKey);
-        if (mapaRaw) {
-            let mapa = JSON.parse(mapaRaw);
-            if (!Array.isArray(mapa)) throw new Error("Los datos del Mapa no tienen un formato válido.");
-            mapa = mapa.filter(registro => !(registro?.tipo === "real" && String(registro.routeClientId ?? "") === id));
-            localStorage.setItem(mapKey, JSON.stringify(mapa));
-        }
+    renderClientes();
 
-        // Las fotos de clientes reales en el Mapa se guardan con entityType "cliente"
-        // y entityId igual al ID de route client.
-        const { deletePhotosForEntity } = await import("../../core/media/fotos.js");
-        await deletePhotosForEntity("cliente", id);
-
-        // Volver a leer justo antes de guardar para no borrar otros cambios.
-        const clientes = LocalDB.getRouteClients();
-        if (!clientes.some(c => String(c.id) === id)) {
-            alert("El cliente ya no está disponible. No se modificaron otros registros.");
-            return;
-        }
-        LocalDB.saveRouteClients(clientes.filter(c => String(c.id) !== id));
-        renderClientes();
-        renderDashboardVisitas();
-    } catch (error) {
-        console.error("No se pudo completar la eliminación segura del cliente:", error);
-        alert("No se pudo completar la eliminación de forma segura. No continúes borrando datos manualmente; revisa el registro y vuelve a intentarlo.");
-    }
 };
 
 renderClientes();
