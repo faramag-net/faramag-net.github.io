@@ -146,60 +146,24 @@ function clienteCard(
     color,
     estado
 ){
-
     const totalVendido = getTotalVendidoCliente(cliente);
+    const fechaRegistro = cliente.createdAt
+        ? new Date(cliente.createdAt).toLocaleDateString("es-MX")
+        : "No disponible";
+    const clienteId = String(cliente.id).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 
     return `
-
-
-<div class="card-cliente">
-
-    <button
-        class="btn-eliminar-cliente"
-        onclick="
-            eliminarClienteConfirm(
-                '${cliente.id}'
-            )
-        "
-    >
-        ✕
-    </button>
-
-    <h3>
-        ${cliente.nombre}
-    </h3>
-
-        <p>
-            📞 ${cliente.telefono || "-"}
-        </p>
-
-        <p class="direccion">
-            📍 ${cliente.direccion || "-"}
-        </p>
-        <p class="fecha-registro-cliente">📅 Registro: ${cliente.createdAt ? new Date(cliente.createdAt).toLocaleDateString("es-MX") : "No disponible"}</p>
-
-        <div class="cliente-resumen-venta">
-            💰 Vendido: <strong>$${totalVendido.toFixed(2)}</strong>
-        </div>
-
-        <small>
-            ${estado}
-        </small>
-
-        <div class="acciones-cliente">
-
-            <button
-            onclick="
-            openClienteModal('${cliente.id}')
-            ">
-
-                Abrir Cliente
-
-            </button>
-
-        </div>
-
-    </div>
-
+        <article class="card-cliente" role="button" tabindex="0"
+            onclick="openClienteModal('${clienteId}')"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openClienteModal('${clienteId}')}"
+            aria-label="Abrir cliente ${String(cliente.nombre || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}">
+            <button type="button" class="btn-eliminar-cliente"
+                aria-label="Eliminar cliente"
+                onclick="event.stopPropagation();eliminarClienteConfirm('${clienteId}')">✕</button>
+            <h3>${cliente.nombre || "Sin nombre"}</h3>
+            <p class="fecha-registro-cliente">📅 Registro: ${fechaRegistro}</p>
+            <div class="cliente-resumen-venta">💰 Vendido: <strong>$${totalVendido.toFixed(2)}</strong></div>
+            <small class="estado-cliente" style="color:${color}">${estado === "🔴 Consignación Activa" ? "🔴 Consignación" : "✅ OK"}</small>
+        </article>
     `;
 }
