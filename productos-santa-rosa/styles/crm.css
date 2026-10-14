@@ -843,3 +843,118 @@ body{
 .actividad-pendiente-acciones button{border:0;border-radius:7px;padding:7px 9px;background:#243447;color:#fff;font-weight:600}
 .agenda-vacia{padding:12px;color:#64748b}
 .fecha-registro-cliente{font-size:12px;color:#64748b}
+
+
+/* Visitas: tarjetas compactas y totalmente clicables. */
+#listaClientes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+    align-items: stretch;
+}
+#listaClientes .card-cliente {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    padding: 12px 10px 10px;
+    gap: 6px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    cursor: pointer;
+    overflow: hidden;
+}
+#listaClientes .card-cliente h3 {
+    margin: 0 22px 2px 0;
+    font-size: 13px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+#listaClientes .card-cliente p {
+    margin: 0;
+}
+#listaClientes .fecha-registro-cliente {
+    font-size: 10px;
+    line-height: 1.25;
+    color: #64748b;
+}
+#listaClientes .cliente-resumen-venta {
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 4px 5px;
+    font-size: 10px;
+}
+#listaClientes .cliente-resumen-venta strong {
+    font-size: 11px;
+}
+#listaClientes .estado-cliente {
+    font-size: 10px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+#listaClientes .btn-eliminar-cliente {
+    z-index: 2;
+    top: 5px;
+    right: 5px;
+    width: 21px !important;
+    min-width: 21px !important;
+    height: 21px !important;
+    min-height: 21px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 13px;
+}
+#listaClientes .btn-eliminar-cliente:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+#listaClientes .card-cliente:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+@media (max-width: 600px) {
+    #listaClientes {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+    }
+    #listaClientes .card-cliente {
+        padding: 9px 6px 7px;
+        gap: 5px;
+        border-radius: 8px;
+    }
+    #listaClientes .card-cliente h3 {
+        margin-right: 16px;
+        font-size: 11px;
+        line-height: 1.15;
+    }
+    #listaClientes .fecha-registro-cliente {
+        font-size: 9px;
+    }
+    #listaClientes .cliente-resumen-venta {
+        display: block;
+        padding: 4px;
+        font-size: 9px;
+        line-height: 1.2;
+    }
+    #listaClientes .cliente-resumen-venta strong {
+        display: block;
+        font-size: 10px;
+        overflow-wrap: anywhere;
+    }
+    #listaClientes .estado-cliente {
+        font-size: 9px;
+    }
+    #listaClientes .btn-eliminar-cliente {
+        top: 3px;
+        right: 3px;
+        width: 18px !important;
+        min-width: 18px !important;
+        height: 18px !important;
+        min-height: 18px !important;
+        font-size: 11px;
+    }
+}
