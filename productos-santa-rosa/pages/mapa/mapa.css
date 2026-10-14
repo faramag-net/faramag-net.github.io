@@ -451,3 +451,17 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; }
   .mapa-panel-head strong { font-size: 11px !important; }
   .mapa-acciones button { font-size: 7.5px !important; }
 }
+
+
+/* v1.2.0.17 · Evitar que el panel del mapa tape la navegación global. */
+@media (min-width: 601px) {
+  /* La navbar de escritorio ocupa aproximadamente 70 px. */
+  .mapa-panel:not(.oculto) { top: 80px !important; }
+}
+@media (max-width: 600px) {
+  /* La navbar móvil ocupa la franja superior; controles flotantes debajo de ella. */
+  #btnAbrirPanel.btn-flotante,
+  #btnUbicacionPermanente {
+    top: calc(68px + env(safe-area-inset-top)) !important;
+  }
+}
