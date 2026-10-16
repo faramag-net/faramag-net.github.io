@@ -235,7 +235,7 @@ export async function movePhotosToEntity(fromType, fromId, toType, toId) {
   return rows.length;
 }
 
-export function renderPhotoPicker({ container, entityType, entityId, label = "Fotografías", draftId = null }) {
+export function renderPhotoPicker({ container, entityType, entityId, label = "Fotografías", draftId = null, readRefs = [] }) {
   if (!container) return;
   const ownerId = String(draftId || entityId);
   container.innerHTML = `<div class="psr-photo-section"><div class="psr-photo-head"><strong>📷 ${label}</strong><span class="psr-photo-limit">máx. 80 KB</span></div><div class="psr-photo-add-actions"><label class="psr-photo-add">📷 Tomar foto<input class="psr-photo-input-camera" type="file" accept="image/*" capture="environment" hidden></label><label class="psr-photo-add">🖼️ Elegir de galería<input class="psr-photo-input-gallery" type="file" accept="image/*" multiple hidden></label></div><div class="psr-photo-grid"></div></div>`;
@@ -243,7 +243,16 @@ export function renderPhotoPicker({ container, entityType, entityId, label = "Fo
 
   const render = async () => {
     grid.innerHTML = "";
-    const photos = await getPhotos(entityType, ownerId);
+    const refs = Array.isArray(readRefs) && readRefs.length
+      ? readRefs
+      : [{ entityType, entityId: ownerId }];
+    const grupos = await Promise.all(
+      refs.map(ref => getPhotos(ref.entityType, ref.entityId))
+    );
+    const fotosUnicas = new Map();
+    grupos.flat().forEach(photo => fotosUnicas.set(String(photo.id), photo));
+    const photos = Array.from(fotosUnicas.values())
+      .sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
     photos.forEach(photo => {
       const url = URL.createObjectURL(photo.blob);
       const card = document.createElement("div");

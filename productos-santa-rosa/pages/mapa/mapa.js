@@ -566,11 +566,35 @@ function photoEntityForRegistro(registro) {
   };
 }
 
+// En Mapa, prospectos y clientes pueden tener fotos guardadas bajo ambos tipos.
+// Consultamos las asociaciones existentes sin mover ni duplicar fotografías.
+function photoRefsForRegistro(registro) {
+  const ids = [...new Set(
+    [registro?.id, registro?.routeClientId, registro?.marketPlaceId]
+      .filter(value => value !== undefined && value !== null && String(value).trim() !== "")
+      .map(String)
+  )];
+  const tipos = registro?.tipo === "tienda" ? ["empresa"] : ["mapa", "cliente"];
+  return tipos.flatMap(entityType =>
+    ids.map(entityId => ({ entityType, entityId }))
+  );
+}
+
+async function getPhotosForRegistro(registro) {
+  const grupos = await Promise.all(
+    photoRefsForRegistro(registro).map(ref => getPhotos(ref.entityType, ref.entityId))
+  );
+  const unicas = new Map();
+  grupos.flat().forEach(photo => unicas.set(String(photo.id), photo));
+  return Array.from(unicas.values())
+    .sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
+}
+
 async function popupHtml(registro) {
   const photoRef = photoEntityForRegistro(registro);
   let tieneFotos = false;
   try {
-    const fotos = await getPhotos(photoRef.entityType, photoRef.entityId);
+    const fotos = await getPhotosForRegistro(registro);
     tieneFotos = fotos.length > 0;
   } catch (error) {
     console.warn("No fue posible consultar las fotografías del registro:", error);
@@ -942,7 +966,13 @@ function abrirModal({ registro = null, lat = null, lon = null, obtenerDireccion 
   document.getElementById("coordenadasTexto").textContent = `${Number(registro?.latitud ?? lat).toFixed(7)}, ${Number(registro?.longitud ?? lon).toFixed(7)}`;
   modal.classList.add("visible");
   modal.setAttribute("aria-hidden", "false");
-  renderPhotoPicker({ container: document.getElementById("mapaFotos"), entityType: modal.dataset.photoEntityType, entityId: modal.dataset.photoEntityId, label: "Fotografías" });
+  renderPhotoPicker({
+    container: document.getElementById("mapaFotos"),
+    entityType: modal.dataset.photoEntityType,
+    entityId: modal.dataset.photoEntityId,
+    label: "Fotografías",
+    readRefs: registro ? photoRefsForRegistro(registro) : []
+  });
   setTimeout(() => document.getElementById("mapaNombre").focus(), 50);
 
   // Al crear un registro nuevo, obtener automáticamente la dirección
@@ -1398,7 +1428,7 @@ mapa.on("click", e => {
 async function abrirGaleriaFotosMapa(registro) {
   const ref = photoEntityForRegistro(registro);
   try {
-    const fotos = await getPhotos(ref.entityType, ref.entityId);
+    const fotos = await getPhotosForRegistro(registro);
     if (!fotos.length) return;
     const modalFotos = document.getElementById("modalFotosMapa");
     const grid = document.getElementById("galeriaFotosMapa");
