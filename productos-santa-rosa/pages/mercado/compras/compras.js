@@ -223,7 +223,7 @@ function categoryCard(c){
 
 function productCard(p){
   const count=presentationsForProduct(p.id).length;
-  return `<div class="product-card-wrap" data-product-card-name="${esc(p.nombre)}"><button class="product-card" data-product="${esc(p.id)}"><span>📦</span><strong>${esc(p.nombre)}</strong><span class="photo-indicator" data-photo-indicator="producto:${esc(p.id)}" aria-hidden="true"></span></button><div class="entity-actions"><button data-edit-product="${esc(p.id)}">✏️</button><button data-toggle-product="${esc(p.id)}" title="${p.active===false?'Activar':'Desactivar'}">${p.active===false?"🔄 Activar":"⏸️ Desactivar"}</button><button data-delete-product="${esc(p.id)}">🗑️</button></div></div>`;
+  return `<div class="product-card-wrap" data-product-card-name="${esc(p.nombre)}"><button class="product-card" data-product="${esc(p.id)}"><span>📦</span><strong>${esc(p.nombre)}</strong><span class="photo-indicator" data-photo-indicator="producto:${esc(p.id)}" aria-hidden="true"></span></button><div class="entity-actions"><button data-edit-product="${esc(p.id)}">✏️</button><button data-toggle-product="${esc(p.id)}" title="${p.active===false?'Activar producto':'Desactivar producto'}" aria-label="${p.active===false?'Activar producto':'Desactivar producto'}">${p.active===false?"🔄":"⏸️"}</button><button data-delete-product="${esc(p.id)}">🗑️</button></div></div>`;
 }
 function periodStart(key){
   if(key==='all')return null;
