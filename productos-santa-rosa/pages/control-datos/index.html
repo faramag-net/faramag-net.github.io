@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#243447">
+  <title>Centro de control · Productos Santa Rosa</title>
+  <link rel="stylesheet" href="../../styles/global.css">
+  <link rel="stylesheet" href="../../components/navbar.css">
+  <link rel="stylesheet" href="./control-datos.css">
+</head>
+<body>
+  <div id="navbar"></div>
+  <main class="control-page">
+    <header class="control-header">
+      <div><p class="eyebrow">PRODUCTOS SANTA ROSA</p><h1>🗄️ Centro de control</h1><p>Consulta los datos existentes. No se generan claves ni historiales nuevos.</p></div>
+      <a class="back-link" href="../../">← Dashboard</a>
+    </header>
+    <section class="control-tools">
+      <label for="searchAll">Buscar clave, palabra, ID o nombre</label>
+      <input id="searchAll" type="search" placeholder="Ej. psr_clients, María, presentación…" autocomplete="off">
+      <div class="control-filters" id="filters" aria-label="Filtrar por tipo">
+        <button type="button" class="active" data-filter="all">Todo</button>
+        <button type="button" data-filter="data">Datos</button>
+        <button type="button" data-filter="photos">📸 Fotos</button>
+      </div>
+      <p id="summary" class="summary" aria-live="polite">Cargando datos…</p>
+    </section>
+    <section id="results" class="results" aria-live="polite"></section>
+  </main>
+  <dialog id="deleteDialog" class="delete-dialog">
+    <form id="deleteForm" method="dialog">
+      <p class="danger-label">ELIMINACIÓN DEFINITIVA</p>
+      <h2>¿Eliminar este elemento?</h2>
+      <p id="deleteDescription"></p>
+      <p class="warning">Se eliminará únicamente el elemento seleccionado. Esta acción no se puede deshacer. No se borrarán automáticamente otros registros relacionados.</p>
+      <label for="confirmWord">Escribe <strong>CONFIRMAR</strong> para continuar</label>
+      <input id="confirmWord" autocomplete="off" spellcheck="false" placeholder="CONFIRMAR">
+      <div class="dialog-actions"><button type="button" class="cancel" id="cancelDelete">Cancelar</button><button type="submit" class="delete-button" id="confirmDelete" disabled>Eliminar definitivamente</button></div>
+    </form>
+  </dialog>
+  <script type="module" src="./control-datos.js"></script>
+</body>
+</html>

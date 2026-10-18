@@ -215,3 +215,8 @@ body{
 }
 
 .psr-photo-add-actions{display:flex;flex-wrap:wrap;gap:7px}
+
+
+/* Acceso al Centro de control desde Dashboard */
+.control-datos-button{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:9px;background:#243447;color:#fff;text-decoration:none;font-weight:700}
+.control-datos-button:hover{background:#334b63}
