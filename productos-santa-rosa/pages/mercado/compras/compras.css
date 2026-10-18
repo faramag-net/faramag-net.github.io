@@ -337,7 +337,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .company-card,.category-card,.product-card{min-height:68px;padding:7px 5px;gap:3px;border-radius:10px}
 .company-icon,.product-card>span,.category-card>span{font-size:15px;line-height:1}
 .company-card strong,.category-card strong,.product-card strong{font-size:11px;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
-.company-card small,.category-card small,.product-card small{display:none}
+.company-card small,.category-card small,.product-card small{display:block}.entity-count{font-size:9px!important;color:var(--muted);line-height:1.1;margin-top:1px}
 .entity-actions{gap:3px;margin-top:3px}
 .entity-actions button{min-width:28px;min-height:27px;padding:2px 4px;font-size:12px}
 .entity-actions button[data-toggle-company],.entity-actions button[data-toggle-category]{width:28px;min-width:28px;font-size:13px}
