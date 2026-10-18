@@ -101,11 +101,11 @@ function render(){
     if(row.kind==="photo"){
       const url=URL.createObjectURL(row.photo.blob);objectUrls.push(url);
       const status=row.owner.exists?`Asociada a: ${row.owner.label} · ${row.owner.key}`:row.owner.label;
-      return `<article class="photo-row"><img class="photo-thumb" src="${url}" alt="Vista previa de ${esc(row.label)}" data-preview="${esc(row.id)}"><div class="row-content"><div class="row-title">${esc(row.label)}</div><div class="row-meta">Fecha: ${esc(formatDate(row.photo.createdAt))}<br>Tipo: ${esc(row.photo.entityType)} · ID asociado: ${esc(row.photo.entityId)}<br>${esc(status)}<br>Tamaño: ${esc(bytes(row.photo.size))}</div></div><div class="row-actions"><button type="button" class="danger" data-delete-photo="${esc(row.photo.id)}">Eliminar</button></div></article>`;
+      return `<article class="photo-row"><img class="photo-thumb" src="${url}" alt="Vista previa de ${esc(row.label)}" data-preview="${esc(row.id)}"><div class="row-content"><div class="row-title">${esc(row.label)}</div><div class="row-meta">Fecha: ${esc(formatDate(row.photo.createdAt))}<br>Tipo: ${esc(row.photo.entityType)} · ID asociado: ${esc(row.photo.entityId)}<br>${esc(status)}<br>Tamaño: ${esc(bytes(row.photo.size))}</div></div><div class="row-actions"><button type="button" data-preview="${esc(row.id)}">Ver foto</button><button type="button" class="danger" data-delete-photo="${esc(row.photo.id)}">Eliminar</button></div></article>`;
     }
     const details=printable(row.record);
     const short=details.length>260?`${details.slice(0,260)}…`:details;
-    return `<article class="data-row"><div class="row-content"><div class="row-title">${esc(row.label)}</div><div class="row-meta">Clave: ${esc(row.key)}${row.id!==null?`<br>ID/propiedad: ${esc(row.id)}`:""}<br>${esc(short)}</div></div><div class="row-actions">${row.protected?'<button type="button" disabled title="Clave protegida">Protegido</button>':`<button type="button" class="danger" data-delete-data="${esc(row.key)}" data-index="${row.index ?? ""}" data-id="${esc(row.id ?? "")}" data-property="${esc(row.property ?? "")}" data-record="${esc(JSON.stringify(row.record))}" data-primitive="${row.primitive?"1":"0"}" data-empty="${row.emptyObject?"1":"0"}">Eliminar</button>`}</div></article>`;
+    return `<article class="data-row"><div class="row-content"><div class="row-title">${esc(row.label)}</div><div class="row-meta">Clave: ${esc(row.key)}${row.id!==null?`<br>ID/propiedad: ${esc(row.id)}`:""}<br>${esc(short)}</div></div><div class="row-actions"><button type="button" data-view-content="1" data-key="${esc(row.key)}" data-index="${row.index ?? ""}" data-property="${esc(row.property ?? "")}" data-id="${esc(row.id ?? "")}">Ver contenido</button>${row.protected?'<button type="button" disabled title="Clave protegida">Protegido</button>':`<button type="button" class="danger" data-delete-data="${esc(row.key)}" data-index="${row.index ?? ""}" data-id="${esc(row.id ?? "")}" data-property="${esc(row.property ?? "")}" data-record="${esc(JSON.stringify(row.record))}" data-primitive="${row.primitive?"1":"0"}" data-empty="${row.emptyObject?"1":"0"}">Eliminar</button>`}</div></article>`;
   }).join("")}</section>`).join("");
 }
 
@@ -145,12 +145,56 @@ document.getElementById("deleteForm").addEventListener("submit",async event=>{
 });
 
 results.addEventListener("click",event=>{
+  const viewButton=event.target.closest("[data-view-content]");
+  if(viewButton){
+    const row=rows.find(r=>r.kind==="data" && r.key===viewButton.dataset.key && String(r.index??"")===viewButton.dataset.index && String(r.property??"")===viewButton.dataset.property);
+    if(!row)return;
+    const layer=document.createElement("div");
+    layer.className="content-preview";
+    layer.setAttribute("role","dialog");
+    layer.setAttribute("aria-modal","true");
+    layer.setAttribute("aria-label",`Contenido completo de ${row.key}`);
+    const content=typeof row.record === "string" ? row.record : JSON.stringify(row.record,null,2);
+    layer.innerHTML=`<section class="content-preview-card"><button type="button" class="content-preview-close">Cerrar ✕</button><h2>Contenido completo</h2><p class="content-preview-meta">Clave: <strong>${esc(row.key)}</strong>${row.id!==null?` · ID/propiedad: <strong>${esc(row.id)}</strong>`:""}</p><pre class="content-preview-json"></pre><div class="content-preview-actions"><button type="button" class="content-copy">Copiar contenido</button><button type="button" class="content-preview-close secondary">Cerrar</button></div></section>`;
+    layer.querySelector(".content-preview-json").textContent=content ?? "null";
+    const close=()=>layer.remove();
+    layer.querySelectorAll(".content-preview-close").forEach(button=>button.addEventListener("click",close));
+    layer.querySelector(".content-copy").addEventListener("click",async()=>{
+      try{await navigator.clipboard.writeText(content ?? "null");layer.querySelector(".content-copy").textContent="Copiado ✓";}
+      catch{const area=document.createElement("textarea");area.value=content ?? "null";area.setAttribute("readonly","");layer.querySelector(".content-preview-card").append(area);area.select();try{document.execCommand("copy");layer.querySelector(".content-copy").textContent="Copiado ✓";}catch{alert("No fue posible copiar automáticamente. Puedes seleccionar el contenido y copiarlo manualmente.");}area.remove();}
+    });
+    layer.addEventListener("click",e=>{if(e.target===layer)close();});
+    const onKey=e=>{if(e.key==="Escape"&&document.body.contains(layer)){close();document.removeEventListener("keydown",onKey);}};
+    document.addEventListener("keydown",onKey);
+    document.body.append(layer);
+    layer.querySelector(".content-preview-close").focus();
+    return;
+  }
   const photoButton=event.target.closest("[data-delete-photo]");
   if(photoButton){const row=rows.find(r=>r.kind==="photo"&&String(r.photo.id)===photoButton.dataset.deletePhoto);if(row)requestDelete({kind:"photo",id:row.photo.id},`Archivo: ${row.photo.name || "Fotografía"}. Fecha: ${formatDate(row.photo.createdAt)}. Registro asociado: ${row.owner.label}. Se eliminará solo esta fotografía.`);return;}
   const dataButton=event.target.closest("[data-delete-data]");
   if(dataButton){const row=rows.find(r=>r.kind==="data"&&r.key===dataButton.dataset.deleteData&&String(r.index??"")===dataButton.dataset.index&&String(r.property??"")===dataButton.dataset.property);if(!row)return;requestDelete({kind:"data",key:row.key,index:row.index,id:row.id,property:row.property,record:row.record,primitive:row.primitive,emptyObject:row.emptyObject},`Clave: ${row.key}. Elemento: ${row.label}. Se eliminará únicamente este elemento; no se ejecutará una eliminación en cascada.`);return;}
   const preview=event.target.closest("[data-preview]");
-  if(preview){const row=rows.find(r=>r.kind==="photo"&&String(r.photo.id)===preview.dataset.preview);if(!row)return;const url=URL.createObjectURL(row.photo.blob);const layer=document.createElement("div");layer.className="photo-preview";layer.innerHTML=`<button type="button">Cerrar ✕</button><img alt="${esc(row.label)}">`;layer.querySelector("img").src=url;layer.querySelector("button").onclick=()=>{URL.revokeObjectURL(url);layer.remove();};layer.onclick=e=>{if(e.target===layer){URL.revokeObjectURL(url);layer.remove();}};document.body.append(layer);}
+  if(preview){
+    const row=rows.find(r=>r.kind==="photo"&&String(r.photo.id)===preview.dataset.preview);
+    if(!row)return;
+    const url=URL.createObjectURL(row.photo.blob);
+    const ownerStatus=row.owner.exists?`Asociada a: ${row.owner.label} · ${row.owner.key}`:row.owner.label;
+    const layer=document.createElement("div");
+    layer.className="photo-preview";
+    layer.setAttribute("role","dialog");
+    layer.setAttribute("aria-modal","true");
+    layer.setAttribute("aria-label",`Detalles de ${row.photo.name || "fotografía"}`);
+    layer.innerHTML=`<section class="photo-preview-card"><button type="button" class="photo-preview-close">Cerrar ✕</button><h2>${esc(row.photo.name || "Fotografía")}</h2><img alt="${esc(row.label)}"><div class="photo-preview-details"><div><strong>Fecha de subida</strong><span>${esc(formatDate(row.photo.createdAt))}</span></div><div><strong>Tipo de archivo</strong><span>${esc(row.photo.mimeType || row.photo.blob?.type || "No disponible")}</span></div><div><strong>Tamaño</strong><span>${esc(bytes(row.photo.size ?? row.photo.blob?.size))}</span></div><div><strong>Tipo de registro</strong><span>${esc(row.photo.entityType || "No disponible")}</span></div><div><strong>ID asociado</strong><span class="breakable">${esc(row.photo.entityId || "Sin ID")}</span></div><div><strong>Registro relacionado</strong><span>${esc(ownerStatus)}</span></div></div></section>`;
+    layer.querySelector("img").src=url;
+    const close=()=>{URL.revokeObjectURL(url);layer.remove();};
+    layer.querySelector(".photo-preview-close").onclick=close;
+    layer.onclick=e=>{if(e.target===layer)close();};
+    const onKey=e=>{if(e.key==="Escape"&&document.body.contains(layer)){close();document.removeEventListener("keydown",onKey);}};
+    document.addEventListener("keydown",onKey);
+    document.body.append(layer);
+    layer.querySelector(".photo-preview-close").focus();
+  }
 });
 searchInput.addEventListener("input",render);
 document.getElementById("filters").addEventListener("click",event=>{const button=event.target.closest("button[data-filter]");if(!button)return;activeFilter=button.dataset.filter;document.querySelectorAll("#filters button").forEach(b=>b.classList.toggle("active",b===button));render();});
