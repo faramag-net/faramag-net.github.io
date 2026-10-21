@@ -348,3 +348,17 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .pres-icon{font-size:12px;vertical-align:middle}
 @media(max-width:380px){.company-grid,.category-grid,.product-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.company-card,.category-card,.product-card{min-height:62px;padding:6px 4px}.company-card strong,.category-card strong,.product-card strong{font-size:10px}.modal .entity-toolbar.presentation-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.modal .entity-toolbar.presentation-actions button{font-size:10px;padding:6px 3px}}
 @media(min-width:700px){.company-grid,.category-grid,.product-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}.company-card,.category-card,.product-card{min-height:72px}}
+
+/* v1.2.0.26: formularios de presentación compactos y texto de empresa legible */
+.compras-page .open-cart-row,.compras-page .open-cart-row strong,.compras-page .open-cart-row small{color:var(--text)!important;}
+.compras-page .open-cart-row small{color:var(--muted)!important;}
+.cart-buyer-box{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:10px;}
+.cart-buyer-box label{font-size:12px;font-weight:700;}
+.compact-presentation-form{padding:12px!important;max-height:94dvh!important;}
+.compact-presentation-form .modal-head{margin-bottom:6px;}
+.compact-presentation-form .modal-head h2{font-size:17px;}
+.compact-presentation-form label{margin:6px 0 3px;font-size:11px;}
+.compact-presentation-form .modal-input,.compact-presentation-form input,.compact-presentation-form select{padding:7px 9px;font-size:13px;min-height:34px;}
+.compact-presentation-form .form-two{gap:6px;}
+.compact-presentation-form .modal-actions{margin-top:9px;}
+@media(min-width:700px){.compact-presentation-form{max-width:500px!important;}}
