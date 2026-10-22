@@ -7,7 +7,7 @@ const productos = [
     tipo: "gourmet",
     activo: true,
     descripcion: "Cereza con trozos de Nuez, arandanos y coco",
-    imagen: "../../../../imagenes/paletabeso.png",
+    imagen: "../../../../imagenes/paletabeso.jpg",
     mensaje: "Quiero paleta de Beso de Angel"
   },
 
@@ -17,7 +17,7 @@ const productos = [
     tipo: "leche",
     activo: true,
     descripcion: "Cremoso relleno con coco rallado",
-    imagen: "../../../../imagenes/paletacoco.png",
+    imagen: "../../../../imagenes/paletacoco.jpg",
     mensaje: "Quiero paleta de Coco"
   },
 
@@ -27,7 +27,7 @@ const productos = [
     tipo: "leche",
     activo: true,
     descripcion: "Delicioso y cremoso con trozos de fresa",
-    imagen: "../../../../imagenes/paletafresa.png",
+    imagen: "../../../../imagenes/paletafresa.jpg",
     mensaje: "Quiero paleta de Fresa"
   },
 
@@ -47,7 +47,7 @@ const productos = [
     tipo: "leche",
     activo: true,
     descripcion: "Cremoso y delicioso, con mamey natural",
-    imagen: "../../../../imagenes/paletamamey.png",
+    imagen: "../../../../imagenes/paletamamey.jpg",
     mensaje: "Quiero paleta de Mamey"
   },
 
@@ -57,7 +57,7 @@ const productos = [
     tipo: "gourmet",
     activo: true,
     descripcion: "Chocolate con una deliciosa cobertura de Nutella",
-    imagen: "../../../../imagenes/paletanutella.png",
+    imagen: "../../../../imagenes/paletanutella.jpg",
     mensaje: "Quiero paleta Choco Nutella"
   },
 
@@ -98,7 +98,7 @@ const productos = [
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante mezcla de frutas tropicales",
-    imagen: "../../../../imagenes/paletatropical.png",
+    imagen: "../../../../imagenes/paletatropical.jpg",
     mensaje: "Quiero paleta Tropical"
   },
 
@@ -108,7 +108,7 @@ const productos = [
     tipo: "hielo",
     activo: true,
     descripcion: "Con pulpa y trozos de mango",
-    imagen: "../../../../imagenes/paletamango.png",
+    imagen: "../../../../imagenes/paletamango.jpg",
     mensaje: "Quiero paleta de Mango"
   },
 
