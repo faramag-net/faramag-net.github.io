@@ -57,7 +57,7 @@ const productos = [
     tipo: "gourmet",
     activo: true,
     descripcion: "Chocolate con una deliciosa cobertura de Nutella",
-    imagen: "../../../../imagenes/bolinuetlla.png",
+    imagen: "../../../../imagenes/bolinutella.jpg",
     mensaje: "Quiero boli Choco Nutella"
   },
 
