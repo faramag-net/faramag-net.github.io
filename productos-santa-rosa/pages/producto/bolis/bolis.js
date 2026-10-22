@@ -37,7 +37,7 @@ const productos = [
     tipo: "gourmet",
     activo: true,
     descripcion: "Rica combinacion de 🫐 Mora azul,🫐 Zarzamora y ❤️ Frambuesa",
-    imagen: "../../../../imagenes/bolifrutos.png",
+    imagen: "../../../../imagenes/bolifrutos.jpg",
     mensaje: "Quiero boli Frutos Rojos"
   },
 
@@ -49,6 +49,16 @@ const productos = [
     descripcion: "Cremoso y delicioso, con mamey natural",
     imagen: "../../../../imagenes/bolimamey.png",
     mensaje: "Quiero boli de Mamey"
+  },
+
+    {
+    nombre: "Cajeta",
+    precio: 20,
+    tipo: "leche",
+    activo: true,
+    descripcion: "Boli cremos con el sabor tradicional de la cajeta original",
+    imagen: "../../../../imagenes/bolicajeta.jpg",
+    mensaje: "Quiero boli de Cajeta"
   },
 
   {
@@ -80,6 +90,17 @@ const productos = [
     imagen: "../../../../imagenes/bolioreo.png",
     mensaje: "Quiero boli Oreo"
   },
+
+    {
+    nombre: "Nuez",
+    precio: 22,
+    tipo: "gourmet",
+    activo: true,
+    descripcion: "Boli cremoso con todo el sabor de la nuez y trocitos de nuez",
+    imagen: "../../../../imagenes/bolinuez.jpg",
+    mensaje: "Quiero boli Nuez"
+  },
+  
 
   // HIELO
 
