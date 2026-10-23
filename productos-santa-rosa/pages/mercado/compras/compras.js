@@ -2,7 +2,7 @@
  * Productos Santa Rosa
  * Módulo: 🛒 Compras (remodelación de Insumos)
  * Versión: 1.2.0.26
- * Build: 20261021.150000
+ * Build: 20261022.211100
  * Objetivo: Preservar contexto de historiales, asignar comprador al carrito y compactar formularios.
  *
  * Regla V1:
