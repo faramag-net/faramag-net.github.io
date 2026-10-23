@@ -362,3 +362,16 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .compact-presentation-form .form-two{gap:6px;}
 .compact-presentation-form .modal-actions{margin-top:9px;}
 @media(min-width:700px){.compact-presentation-form{max-width:500px!important;}}
+
+
+/* v1.2.0.27: restauración de contexto y compactación del detalle de presentación */
+.compras-page .open-cart-row, .compras-page .open-cart-row * { color: var(--text) !important; }
+.compras-page .open-cart-row small { color: var(--muted) !important; }
+.presentation-detail-modal .modal-box { max-height: 94dvh; overflow-y: auto; }
+.presentation-detail-modal .price-box, .presentation-detail-modal .cart-add-box { padding: 9px; margin-top: 7px; }
+.presentation-detail-modal .modal-input, .presentation-detail-modal input, .presentation-detail-modal select { padding: 7px 9px; min-height: 34px; font-size: 13px; }
+.presentation-detail-modal .current-price { font-size: 21px; margin-top: 5px; }
+.presentation-detail-modal .inline-price input { padding: 7px; font-size: 16px; }
+.presentation-detail-modal .modal-head { margin-bottom: 7px; }
+.presentation-detail-modal .modal-box label { margin: 6px 0 3px; }
+.history-modal .history-list { overflow-y: auto; overscroll-behavior: contain; scroll-behavior: auto; }
