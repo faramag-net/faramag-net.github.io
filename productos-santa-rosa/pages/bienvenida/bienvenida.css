@@ -296,3 +296,15 @@ footer{
     }
 
 }
+
+.card-eventos, .card-mayoreo { border: 2px solid rgba(46,125,50,.22); }
+.card-mayoreo { background: rgba(255,255,255,.68); }
+.secundarios { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; padding: 4px 18px 24px; }
+.secundarios a { color:#5a493d; font-weight:700; text-decoration:none; }
+.secundarios a:hover { text-decoration:underline; }
+@media(max-width:768px) {
+  .cards { grid-template-columns:1fr; gap:18px; padding-top:20px; }
+  .card { border-radius:28px; padding:24px 20px; }
+  .card img { width:150px; }
+  .hero { min-height:auto; padding-top:28px; }
+}
