@@ -158,7 +158,7 @@ const productos = [
     nombre: "Piña con chile y chamoy",
     precio: 18,
     tipo: "hielo",
-    activo: true,
+    activo: false,
     descripcion: "Picosita y refrescante",
     imagen: "../../../../imagenes/bolipinachamoy.jpg",
     mensaje: "Quiero boli de Piña con chile y chamoy"
