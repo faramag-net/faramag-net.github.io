@@ -3,7 +3,7 @@ const productos = [
   // LECHOSOS
   {
     nombre: "Beso de Ángel",
-    precio: 22,
+    precio: 26,
     tipo: "gourmet",
     activo: true,
     descripcion: "Cereza con trozos de Nuez, arandanos y coco",
@@ -13,7 +13,7 @@ const productos = [
 
   {
     nombre: "Coco",
-    precio: 20,
+    precio: 22,
     tipo: "leche",
     activo: true,
     descripcion: "Cremoso relleno con coco rallado",
@@ -23,7 +23,7 @@ const productos = [
 
   {
     nombre: "Fresa",
-    precio: 20,
+    precio: 22,
     tipo: "leche",
     activo: true,
     descripcion: "Delicioso y cremoso con trozos de fresa",
@@ -33,7 +33,7 @@ const productos = [
 
   {
     nombre: "Frutos Rojos",
-    precio: 22,
+    precio: 26,
     tipo: "gourmet",
     activo: true,
     descripcion: "Rica combinacion de 🫐 Mora azul,🫐 Zarzamora y ❤️ Frambuesa",
@@ -43,7 +43,7 @@ const productos = [
 
   {
     nombre: "Mamey",
-    precio: 20,
+    precio: 22,
     tipo: "leche",
     activo: true,
     descripcion: "Cremoso y delicioso, con mamey natural",
@@ -53,7 +53,7 @@ const productos = [
 
   {
     nombre: "Choco Nutella",
-    precio: 24,
+    precio: 26,
     tipo: "gourmet",
     activo: true,
     descripcion: "Chocolate con una deliciosa cobertura de Nutella",
@@ -63,7 +63,7 @@ const productos = [
 
   {
     nombre: "Chocolate",
-    precio: 20,
+    precio: 22,
     tipo: "leche",
     activo: true,
     descripcion: "Intenso y delicioso chocolate",
@@ -73,7 +73,7 @@ const productos = [
 
   {
     nombre: "Oreo",
-    precio: 22,
+    precio: 26,
     tipo: "gourmet",
     activo: true,
     descripcion: "Delicioso sabor a Oreo con trozos de galleta",
@@ -84,7 +84,7 @@ const productos = [
   // HIELO
   {
     nombre: "Mango con chile y chamoy",
-    precio: 18,
+    precio: 20,
     tipo: "hielo",
     activo: true,
     descripcion: "Picosita con pulpa y trozos de mango",
@@ -94,7 +94,7 @@ const productos = [
 
   {
     nombre: "Tropical",
-    precio: 18,
+    precio: 20,
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante mezcla de frutas tropicales",
@@ -104,7 +104,7 @@ const productos = [
 
   {
     nombre: "Mango",
-    precio: 18,
+    precio: 20,
     tipo: "hielo",
     activo: true,
     descripcion: "Con pulpa y trozos de mango",
@@ -114,7 +114,7 @@ const productos = [
 
   {
     nombre: "Pepino con limón",
-    precio: 18,
+    precio: 20,
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante limón con pepino",
@@ -125,7 +125,7 @@ const productos = [
 
   {
     nombre: "Piña",
-    precio: 18,
+    precio: 20,
     tipo: "hielo",
     activo: true,
     descripcion: "Con pulpa de piña",
@@ -135,7 +135,7 @@ const productos = [
 
   {
     nombre: "Piña con chile y chamoy",
-    precio: 18,
+    precio: 20,
     tipo: "hielo",
     activo: false,
     descripcion: "Picosita y refrescante",
@@ -145,7 +145,7 @@ const productos = [
 
   {
     nombre: "Oasis",
-    precio: 18,
+    precio: 20,
     tipo: "hielo",
     activo: true,
     descripcion: "Refrescante mezcla de fresa, naranja y papaya",
