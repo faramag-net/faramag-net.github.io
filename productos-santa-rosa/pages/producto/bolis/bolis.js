@@ -51,16 +51,6 @@ const productos = [
     mensaje: "Quiero boli de Mamey"
   },
 
-    {
-    nombre: "Cajeta",
-    precio: 20,
-    tipo: "leche",
-    activo: true,
-    descripcion: "Boli cremos con el sabor tradicional de la cajeta original",
-    imagen: "../../../../imagenes/bolicajeta.jpg",
-    mensaje: "Quiero boli de Cajeta"
-  },
-
   {
     nombre: "Choco Nutella",
     precio: 24,
@@ -91,7 +81,7 @@ const productos = [
     mensaje: "Quiero boli Oreo"
   },
 
-    {
+  {
     nombre: "Nuez",
     precio: 22,
     tipo: "gourmet",
@@ -101,6 +91,15 @@ const productos = [
     mensaje: "Quiero boli Nuez"
   },
   
+  {
+    nombre: "Cajeta",
+    precio: 20,
+    tipo: "gourmet",
+    activo: true,
+    descripcion: "Boli cremos con el sabor tradicional de la cajeta original",
+    imagen: "../../../../imagenes/bolicajeta.jpg",
+    mensaje: "Quiero boli de Cajeta"
+  },
 
   // HIELO
 
