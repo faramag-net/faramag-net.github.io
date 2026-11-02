@@ -27,7 +27,7 @@ body::before{
     inset:0;
 
     background-image:
-        url("/imagenes/fondo_frutas_santa_rosa.jpg.png");
+        url("/imagenes/fondo_frutas_santa_rosa.jpg");
 
     background-repeat:no-repeat;
 
