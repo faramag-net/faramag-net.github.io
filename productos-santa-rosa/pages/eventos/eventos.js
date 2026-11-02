@@ -5,7 +5,7 @@
  * Cada colección puede tener una portada y varias fotografías.
  */
 (() => {
-  const BASE = "../../imagenes/eventos/";
+  const BASE = "../../../../imagenes/eventos/";
 
   // Para agregar contenido: crea una carpeta dentro de /imagenes/eventos/
   // y agrega aquí una colección con su portada y su arreglo de fotografías.
