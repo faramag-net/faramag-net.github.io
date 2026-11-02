@@ -308,3 +308,55 @@ footer{
   .card img { width:150px; }
   .hero { min-height:auto; padding-top:28px; }
 }
+
+
+/* Sección independiente de mayoreo, con la misma línea visual de los catálogos */
+.mayoreo {
+    width: min(900px, calc(100% - 28px));
+    margin: 12px auto 24px;
+    padding: 18px 18px 16px;
+    border: 1px solid rgba(255,255,255,.55);
+    border-radius: 18px;
+    background: rgba(255,255,255,.58);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.10);
+    text-align: center;
+}
+.mayoreo-kicker {
+    margin: 0 0 5px;
+    font-size: .82rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+}
+.mayoreo h2 {
+    margin: 0;
+    font-size: clamp(1.25rem, 4.5vw, 1.65rem);
+    line-height: 1.2;
+}
+.mayoreo p {
+    margin: 7px auto 12px;
+    max-width: 640px;
+    font-size: .98rem;
+    line-height: 1.5;
+}
+.mayoreo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: #25b85a;
+    color: #fff;
+    text-decoration: none;
+    font-size: .95rem;
+    font-weight: 800;
+    box-shadow: 0 5px 14px rgba(0,0,0,.12);
+}
+.mayoreo-btn:hover { background: #1e9e4d; }
+.card-frescos {
+    color: inherit;
+    text-decoration: none;
+    border: 2px solid rgba(46,125,50,.25);
+}
+.card-frescos .btn { margin-top: 0; }
