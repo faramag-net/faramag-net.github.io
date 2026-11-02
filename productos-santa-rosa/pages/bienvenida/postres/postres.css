@@ -26,7 +26,7 @@ body::before {
   inset: 0;
   background:
     linear-gradient(rgba(0,0,0,.20), rgba(0,0,0,.20)),
-    url("/imagenes/fondopostresybolis.png");
+    url("/imagenes/fondo_frutas_santa_rosa.jpg.png");
   background-repeat: no-repeat;
   background-position: center top;
   background-size: cover;
