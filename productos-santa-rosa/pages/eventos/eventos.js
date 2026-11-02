@@ -44,7 +44,21 @@
       ],
       activo: true,
       enlace: "../producto/"
+    },
+    {
+      id: "chamoyadas",
+      nombre: "Chamoyadas",
+      categoria: "Productos",
+      descripcion: "Opciones frutales y gourmet para disfrutar y compartir durante tu celebración.",
+      portada: `${BASE}chamoyadas.jpg`,
+      imagenes: [
+        { src: `${BASE}chamoyadas.jpg`, alt: "Variedad de chamoyadas artesanales", texto: "Chamoyadas para compartir" },
+        { src: `${BASE}chamoyadas.jpg`, alt: "Variedad de chamoyadas artesanales", texto: "Chamoyadas para compartir" }
+      ],
+      activo: true,
+      enlace: "../producto/"
     }
+  
   ];
 
   const container = document.getElementById("servicios");
